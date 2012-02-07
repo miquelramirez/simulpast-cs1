@@ -8,15 +8,16 @@
 
 ####### Compiler, tools and options
 
+QWT_VERSION   = qwt-6.0.1
 CC            = gcc
 CXX           = g++
 DEFINES       = -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
 CFLAGS        = -pipe -O2 -D_REENTRANT -Wall -W $(DEFINES)
 CXXFLAGS      = -pipe -O2 -D_REENTRANT -Wall -W $(DEFINES)
-INCPATH       = -I/usr/share/qt4/mkspecs/linux-g++ -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4 -I. -I../pandora -I/usr/include/qwt/ -I/usr/include/mpich2 -I/usr/include/GL -I/usr/include/qt4/QtOpenGL -I/usr/include/qt4 -I/usr/include/IL -I/usr/local/qwt-6.0.0/include -I. -I.
+INCPATH       = -I/usr/share/qt4/mkspecs/linux-g++ -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4 -I. -I../pandora -I/usr/include/qwt/ -I/usr/include/mpich2 -I/usr/include/GL -I/usr/include/qt4/QtOpenGL -I/usr/include/qt4 -I/usr/include/IL -I/usr/local/$(QWT_VERSION)/include -I. -I.
 LINK          = g++
 LFLAGS        = -Wl,-O1
-LIBS          = $(SUBLIBS)  -L/usr/lib -L../pandora/ -lpandora -L/usr/local/qwt-6.0.0/lib/ -lqwt -lhdf5 -lmpich -lmpi -lglut -lGL -lGLU -lQtOpenGL -lIL -ltinyxml -lQtGui -lQtCore -lpthread 
+LIBS          = $(SUBLIBS)  -L/usr/lib -L../pandora/ -lpandora -L/usr/local/$(QWT_VERSION)/lib/ -lqwt -lhdf5 -lmpich -lmpi -lglut -lGL -lGLU -lQtOpenGL -lIL -ltinyxml -lQtGui -lQtCore -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/bin/qmake

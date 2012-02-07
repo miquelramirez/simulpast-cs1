@@ -6,6 +6,8 @@
 			* Ignore error message regarding "blcr-dkms"
 		libcr-dev
 		libdevil-dev
+		libboost-all-dev
+		libglut3-dev
 
 2. Install libtinyxml:
 
@@ -16,6 +18,7 @@
 	* Issue
 		$ ./configure
 		$ make
+		$ make install
 
 	* Compilation will fail with this message:
 
@@ -27,5 +30,6 @@
 				$ sudo ln -s /usr/include/mpich2/mpio.h /usr/include/mpio.h
 				$ sudo ln -s /usr/include/mpich2/mpicxx.h /usr/include/mpicxx.h
 
-4. Install package for libqwt 6.0.0. IF NOT available then compile and install sources available
-in the repository
+4. Install package for libqwt 6.0.0. IF NOT available then compile and install sources available. 
+   If you install higher version, specify it in cassandra/Makefile variable (QWT_VERSION)
+   
