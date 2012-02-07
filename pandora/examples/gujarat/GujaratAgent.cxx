@@ -9,7 +9,7 @@ namespace Gujarat
 
 GujaratAgent::GujaratAgent( const std::string & id ) 
 	: Engine::Agent(id), 
-	 _spentTime(0), _collectedResources(0), _age(0), _homeRange(150)
+	 _spentTime(0), _collectedResources(0), _age(0), _homeRange(50)
 {
 	// we start with a couple of 15 years
 	_populationAges.push_back(15);
