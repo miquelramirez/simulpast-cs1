@@ -1,0 +1,2 @@
+1. Install libhdf (with MPI support):
+	* Debian/Ubuntu package: libhdf5-mpich-dev
