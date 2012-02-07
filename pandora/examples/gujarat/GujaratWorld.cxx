@@ -57,7 +57,6 @@ void GujaratWorld::createRasters()
 
 void GujaratWorld::createAgents()
 {
-/*	
 	for(int i=0; i<_config._numHG; i++)
 	{ 
 		if((i%_simulation.getNumTasks())==_simulation.getId())
@@ -71,7 +70,6 @@ void GujaratWorld::createAgents()
 			std::cout << _simulation.getId() << " new HunterGathrer: " << agent << std::endl;
 		}
 	}
-*/	
 
 	for(int i=0; i<_config._numAP; i++)
 	{ 
@@ -86,59 +84,6 @@ void GujaratWorld::createAgents()
 			std::cout << _simulation.getId() << " new AgroPastoralist: " << agent << std::endl;
 		}
 	}
-
-	/*
-	for(int i=0; i<_numAgentsAP; i++)
-	{ 
-		if((i%_simulation.getNumTasks())==_simulation.getId())
-		{
-			std::ostringstream oss;
- 			oss << "AP_" << i;
-			GujaratAgroPast * group;// = new GujaratAgroPast(oss.str());
-			bool located = false;
-			// TODO clean all around that loop and the second creator call
-			while(!located)
-			{
-				Engine::Point2D<int> bornPlace(_statistics.getUniformDistValue(0,_boundaries._size._x-1), _statistics.getUniformDistValue(0,_boundaries._size._y-1));
-				bornPlace += _boundaries._origin;
-				if(checkPosition(bornPlace) && _boundaries.isInside(bornPlace))
-				{
-				// TODO create correctly the group
-				//group->_...
-					group = new GujaratAgroPast(oss.str()
-											, bornPlace // position
-											, true // exists
-											, this // world
-											, 10// resources
-											, 1 // population
-											, 1 // homeRange
-											, 0 // cannibalism
-											, 0 // stepsUsingCannibalism
-											, 0 // age
-											, 0 // splitChance
-											, 0 // children
-											, 25 // minForkResources
-											, 10 // splitWaste
-											, 10 // maxAge
-											, 21 // minFoodToEat
-											, 1 // minFoodToMove
-											);
-
-					located = true;
-				}
-			}
-
-			//group->setPopulation((int)round(_statistics.getUniformDistValue(0,10)));
-			//group->setPopulation(1);// 1 agent = 1 individual
-			//group->setHomeRange((int)round(_statistics.getUniformDistValue(_minHomeRange, _maxHomeRange)));
-			//group->setSplitChance((int)round(_statistics.getUniformDistValue(_minSplitChance, _maxSplitChance)));
-			//group->setCannibalism((int)round(_statistics.getUniformDistValue(_minCannibalism, _maxCannibalism)));
-			std::cout << _simulation.getId() << " new AP: " << group << std::endl;
-			// TODO test a world with no agents!! 
-			addAgent(group); 
-		}
-	}
-	*/
 }
 
 /*------------------------------*/
