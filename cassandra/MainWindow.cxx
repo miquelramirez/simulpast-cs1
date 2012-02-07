@@ -287,7 +287,7 @@ void MainWindow::selectSimulation()
 	{
 		// ask for step resolution
 		bool resolutionCorrect;
-		int resolution = QInputDialog::getInt(this, tr("QInputDialog::getInteger()"),tr("Resolution Step:"), 1, 1, 1000, 1, &resolutionCorrect);
+		int resolution = QInputDialog::getInt(this, tr("Select time step resolution"),tr("Resolution Step:"), 1, 1, 1000, 1, &resolutionCorrect);
 		if(!resolutionCorrect)
 		{
 			resolution = 1;
