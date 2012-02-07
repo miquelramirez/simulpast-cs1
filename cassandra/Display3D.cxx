@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <GL/gl.h>
-#include <GL/glut.h>
 #include <QListWidgetItem>
 
 #include "Exceptions.hxx"

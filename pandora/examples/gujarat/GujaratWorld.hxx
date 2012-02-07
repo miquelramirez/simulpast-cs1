@@ -27,6 +27,7 @@ enum ResourceType
 
 class GujaratWorld : public Engine::World
 {
+	long int _agentKey;
 	Climate _climate;
 	const GujaratConfig & _config;
 	
@@ -50,7 +51,6 @@ class GujaratWorld : public Engine::World
 	void updateSoilCondition();
 	void updateResources();
 	
-	long int _agentKey;
 public:
 	GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config );
 	virtual ~GujaratWorld();

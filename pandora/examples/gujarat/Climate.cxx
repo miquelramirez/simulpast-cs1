@@ -6,7 +6,11 @@
 namespace Gujarat
 {
 
-Climate::Climate( const GujaratConfig & config ) : _randomGenerator(config._climateSeed), _uniformDistribution(_randomGenerator, boost::uniform_real <> (0,1)), _currentSeason(HOTDRY), _currentRain(0.0f), _config(config)
+Climate::Climate( const GujaratConfig & config ) 
+	: _randomGenerator(config._climateSeed), _currentSeason(HOTDRY),  
+	_currentRain(0.0f),
+	_uniformDistribution(_randomGenerator, boost::uniform_real <> (0,1)), 
+	_config(config)
 {
 }
 

@@ -19,9 +19,16 @@ INCLUDEPATH += /usr/include/GL/
 INCLUDEPATH += /usr/include/qt4/QtOpenGL/
 INCLUDEPATH += /usr/include/qt4/
 INCLUDEPATH += /usr/include/IL/
+# Required when installing qwt-6.0.0 from sources
+INCLUDEPATH += /usr/local/qwt-6.0.0/include/
 
 CONFIG += qt
-LIBS += -L../pandora/ -lpandora -lqwt -lhdf5 -lmpich -lmpi -lglut -lGL -lGLU -lQtOpenGL -lIL -ltinyxml
+
+# Required when installing qwt-6.0.0 from sources
+LIBS += -L../pandora/ -lpandora -L/usr/local/qwt-6.0.0/lib/ -lqwt -lhdf5 -lmpich -lmpi -lglut -lGL -lGLU -lQtOpenGL -lIL -ltinyxml
+
+# LIBS += -L../pandora/ -lpandora -lqwt -lhdf5 -lmpich -lmpi -lGL -lGLU -lQtOpenGL -lIL -ltinyxml
+
 # Input
 HEADERS += Display2D.hxx MainWindow.hxx AgentTypeSelection.hxx AgentTraitSelection.hxx DataPlot.hxx GenericStatistics.hxx StepDataPlot.hxx RasterSelection.hxx Display3D.hxx AgentConfigurator.hxx Model3D.hxx Object3D.hxx Material.hxx Loader3DS.hxx ColorSelector.hxx DefaultColorSelector.hxx AgentConfiguration.hxx RasterConfigurator.hxx ColorInterval.hxx RasterConfiguration.cxx Configurator3D.hxx Configuration3D.hxx ProjectConfiguration.hxx LoadSimulationThread.hxx LoadingProgressBar.hxx
 SOURCES += main.cxx Display2D.cxx  MainWindow.cxx AgentTypeSelection.cxx AgentTraitSelection.cxx DataPlot.cxx MeanDataPlot.cxx SumDataPlot.cxx  GenericStatistics.cxx StepDataPlot.cxx RasterSelection.cxx Display3D.cxx AgentConfigurator.cxx Model3D.cxx Object3D.cxx Material.cxx Loader3DS.cxx DefaultColorSelector.cxx AgentConfiguration.cxx RasterConfigurator.cxx ColorInterval.cxx RasterConfiguration.cxx Configurator3D.cxx Configuration3D.cxx ProjectConfiguration.cxx LoadSimulationThread.cxx LoadingProgressBar.cxx

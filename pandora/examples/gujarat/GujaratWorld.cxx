@@ -12,7 +12,8 @@
 namespace Gujarat
 {
 
-GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config ) : World(simulation, 1, true, config._path+"/ned.h5"), _agentKey(0), _climate(config), _config(config)					
+GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config ) 
+	: World(simulation, 1, true, config._path+"/ned.h5"), _agentKey(0), _climate(config), _config(config)					
 {
 	// overlap is maxHomeRange + 1 to allow splits to be in adjacent worlds
 	// TODO code a function proces config for resources 
@@ -451,6 +452,7 @@ MPI_Datatype * GujaratWorld::createTypeGujaratHuntGath()
 	MPI_Type_commit(newDataType);
 	return newDataType;
 	*/
+	return NULL;
 }
 
 MPI_Datatype * GujaratWorld::createTypeGujaratAgroPast()
@@ -503,6 +505,7 @@ MPI_Datatype * GujaratWorld::createTypeGujaratAgroPast()
 	MPI_Type_commit(newDataType);
 	return newDataType;
 	*/
+	return NULL;
 }
 
 long int GujaratWorld::getNewKey()

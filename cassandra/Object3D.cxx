@@ -1,10 +1,6 @@
-
+#include <iostream>
 #include "Object3D.hxx"
 #include "Exceptions.hxx"
-
-#include <GL/glut.h>
-#include <iostream>
-
 #include "Material.hxx"
 
 namespace GUI

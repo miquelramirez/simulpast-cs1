@@ -4,7 +4,9 @@
 		libhdf5-mpich-dev
 		libmpich2-dev
 			* Ignore error message regarding "blcr-dkms"
-	
+		libcr-dev
+		libdevil-dev
+
 2. Install libtinyxml:
 
 	* Debian/Ubuntu package: libtinyxml-dev
@@ -24,3 +26,6 @@
 				$ sudo ln -s /usr/include/mpich2/mpi.h /usr/include/mpi.h
 				$ sudo ln -s /usr/include/mpich2/mpio.h /usr/include/mpio.h
 				$ sudo ln -s /usr/include/mpich2/mpicxx.h /usr/include/mpicxx.h
+
+4. Install package for libqwt 6.0.0. IF NOT available then compile and install sources available
+in the repository

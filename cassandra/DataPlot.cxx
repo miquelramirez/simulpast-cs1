@@ -78,7 +78,7 @@ void DataPlot::setSimulationRecord( Engine::SimulationRecord * simulationRecord 
 	{
 		_steps[i] = i*_simulationRecord->getResolution();
 	}
-//	_valuePlot->setRawData(_steps.data(), _values.data(), _steps.size());
+	//_valuePlot->setRawData(_steps.data(), _values.data(), _steps.size());
 	_valuePlot->setRawSamples(_steps.data(), _values.data(), _steps.size());
 
 	replot();

@@ -55,7 +55,7 @@ void HunterGatherer::evaluateIntraSeasonalActions()
 			// could avoid a call to random by doing dice=dice%2
 			// but with more actions in the future... call random.
 		}// else == moveHome
-		Action *a;
+		Action *a = NULL;
 		switch(dice)
 		{
 			case 0:

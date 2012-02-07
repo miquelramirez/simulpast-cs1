@@ -5,7 +5,8 @@
 namespace Gujarat
 {
 
-CultivatedField::CultivatedField( GujaratWorld & world, const Engine::Point2D<int> & position ) : _world(world), _position(position), _sown(false)
+CultivatedField::CultivatedField( GujaratWorld & world, const Engine::Point2D<int> & position ) 
+	: _position(position), _world(world),  _sown(false)
 {
 	_world.setValue("resourceType", _position, DOMESTICATED);
 }
