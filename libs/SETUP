@@ -1,2 +1,26 @@
 1. Install libhdf (with MPI support):
-	* Debian/Ubuntu package: libhdf5-mpich-dev
+
+	* Debian/Ubuntu packages: 
+		libhdf5-mpich-dev
+		libmpich2-dev
+			* Ignore error message regarding "blcr-dkms"
+	
+2. Install libtinyxml:
+
+	* Debian/Ubuntu package: libtinyxml-dev
+
+3. Install gdal-1.9.0 from the sources in the repository:
+
+	* Issue
+		$ ./configure
+		$ make
+
+	* Compilation will fail with this message:
+
+		/usr/include/H5public.h:57:20: fatal error: mpi.h: No such file or directory
+
+		* How to fix it:
+			* Create symlink to libmpich headers 
+				$ sudo ln -s /usr/include/mpich2/mpi.h /usr/include/mpi.h
+				$ sudo ln -s /usr/include/mpich2/mpio.h /usr/include/mpio.h
+				$ sudo ln -s /usr/include/mpich2/mpicxx.h /usr/include/mpicxx.h
