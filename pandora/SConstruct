@@ -1,0 +1,45 @@
+
+import os
+
+release = ARGUMENTS.get('release', 1)
+mareNostrum = ARGUMENTS.get('mn', 0)
+
+env = Environment(ENV=os.environ, CXX='mpicxx')
+
+if int(release) == 0:
+	env['CCFLAGS'] = Split('-g -O1 -Wall')    
+	if int(mareNostrum) == 1:
+		libs = Split('pthread mpich gdal hdf5')
+	else:
+		libs = Split('pthread mpich gdal hdf5 tinyxml')
+	libraryName = 'pandorad'
+else:
+	env['CCFLAGS'] = Split('-O3')
+	if int(mareNostrum) == 1:
+		libs = Split('pthread mpich gdal hdf5')
+	else:
+		libs = Split('pthread mpich gdal hdf5 tinyxml')
+	libraryName = 'pandora'
+
+srcFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx')
+
+if int(mareNostrum)==1:
+	includeDirs = Split('. /gpfs/apps/HDF5/1.6.5/include')
+	includeDirs += ['/gpfs/apps/BOOST/1_39_0/64/include/boost-1_39/']
+	includeDirs += ['/gpfs/apps/TINYXML/2.6.2/']
+	includeDirs += ['/gpfs/apps/GDAL/1.7.1/64/include']
+	libDirs = Split('/gpfs/apps/HDF5/1.6.5/lib /opt/ibmcmp/vacpp/10.1/lib64/ /gpfs/apps/GDAL/1.7.1/64/lib')
+	libs += ['gpfs']
+	libs += ['z']
+	libs += ['xl']
+else:
+	includeDirs = Split('. /usr/local/include')
+	libDirs = Split('. /usr/local/lib')
+
+# if debug && mare nostrum mpitrace is added
+if int(release)==0 and int(mareNostrum)==1:
+	libs += ['mpitrace']
+	libDirs += ['/gpfs/apps/CEPBATOOLS/mpitrace-stable-1.2-mx/lib']
+
+env.SharedLibrary(libraryName, srcFiles, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs)
+

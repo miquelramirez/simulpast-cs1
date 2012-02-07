@@ -1,0 +1,342 @@
+
+#include "GujaratAgent.hxx"
+#include "GujaratWorld.hxx"
+
+#include "Action.hxx"
+
+namespace Gujarat
+{
+
+GujaratAgent::GujaratAgent( const std::string & id ) : Engine::Agent(id), _age(0), _homeRange(150), _spentTime(0), _collectedResources(0)
+{
+	// we start with a couple of 15 years
+	_populationAges.push_back(15);
+	_populationAges.push_back(15);
+}
+
+GujaratAgent::~GujaratAgent()
+{
+}
+
+void GujaratAgent::step()
+{
+	updateKnowledge();
+
+	GujaratWorld * world = (GujaratWorld*)_world;
+	// rain season is the first of the year; evaluate year actions
+	if(world->getClimate().getSeason()==HOTWET)
+	{
+		evaluateYearlyActions();
+		executeActions();
+	}
+	evaluateSeasonalActions();
+	executeActions();
+
+	evaluateIntraSeasonalActions();
+	executeActions();
+
+	_spentTime = 0;
+
+	// age of the agent, in seasons
+	_age++;
+	// end of season, evaluate reproduction, mortality and update age
+	if(world->getClimate().getSeason()==HOTDRY)
+	{
+		updateAges();
+		checkMortality();
+		checkReproduction();
+		checkMarriage();
+		checkAgentRemoval();
+		_collectedResources = 0;
+	}
+}
+
+GujaratAgent * GujaratAgent::getMarriageCandidate()
+{
+	std::vector<GujaratAgent*> possible;
+	Engine::World::AgentsList listOfNeighbors = _world->getNeighbours(this, _homeRange, getType());
+	for(Engine::World::AgentsList::iterator it=listOfNeighbors.begin(); it!=listOfNeighbors.end(); it++)
+	{
+		GujaratAgent * possibleAgent = (GujaratAgent*)(*it);
+		for(int i=2; i<possibleAgent->_populationAges.size(); i++)
+		{	
+			// it avoids dead children (-1)
+			if(possibleAgent->_populationAges[i]>15)
+			{
+				possible.push_back(possibleAgent);
+			}
+		}
+	}
+
+	if(possible.size()==0)
+	{
+		return 0;
+	}
+	std::random_shuffle(possible.begin(), possible.end());
+	return possible[0];
+}
+
+void GujaratAgent::checkMarriage()
+{
+	for(int i=2; i<_populationAges.size(); i++)
+	{
+		if(_populationAges[i]>15)
+		{
+			GujaratAgent * agent = getMarriageCandidate();
+
+			if(!agent)
+			{
+				//std::cout << "no agent near this one with candidate" << std::endl;
+				return;
+			}
+			
+			// TODO male female??
+			GujaratAgent * newAgent = agent->createNewAgent();
+
+			newAgent->_populationAges[0] = _populationAges[i];
+			_populationAges[i] = -1;
+
+			for(unsigned int j=2; j<agent->_populationAges.size(); j++)
+			{
+				if(agent->_populationAges[j]>15)
+				{
+					newAgent->_populationAges[1] = agent->_populationAges[j];
+					agent->_populationAges[j] = -1;
+					break;
+				}
+			}
+			// location inside home range of husband family
+			newAgent->setPosition(getNearLocation());
+			_world->addAgent(newAgent);
+			//std::cout << "new agent created: " << newAgent << " with husband age: " << newAgent->_populationAges[0] << " and wife age: " << newAgent->_populationAges[1] << std::endl;
+		}
+	}
+}
+
+Engine::Point2D<int> GujaratAgent::getNearLocation()
+{
+	std::vector<Engine::Point2D<int> > possiblePositions;
+	// TODO this method excludes the creation of children in cells in other environments
+	Engine::Point2D<int> location = _position;
+	for(location._x=_position._x-_homeRange; location._x<=_position._x+_homeRange; location._x++)
+	{
+		for(location._y=_position._y-_homeRange; location._y<=_position._y+_homeRange; location._y++)
+		{
+			if(_world->getOverlapBoundaries().isInside(location) && _world->checkPosition(location) && _world->getValue("soils", location)==DUNE)
+			{
+				possiblePositions.push_back(location);
+			}
+		}
+	}
+
+	// no one near the agent
+	if(possiblePositions.size()==0)
+	{
+		return Engine::Point2D<int>(-1,-1);
+	}
+	std::random_shuffle(possiblePositions.begin(), possiblePositions.end());
+	return possiblePositions[0];
+}
+
+void GujaratAgent::executeActions()
+{
+	std::list<Action *>::iterator it = _actions.begin();
+	while(it!=_actions.end())
+	{
+		Action * nextAction = *it;
+		_spentTime += nextAction->getTimeNeeded();
+		if(_spentTime<=_availableTime)
+		{
+			nextAction->execute(*this);
+		}
+		it = _actions.erase(it);
+		delete nextAction;
+	}
+}
+
+void GujaratAgent::checkAgentRemoval()
+{
+	if(_populationAges[0] == -1 && _populationAges[1] == -1)
+	{
+		//std::cout << "agent: " << this << " removed" << std::endl;
+		_exists = false;
+		_world->removeAgent(this);
+	}
+}
+
+void GujaratAgent::updateAges()
+{
+	for(unsigned int i=0; i<_populationAges.size(); i++)
+	{
+		if(_populationAges[i]!=-1)
+		{
+			_populationAges[i]++;
+		}
+	}
+}
+
+void GujaratAgent::checkReproduction()
+{
+	// if male or female died, reproduction is impossible
+	if(_populationAges[0] == -1 || _populationAges[1] == -1)
+	{
+		return;
+	}
+	// 50% chance of having new child
+	if(_world->getStatistics().getUniformDistValue(0,1)==0)
+	{
+		//std::cout << this << " have a new baby!" << std::endl;
+		// we look for an empty space or add a new one
+		for(unsigned int index=2; index!=_populationAges.size(); index++)
+		{
+			if(_populationAges[index]==-1)
+			{
+				_populationAges[index] = 0;
+				return;
+			}
+		}
+		_populationAges.push_back(0);
+	}
+}
+
+void GujaratAgent::checkMortality()
+{
+	// TODO check resources, now year, must be seasonal
+	int popSize = 0;
+	for(unsigned int index=0; index<_populationAges.size(); index++)
+	{
+		if(_populationAges[index]!=-1)
+		{
+			popSize++;
+		}
+	}
+	// each individual eats 10 resources
+	int maintainedPopulation = _collectedResources/10.0f;
+	int starvingPopulation = popSize - maintainedPopulation;
+	// for each starving pop, possibility of death = 10% for each individual
+	if(starvingPopulation>0)
+	{	
+		//std::cout << "starving pop!: " << starvingPopulation << " with collected resources: " << _collectedResources << " and pop size: " << popSize << std::endl;
+		for(unsigned int index=0; index<_populationAges.size(); index++)
+		{
+			if(_populationAges[index]!=-1)
+			{	
+				if(_world->getStatistics().getUniformDistValue(0,9)==0)
+				{
+					_populationAges[index]=-1;
+				}
+			}
+		}
+	}
+
+	for(unsigned int index=0; index<2; index++)
+	{
+		if(_populationAges[index]==-1)
+		{
+			continue;
+		}
+		// 2% chance of mortality in adults
+		if(_world->getStatistics().getUniformDistValue(0,1000)<_populationAges[index])
+		{
+			//std::cout << "adult: " << index << " died at age: " << _populationAges[index] << std::endl;
+			_populationAges[index] = -1;
+		}
+		/*
+		// absolute maximum: 50 years
+		if(_populationAges[index]==50)
+		{
+			//std::cout << "adult: " << index << " died at maximum age: " << std::endl;
+			_populationAges[index] = -1;
+		}
+		*/
+	}
+	for(unsigned int index=2; index<_populationAges.size(); index++)
+	{
+		if(_populationAges[index]==-1)
+		{
+			continue;
+		}
+		// 10% chance of mortality until 2
+		if(_populationAges[index]<3)
+		{
+			if(_world->getStatistics().getUniformDistValue(0,9)==0)
+			{
+				//std::cout << "child: " << _populationAges[index] << " died during infancy" << std::endl;
+				_populationAges[index] = -1;
+			}
+		}
+		// 2% afterwards (as male/female)
+		//else if(_world->getStatistics().getUniformDistValue(0,24)==0)
+		else if(_world->getStatistics().getUniformDistValue(0,1000)<_populationAges[index])
+		{
+			//std::cout << "child: " << _populationAges[index] << " died" << std::endl;
+			_populationAges[index] = -1;
+		}
+	}
+}
+
+void GujaratAgent::serialize()
+{
+	serializeAttribute("agent age", _age);
+
+	if(_populationAges[0]!=-1)
+	{
+		serializeAttribute("male alive", 1);
+		serializeAttribute("male age", _populationAges[0]);
+	}
+	else
+	{
+		serializeAttribute("male alive", 0);
+		serializeAttribute("male age", std::numeric_limits<int>::max());
+	}
+	
+	if(_populationAges[1]!=-1)
+	{
+		serializeAttribute("female alive", 1);
+		serializeAttribute("female age", _populationAges[1]);
+	}
+	else
+	{
+		serializeAttribute("female alive", 0);
+		serializeAttribute("female age", std::numeric_limits<int>::max());
+	}
+
+	int numChildren = 0;
+	for(int i=2; i<_populationAges.size(); i++)
+	{
+		if(_populationAges[i]!=-1)
+		{
+			numChildren++;
+		}
+	}
+	serializeAttribute("children", numChildren);
+	serializeAttribute("collected resources", _collectedResources);
+}
+
+void GujaratAgent::moveHome()
+{	
+	Engine::Point2D<int> newPosition(-1,-1);
+	std::vector<Engine::Point2D<int> > possiblePositions;
+	for(newPosition._x=_position._x-_homeRange; newPosition._x<=_position._x+_homeRange; newPosition._x++)
+	{
+		for(newPosition._y=_position._y-_homeRange; newPosition._y<=_position._y+_homeRange; newPosition._y++)
+		{
+			// by now common home is excluded
+			if(_world->getOverlapBoundaries().isInside(newPosition) && _world->checkPosition(newPosition) && _world->getValue("soils", newPosition)==DUNE)
+			{
+				possiblePositions.push_back(newPosition);
+			}
+		}
+	}
+	if(possiblePositions.size()==0)
+	{
+		//std::cout <<  this << " tried to move but no place to go" << std::endl;
+		return;
+	}
+	std::random_shuffle(possiblePositions.begin(), possiblePositions.end());
+	//std::cout << this << " going to: " << possiblePositions[0] << std::endl;
+	_position = possiblePositions[0];
+}
+
+} // namespace Gujarat
+
