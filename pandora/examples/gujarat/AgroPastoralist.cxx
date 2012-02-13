@@ -162,8 +162,8 @@ void AgroPastoralist::abandonPlot()
 }
 
 void AgroPastoralist::moveHome()
-{	
-	GujaratAgent::moveHome();
+{
+	_position = getNearLocation(getSocialRange());	
 	if(_cultivatedField && _position.distance(_cultivatedField->getPosition())>_maxCropHomeDistance)
 	{
 		_actions.push_back(new AbandonPlotAction());

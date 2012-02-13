@@ -13,9 +13,6 @@ class Action;
 
 class GujaratAgent : public Engine::Agent
 {
-	// age of the agent in num steps (years*3)
-//	int _age;
-//	int _homeRange;
 
 	// father = 0, mother = 1, children > 1
 	std::vector<int> _populationAges;
@@ -27,7 +24,6 @@ class GujaratAgent : public Engine::Agent
 	void checkMarriage();
 
 	GujaratAgent * getMarriageCandidate();
-	Engine::Point2D<int> getNearLocation();
 
 	virtual void updateKnowledge() = 0;
 
@@ -45,12 +41,14 @@ protected:
 	int _spentTime;
 	int _collectedResources;
 
+	// age of the agent in num steps (years*3)
 	int _age;
-	int _homeRange;
-
+	// allowed range for social interaction
+	int _socialRange;
 
 
 	std::list<Action*> _actions;
+	Engine::Point2D<int> getNearLocation( int range );
 
 public:
 	GujaratAgent( const std::string & id );
@@ -59,7 +57,9 @@ public:
 	void step();
 	void serialize();
 
-	virtual void moveHome();
+	virtual void moveHome() = 0;
+	void	setSocialRange( int v ) { _socialRange = v; }
+	int	getSocialRange() const { return _socialRange; }
 };
 
 } // namespace Gujarat

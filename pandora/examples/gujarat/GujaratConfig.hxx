@@ -13,10 +13,15 @@ namespace Gujarat
 
 class GujaratConfig : public Config
 { 
-	int _size;		
-	std::string _soilFile;
-	std::string _demFile;
-	int	_climateSeed;
+	int 		_size;		
+	std::string 	_soilFile;
+	std::string 	_demFile;
+	int		_climateSeed;
+	// Agent home range expressed in # of underlying GIS
+	// data grid (~30m)
+	int		_homeRange;
+	// Agents social range expressed in # GIS data grid tiles
+	int		_socialRange;
 
 	float _rainHistoricalDistribShape;
 	float _rainHistoricalDistribScale;

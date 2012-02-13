@@ -9,7 +9,8 @@ namespace Gujarat
 
 GujaratAgent::GujaratAgent( const std::string & id ) 
 	: Engine::Agent(id), 
-	 _spentTime(0), _collectedResources(0), _age(0), _homeRange(50)
+	 _spentTime(0), _collectedResources(0), _age(0),
+	_socialRange( 50 )
 {
 	// we start with a couple of 15 years
 	_populationAges.push_back(15);
@@ -56,7 +57,7 @@ void GujaratAgent::step()
 GujaratAgent * GujaratAgent::getMarriageCandidate()
 {
 	std::vector<GujaratAgent*> possible;
-	Engine::World::AgentsList listOfNeighbors = _world->getNeighbours(this, _homeRange, getType());
+	Engine::World::AgentsList listOfNeighbors = _world->getNeighbours(this, _socialRange, getType());
 	for(Engine::World::AgentsList::iterator it=listOfNeighbors.begin(); it!=listOfNeighbors.end(); it++)
 	{
 		GujaratAgent * possibleAgent = (GujaratAgent*)(*it);
@@ -108,23 +109,24 @@ void GujaratAgent::checkMarriage()
 				}
 			}
 			// location inside home range of husband family
-			newAgent->setPosition(getNearLocation());
+			newAgent->setPosition(getNearLocation(getSocialRange()));
 			_world->addAgent(newAgent);
 			//std::cout << "new agent created: " << newAgent << " with husband age: " << newAgent->_populationAges[0] << " and wife age: " << newAgent->_populationAges[1] << std::endl;
 		}
 	}
 }
 
-Engine::Point2D<int> GujaratAgent::getNearLocation()
+Engine::Point2D<int> GujaratAgent::getNearLocation( int range )
 {
 	std::vector<Engine::Point2D<int> > possiblePositions;
 	// TODO this method excludes the creation of children in cells in other environments
 	Engine::Point2D<int> location = _position;
-	for(location._x=_position._x-_homeRange; location._x<=_position._x+_homeRange; location._x++)
+	for(location._x=_position._x-range; location._x<=_position._x+range; location._x++)
 	{
-		for(location._y=_position._y-_homeRange; location._y<=_position._y+_homeRange; location._y++)
+		for(location._y=_position._y-range; location._y<=_position._y+range; location._y++)
 		{
-			if(_world->getOverlapBoundaries().isInside(location) && _world->checkPosition(location) && _world->getValue("soils", location)==DUNE)
+			if(	_world->getOverlapBoundaries().isInside(location) && 
+				_world->checkPosition(location) && _world->getValue("soils", location)==DUNE)
 			{
 				possiblePositions.push_back(location);
 			}
@@ -315,30 +317,6 @@ void GujaratAgent::serialize()
 	serializeAttribute("collected resources", _collectedResources);
 }
 
-void GujaratAgent::moveHome()
-{	
-	Engine::Point2D<int> newPosition(-1,-1);
-	std::vector<Engine::Point2D<int> > possiblePositions;
-	for(newPosition._x=_position._x-_homeRange; newPosition._x<=_position._x+_homeRange; newPosition._x++)
-	{
-		for(newPosition._y=_position._y-_homeRange; newPosition._y<=_position._y+_homeRange; newPosition._y++)
-		{
-			// by now common home is excluded
-			if(_world->getOverlapBoundaries().isInside(newPosition) && _world->checkPosition(newPosition) && _world->getValue("soils", newPosition)==DUNE)
-			{
-				possiblePositions.push_back(newPosition);
-			}
-		}
-	}
-	if(possiblePositions.size()==0)
-	{
-		//std::cout <<  this << " tried to move but no place to go" << std::endl;
-		return;
-	}
-	std::random_shuffle(possiblePositions.begin(), possiblePositions.end());
-	//std::cout << this << " going to: " << possiblePositions[0] << std::endl;
-	_position = possiblePositions[0];
-}
 
 } // namespace Gujarat
 

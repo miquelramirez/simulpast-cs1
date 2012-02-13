@@ -10,7 +10,7 @@
 namespace Gujarat
 {
 
-HunterGatherer::HunterGatherer( const std::string & id ) : GujaratAgent(id), _surplusForReproductionThreshold(2), _surplusWanted(1)
+HunterGatherer::HunterGatherer( const std::string & id ) : GujaratAgent(id), _surplusForReproductionThreshold(2), _surplusWanted(1), _homeRange(50)
 {
 }
 
@@ -130,9 +130,9 @@ void HunterGatherer::hunt()
 	if (_collectedResources < (_surplusForReproductionThreshold + _surplusWanted))
 	{
 	std::cout << "H";
-		for(location._x=_position._x-GujaratAgent::_homeRange; location._x<=_position._x+GujaratAgent::_homeRange; location._x++)
+		for(location._x=_position._x-_homeRange; location._x<=_position._x+_homeRange; location._x++)
 		{
-			for(location._y=_position._y-GujaratAgent::_homeRange; location._y<=_position._y+GujaratAgent::_homeRange; location._y++)
+			for(location._y=_position._y-_homeRange; location._y<=_position._y+_homeRange; location._y++)
 			{
 				Agent * agent = _world->getAgent(location);
 				if(_world->getOverlapBoundaries().isInside(location) && (!agent || !agent->exists() || agent==this))
@@ -162,9 +162,9 @@ void HunterGatherer::gather()
 	if (_collectedResources < (_surplusForReproductionThreshold + _surplusWanted))
 	{
 	std::cout << "G";
-	for(location._x=_position._x-GujaratAgent::_homeRange; location._x<=_position._x+GujaratAgent::_homeRange; location._x++)
+	for(location._x=_position._x-_homeRange; location._x<=_position._x+_homeRange; location._x++)
 	{
-		for(location._y=_position._y-GujaratAgent::_homeRange; location._y<=_position._y+GujaratAgent::_homeRange; location._y++)
+		for(location._y=_position._y-_homeRange; location._y<=_position._y+_homeRange; location._y++)
 		{
 			Agent * agent = _world->getAgent(location);
 			if(_world->getOverlapBoundaries().isInside(location) && (!agent || !agent->exists() || agent==this))
@@ -187,31 +187,11 @@ void HunterGatherer::gather()
 	std::cout << "***********************" << std::endl;
 	}
 }
-/*
+
 void HunterGatherer::moveHome()
-{
-	Engine::Point2D<int> location;
-	for(location._x=_position._x-GujaratAgent::_homeRange; location._x<=_position._x+GujaratAgent::_homeRange; location._x++)
-	{
-		for(location._y=_position._y-GujaratAgent::_homeRange; location._y<=_position._y+GujaratAgent::_homeRange; location._y++)
-		{
-			Agent * agent = _world->getAgent(location);
-			if(_world->getOverlapBoundaries().isInside(location) && (!agent || !agent->exists() || agent==this))
-			{
-				Soils soilType = (Soils)_world->getValue("soils", location);
-				int type       = _world->getValue("resourceType", location);
-				if (soilType == DUNE && type == WILD && agent == 0)
-				{
-					_world->occupy(location);
-					_location = location;
-				}
-			}
-		}
-	}
+{	
+	_position = getNearLocation(_homeRange);
 }
-*/
-
-
 
 } // namespace Gujarat
 

@@ -37,9 +37,14 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	_rainHistoricalDistribShape = atof(element->Attribute("shape"));
 	_rainHistoricalDistribScale = atof(element->Attribute("scale"));
 	_rainHistoricalDistribMean = atof(element->Attribute("mean"));
+
+	element = root->FirstChildElement("socialRange");
+	_socialRange = atoi( element->Attribute("value") ); 
 	
 	element = root->FirstChildElement("hunterGatherers");
 	_numHG = atoi(element->Attribute("num"));
+	_homeRange = atoi( element->Attribute("homeRange") );
+	
 	element = root->FirstChildElement("agroPastoralists");
 	_numAP = atoi(element->Attribute("num"));
 }

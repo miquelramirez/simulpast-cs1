@@ -64,6 +64,8 @@ void GujaratWorld::createAgents()
 			std::ostringstream oss;
  			oss << "HunterGatherer_" << i;
 			HunterGatherer * agent = new HunterGatherer(oss.str());
+			agent->setSocialRange( _config._socialRange );
+			agent->setHomeRange( _config._homeRange );
 			agent->setPosition(getRandomPosition());
 			addAgent(agent);
 			agent->moveHome();
@@ -78,6 +80,7 @@ void GujaratWorld::createAgents()
 			std::ostringstream oss;
  			oss << "AgroPastoralist_" << i;
 			AgroPastoralist * agent = new AgroPastoralist(oss.str());
+			agent->setSocialRange( _config._socialRange );
 			agent->setPosition(getRandomPosition());
 			addAgent(agent); 
 			agent->moveHome();

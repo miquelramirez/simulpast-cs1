@@ -11,6 +11,7 @@ class HunterGatherer : public GujaratAgent
 {	
 	int _surplusForReproductionThreshold;
 	int _surplusWanted;
+	int _homeRange;
 	
 	void updateKnowledge();
 	
@@ -19,6 +20,7 @@ class HunterGatherer : public GujaratAgent
 	void evaluateIntraSeasonalActions();
 	
 	void serializeAdditionalAttributes();
+
 	
 	GujaratAgent * createNewAgent();
 
@@ -31,6 +33,8 @@ public:
 	// actions
 	void hunt();
 	void gather();
+	void setHomeRange( int v ) { _homeRange = v; }
+	void moveHome(); 
 };
 
 } // namespace Gujarat
