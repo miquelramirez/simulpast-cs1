@@ -959,7 +959,7 @@ World::AgentsList World::getAgentsNear( const Position<int> & position, const in
 	return agents;
 }
 */
-const int & World::getCurrentStep()
+const int & World::getCurrentStep() const
 {
 	return _step;
 }

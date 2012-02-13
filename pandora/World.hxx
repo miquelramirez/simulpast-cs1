@@ -267,7 +267,7 @@ public:
 	//! returns a list with the neighbours of agent 'target' within the radius 'radius' using Euclidean Distance.
 	AgentsList getNeighbours( Agent * target, const int & radius, const std::string & type="all" );
 	//! returns an integer identifying the current step where the simulation is. The identifiers denote an order from older to newer steps.
-	const int & getCurrentStep();
+	const int & getCurrentStep() const;
 	//! this method can be redefined by the children in order to modify the execution of each step on a given resource field. Default is grow 1 until max
 	virtual void stepEnvironment();
 	//! this method is executed for each section during @stepSection. It is useful in the cases where a Raster is modified following data in adjacent cells.

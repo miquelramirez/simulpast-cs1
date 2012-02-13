@@ -22,6 +22,8 @@ class GujaratConfig : public Config
 	int		_homeRange;
 	// Agents social range expressed in # GIS data grid tiles
 	int		_socialRange;
+	// # days corresponding to a climate model season
+	int		_daysPerSeason;
 
 	float _rainHistoricalDistribShape;
 	float _rainHistoricalDistribScale;

@@ -47,6 +47,9 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	
 	element = root->FirstChildElement("agroPastoralists");
 	_numAP = atoi(element->Attribute("num"));
+
+	element = root->FirstChildElement("daysPerSeason");
+	_daysPerSeason = atoi( element->Attribute("value") );
 }
   
 void GujaratConfig::parseSoilInfo( TiXmlElement * element )

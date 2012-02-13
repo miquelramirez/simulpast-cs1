@@ -13,7 +13,7 @@ namespace Gujarat
 {
 
 GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config ) 
-	: World(simulation, 1, true, config._path+"/ned.h5"), _agentKey(0), _climate(config), _config(config)					
+	: World(simulation, 1, true, config._path+"/ned.h5"), _agentKey(0), _climate(config,*this), _config(config)					
 {
 	// overlap is maxHomeRange + 1 to allow splits to be in adjacent worlds
 	// TODO code a function proces config for resources 
@@ -158,11 +158,6 @@ float GujaratWorld::moistureFunction( const Soils & soilType, const float & rain
 void GujaratWorld::updateRainfall()
 {		
 	_climate.step();
-	if(_step%3==HOTWET)
-	{
-		std::cout << _climate.getRain() << std::endl;
-		//std::cout << "rain fall for year: " << _step/3 << " is: " << _climate.getRain() << std::endl;
-	}
 }
 
 void GujaratWorld::updateMoisture()
@@ -262,6 +257,8 @@ void GujaratWorld::stepEnvironment()
 {
 	// at the end of simulation
 	_climate.advanceSeason();
+
+	if ( !_climate.cellUpdateRequired() ) return;
 
 	// update rainfall and moisture
 	updateRainfall();

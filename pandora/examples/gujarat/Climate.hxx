@@ -14,6 +14,7 @@ enum Seasons
 	HOTDRY = 2
 };
 
+class GujaratWorld;
 class GujaratConfig;
 
 class Climate
@@ -29,8 +30,10 @@ class Climate
 
 	const GujaratConfig & _config;
 
+	const GujaratWorld &  _theWorld;	
+
 public:
-	Climate( const GujaratConfig & config );
+	Climate( const GujaratConfig & config, const GujaratWorld& theWorld );
 	virtual ~Climate();
 
 	void step();	
@@ -39,6 +42,7 @@ public:
 	const Seasons & getSeason() const;
 
 	void advanceSeason();
+	bool cellUpdateRequired() const;
 };
 
 } // namespace Gujarat
