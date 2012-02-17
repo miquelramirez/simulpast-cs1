@@ -37,15 +37,17 @@ class GujaratAgent : public Engine::Agent
 	virtual void serializeAdditionalAttributes() = 0;
 
 protected:
-	const static int _availableTime = 1000;
+	int _availableTime;
 	int _spentTime;
 	int _collectedResources;
+	
 
 	// age of the agent in num steps (years*3)
 	int _age;
 	// allowed range for social interaction
 	int _socialRange;
 
+	int _homeMobilityRange;
 
 	std::list<Action*> _actions;
 	Engine::Point2D<int> getNearLocation( int range );
@@ -57,9 +59,13 @@ public:
 	void step();
 	void serialize();
 
-	virtual void moveHome() = 0;
 	void	setSocialRange( int v ) { _socialRange = v; }
 	int	getSocialRange() const { return _socialRange; }
+	void	setAvailableTime( int daysPerSeason );
+	void	setHomeMobilityRange( int v ) { _homeMobilityRange = v; }
+	int	getHomeMobilityRange( ) { return _homeMobilityRange; } 
+	
+	void	initializePosition( Engine::Point2D<int> randomPos );
 };
 
 } // namespace Gujarat

@@ -20,7 +20,6 @@ class HunterGatherer : public GujaratAgent
 	void evaluateIntraSeasonalActions();
 	
 	void serializeAdditionalAttributes();
-
 	
 	GujaratAgent * createNewAgent();
 
@@ -29,12 +28,17 @@ public:
 	virtual ~HunterGatherer();
 
 	void * createPackage();
-
-	// actions
-	void hunt();
-	void gather();
+	
 	void setHomeRange( int v ) { _homeRange = v; }
-	void moveHome(); 
+	int  getHomeRange() const { return _homeRange; }
+
+	void setSurplusForReproductionThreshold( int v ) { _surplusForReproductionThreshold = v; }
+	void setSurplusWanted( int v ) { _surplusWanted = v; }
+	bool cellValid( Engine::Point2D<int>& loc );
+	bool cellRelevant( Engine::Point2D<int>& loc );
+	bool needsResources();
+
+	void		updateResources( int v ) { _collectedResources += v; }
 };
 
 } // namespace Gujarat

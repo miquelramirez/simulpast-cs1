@@ -10,7 +10,8 @@
 namespace Gujarat
 {
 
-HunterGatherer::HunterGatherer( const std::string & id ) : GujaratAgent(id), _surplusForReproductionThreshold(2), _surplusWanted(1), _homeRange(50)
+HunterGatherer::HunterGatherer( const std::string & id ) 
+	: GujaratAgent(id), _surplusForReproductionThreshold(2), _surplusWanted(1), _homeRange(50)
 {
 }
 
@@ -28,82 +29,29 @@ void HunterGatherer::evaluateYearlyActions()
 
 void HunterGatherer::evaluateSeasonalActions()
 {
-	// 100% of chance
-	_actions.push_back(new MoveHomeAction());
 }
 
 void HunterGatherer::evaluateIntraSeasonalActions()
 {
-	std::list<Action*> actions;
 	// TODO: which order must follow the actions? random?
 	// now random
 
-	// action pack : move, move Home, hunting, gathering
+	// action pack : move Home, hunting, gathering
+	int dice = _world->getStatistics().getUniformDistValue(1,10);
 
-	int  planTime          = 0;
-	int  failedAllocations = 0;
-	bool actionMaskFails[] = {false, false, false};
-	//int planEnergy = 0; // TODO just to remember someday we will estimate reward from a plan
-
-	while(failedAllocations < 3 && planTime < _availableTime)
-	// TODO may I do an estimation of reward received for each action?
+	if ( dice >= 8 ) // p=0.2 agent chooses to move its home
 	{
-		int dice = _world->getStatistics().getUniformDistValue(1,10);
-		if (dice != 2)
-		{
-			dice = _world->getStatistics().getUniformDistValue(0,1);
-			// could avoid a call to random by doing dice=dice%2
-			// but with more actions in the future... call random.
-		}// else == moveHome
-		Action *a = NULL;
-		switch(dice)
-		{
-			case 0:
-				a = new HuntAction();
-				if (_availableTime < a->getTimeNeeded())
-				{
-					delete a;
-					a = 0;
-					if (!actionMaskFails[dice])
-					{
-						failedAllocations++;
-						actionMaskFails[dice] = true;
-					}
-				}			
-				break;
-			case 1: 
-				a = new GatherAction();
-				if (_availableTime < a->getTimeNeeded())
-				{
-					delete a;
-					a = 0;
-					if (!actionMaskFails[dice])
-					{
-						failedAllocations++;
-						actionMaskFails[dice] = true;
-					}
-				}
-				break;
-			case 2: 
-				a = new MoveHomeAction();
-				if (_availableTime < a->getTimeNeeded())
-				{
-					delete a;
-					a = 0;
-					if (!actionMaskFails[dice])
-					{
-						failedAllocations++;
-						actionMaskFails[dice] = true;
-					}
-				}
-				break;
-		}
-		if (a) 
-		{ 
-			_actions.push_back((Action*)a);
-			planTime = planTime + a->getTimeNeeded();
-		}
+		_actions.push_back( new MoveHomeAction() );
+		return;
 	}
+
+	if ( dice < 4 ) // select Hunt
+	{
+		_actions.push_back( new HuntAction() );
+		return;
+	}
+
+	_actions.push_back( new GatherAction() );
 
 }
 
@@ -124,73 +72,27 @@ GujaratAgent * HunterGatherer::createNewAgent()
 	return new HunterGatherer(oss.str());
 }
 
-void HunterGatherer::hunt()
+bool	HunterGatherer::needsResources()
 {
-	Engine::Point2D<int> location;
-	if (_collectedResources < (_surplusForReproductionThreshold + _surplusWanted))
-	{
-	std::cout << "H";
-		for(location._x=_position._x-_homeRange; location._x<=_position._x+_homeRange; location._x++)
-		{
-			for(location._y=_position._y-_homeRange; location._y<=_position._y+_homeRange; location._y++)
-			{
-				Agent * agent = _world->getAgent(location);
-				if(_world->getOverlapBoundaries().isInside(location) && (!agent || !agent->exists() || agent==this))
-				{
-					int actualValue = _world->getValue("resources", location);
-					//int collected = actualValue;
-					// TODO watch your collect capacity / throughput 
-					// depending on group size and your competence
-					Soils soilType = (Soils) _world->getValue("soils", location);
-					int type       = _world->getValue("resourceType", location);
-					if (soilType == INTERDUNE && type == WILD && agent == 0)
-					{
-						int collected = _world->getStatistics().getUniformDistValue(0,actualValue); // NormalDistValue = competence?? 		
-						_collectedResources += collected;
-						_world->setValue("resources", location, actualValue-collected);
-					}
-				}
-			}
-		}
-	std::cout << "***********************" << std::endl;
-	}
+	return _collectedResources < (_surplusForReproductionThreshold + _surplusWanted);
 }
 
-void HunterGatherer::gather()
+bool	HunterGatherer::cellValid( Engine::Point2D<int>& loc )
 {
-	Engine::Point2D<int> location;
-	if (_collectedResources < (_surplusForReproductionThreshold + _surplusWanted))
-	{
-	std::cout << "G";
-	for(location._x=_position._x-_homeRange; location._x<=_position._x+_homeRange; location._x++)
-	{
-		for(location._y=_position._y-_homeRange; location._y<=_position._y+_homeRange; location._y++)
-		{
-			Agent * agent = _world->getAgent(location);
-			if(_world->getOverlapBoundaries().isInside(location) && (!agent || !agent->exists() || agent==this))
-			{
-				int actualValue = _world->getValue("resources", location);
-				//int collected = actualValue;
-				// TODO watch your collect capacity / throughput 
-				// depending on group size and your competence
-				Soils soilType = (Soils)_world->getValue("soils", location);
-				int type       = _world->getValue("resourceType", location);
-				if (soilType == INTERDUNE && type == WILD && agent == 0)
-				{
-					int collected = _world->getStatistics().getUniformDistValue(actualValue/5,actualValue/2); // NormalDistValue = competence??
-					_collectedResources += collected;
-					_world->setValue("resources", location, actualValue-collected);
-				}
-			}
-		}
-	}
-	std::cout << "***********************" << std::endl;
-	}
+	if ( !_world->getOverlapBoundaries().isInside(loc) )
+		return false;
+	// Check that the home of another agent resides in loc
+	Agent * agent = _world->getAgent(loc);
+	if ( agent && agent->exists() && (agent != this ) )
+		return false;
+	return true;
 }
 
-void HunterGatherer::moveHome()
-{	
-	_position = getNearLocation(_homeRange);
+bool	HunterGatherer::cellRelevant( Engine::Point2D<int>& loc )
+{
+	Soils soilType = (Soils) _world->getValue("soils", loc);
+	int resourceType = _world->getValue("resourceType", loc);
+	return soilType == INTERDUNE && resourceType == WILD;
 }
 
 } // namespace Gujarat

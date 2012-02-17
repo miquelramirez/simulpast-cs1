@@ -21,6 +21,11 @@ GujaratAgent::~GujaratAgent()
 {
 }
 
+void GujaratAgent::setAvailableTime( int daysPerSeason )
+{
+	_availableTime = 120 / daysPerSeason;
+}
+
 void GujaratAgent::step()
 {
 	updateKnowledge();
@@ -315,6 +320,12 @@ void GujaratAgent::serialize()
 	}
 	serializeAttribute("children", numChildren);
 	serializeAttribute("collected resources", _collectedResources);
+}
+
+void	GujaratAgent::initializePosition( Engine::Point2D<int> randomPos )
+{
+	setPosition(randomPos);
+	setPosition(getNearLocation(50));
 }
 
 

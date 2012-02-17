@@ -64,11 +64,14 @@ void GujaratWorld::createAgents()
 			std::ostringstream oss;
  			oss << "HunterGatherer_" << i;
 			HunterGatherer * agent = new HunterGatherer(oss.str());
+			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
+			agent->setHomeMobilityRange( _config._homeRange );
 			agent->setHomeRange( _config._homeRange );
-			agent->setPosition(getRandomPosition());
+			agent->setSurplusForReproductionThreshold( _config._surplusForReproductionThreshold );
+			agent->setSurplusWanted( _config._surplusWanted );
 			addAgent(agent);
-			agent->moveHome();
+			agent->initializePosition(getRandomPosition());
 			std::cout << _simulation.getId() << " new HunterGathrer: " << agent << std::endl;
 		}
 	}
@@ -80,10 +83,11 @@ void GujaratWorld::createAgents()
 			std::ostringstream oss;
  			oss << "AgroPastoralist_" << i;
 			AgroPastoralist * agent = new AgroPastoralist(oss.str());
+			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
-			agent->setPosition(getRandomPosition());
+			agent->setHomeMobilityRange( _config._socialRange );
 			addAgent(agent); 
-			agent->moveHome();
+			agent->initializePosition(getRandomPosition());
 			std::cout << _simulation.getId() << " new AgroPastoralist: " << agent << std::endl;
 		}
 	}

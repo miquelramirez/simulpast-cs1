@@ -44,6 +44,8 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	element = root->FirstChildElement("hunterGatherers");
 	_numHG = atoi(element->Attribute("num"));
 	_homeRange = atoi( element->Attribute("homeRange") );
+	_surplusForReproductionThreshold = atoi( element->Attribute("surplusForReproductionThreshold") );
+	_surplusWanted = atoi( element->Attribute("surplusWanted") );
 	
 	element = root->FirstChildElement("agroPastoralists");
 	_numAP = atoi(element->Attribute("num"));

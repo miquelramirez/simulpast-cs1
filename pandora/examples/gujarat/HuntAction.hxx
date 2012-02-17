@@ -14,7 +14,6 @@ class HuntAction : public Action
 public:
 	HuntAction();
 	virtual ~HuntAction();
-	// TODO templatitzar classe per agent
 	void execute( GujaratAgent & agent );
 	int getTimeNeeded();
 };

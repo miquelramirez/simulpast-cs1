@@ -25,6 +25,9 @@ class GujaratConfig : public Config
 	// # days corresponding to a climate model season
 	int		_daysPerSeason;
 
+	int		_surplusForReproductionThreshold;
+	int		_surplusWanted;
+
 	float _rainHistoricalDistribShape;
 	float _rainHistoricalDistribScale;
 	float _rainHistoricalDistribMean;
