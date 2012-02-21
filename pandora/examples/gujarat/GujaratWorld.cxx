@@ -64,14 +64,16 @@ void GujaratWorld::createAgents()
 			std::ostringstream oss;
  			oss << "HunterGatherer_" << i;
 			HunterGatherer * agent = new HunterGatherer(oss.str());
+			addAgent(agent);
 			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
 			agent->setHomeMobilityRange( _config._homeRange );
 			agent->setHomeRange( _config._homeRange );
 			agent->setSurplusForReproductionThreshold( _config._surplusForReproductionThreshold );
 			agent->setSurplusWanted( _config._surplusWanted );
-			addAgent(agent);
+			agent->setNumSectors( _config._numSectors );
 			agent->initializePosition(getRandomPosition());
+			agent->createSectorsMask();
 			std::cout << _simulation.getId() << " new HunterGathrer: " << agent << std::endl;
 		}
 	}

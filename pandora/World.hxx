@@ -86,6 +86,7 @@ protected:
 	//! returns true if neighbor id will send data to _id, according to index execution
 	bool needsToReceiveData( const int & id, const int & sectionIndex );
 
+
 	// simulation
 //	int _numSteps;
 	//! current simulation step
@@ -307,6 +308,7 @@ public:
 
 	//! returns a Rectangle<int> expressing the boundaries of the world
 	const Rectangle<int> & getBoundaries();
+	const Rectangle<int>& getGlobalBoundaries() const { return _globalBoundaries; }
 	//! returns the Rectangle the contains the world section boundaries plus the overlap area around that boundaries
 	const Rectangle<int> & getOverlapBoundaries();
 	//! returns the id of the section that contains the point 'position' 

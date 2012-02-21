@@ -28,6 +28,8 @@ class GujaratConfig : public Config
 	int		_surplusForReproductionThreshold;
 	int		_surplusWanted;
 
+	int		_numSectors;
+
 	float _rainHistoricalDistribShape;
 	float _rainHistoricalDistribScale;
 	float _rainHistoricalDistribMean;
