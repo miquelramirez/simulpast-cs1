@@ -17,7 +17,9 @@ class HunterGatherer : public GujaratAgent
 	std::vector< std::vector< int > >	_sectorsMask;
 
 	void updateKnowledge();
-	bool sameSide( Engine::Point2D<int> A, Engine::Point2D<int> B, Engine::Point2D<int> P );
+
+	// this method checks whether P1 and P2 are in the same side of the line that goes from B to C
+	bool sameSide( Engine::Point2D<int> P1, Engine::Point2D<int> P2, Engine::Point2D<int> A, Engine::Point2D<int> B );
 	bool insideTriangle( Engine::Point2D<int> p,  Engine::Point2D<int> b, Engine::Point2D<int> c ); 
 	
 	void evaluateYearlyActions();

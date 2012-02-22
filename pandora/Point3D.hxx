@@ -135,6 +135,11 @@ public:
 		result._y = _z*vector._x - _x*vector._z;
 		result._z = _x*vector._y - _y*vector._x;
 		return result;
+	}	
+	
+	Type dot( const Point3D<Type> & point ) const
+	{
+		return _x*point._x + _y*point._y + _z*point._z;
 	}
 };
 

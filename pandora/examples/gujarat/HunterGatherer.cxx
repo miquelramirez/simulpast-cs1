@@ -7,6 +7,7 @@
 #include "GatherAction.hxx"
 #include "HuntAction.hxx"
 #include "Sector.hxx"
+#include "Point3D.hxx"
 #include <cmath>
 
 namespace Gujarat
@@ -24,24 +25,29 @@ HunterGatherer::~HunterGatherer()
 		delete _sectors[k];
 }
 
-bool HunterGatherer::sameSide( Engine::Point2D<int> A, Engine::Point2D<int> B, Engine::Point2D<int> P )
+bool HunterGatherer::sameSide( Engine::Point2D<int> P1, Engine::Point2D<int> P2, Engine::Point2D<int> A, Engine::Point2D<int> B )
 {
-	Engine::Point2D<int> BA = B - A;
-	Engine::Point2D<int> PA = P - A;
+	Engine::Point3D<int> BA(B._x-A._x, B._y-A._y, 0);
+	Engine::Point3D<int> P1A(P1._x-A._x, P1._y-A._y, 0);
+	Engine::Point3D<int> P2A(P2._x-A._x, P2._y-A._y, 0);
 
-	return BA.dot(PA) >= 0;	
+	Engine::Point3D<int> cp1 = BA.crossProduct(P1A);
+	Engine::Point3D<int> cp2 = BA.crossProduct(P2A);
+	if(cp1.dot(cp2)>=0)
+	{
+		return true;		
+	}
+	return false;
 }
 
 bool HunterGatherer::insideTriangle( Engine::Point2D<int> p,  Engine::Point2D<int> b, Engine::Point2D<int> c )
 {
 	Engine::Point2D<int> a(0,0);
-
-	if ( sameSide( a, b, p ) && sameSide( b, c, p) && sameSide( c, a, p ) )
+	if ( sameSide( p, a, b, c ) && sameSide( p, b, a, c ) && sameSide( p, c, a, b  ) )
+	{
 		return true;
-	if ( !sameSide( a, b, p ) && !sameSide( b, c, p) && !sameSide( c, a, p ) )
-		return true;
+	}
 	return false;
-
 }
 
 void HunterGatherer::createSectorsMask()
@@ -54,9 +60,12 @@ void HunterGatherer::createSectorsMask()
 	Engine::Point2D<float> c;
 
 	sectors.resize( _numSectors );
-	_sectorsMask.resize( 2*_homeRange );
-	for ( unsigned k = 0; k < 2*_homeRange; k++ )
-		_sectorsMask[k].resize( 2*_homeRange );
+	// center position + home Range in any direction
+	_sectorsMask.resize( 1+2*_homeRange );
+	for ( unsigned k = 0; k < 1+2*_homeRange; k++ )
+	{
+		_sectorsMask[k].resize( 1+2*_homeRange );
+	}
 
 	b._x = 0;
 	b._y = - _homeRange;
@@ -70,12 +79,14 @@ void HunterGatherer::createSectorsMask()
 		b = c;
 	}
 
-
-	int x, y;
-
-	for ( x = -_homeRange; x < _homeRange; x++ )
-		for ( y = -_homeRange; y < _homeRange; y++ )
+	for ( int x=-_homeRange; x<=_homeRange; x++ )
+	{
+		for ( int y=-_homeRange; y<=_homeRange; y++ )
 		{
+			if(x==0 && y==0)
+			{
+				continue;
+			}
 			Engine::Point2D<int> p( x, y );
 			_sectorsMask[x+_homeRange][y+_homeRange] = -1;	
 			for ( unsigned k = 0; k < _numSectors; k++ )
@@ -86,34 +97,43 @@ void HunterGatherer::createSectorsMask()
 					break;
 				}
 			}
-
 		}
+	}
 
 	_sectors.resize( _numSectors );
 	for ( unsigned k = 0; k < _numSectors; k++ )
+	{
 		_sectors[k] = new Sector( *_world );
+	}
 }
 
 void HunterGatherer::updateKnowledge()
 {
 	for ( unsigned k = 0; k < _numSectors; k++ )
+	{
 		_sectors[k]->clearCells();
+	}
 
-	int x, y;
-
-	for ( x = -_homeRange; x < _homeRange; x++ )
-		for ( y = -_homeRange; y < _homeRange; y++ )
+	for ( int x=-_homeRange; x<=_homeRange; x++ )
+	{
+		for ( int y=-_homeRange; y<=_homeRange; y++ )
 		{
 			int indexSector = _sectorsMask[x+_homeRange][y+_homeRange];
-			if ( indexSector == - 1 ) continue;
+			if ( indexSector == - 1 )
+			{
+				continue;
+			}
+
 			Engine::Point2D<int> p;
 			p._x = _position._x + x;
 			p._y = _position._y + y;
 			if ( !_world->getBoundaries().isInside(p) )
+			{
 				continue;
+			}
 			_sectors[indexSector]->addCell( p );
-		}	
-	
+		}
+	}
 }
 
 void HunterGatherer::evaluateYearlyActions()

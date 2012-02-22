@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <config>  
     <path 	name="path" 	type="string"  value="./data/"/>
-    <numSteps 	name="numSteps" 	type="int"  value="721"/>
+    <numSteps 	name="numSteps" 	type="int"  value="1"/>
     <climateSeed value="432432"/>
     <socialRange value="25" />
     <daysPerSeason value="120" />
@@ -9,7 +9,7 @@
     <dem fileName="./resources/gujarat_400_dem.tiff" size="400"/>
 	<rainHistoricalDistribution shape="2.628" scale="5278.807" mean="4643.847826087"/>
 	<hunterGatherers 
-		num="1" homeRange="10"
+		num="1" homeRange="30"
 		surplusForReproductionThreshold="2" 
 		surplusWanted="1"
 		numSectors="4"
