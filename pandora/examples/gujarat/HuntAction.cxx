@@ -21,7 +21,8 @@ void HuntAction::execute( GujaratAgent & a )
 	if (!agent.needsResources()) return;
 
 	Engine::Point2D<int> location;
-	std::cout << "H";
+
+	std::cout << "DEBUG: Hunt action executing..." << std::endl;
 
 	const Engine::Point2D<int>& pos = agent.getPosition();
 	int   hr = agent.getHomeRange();
@@ -43,7 +44,6 @@ void HuntAction::execute( GujaratAgent & a )
 		}
 	}
 	
-	std::cout << "***********************" << std::endl;
 
 }
 

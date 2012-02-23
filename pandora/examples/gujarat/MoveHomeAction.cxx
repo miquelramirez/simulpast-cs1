@@ -22,6 +22,8 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 	Engine::Point2D<int> location;
 	Engine::Point2D<int> currPos = agent.getPosition();
 	int range = agent.getHomeMobilityRange();
+
+	std::cout << "DEBUG: MoveHome action executing..." << std::endl;
 	
 	for( location._x = currPos._x-range; 
 		location._x <= currPos._x+range; location._x++)

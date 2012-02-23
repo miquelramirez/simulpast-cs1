@@ -4,6 +4,7 @@
 
 #include "Point2D.hxx"
 #include <vector>
+#include <iosfwd>
 
 namespace Engine
 {
@@ -13,13 +14,23 @@ namespace Engine
 namespace Gujarat
 {
 
+enum	BiomassAmountClass
+{
+	BIOMASS_AMOUNT_LOW = 0,
+	BIOMASS_AMOUNT_MED,
+	BIOMASS_AMOUNT_HI
+};
 
 class Sector
 {
 	Engine::World & 			_world;
 	std::vector< Engine::Point2D<int> >	_cells;
+	int					_biomassAmount;
+	BiomassAmountClass			_biomassAmountClass;
 
 private:
+
+	void	computeBiomassAmount();
 
 public:
 	Sector( Engine::World & world );
@@ -34,6 +45,20 @@ public:
 	{
 		_cells.clear();
 	}
+
+	int	getBiomassAmount() const
+	{
+		return _biomassAmount;
+	}
+
+	BiomassAmountClass	getBiomassAmountClass() const
+	{
+		return _biomassAmountClass;
+	}
+
+	void	updateFeatures();
+
+	void	showFeatures( std::ostream& );
 };
 
 } // namespace Gujarat

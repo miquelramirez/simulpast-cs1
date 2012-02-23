@@ -40,6 +40,7 @@ public:
 	void resize( const Point2D<int> & size );
 	
 	void loadGDALFile( const std::string & fileName, World & world );
+	void updateMinMaxValues();
 };
 
 } // namespace Engine

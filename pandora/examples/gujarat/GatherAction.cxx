@@ -20,7 +20,7 @@ void GatherAction::execute( GujaratAgent & a )
 	if (!agent.needsResources()) return;
 
 	Engine::Point2D<int> location;
-	std::cout << "G";
+	std::cout << "DEBUG: Gather action executing..." << std::endl;
 
 	const Engine::Point2D<int>& pos = agent.getPosition();
 	int   hr = agent.getHomeRange();
@@ -41,9 +41,6 @@ void GatherAction::execute( GujaratAgent & a )
 			agent.getWorld()->setValue("resources", location, actualValue-collected);
 		}
 	}
-	
-	std::cout << "***********************" << std::endl;
-
 }
 
 int GatherAction::getTimeNeeded()

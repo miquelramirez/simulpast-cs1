@@ -1,4 +1,3 @@
-
 #include "GujaratWorld.hxx"
 #include "Raster.hxx"
 #include "Point2D.hxx"
@@ -13,7 +12,7 @@ namespace Gujarat
 {
 
 GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config ) 
-	: World(simulation, 1, true, config._path+"/ned.h5"), _agentKey(0), _climate(config,*this), _config(config)					
+	: World(simulation, 1+config._homeRange, true, config._path+"/ned.h5"), _agentKey(0), _climate(config,*this), _config(config)					
 {
 	// overlap is maxHomeRange + 1 to allow splits to be in adjacent worlds
 	// TODO code a function proces config for resources 
@@ -40,6 +39,8 @@ void GujaratWorld::createRasters()
 	getDynamicRaster("resourceType").setInitValues(0, SEASONALFALLOW, 0);
 	registerDynamicRaster("consecutiveYears", false); // years passed using a given cell for a particular use
 	getDynamicRaster("consecutiveYears").setInitValues(0, 3, 0);
+	registerDynamicRaster("sectors", true); 
+	getDynamicRaster("sectors").setInitValues(0, _config._numSectors, 0);
 
 	Engine::Point2D<int> index;
 	for(index._x=_boundaries._origin._x; index._x<_boundaries._origin._x+_boundaries._size._x; index._x++)
@@ -271,6 +272,7 @@ void GujaratWorld::stepEnvironment()
 	updateMoisture();
 	updateSoilCondition();
 	updateResources();
+	getDynamicRaster("resources").updateMinMaxValues();
 }
 
 Engine::Agent * GujaratWorld::createAgentFromPackage( const std::string & type, void * package )

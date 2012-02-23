@@ -132,7 +132,15 @@ void HunterGatherer::updateKnowledge()
 				continue;
 			}
 			_sectors[indexSector]->addCell( p );
+			getWorld()->setValue( "sectors", p, 1 );
 		}
+	}
+
+	for ( unsigned k = 0; k < _numSectors; k++ )
+	{
+		std::cout << "Sector #" << (k+1) << " features:" << std::endl;
+		_sectors[k]->updateFeatures();
+		_sectors[k]->showFeatures( std::cout );
 	}
 }
 
@@ -154,16 +162,19 @@ void HunterGatherer::evaluateIntraSeasonalActions()
 
 	if ( dice >= 8 ) // p=0.2 agent chooses to move its home
 	{
+		std::cout << "DEBUG: MoveHome action selected" << std::endl;
 		_actions.push_back( new MoveHomeAction() );
 		return;
 	}
 
 	if ( dice < 4 ) // select Hunt
 	{
+		std::cout << "DEBUG: Hunt action selected" << std::endl;
 		_actions.push_back( new HuntAction() );
 		return;
 	}
 
+	std::cout << "DEBUG: Gather action selected" << std::endl;
 	_actions.push_back( new GatherAction() );
 
 }

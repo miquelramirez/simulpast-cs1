@@ -153,11 +153,11 @@ void GujaratAgent::executeActions()
 	while(it!=_actions.end())
 	{
 		Action * nextAction = *it;
-		_spentTime += nextAction->getTimeNeeded();
-		if(_spentTime<=_availableTime)
-		{
-			nextAction->execute(*this);
-		}
+		//_spentTime += nextAction->getTimeNeeded();
+		//if(_spentTime<=_availableTime)
+		//{
+		nextAction->execute(*this);
+		//}
 		it = _actions.erase(it);
 		delete nextAction;
 	}

@@ -156,8 +156,6 @@ protected:
 	void step();
 	//! applies next simulation step on the Section of the space identified by parameter 'sectionIndex'.
 	void stepSection( const int & sectionIndex );
-	//! returns raster identified by parameter 'key'.
-	Raster & getDynamicRaster( const std::string & key );
 	//! returns static raster identified by parameter 'key'.
 	StaticRaster & getStaticRaster( const std::string & key );
 	
@@ -283,6 +281,9 @@ public:
 	virtual void stepRaster( const std::string & key);
 	//! the override of this method allows to modify agents between step executions
 	virtual void stepAgents();
+
+	//! returns raster identified by parameter 'key'.
+	Raster & getDynamicRaster( const std::string & key );
 
 	//! create a new static raster map with the stablished size and given key
 	void registerStaticRaster( const std::string & key, const bool & serialize );
