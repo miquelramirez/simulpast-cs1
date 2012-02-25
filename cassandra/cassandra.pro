@@ -25,7 +25,7 @@ INCLUDEPATH += /usr/local/qwt-6.0.0/include/
 CONFIG += qt
 
 # Required when installing qwt-6.0.0 from sources
-LIBS += -L../pandora/ -lpandora -L/usr/local/qwt-6.0.0/lib/ -lqwt -lhdf5 -lmpich -lmpi -lglut -lGL -lGLU -lQtOpenGL -lIL -ltinyxml
+LIBS += -L../pandora/ -lpandora -L/usr/local/qwt-6.0.0/lib/ -lqwt -lhdf5 -lmpich -lmpi -lGL -lGLU -lQtOpenGL -lIL -ltinyxml
 
 # LIBS += -L../pandora/ -lpandora -lqwt -lhdf5 -lmpich -lmpi -lGL -lGLU -lQtOpenGL -lIL -ltinyxml
 
