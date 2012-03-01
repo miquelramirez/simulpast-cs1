@@ -43,6 +43,7 @@ public:
 
 	void advanceSeason();
 	bool cellUpdateRequired() const;
+	bool rainSeasonStarted() const;
 };
 
 } // namespace Gujarat

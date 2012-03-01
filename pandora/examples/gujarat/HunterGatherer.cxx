@@ -6,6 +6,7 @@
 #include "MoveHomeAction.hxx"
 #include "GatherAction.hxx"
 #include "HuntAction.hxx"
+#include "ForageAction.hxx"
 #include "Sector.hxx"
 #include "Point3D.hxx"
 #include <cmath>
@@ -167,15 +168,8 @@ void HunterGatherer::evaluateIntraSeasonalActions()
 		return;
 	}
 
-	if ( dice < 4 ) // select Hunt
-	{
-		std::cout << "DEBUG: Hunt action selected" << std::endl;
-		_actions.push_back( new HuntAction() );
-		return;
-	}
-
-	std::cout << "DEBUG: Gather action selected" << std::endl;
-	_actions.push_back( new GatherAction() );
+	dice = _world->getStatistics().getUniformDistValue( 0, _sectors.size()-1 );
+	_actions.push_back( new ForageAction( _sectors[dice] ) );
 
 }
 

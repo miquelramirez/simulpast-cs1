@@ -14,6 +14,24 @@ Sector::~Sector()
 {
 }
 
+Engine::Point2D<int>	Sector::getNearestTo( Engine::Point2D<int> p )
+{
+	Engine::Point2D<int> nearest = _cells[0];
+	double nearestDist = nearest.distance( p );
+
+	for ( unsigned i = 1; i < _cells.size(); i++ )
+	{
+		double currDist = _cells[i].distance( p );
+		if ( currDist < nearestDist )
+		{
+			nearest = _cells[i];
+			nearestDist = currDist;
+		} 
+	} 
+
+	return nearest;
+}
+
 void	Sector::computeBiomassAmount()
 {
 	_biomassAmount = 0;
@@ -65,6 +83,18 @@ void	Sector::showFeatures( std::ostream& stream )
 		break;
 	}
 	stream << "\tFeature: BioMassAmountClass: " << bioclass << std::endl;
+}
+
+void	Sector::getAdjacent( Engine::Point2D<int> p, std::vector<Engine::Point2D<int> >& adjList )
+{
+	for ( unsigned i = 0; i < _cells.size(); i++ )
+	{
+		Engine::Point2D<int> delta = p - _cells[i];
+		delta._x = abs(delta._x);
+		delta._y = abs(delta._y);	
+		if ( delta._x <= 1 && delta._y <= 1 )
+			adjList.push_back( _cells[i] );
+	}	
 }
 
 } // namespace Gujarat

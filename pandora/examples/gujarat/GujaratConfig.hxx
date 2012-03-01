@@ -57,6 +57,9 @@ public:
 		return stream << "Config(" << "path:" << config._path << "," << "size:" << config._size << "," << "steps:" << config._numSteps << " soil file: " << config._soilFile << ")";
 	}  
 	const int & getSize() const;
+
+	
+
 	friend class GujaratWorld;
 	friend class Climate;
 };

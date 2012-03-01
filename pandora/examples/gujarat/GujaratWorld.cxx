@@ -16,6 +16,7 @@ GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig
 {
 	// overlap is maxHomeRange + 1 to allow splits to be in adjacent worlds
 	// TODO code a function proces config for resources 
+	_yearlyBiomass.resize(3);
 }
 
 GujaratWorld::~GujaratWorld()
@@ -34,6 +35,9 @@ void GujaratWorld::createRasters()
 	getDynamicRaster("moisture").setInitValues(0, std::numeric_limits<int>::max(), 0);
 	registerDynamicRaster("resources", true); // DEBUG Resources will be generated with an explicit function
 	getDynamicRaster("resources").setInitValues(0, std::numeric_limits<int>::max(), 0);
+	registerDynamicRaster("forageActivity", true); 
+	getDynamicRaster("forageActivity").setInitValues(0, std::numeric_limits<int>::max(), 0);
+
 	
 	registerDynamicRaster("resourceType", true); // type of resources: wild, domesticated or fallow
 	getDynamicRaster("resourceType").setInitValues(0, SEASONALFALLOW, 0);
@@ -259,15 +263,33 @@ void GujaratWorld::updateResources()
 			index._y<_boundaries._origin._y+_boundaries._size._y; 
 			index._y++ )
 		{
+			// 3. Increment or Decrement cell biomass depending on yearly biomass
+			//    figures and current timestep
 			setValue("resources", index, getValue("moisture", index)/10);
 		}
 	}
+}
+
+void GujaratWorld::recomputeYearlyBiomass()
+{
+	// 1. Compute factor between actual rain and average rain		
+	float raininessFactor = _climate.getRain() / _climate.getMeanAnnualRain();
+	
+	// 2. For each soil type compute yearly biomass	
+
+	_yearlyBiomass[WATER] = 0.0f;
+	_yearlyBiomass[DUNE] = _config._duneBiomass * raininessFactor * _config._duneEfficiency;
+	_yearlyBiomass[INTERDUNE] = _config._interduneBiomass * _config._interduneEfficiency * raininessFactor;
 }
 
 void GujaratWorld::stepEnvironment()
 {
 	// at the end of simulation
 	_climate.advanceSeason();
+	if ( _climate.rainSeasonStarted() )
+	{
+		recomputeYearlyBiomass();
+	}
 
 	if ( !_climate.cellUpdateRequired() ) return;
 

@@ -109,7 +109,7 @@ public:
 	}
 	
 	//! Euclidean Distance between points.
-	Type distance( const Point2D<Type> & point) const
+	double distance( const Point2D<Type> & point) const
 	{
 		//Type valueX = abs(_x-point._x);
 		Type valueX = (_x-point._x);

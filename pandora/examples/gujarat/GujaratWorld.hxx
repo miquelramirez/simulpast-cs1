@@ -12,9 +12,9 @@ class GujaratConfig;
 
 enum Soils
 {
-	WATER = 1,
-	INTERDUNE = 2,
-	DUNE = 3
+	WATER = 0,
+	INTERDUNE,
+	DUNE
 };
 
 enum ResourceType
@@ -30,6 +30,7 @@ class GujaratWorld : public Engine::World
 	long int _agentKey;
 	Climate _climate;
 	const GujaratConfig & _config;
+	std::vector<float>	_yearlyBiomass;
 	
 	//*********************************************
 	void createRasters();
@@ -50,6 +51,8 @@ class GujaratWorld : public Engine::World
 	void updateMoisture();
 	void updateSoilCondition();
 	void updateResources();
+
+	void recomputeYearlyBiomass();
 	
 public:
 	GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config );
@@ -61,6 +64,7 @@ public:
 	//void stepGeneralUpdate( int step );
 	long int getNewKey();
 	const Climate & getClimate() const;
+	const GujaratConfig& getConfig() const { return _config; }
 };
 
 } // namespace Gujarat

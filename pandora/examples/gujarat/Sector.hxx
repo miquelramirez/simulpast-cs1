@@ -46,6 +46,11 @@ public:
 		_cells.clear();
 	}
 
+	Engine::Point2D<int> getNearestTo( Engine::Point2D<int> p );
+
+	void	getAdjacent( Engine::Point2D<int> p,
+				std::vector<Engine::Point2D<int> >& adjList );
+
 	int	getBiomassAmount() const
 	{
 		return _biomassAmount;

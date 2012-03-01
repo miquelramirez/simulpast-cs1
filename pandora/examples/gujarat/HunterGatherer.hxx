@@ -7,6 +7,7 @@
 namespace Gujarat
 {
 class Sector;
+class ForageAction;
 
 class HunterGatherer : public GujaratAgent
 {	
@@ -31,6 +32,7 @@ class HunterGatherer : public GujaratAgent
 	GujaratAgent * createNewAgent();
 
 	std::vector<Sector *> _sectors;
+	std::vector<ForageAction* > _availableForage;
 
 public:
 	HunterGatherer( const std::string & id );

@@ -66,6 +66,7 @@ public:
 	int	getHomeMobilityRange( ) { return _homeMobilityRange; } 
 	
 	void	initializePosition( Engine::Point2D<int> randomPos );
+	int	getNrAvailableAdults();
 };
 
 } // namespace Gujarat

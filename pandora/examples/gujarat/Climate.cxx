@@ -42,6 +42,11 @@ void Climate::step()
 	}
 }
 
+bool Climate::rainSeasonStarted() const
+{
+	return cellUpdateRequired() && _currentSeason == HOTWET;
+}
+
 void Climate::advanceSeason()
 {
 	_currentSeason = (Seasons)((_theWorld.getCurrentStep() / _config._daysPerSeason) % 3);
