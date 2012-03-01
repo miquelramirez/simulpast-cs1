@@ -37,7 +37,8 @@ void GujaratWorld::createRasters()
 	getDynamicRaster("resources").setInitValues(0, std::numeric_limits<int>::max(), 0);
 	registerDynamicRaster("forageActivity", true); 
 	getDynamicRaster("forageActivity").setInitValues(0, std::numeric_limits<int>::max(), 0);
-
+	registerDynamicRaster("homeActivity", true);
+	getDynamicRaster("homeActivity").setInitValues(0, std::numeric_limits<int>::max(), 0);
 	
 	registerDynamicRaster("resourceType", true); // type of resources: wild, domesticated or fallow
 	getDynamicRaster("resourceType").setInitValues(0, SEASONALFALLOW, 0);
@@ -346,6 +347,12 @@ void * GujaratWorld::createPackage( const std::string & type )
 	oss << "GujaratWorld::createPackage() NOT implemented!" << std::endl;
 	throw Engine::Exception(oss.str());
 	return 0;
+}
+
+int  GujaratWorld::convertToCalories( int mass )
+{
+	float fMass = (float)mass;
+	return fMass*_config._massToEnergyRate*_config._energyToCalRate;
 }
 
 void GujaratWorld::registerTypes()

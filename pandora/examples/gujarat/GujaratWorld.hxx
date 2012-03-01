@@ -65,6 +65,8 @@ public:
 	long int getNewKey();
 	const Climate & getClimate() const;
 	const GujaratConfig& getConfig() const { return _config; }
+
+	int  convertToCalories( int mass );
 };
 
 } // namespace Gujarat
