@@ -164,7 +164,18 @@ void HunterGatherer::evaluateIntraSeasonalActions()
 	if ( dice >= 8 ) // p=0.2 agent chooses to move its home
 	{
 		std::cout << "DEBUG: MoveHome action selected" << std::endl;
-		_actions.push_back( new MoveHomeAction() );
+		std::vector< MoveHomeAction* > possibleActions;
+		MoveHomeAction::generatePossibleActions( *this, possibleActions );
+
+		// MRJ: Select Move Home action on a random basis
+		dice = _world->getStatistics().getUniformDistValue( 0, possibleActions.size() - 1 );
+
+		MoveHomeAction* selectedAction = possibleActions[dice];
+		possibleActions[dice] = NULL;
+		_actions.push_back( selectedAction );
+		for ( unsigned i = 0; i < possibleActions.size(); i++ )
+			if ( possibleActions[i] != NULL )
+				delete possibleActions[i];
 		return;
 	}
 
