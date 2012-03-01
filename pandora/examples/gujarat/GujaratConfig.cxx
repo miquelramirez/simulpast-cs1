@@ -1,5 +1,6 @@
-
 #include "GujaratConfig.hxx"
+#include <sstream>
+#include "Exceptions.hxx"
 
 namespace Gujarat
 {
@@ -53,6 +54,45 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 
 	element = root->FirstChildElement("daysPerSeason");
 	_daysPerSeason = atoi( element->Attribute("value") );
+	element = root->FirstChildElement("massToEnergyRate" );
+	_massToEnergyRate = atof( element->Attribute("value") );
+	element = root->FirstChildElement("energyToCaloriesRate" );
+	_energyToCalRate = atof( element->Attribute("value") );
+	
+	TiXmlNode* n = NULL;
+	while ( ( n = root->IterateChildren( n ) ) )
+	{
+		if ( n->Type() != TiXmlNode::ELEMENT ) continue;
+		TiXmlElement* elem = n->ToElement();
+		if ( elem->ValueStr().compare("cellBiomass") )
+			continue;
+		std::string elemType = elem->Attribute("type");
+		if ( !elemType.compare("dune" ) )
+		{
+			_duneBiomass = atof( elem->Attribute("value") );
+			_duneEfficiency = atof( elem->Attribute("efficiency"));	
+		}
+		else if ( !elemType.compare("interdune") )
+		{
+			_interduneBiomass = atof( elem->Attribute("value") );
+			_interduneEfficiency = atof( elem->Attribute("efficiency"));
+		}
+		else
+		{
+			std::stringstream sstr;
+			sstr << "ERROR: Loading simulation config document" << std::endl;
+			sstr << "Unknown cellBiomass type " << elemType << " found!!!" << std::endl;
+			throw Engine::Exception( sstr.str() ); 
+		}
+	}
+
+	std::cout << "[CONFIG]: Mass To Energy Rate: " << _massToEnergyRate << std::endl;
+	std::cout << "[CONFIG]: Energy To Calories Rate: " << _energyToCalRate << std::endl;
+	std::cout << "[CONFIG]: Dune Cell: Biomass: Mass: " << _duneBiomass << std::endl;
+	std::cout << "[CONFIG]: Dune Cell: Biomass: Efficiency: " << _duneEfficiency << std::endl;
+	std::cout << "[CONFIG]: Interdune Cell: Biomass: Mass: " << _interduneBiomass << std::endl;
+	std::cout << "[CONFIG]: Interdune Cell: Biomass: Efficiency: " << _interduneEfficiency << std::endl;
+
 }
   
 void GujaratConfig::parseSoilInfo( TiXmlElement * element )

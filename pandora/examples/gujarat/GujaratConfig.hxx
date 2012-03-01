@@ -29,6 +29,12 @@ class GujaratConfig : public Config
 	int		_surplusWanted;
 
 	int		_numSectors;
+	float		_massToEnergyRate;
+	float		_energyToCalRate;
+	int		_duneBiomass;
+	float		_duneEfficiency;
+	int		_interduneBiomass;
+	float		_interduneEfficiency;
 
 	float _rainHistoricalDistribShape;
 	float _rainHistoricalDistribScale;
