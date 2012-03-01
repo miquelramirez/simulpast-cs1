@@ -7,7 +7,8 @@
 namespace Gujarat
 {
 
-MoveHomeAction::MoveHomeAction()
+MoveHomeAction::MoveHomeAction( Engine::Point2D<int>& p ) 
+	: _newHomeLoc( p )
 {
 }
 
@@ -15,16 +16,14 @@ MoveHomeAction::~MoveHomeAction()
 {
 }
 
-void MoveHomeAction::execute( GujaratAgent & agent )
+void MoveHomeAction::generatePossibleActions( 	GujaratAgent& agent,
+						std::vector< MoveHomeAction* >& actions )
 {
-	std::vector<Engine::Point2D<int> > possiblePositions;
 	// TODO this method excludes the creation of children in cells in other environments
 	Engine::Point2D<int> location;
 	Engine::Point2D<int> currPos = agent.getPosition();
 	int range = agent.getHomeMobilityRange();
 
-	std::cout << "DEBUG: MoveHome action executing..." << std::endl;
-	
 	for( location._x = currPos._x-range; 
 		location._x <= currPos._x+range; location._x++)
 	{
@@ -35,18 +34,18 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 				agent.getWorld()->checkPosition(location) && 
 				agent.getWorld()->getValue("soils", location)==DUNE)
 			{
-				possiblePositions.push_back(location);
+				actions.push_back( new MoveHomeAction(location) );
 			}
 		}
 	}
+}
 
-	// no one near the agent
-	if(possiblePositions.size()==0)
-	{
-		return;
-	}
-	std::random_shuffle(possiblePositions.begin(), possiblePositions.end());
-	agent.setPosition( possiblePositions[0] );
+void MoveHomeAction::execute( GujaratAgent & agent )
+{
+	std::cout << "DEBUG: MoveHome action executing..." << std::endl;
+	int prevHomeActivity = agent.getWorld()->getValue( "homeActivity", _newHomeLoc );
+	agent.getWorld()->setValue( "homeActivity", _newHomeLoc, prevHomeActivity + 1 );
+	agent.setPosition( _newHomeLoc );
 }
 
 int MoveHomeAction::getTimeNeeded()
