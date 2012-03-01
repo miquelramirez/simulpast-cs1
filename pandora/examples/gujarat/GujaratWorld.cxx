@@ -251,9 +251,13 @@ void GujaratWorld::updateSoilCondition()
 void GujaratWorld::updateResources()
 {
 	Engine::Point2D<int> index;
-	for(index._x=_boundaries._origin._x; index._x<_boundaries._origin._x+_boundaries._size._x; index._x++)		
+	for( 	index._x=_boundaries._origin._x; 
+		index._x<_boundaries._origin._x+_boundaries._size._x; 
+		index._x++ )		
 	{
-		for(index._y=_boundaries._origin._y; index._y<_boundaries._origin._y+_boundaries._size._y; index._y++)
+		for( 	index._y=_boundaries._origin._y; 
+			index._y<_boundaries._origin._y+_boundaries._size._y; 
+			index._y++ )
 		{
 			setValue("resources", index, getValue("moisture", index)/10);
 		}
@@ -316,19 +320,9 @@ Engine::Agent * GujaratWorld::createAgentFromPackage( const std::string & type, 
 
 void * GujaratWorld::createPackage( const std::string & type )
 {
-	/*
-	if(type.compare("neandertal")==0)
-	{
-		return new GujaratHuntGathPackage;
-	}
-	else if(type.compare("sapiens")==0)
-	{
-		return new GujaratAgroPastPackage;
-	}
 	std::stringstream oss;
-	oss << "GujaratWorld::createPackage - unknown agent type: " << type;
+	oss << "GujaratWorld::createPackage() NOT implemented!" << std::endl;
 	throw Engine::Exception(oss.str());
-	*/
 	return 0;
 }
 

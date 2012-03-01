@@ -69,12 +69,14 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		std::string elemType = elem->Attribute("type");
 		if ( !elemType.compare("dune" ) )
 		{
-			_duneBiomass = atof( elem->Attribute("value") );
+			_duneBiomass = atof( elem->Attribute("mean") );
+			_duneBiomassStdDev = atof( elem->Attribute("stddev") );
 			_duneEfficiency = atof( elem->Attribute("efficiency"));	
 		}
 		else if ( !elemType.compare("interdune") )
 		{
-			_interduneBiomass = atof( elem->Attribute("value") );
+			_interduneBiomass = atof( elem->Attribute("mean") );
+			_interduneBiomassStdDev = atof( elem->Attribute("stddev"));
 			_interduneEfficiency = atof( elem->Attribute("efficiency"));
 		}
 		else
@@ -89,8 +91,10 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	std::cout << "[CONFIG]: Mass To Energy Rate: " << _massToEnergyRate << std::endl;
 	std::cout << "[CONFIG]: Energy To Calories Rate: " << _energyToCalRate << std::endl;
 	std::cout << "[CONFIG]: Dune Cell: Biomass: Mass: " << _duneBiomass << std::endl;
+	std::cout << "[CONFIG]: Dune Cell: Biomass: Std. Dev: " << _duneBiomassStdDev << std::endl;
 	std::cout << "[CONFIG]: Dune Cell: Biomass: Efficiency: " << _duneEfficiency << std::endl;
 	std::cout << "[CONFIG]: Interdune Cell: Biomass: Mass: " << _interduneBiomass << std::endl;
+	std::cout << "[CONFIG]: Interdune Cell: Biomass: Std. Dev: " << _interduneBiomassStdDev << std::endl;
 	std::cout << "[CONFIG]: Interdune Cell: Biomass: Efficiency: " << _interduneEfficiency << std::endl;
 
 }
