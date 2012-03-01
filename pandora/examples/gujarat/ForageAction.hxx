@@ -4,12 +4,12 @@
 #include "Action.hxx"
 #include "Sector.hxx"
 #include "Point2D.hxx"
-#include "World.hxx"
 
 namespace Gujarat
 {
 
 class GujaratAgent;
+class GujaratWorld;
 
 class ForageAction : public Action
 {
@@ -19,7 +19,7 @@ private:
 
 	int		doWalk( Engine::Point2D<int>& start, 
 				double maxDist,
-				Engine::World* world );
+				GujaratWorld* world );
 
 public:
 	ForageAction( Sector* loc );

@@ -1,6 +1,8 @@
 #include "ForageAction.hxx"
 #include "GujaratAgent.hxx"
 #include "HunterGatherer.hxx"
+#include "GujaratWorld.hxx"
+#include <cassert>
 
 namespace Gujarat
 {
@@ -29,13 +31,15 @@ void	ForageAction::execute( GujaratAgent& a )
 	Engine::Point2D<int> nearest = _forageArea->getNearestTo( agent.getPosition() );
 
 	// 3. execut walk
-	int    amountCollected = doWalk( nearest, maxDistAgentWalk, agent.getWorld() );
+	int    amountCollected = doWalk( nearest, maxDistAgentWalk, 
+					dynamic_cast<GujaratWorld*>(agent.getWorld()) );
 	agent.updateResources( amountCollected );
 }
 
 
-int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, Engine::World* world )
+int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, GujaratWorld* world )
 {
+	assert( world != NULL );
 	double walkedDist = 0.0;
 	int    collected = 0;
 	std::vector< Engine::Point2D<int> >	adjCells;
@@ -59,6 +63,11 @@ int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, Engine::Worl
 			}
 		}
 		// 2. update walk distance
+		// MRJ: Walking from one place to another will consume very little time
+		// we need to account for the time that hunting/gathering can take.
+		// As a starting proposal, I'm setting the cost in time (i.e. travelling distance)
+		// to be of 10 minutes (so the distance becomes  3 * 1 / 6 = 1/2 )
+		walkedDist += 0.5;
 		walkedDist += best.distance(n);
 		n = best;
 
@@ -66,7 +75,9 @@ int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, Engine::Worl
 		int amtCollected =  world->getStatistics().getNormalDistValue(0,bestScore);
 		int prevActivity = world->getValue( "forageActivity", n );
 		world->setValue( "forageActivity", n, prevActivity + 1 );
-		collected += amtCollected;
+
+		// MRJ: Mass to Cal conversion
+		collected += world->convertToCalories(amtCollected);
 
 		// 4. update cell resources & amount collected 
 		world->setValue( "resources", n, bestScore - amtCollected );
