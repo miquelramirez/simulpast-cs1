@@ -30,10 +30,13 @@ void AgroPastoralist::evaluateYearlyActions()
 {
 	//std::cout << this << " evaluating yearly actions" << std::endl;	
 	// 20% of chance
+	// MRJ: Commenting out until fixed
+	/*
 	if(_world->getStatistics().getUniformDistValue(0,4)==0)
 	{
 		_actions.push_back(new MoveHomeAction());
 	}
+	*/
 	if(!_cultivatedField || _world->getValue("resourceType", _cultivatedField->getPosition())==FALLOW)
 	{
 		_actions.push_back(new AbandonPlotAction());
@@ -50,6 +53,7 @@ void AgroPastoralist::evaluateSeasonalActions()
 		_actions.push_back(new MaintainPlotAction());
 		_actions.push_back(new HarvestAction());
 	}
+
 }
 
 void AgroPastoralist::evaluateIntraSeasonalActions()
@@ -98,7 +102,8 @@ void AgroPastoralist::stablishPlot()
 	{
 		throw Engine::Exception("agent without crop");
 
-		_actions.push_back(new MoveHomeAction());
+		// MRJ: Commenting until fixed
+		//_actions.push_back(new MoveHomeAction());
 		_actions.push_back(new StablishPlotAction());
 		return;
 	}
