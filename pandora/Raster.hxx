@@ -11,7 +11,9 @@ namespace Engine
 //! Raster adds mechanisms to modify the values of the raster map. It is serialized each time step.
 class Raster : public StaticRaster
 {
-	std::vector< std::vector<int> >_maxValues;
+	std::vector< std::vector<int> >	_maxValues;
+	int				_currentMaxValue;
+	int				_currentMinValue;
 public:
 	Raster();
 	virtual ~Raster();
@@ -40,7 +42,10 @@ public:
 	void resize( const Point2D<int> & size );
 	
 	void loadGDALFile( const std::string & fileName, World & world );
-	void updateMinMaxValues();
+	void updateCurrentMinMaxValues();
+
+	int  getCurrentMinValue() const { return _currentMinValue; }
+	int  getCurrentMaxValue() const { return _currentMaxValue; }
 };
 
 } // namespace Engine

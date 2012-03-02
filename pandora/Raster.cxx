@@ -156,22 +156,22 @@ void Raster::setMinValue( const int & minValue )
 	_minValue = minValue;
 }
 
-void Raster::updateMinMaxValues()
+void Raster::updateCurrentMinMaxValues()
 {
-	_minValue = std::numeric_limits<int>::max();
-	_maxValue = std::numeric_limits<int>::min();
+	_currentMinValue = std::numeric_limits<int>::max();
+	_currentMaxValue = std::numeric_limits<int>::min();
 	for ( unsigned i = 0; i < _values.size(); i++  )
 		for ( unsigned j = 0; j < _values[i].size(); j++ )
 		{
-			_maxValue = ( _values[i][j] > _maxValue ? _values[i][j] : _maxValue );
-			_minValue = ( _values[i][j] < _minValue ? _values[i][j] : _minValue );
+			_currentMaxValue = ( _values[i][j] > _currentMaxValue ? _values[i][j] : _currentMaxValue );
+			_currentMinValue = ( _values[i][j] < _currentMinValue ? _values[i][j] : _currentMinValue );
 		}
 }
 
 void Raster::setInitValues( int minValue, int maxValue, int defaultValue )
 {
-	_minValue = minValue;
-	_maxValue = maxValue;
+	_minValue = _currentMinValue = minValue;
+	_maxValue = _currentMaxValue = maxValue;
 	for(int i=0; i<_values.size(); i++)
 	{
 		for(int j=0; j<_values[i].size(); j++)
