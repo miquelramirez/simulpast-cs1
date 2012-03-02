@@ -113,7 +113,9 @@ void HunterGatherer::updateKnowledge()
 	_collectedResources = 0;
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
+		std::cout << this << "clearing sector: " << k << std::endl;
 		_sectors[k]->clearCells();
+		std::cout << "DONE!" <<  std::endl;
 	}
 
 	for ( int x=-_homeRange; x<=_homeRange; x++ )
@@ -204,7 +206,19 @@ GujaratAgent * HunterGatherer::createNewAgent()
 	GujaratWorld * world = (GujaratWorld*)_world;
 	std::ostringstream oss;
 	oss << "HunterGatherer_" << world->getId() << "-" << world->getNewKey();
-	return new HunterGatherer(oss.str());
+	
+	HunterGatherer * agent = new HunterGatherer(oss.str());
+	agent->setAvailableTime( _availableTime );
+	agent->setSocialRange( _socialRange );
+	agent->setHomeMobilityRange( _homeMobilityRange );
+	agent->setHomeRange( _homeRange );
+	agent->setSurplusForReproductionThreshold( _surplusForReproductionThreshold );
+	agent->setSurplusWanted( _surplusWanted );
+	agent->setNumSectors( _sectors.size() );
+	agent->setPosition(_position);
+	agent->createSectorsMask();
+
+	return agent;
 }
 
 bool	HunterGatherer::needsResources()
