@@ -62,7 +62,7 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	TiXmlNode* n = NULL;
 	while ( ( n = root->IterateChildren( n ) ) )
 	{
-		if ( n->Type() != TiXmlNode::TINYXML_ELEMENT ) continue;
+		if ( n->Type() != TiXmlNode::ELEMENT ) continue;
 		TiXmlElement* elem = n->ToElement();
 		if ( elem->ValueStr().compare("cellBiomass") )
 			continue;
