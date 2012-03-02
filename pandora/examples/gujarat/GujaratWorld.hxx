@@ -10,11 +10,12 @@ namespace Gujarat
 {
 class GujaratConfig;
 
+// id's depends on GIS data
 enum Soils
 {
-	WATER = 0,
-	INTERDUNE,
-	DUNE
+	WATER = 1,
+	INTERDUNE = 2,
+	DUNE = 3
 };
 
 enum ResourceType
@@ -30,7 +31,12 @@ class GujaratWorld : public Engine::World
 	long int _agentKey;
 	Climate _climate;
 	const GujaratConfig & _config;
+	// biomass produced by a cell each year
 	std::vector<float>	_yearlyBiomass;
+	// biomass increase for each day of rain season per cell
+	std::vector<float> _dailyRainSeasonBiomassIncrease;
+	// biomass decrease for each day of rain season per cell
+	std::vector<float> _dailyDrySeasonBiomassDecrease;
 	
 	//*********************************************
 	void createRasters();

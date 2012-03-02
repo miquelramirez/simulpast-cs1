@@ -16,7 +16,9 @@ GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig
 {
 	// overlap is maxHomeRange + 1 to allow splits to be in adjacent worlds
 	// TODO code a function proces config for resources 
-	_yearlyBiomass.resize(3);
+	_yearlyBiomass.resize(4);
+	_dailyRainSeasonBiomassIncrease.resize(4);
+	_dailyDrySeasonBiomassDecrease.resize(4);
 }
 
 GujaratWorld::~GujaratWorld()
@@ -31,33 +33,22 @@ void GujaratWorld::createRasters()
 	registerStaticRaster("dem", true);
 	getStaticRaster("dem").loadGDALFile(_config._demFile, *this);
 	
-	registerDynamicRaster("moisture", true);
+	registerDynamicRaster("moisture", false);
 	getDynamicRaster("moisture").setInitValues(0, std::numeric_limits<int>::max(), 0);
 	registerDynamicRaster("resources", true); // DEBUG Resources will be generated with an explicit function
 	getDynamicRaster("resources").setInitValues(0, std::numeric_limits<int>::max(), 0);
-	registerDynamicRaster("forageActivity", true); 
+	registerDynamicRaster("forageActivity", false); 
 	getDynamicRaster("forageActivity").setInitValues(0, std::numeric_limits<int>::max(), 0);
-	registerDynamicRaster("homeActivity", true);
+	registerDynamicRaster("homeActivity", false);
 	getDynamicRaster("homeActivity").setInitValues(0, std::numeric_limits<int>::max(), 0);
 	
-	registerDynamicRaster("resourceType", true); // type of resources: wild, domesticated or fallow
-	getDynamicRaster("resourceType").setInitValues(0, SEASONALFALLOW, 0);
+	registerDynamicRaster("resourceType", false); // type of resources: wild, domesticated or fallow
+	getDynamicRaster("resourceType").setInitValues(0, SEASONALFALLOW, WILD);
 	registerDynamicRaster("consecutiveYears", false); // years passed using a given cell for a particular use
 	getDynamicRaster("consecutiveYears").setInitValues(0, 3, 0);
-	registerDynamicRaster("sectors", true); 
+	registerDynamicRaster("sectors", false); 
 	getDynamicRaster("sectors").setInitValues(0, _config._numSectors, 0);
 
-	Engine::Point2D<int> index;
-	for(index._x=_boundaries._origin._x; index._x<_boundaries._origin._x+_boundaries._size._x; index._x++)
-	{
-		for(index._y=_boundaries._origin._y; index._y<_boundaries._origin._y+_boundaries._size._y; index._y++)
-		{
-			setValue("moisture", index, 0);
-			setValue("resources", index, 0);
-			setValue("consecutiveYears", index, 0);
-			setValue("resourceType", index, WILD);
-		}
-	}
 	updateMoisture();
 }
 
@@ -256,17 +247,27 @@ void GujaratWorld::updateSoilCondition()
 void GujaratWorld::updateResources()
 {
 	Engine::Point2D<int> index;
-	for( 	index._x=_boundaries._origin._x; 
-		index._x<_boundaries._origin._x+_boundaries._size._x; 
-		index._x++ )		
+	for( index._x=_boundaries._origin._x; index._x<_boundaries._origin._x+_boundaries._size._x; index._x++ )		
 	{
-		for( 	index._y=_boundaries._origin._y; 
-			index._y<_boundaries._origin._y+_boundaries._size._y; 
-			index._y++ )
+		for( index._y=_boundaries._origin._y; index._y<_boundaries._origin._y+_boundaries._size._y; index._y++ )
 		{
 			// 3. Increment or Decrement cell biomass depending on yearly biomass
 			//    figures and current timestep
-			setValue("resources", index, getValue("moisture", index)/10);
+			int currentValue = getValue("resources", index);
+			Soils cellSoil = (Soils)getValue("soils", index);
+			if(cellSoil!=WATER)
+			{
+				Seasons season = _climate.getSeason();
+				// increasing biomass
+				if(season==HOTWET)
+				{
+					setValue("resources", index,  std::max(0.0f, currentValue+_dailyRainSeasonBiomassIncrease[cellSoil]));
+				}			
+				else
+				{
+					setValue("resources", index,  std::max(0.0f, currentValue-_dailyDrySeasonBiomassDecrease[cellSoil]));
+				}
+			}
 		}
 	}
 }
@@ -276,30 +277,56 @@ void GujaratWorld::recomputeYearlyBiomass()
 	// 1. Compute factor between actual rain and average rain		
 	float raininessFactor = _climate.getRain() / _climate.getMeanAnnualRain();
 	
+	// each cell is 31.5m * 31.5m
+	double areaOfCell = 31.5*31.5;
+
 	// 2. For each soil type compute yearly biomass	
 
+	// data expressed in g/m2
 	_yearlyBiomass[WATER] = 0.0f;
-	_yearlyBiomass[DUNE] = _config._duneBiomass * raininessFactor * _config._duneEfficiency;
-	_yearlyBiomass[INTERDUNE] = _config._interduneBiomass * _config._interduneEfficiency * raininessFactor;
+	_yearlyBiomass[DUNE] = areaOfCell*_config._duneBiomass * raininessFactor * _config._duneEfficiency;
+	_yearlyBiomass[INTERDUNE] = areaOfCell*_config._interduneBiomass * _config._interduneEfficiency * raininessFactor;
+	std::cout << "step: " << getCurrentStep() << " yearly biomass of dune: " << _yearlyBiomass[DUNE] << " and interdune: " << _yearlyBiomass[INTERDUNE] << " with rain: " << _climate.getRain() << " and mean rain: " << _climate.getMeanAnnualRain() << std::endl;
+
+
+	// yearly biomass is the area of a triangle with max height at the end of wet season
+	// A_1 + A_2 = biomass, being A_1 = daysPerSeason*h/2 and A_2 = 2*daysPerSeason*h/2
+	// dPS*h/2 + 2*dPS*h/2 = biomass, so h = biomass/1.5*dPS
+	// and A_2 = 2*A_1
+
+	double heightInterDune = _yearlyBiomass[INTERDUNE]/(_config._daysPerSeason*3/2);
+	_dailyRainSeasonBiomassIncrease[INTERDUNE] = heightInterDune/_config._daysPerSeason;
+	_dailyDrySeasonBiomassDecrease[INTERDUNE] = heightInterDune/(2*_config._daysPerSeason);
+	std::cout << "height interdune: " << heightInterDune << " increment: " << _dailyRainSeasonBiomassIncrease[INTERDUNE] << " and decrease: " << _dailyDrySeasonBiomassDecrease[INTERDUNE] << std::endl;
+
+	double heightDune = _yearlyBiomass[DUNE]/(_config._daysPerSeason*3/2);
+	_dailyRainSeasonBiomassIncrease[DUNE] = heightDune/_config._daysPerSeason;
+	_dailyDrySeasonBiomassDecrease[DUNE] = heightDune/(2*_config._daysPerSeason);
+	std::cout << "height dune: " << heightDune << " increment: " << _dailyRainSeasonBiomassIncrease[DUNE] << " and decrease: " << _dailyDrySeasonBiomassDecrease[DUNE] << std::endl;
+
+	_dailyRainSeasonBiomassIncrease[WATER] = 0.0f;
+	_dailyDrySeasonBiomassDecrease[WATER] = 0.0f;
 }
 
 void GujaratWorld::stepEnvironment()
 {
 	// at the end of simulation
 	_climate.advanceSeason();
+	// if this is the first step of a wet season, rainfall and biomass are calculated for the entire year
 	if ( _climate.rainSeasonStarted() )
 	{
+		updateRainfall();
 		recomputeYearlyBiomass();
 	}
+	// resources are updated each time step
+	updateResources();
 
+	// these rasters are only updated at the beginning of seasons
 	if ( !_climate.cellUpdateRequired() ) return;
 
-	// update rainfall and moisture
-	updateRainfall();
-	updateMoisture();
-	updateSoilCondition();
-	updateResources();
-	getDynamicRaster("resources").updateMinMaxValues();
+	//updateMoisture();
+	//updateSoilCondition();
+	//getDynamicRaster("resources").updateMinMaxValues();
 }
 
 Engine::Agent * GujaratWorld::createAgentFromPackage( const std::string & type, void * package )

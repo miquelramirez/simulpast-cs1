@@ -110,6 +110,7 @@ void HunterGatherer::createSectorsMask()
 
 void HunterGatherer::updateKnowledge()
 {
+	_collectedResources = 0;
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
 		_sectors[k]->clearCells();
@@ -191,6 +192,7 @@ void * HunterGatherer::createPackage()
 
 void HunterGatherer::serializeAdditionalAttributes()
 {
+	serializeAttribute("collected resources", _collectedResources);
 }
 
 GujaratAgent * HunterGatherer::createNewAgent()

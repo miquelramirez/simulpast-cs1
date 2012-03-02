@@ -2,7 +2,7 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<path 	name="path" 	type="string"  value="./data/"/>
-	<numSteps 	name="numSteps" 	type="int"  value="150"/>
+	<numSteps 	name="numSteps" 	type="int"  value="361"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4184 -->
@@ -28,7 +28,7 @@
 	<!-- Agents definition -->
 	<!-- overlap will be defined as homeRange + 1. It must be < 1/4 of world size -->
 	<hunterGatherers 
-		num="1" homeRange="30"
+		num="0" homeRange="30"
 		surplusForReproductionThreshold="2" 
 		surplusWanted="1"
 		numSectors="8" 	/>
