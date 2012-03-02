@@ -278,7 +278,7 @@ void GujaratWorld::recomputeYearlyBiomass()
 	float raininessFactor = _climate.getRain() / _climate.getMeanAnnualRain();
 	
 	// each cell is 31.5m * 31.5m
-	double areaOfCell = 31.5*31.5;
+	double areaOfCell = _config._cellResolution * _config._cellResolution;
 
 	// 2. For each soil type compute yearly biomass	
 

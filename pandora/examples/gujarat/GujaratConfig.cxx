@@ -54,6 +54,9 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 
 	element = root->FirstChildElement("daysPerSeason");
 	_daysPerSeason = atoi( element->Attribute("value") );
+	element = root->FirstChildElement("cellResolution");
+	_cellResolution = atof( element->Attribute("value") );
+
 	element = root->FirstChildElement("massToEnergyRate" );
 	_massToEnergyRate = atof( element->Attribute("value") );
 	element = root->FirstChildElement("energyToCaloriesRate" );

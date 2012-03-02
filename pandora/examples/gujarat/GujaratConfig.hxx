@@ -24,6 +24,8 @@ class GujaratConfig : public Config
 	int		_socialRange;
 	// # days corresponding to a climate model season
 	int		_daysPerSeason;
+	// # meters corresponding to the side of a cell
+	float _cellResolution;
 
 	int		_surplusForReproductionThreshold;
 	int		_surplusWanted;
