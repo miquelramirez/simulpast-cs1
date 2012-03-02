@@ -320,13 +320,13 @@ void GujaratWorld::stepEnvironment()
 	}
 	// resources are updated each time step
 	updateResources();
+	getDynamicRaster("resources").updateCurrentMinMaxValues();
 
 	// these rasters are only updated at the beginning of seasons
 	if ( !_climate.cellUpdateRequired() ) return;
 
 	//updateMoisture();
 	//updateSoilCondition();
-	//getDynamicRaster("resources").updateMinMaxValues();
 }
 
 Engine::Agent * GujaratWorld::createAgentFromPackage( const std::string & type, void * package )
