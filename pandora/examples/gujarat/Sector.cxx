@@ -35,7 +35,7 @@ Engine::Point2D<int>	Sector::getNearestTo( Engine::Point2D<int> p )
 void	Sector::computeBiomassAmount()
 {
 	_biomassAmount = 0;
-	int maxBiomassAmount = _world.getDynamicRaster("resources").getMaxValue();
+	int maxBiomassAmount = _world.getDynamicRaster("resources").getCurrentMaxValue();
 
 	std::cout << "DEBUG: Max Timestep biomass amount" << maxBiomassAmount << std::endl;
 
@@ -44,7 +44,11 @@ void	Sector::computeBiomassAmount()
 		_biomassAmount += _world.getValue( "resources", _cells[i] );
 	}
 	
-	double normAmount = (double)_biomassAmount / ((double)_cells.size()*maxBiomassAmount);
+	double normAmount = (double)_biomassAmount;
+	if ( maxBiomassAmount > 0 )
+		normAmount /= ((double)_cells.size()*maxBiomassAmount);
+	else
+		normAmount = 0.0;
 
 	std::cout << "DEBUG: biomass amount: " << _biomassAmount;
 	std::cout << " # cells: " << _cells.size() << " max bio: " << maxBiomassAmount;
