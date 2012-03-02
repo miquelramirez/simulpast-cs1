@@ -29,9 +29,12 @@ public:
 	
 	//! Returns size of the raster codifying the horizontal and vertical dimensions in a Point2D object. 
 	Point2D<int> getSize() const;
-	// TODO clear before load
+	// load a GDAL file conforming World position
 	void loadGDALFile( const std::string & fileName, World & world );
+	// load an HDF5 adjusting the raster to its size
 	void loadHDF5File( const std::string & fileName, const std::string & rasterName );
+	// load an HDF5 conforming World position
+	void loadHDF5File( const std::string & fileName, const std::string & rasterName, World & world );
 
 	//! Reads attribute _maxValue.
 	const int & getMaxValue() const;
