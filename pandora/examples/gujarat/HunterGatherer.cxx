@@ -180,7 +180,11 @@ void HunterGatherer::evaluateIntraSeasonalActions()
 		return;
 	}
 
-	dice = _world->getStatistics().getUniformDistValue( 0, _sectors.size()-1 );
+	do
+	{
+		dice = _world->getStatistics().getUniformDistValue( 0, _sectors.size()-1 );
+	} while ( _sectors[dice]->isEmpty() );
+
 	_actions.push_back( new ForageAction( _sectors[dice] ) );
 
 }
