@@ -36,6 +36,8 @@ public:
 	Sector( Engine::World & world );
 	virtual ~Sector();
 
+	bool	isEmpty() const { return _cells.empty(); }
+
 	void	addCell( Engine::Point2D<int>& p )
 	{
 		_cells.push_back( p );
