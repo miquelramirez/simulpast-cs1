@@ -83,6 +83,8 @@ void StaticRaster::loadGDALFile( const std::string & fileName, World & world )
 		throw Engine::Exception(oss.str());
 	}
 
+	resize(world.getOverlapBoundaries()._size);
+
 	GDALRasterBand * band = dataset->GetRasterBand(1);
 	double minMaxValues[2];
 	int hasMin, hasMax;
@@ -93,20 +95,19 @@ void StaticRaster::loadGDALFile( const std::string & fileName, World & world )
 		GDALComputeRasterMinMax((GDALRasterBandH)band, TRUE, minMaxValues);
 	}
 	
-	float * pafScanline = (float *)CPLMalloc(sizeof(float)*(simulation.getLocalRasterSize()*simulation.getLocalRasterSize()));
-	int worldsPerRow = sqrt(simulation.getNumTasks());
-	int column = simulation.getId()/worldsPerRow;
-	int row = simulation.getId()%worldsPerRow;		
-	band->RasterIO( GF_Read, row*simulation.getLocalRasterSize(), column*simulation.getLocalRasterSize(), simulation.getLocalRasterSize(), simulation.getLocalRasterSize(), pafScanline, simulation.getLocalRasterSize(), simulation.getLocalRasterSize(), GDT_Float32, 0, 0 );
+	float * pafScanline = (float *)CPLMalloc(sizeof(float)*(world.getOverlapBoundaries()._size._x*world.getOverlapBoundaries()._size._y));
 
-	const Rectangle<int> & boundaries = world.getBoundaries();
+	band->RasterIO( GF_Read, world.getOverlapBoundaries()._origin._x, world.getOverlapBoundaries()._origin._y, world.getOverlapBoundaries()._size._x, world.getOverlapBoundaries()._size._y, pafScanline, world.getOverlapBoundaries()._size._x, world.getOverlapBoundaries()._size._y, GDT_Float32, 0, 0 );
+
+	const Rectangle<int> & overlapBoundaries = world.getOverlapBoundaries();
 	Point2D<int> index;
-	for(index._x=boundaries._origin._x; index._x<boundaries._origin._x+boundaries._size._x; index._x++)
+
+	for(index._x=overlapBoundaries._origin._x; index._x<overlapBoundaries._origin._x+overlapBoundaries._size._x; index._x++)
 	{
-		for(index._y=boundaries._origin._y; index._y<boundaries._origin._y+boundaries._size._y; index._y++)
+		for(index._y=overlapBoundaries._origin._y; index._y<overlapBoundaries._origin._y+overlapBoundaries._size._y; index._y++)
 		{
-			Point2D<int> index2(index - boundaries._origin);
-			int value = (int)(pafScanline[simulation.getLocalRasterSize()*index2._y+index2._x]);
+			Point2D<int> index2(index - overlapBoundaries._origin);
+			int value = (int)(pafScanline[overlapBoundaries._size._y*index2._y+index2._x]);
 			if(value>_maxValue)
 			{
 				_maxValue = value;
@@ -115,7 +116,7 @@ void StaticRaster::loadGDALFile( const std::string & fileName, World & world )
 			{
 				_minValue = value;
 			}
-			_values[index._x][index._y] = value;
+			_values[index2._x][index2._y] = value;
 		}
 	}
 	GDALClose(dataset);
@@ -158,6 +159,61 @@ void StaticRaster::loadHDF5File( const std::string & fileName, const std::string
 			_values[i][j] = value;
 		}
 	}
+	free(dset_data);
+	std::cout << std::endl;
+	H5Fclose(fileId);
+}
+
+void StaticRaster::loadHDF5File( const std::string & fileName, const std::string & rasterName, World & world )
+{
+	std::cout << "loading static raster " << rasterName << " from: " << fileName  << "...";
+	Simulation & simulation(world.getSimulation());
+	std::ostringstream oss;
+	oss << "/" << rasterName << "/values";	
+	hid_t fileId = H5Fopen(fileName.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+	hid_t dset_id = H5Dopen(fileId, oss.str().c_str());
+	hid_t dataspaceId = H5Dget_space(dset_id);
+	hsize_t dims[2];
+	H5Sget_simple_extent_dims(dataspaceId, dims, NULL);
+	H5Sclose(dataspaceId);
+	
+	if(dims[0]!=dims[1] || dims[0]!=simulation.getSize())
+	{
+		std::stringstream oss;
+		oss << "StaticRaster::loadHDF5File - file: " << fileName << " and raster name: " << rasterName << " with size: " << dims[0] << " different from defined size: " << simulation.getSize() << std::endl;
+		throw Engine::Exception(oss.str());
+	}
+	//std::cout << "dims: " << dims[0] << "/" << dims[1] << std::endl;
+	int * dset_data = (int*)malloc(sizeof(int)*world.getOverlapBoundaries()._size._x*world.getOverlapBoundaries()._size._y);
+				
+	// squared
+	//resize(Point2D<int>(dims[0], dims[1]));
+	resize(world.getOverlapBoundaries()._size);
+
+	H5Dread(dset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, dset_data);
+	H5Dclose(dset_id);
+
+	const Rectangle<int> & overlapBoundaries = world.getOverlapBoundaries();
+	Point2D<int> index;
+	for(index._x=overlapBoundaries._origin._x; index._x<overlapBoundaries._origin._x+overlapBoundaries._size._x; index._x++)
+	{
+		for(index._y=overlapBoundaries._origin._y; index._y<overlapBoundaries._origin._y+overlapBoundaries._size._y; index._y++)
+		{
+			Point2D<int> index2(index - overlapBoundaries._origin);
+			int index = overlapBoundaries._size._y*index2._y+index2._x;
+			int value = (int)dset_data[index];
+			if(value>_maxValue)
+			{
+				_maxValue = value;
+			}
+			if(value<_minValue)
+			{
+				_minValue = value;
+			}
+			_values[index2._x][index2._y] = value;
+		}
+	}
+	
 	free(dset_data);
 	std::cout << std::endl;
 	H5Fclose(fileId);
