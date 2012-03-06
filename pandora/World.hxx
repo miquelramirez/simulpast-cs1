@@ -215,7 +215,7 @@ public:
 
 	template<class T> struct aggregator : public std::unary_function<T,void>
 	{
-		aggregator(int radius, T &center, const std::string & type ) :  _radius(radius), _center(center), _type(type)
+		aggregator(float radius, T &center, const std::string & type ) :  _radius(radius), _center(center), _type(type)
 		{
 			_particularType = _type.compare("all");
 		}
@@ -236,14 +236,14 @@ public:
 		}
 		virtual void execute( T & neighbor )=0;
 		bool _particularType;
-		int _radius;
+		float _radius;
 		T & _center;
 		std::string _type;
 	};
 
 	template<class T> struct aggregatorCount : public aggregator<T>
 	{
-		aggregatorCount( int radius, T & center, const std::string & type ) : aggregator<T>(radius,center,type), _count(0) {}
+		aggregatorCount( float radius, T & center, const std::string & type ) : aggregator<T>(radius,center,type), _count(0) {}
 		void execute( T & neighbor )
 		{
 			_count++;
@@ -253,7 +253,7 @@ public:
 	
 	template<class T> struct aggregatorGet : public aggregator<T>
 	{
-		aggregatorGet( int radius, T & center, const std::string & type ) : aggregator<T>(radius,center,type) {}
+		aggregatorGet( float radius, T & center, const std::string & type ) : aggregator<T>(radius,center,type) {}
 		void execute( T & neighbor )
 		{
 			_neighbors.push_back(&neighbor);
@@ -262,9 +262,9 @@ public:
 	};
 
 	//! returns the number of neighbours of agent 'target' within the radius 'radius' using Euclidean Distance.
-	int countNeighbours( Agent * target, const int & radius, const std::string & type="all" );
+	int countNeighbours( Agent * target, const float & radius, const std::string & type="all" );
 	//! returns a list with the neighbours of agent 'target' within the radius 'radius' using Euclidean Distance.
-	AgentsList getNeighbours( Agent * target, const int & radius, const std::string & type="all" );
+	AgentsList getNeighbours( Agent * target, const float & radius, const std::string & type="all" );
 	//! returns an integer identifying the current step where the simulation is. The identifiers denote an order from older to newer steps.
 	const int & getCurrentStep() const;
 	//! this method can be redefined by the children in order to modify the execution of each step on a given resource field. Default is grow 1 until max

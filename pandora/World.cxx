@@ -1655,7 +1655,7 @@ bool World::getSearchAgents()
 }
 
 
-int World::countNeighbours( Agent * target, const int & radius, const std::string & type )
+int World::countNeighbours( Agent * target, const float & radius, const std::string & type )
 {
 
 	int numAgents = for_each(_agents.begin(), _agents.end(), aggregatorCount<Engine::Agent>(radius,*target, type))._count;
@@ -1663,7 +1663,7 @@ int World::countNeighbours( Agent * target, const int & radius, const std::strin
 	return numAgents+numOverlapAgents;
 }
 
-World::AgentsList World::getNeighbours( Agent * target, const int & radius, const std::string & type )
+World::AgentsList World::getNeighbours( Agent * target, const float & radius, const std::string & type )
 {
 	AgentsList agentsList = for_each(_agents.begin(), _agents.end(), aggregatorGet<Engine::Agent>(radius,*target, type))._neighbors;
 	AgentsList overlapAgentsList =  for_each(_overlapAgents.begin(), _overlapAgents.end(), aggregatorGet<Engine::Agent>(radius,*target, type))._neighbors;
