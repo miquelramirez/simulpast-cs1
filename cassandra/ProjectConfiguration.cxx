@@ -75,6 +75,7 @@ bool ProjectConfiguration::loadSimulation()
 	if(_simulationRecord)
 	{
 		delete _simulationRecord;
+		_simulationRecord = 0;
 	}
 	_simulationRecord = new Engine::SimulationRecord(_resolution);
 

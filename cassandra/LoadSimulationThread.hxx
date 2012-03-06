@@ -16,7 +16,6 @@ public:
 	virtual ~LoadSimulationThread();
 
 	void run();
-
 signals:
 	void simulationLoaded(bool);
 };

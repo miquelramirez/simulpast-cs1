@@ -42,7 +42,7 @@ void Display2D::setSimulationRecord( Engine::SimulationRecord * simulationRecord
 
 void Display2D::paintEvent(QPaintEvent *event)
 {
-	if(!_simulationRecord || _orderedRasters.empty())
+	if(!_simulationRecord || _simulationRecord->getLoadingPercentageDone()!=100.0f || _orderedRasters.empty())
 	{
 		return;
 	}
@@ -55,6 +55,7 @@ void Display2D::paintEvent(QPaintEvent *event)
 
 	Engine::StaticRaster & rasterTmp(_simulationRecord->getRasterTmp(*(_orderedRasters.begin()), _viewedStep));
 	Engine::Point2D<int> size = rasterTmp.getSize();
+
 	for(int i=0; i<size._x; i++)
 	{
 		for(int j=0; j<size._y; j++)
@@ -64,7 +65,7 @@ void Display2D::paintEvent(QPaintEvent *event)
 			{
 				it--;
 				RasterConfiguration * rasterConfig = ProjectConfiguration::instance()->getRasterConfig(*it);
-				Engine::StaticRaster & raster(_simulationRecord->getRasterTmp(*it, _viewedStep));
+				Engine::StaticRaster & raster(_simulationRecord->getRasterTmp(*it, _viewedStep));				
 				int value = raster.getValue(Engine::Point2D<int>(i,j));
 				if(rasterConfig->isTransparentEnabled() && value==rasterConfig->getTransparentValue())
 				{
@@ -99,7 +100,8 @@ void Display2D::paintEvent(QPaintEvent *event)
 			}
 		}
 	}
-	
+
+
 	if(!_showAgents)
 	{
 		QPainter screenPainter(this);	
@@ -165,46 +167,6 @@ void Display2D::paintEvent(QPaintEvent *event)
 					}
 
 					painter.drawPoint(x*_zoom+_zoom/2, y*_zoom+_zoom/2);
-					/*
-					std::string shape("circle");
-					AgentsShapeMap::iterator itShape= _agentsShape.find(itType->first);
-					if(itShape!=_agentsShape.end())
-					{
-						shape = itShape->second;
-					}
-
-					if(shape.compare("rectangle")==0)
-					{
-						painter.drawRect(x,y,2,1);
-					}
-					else if(shape.compare("circle")==0)
-					{
-						painter.drawEllipse(x,y,1,1);
-					}
-					else if(shape.compare("square")==0)
-					{
-						painter.drawRect(x,y,1,1);
-					}
-					else if(shape.compare("triangle")==0)
-					{
-						QPointF points[3];
-						points[0] = QPointF(x-1,y-1);
-						points[1] = QPointF(x+1,y-1);
-						points[2] = QPointF(x,y+1);
-
-						painter.drawPolygon(points, 3);
-					}
-					else if(shape.compare("star")==0)
-					{
-						QPointF points[5];
-						points[0] = QPointF(x+1, y+0.5);
-						for (int i = 1; i < 5; ++i)
-						{
-							points[i] = QPointF(x + 0.5 + 0.5 * cos(0.8 * i * 3.14), y+ 0.5 + 0.5 * sin(0.8 * i * 3.14));
-						}
-						painter.drawPolygon(points, 5);
-					}
-					*/
 				}
 			}
 		}

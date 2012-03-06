@@ -292,15 +292,18 @@ void MainWindow::selectSimulation()
 		{
 			resolution = 1;
 		}
+		repaint();
 
 		ProjectConfiguration::instance()->setResolution(resolution);
 		ProjectConfiguration::instance()->setSimulationFileName(fileName.toStdString());
 
 		setEnabled(false);
+		setUpdatesEnabled(false);
 
 		QRect windowSize(geometry());
 		_progressBar->move(windowSize.x()+(windowSize.width()-_progressBar->geometry().width())/2, windowSize.y()+(windowSize.height()-_progressBar->geometry().height())/2);
 		_progressBar->initLoading();
+
 		_loadSimulationThread.start();
 		_loadSimulationTimer->start();
 	}
@@ -540,6 +543,7 @@ void MainWindow::loadSimulationFinished( bool correct )
 	_progressBar->hide();
 	_loadSimulationTimer->stop();
 	setEnabled(true);
+	setUpdatesEnabled(true);
 	adjustGUI();
 	if(!correct)
 	{

@@ -1,9 +1,6 @@
 
 #include "LoadSimulationThread.hxx"
-
 #include "ProjectConfiguration.hxx"
-
-#include <iostream>
 
 namespace GUI
 {

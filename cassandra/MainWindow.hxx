@@ -122,7 +122,6 @@ private slots:
 	void configured3D( const Configuration3D &);
 
 	void loadSimulationFinished( bool correct);
-
 signals:
 	void stepChangeToStepBox(int stepChangeToStepBox);
 	void newViewedStep(int newViewedStep);
