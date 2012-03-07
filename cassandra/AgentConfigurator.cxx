@@ -27,8 +27,17 @@ AgentConfigurator::AgentConfigurator( QWidget * parent, const std::string & type
 	_agentConfig.setupUi(this);
 
 	colorSelected(_configuration.getColor());
-	_agentConfig.iconChooserButton->setIcon(_configuration.getIcon());
-	_agentConfig.size2D->setValue(_configuration.getSize());	
+	if(!_configuration.getFileName2D().empty())
+	{
+		_agentConfig.iconChooserButton->setIcon(_configuration.getIcon());
+	}
+	else
+	{
+		_agentConfig.iconButton->setEnabled(false);
+		_agentConfig.colorButton->setEnabled(false);
+	}
+
+	_agentConfig.size2D->setValue(_configuration.getSize());
 	_agentConfig.model3DFilename->setText(_configuration.getFileName3D().c_str());
 
 	_agentConfig.xSize->setValue(_configuration.getSize3D()._x);
@@ -186,13 +195,17 @@ void AgentConfigurator::selectIcon()
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Select Icon"), path.c_str(), tr("Images ")+formats);
 	if(fileName.isEmpty())
 	{
+		_agentConfig.iconButton->setEnabled(false);
+		_agentConfig.colorButton->setEnabled(false);
 		return;
 	}
 	else
 	{
 		//_configuration.setIcon(fileName.toStdString());
 		_configuration.setFileName2D(fileName.toStdString());
-		_agentConfig.iconChooserButton->setIcon(_configuration.getIcon());
+		_agentConfig.iconChooserButton->setIcon(_configuration.getIcon());	
+		_agentConfig.iconButton->setEnabled(true);
+		_agentConfig.colorButton->setEnabled(true);
 	}
 }
 
