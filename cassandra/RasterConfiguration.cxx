@@ -7,9 +7,14 @@
 namespace GUI
 {
 
-RasterConfiguration::RasterConfiguration( const int & minValue, const int & maxValue) : _colorSelector(0), _minValue(minValue), _maxValue(maxValue), _transparentEnabled(false), _transparentValue(0)
+RasterConfiguration::RasterConfiguration( const int & minValue, const int & maxValue, bool init ) : _colorSelector(0), _minValue(minValue), _maxValue(maxValue), _transparentEnabled(false), _transparentValue(0)
 {
 	resetColorRamp();
+
+	if(!init)
+	{
+		return;
+	}
 	
 	// basic behavior, 5 different random values
 	int numSteps = std::min(5, maxValue+1-_minValue);
@@ -25,25 +30,11 @@ RasterConfiguration::RasterConfiguration( const int & minValue, const int & maxV
 		//std::cout << "\tadding break: " << minValue+range*i << " with color: " << rangeColor*i << std::endl;
 		_colorSelector->setColor(QColor(0,rangeColor*i,0), i);
 	}
-
-	/*
-	for(int i=0; i<_colorSelector->getNumIntervals(); i++)
-	{
-		std::cout << "i: " << i << " from: " << _colorSelector->getBreak(i) << " to: " << _colorSelector->getBreak(i+1)-1 << " with color: " << _colorSelector->getColor(_colorSelector->getBreak(i)).name().toStdString() << std::endl;
-	}
-	*/
 }
 
 RasterConfiguration::RasterConfiguration( const RasterConfiguration & prototype ) : _colorSelector(0), _minValue(prototype.getMinValue()), _maxValue(prototype.getMaxValue()), _transparentEnabled(prototype.isTransparentEnabled()), _transparentValue(prototype.getTransparentValue())
 {
 	_colorSelector =  prototype.getColorRamp().copy();
-	
-	/*
-	for(int i=0; i<_colorSelector->getNumIntervals(); i++)
-	{
-		std::cout << "copy i: " << i << " from: " << _colorSelector->getBreak(i) << " to: " << _colorSelector->getBreak(i+1)-1 << " with color: " << _colorSelector->getColor(_colorSelector->getBreak(i)).name().toStdString() << std::endl;
-	}
-	*/
 }
 
 RasterConfiguration::~RasterConfiguration()

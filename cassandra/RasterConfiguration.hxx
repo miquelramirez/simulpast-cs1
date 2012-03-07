@@ -15,7 +15,7 @@ class RasterConfiguration
 	bool _transparentEnabled;
 	int _transparentValue;
 public:
-	RasterConfiguration( const int & minValue = 0, const int & maxValue = 10);
+	RasterConfiguration( const int & minValue = 0, const int & maxValue = 10, bool init = true);
 	RasterConfiguration( const RasterConfiguration & prototype );
 	virtual ~RasterConfiguration();
 

@@ -262,7 +262,10 @@ void Display3D::paintAgents()
 			//std::cout << "painting agent: " << it->first << " at pos: " << position << std::endl;
 			glTranslatef(scale._x*position._x, -scale._y*position._y, scale._z*position._z);
 			//glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-			agentConfig->getModel().paint();
+			if(!agentConfig->getFileName3D().empty())
+			{
+				agentConfig->getModel().paint();
+			}
 			glPopMatrix();
 		}
 	}

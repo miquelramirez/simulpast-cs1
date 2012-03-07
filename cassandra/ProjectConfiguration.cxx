@@ -5,6 +5,8 @@
 #include "AgentConfiguration.hxx"
 #include "RasterConfiguration.hxx"
 #include "Exceptions.hxx"
+#include "ColorSelector.hxx"
+#include "ColorInterval.hxx"
 
 #include <QMessageBox>
 
@@ -52,7 +54,7 @@ void ProjectConfiguration::reset()
 	cleanConfigs();
 }
 
-void ProjectConfiguration::loadParameters( const std::string & fileName )
+void ProjectConfiguration::loadProject( const std::string & fileName )
 {
 	reset();
 	_fileName = fileName;
@@ -68,6 +70,10 @@ void ProjectConfiguration::loadParameters( const std::string & fileName )
 	TiXmlElement * simulation = fileProject.FirstChildElement("simulation");
 	_simulationFileName = simulation->Attribute("execution");
 	_resolution = atoi(simulation->Attribute("resolution"));
+
+	loadAgentsConfigs(simulation->FirstChildElement("agents"));
+	loadRastersConfigs(simulation->FirstChildElement("rasters"));
+
 }
 
 bool ProjectConfiguration::loadSimulation()
@@ -85,22 +91,154 @@ bool ProjectConfiguration::loadSimulation()
 		_simulationRecord = 0;
 		return false;
 	}
+	checkConfigs();
 	return true;
 }
 
-void ProjectConfiguration::store( const std::string & fileName )
+void ProjectConfiguration::storeProject( const std::string & fileName )
 {
 	_fileName = fileName;
-	store();
+	// if extension ".cas" is not present, append it.
+	if(_fileName.find(".cas")==std::string::npos)
+	{
+		_fileName.append(".cas");
+	}
+	storeProject();
 }
 
-void ProjectConfiguration::store()
+void ProjectConfiguration::loadAgentsConfigs( TiXmlElement * agents )
+{
+	TiXmlElement * agent = agents->FirstChildElement();
+	while(agent)
+	{
+		AgentConfiguration * agentConfig = new AgentConfiguration();
+
+		TiXmlElement * config2d = agent->FirstChildElement("shape2D");
+		TiXmlElement * config3d = agent->FirstChildElement("shape3D");
+
+		agentConfig->setSize( atof(config2d->Attribute("size")));
+		agentConfig->setUseIcon( atoi(config2d->Attribute("useIcon")));
+		agentConfig->setFileName2D( config2d->Attribute("iconPath"));
+		agentConfig->setColor(QColor(config2d->Attribute("color")));
+
+		agentConfig->setFileName3D( config3d->Attribute("model3D"));		
+		Engine::Point3D<float> size3d(atof(config3d->Attribute("x3D")), atof(config3d->Attribute("y3D")), atof(config3d->Attribute("z3D")));
+		agentConfig->setSize3D( size3d );
+		
+		_agentsConfig.insert(make_pair(std::string(agent->Attribute("type")), agentConfig));
+		agent = agent->NextSiblingElement();
+	}
+}
+
+void ProjectConfiguration::loadRastersConfigs( TiXmlElement * rasters )
+{
+	std::list<std::string> rastersNames;
+	
+	TiXmlElement * raster = rasters->FirstChildElement();
+	while(raster)
+	{
+		// create a raster without initialization
+		int rasterMinValue = atoi(raster->Attribute("minRaster"));
+		int rasterMaxValue = atoi(raster->Attribute("maxRaster"));		
+		RasterConfiguration * rasterConfig = new RasterConfiguration( rasterMinValue, rasterMaxValue, false);
+		rasterConfig->setTransparentValue( atoi(raster->Attribute("transparentValue")));
+		rasterConfig->setTransparentEnabled( atoi(raster->Attribute("transparentEnabled")));
+
+		ColorSelector & selector = rasterConfig->getColorRamp();
+		TiXmlElement * colorRamp = raster->FirstChildElement("colorRamp");
+		TiXmlElement * colorInterval = colorRamp->FirstChildElement();
+
+		int index = 0;
+		while(colorInterval)
+		{
+			int breakStep = atoi(colorInterval->Attribute("break"));
+			QColor color = QColor(colorInterval->Attribute("color"));
+
+			if(breakStep!=rasterMinValue && breakStep!=rasterMaxValue)
+			{
+				selector.addBreak(breakStep);
+				index++;
+			}
+			selector.setColor(color, index);
+			colorInterval = colorInterval->NextSiblingElement();
+		}
+		_rastersConfig.insert(make_pair( std::string(raster->Attribute("name")), rasterConfig));
+		rastersNames.push_back(raster->Attribute("name"));
+		raster = raster->NextSiblingElement();
+	}
+	_config3D.setRastersList(rastersNames);
+}
+
+TiXmlElement * ProjectConfiguration::storeAgentsConfigs()
+{
+	TiXmlElement * agents = new TiXmlElement("agents");
+	for(AgentsConfigurationMap::iterator it=_agentsConfig.begin(); it!=_agentsConfig.end(); it++)
+	{
+		AgentConfiguration * config = it->second;
+		TiXmlElement * currentAgent = new TiXmlElement("agent");
+		currentAgent->SetAttribute("type", it->first);
+
+		TiXmlElement * config2d = new TiXmlElement("shape2D");
+		config2d->SetDoubleAttribute("size", config->getSize());
+		config2d->SetAttribute("color", config->getColor().name().toStdString());
+		config2d->SetAttribute("iconPath", config->getFileName2D());
+		config2d->SetAttribute("useIcon", config->useIcon());
+
+		TiXmlElement * config3d = new TiXmlElement("shape3D");
+		config3d->SetAttribute("model3D", config->getFileName3D());
+		config3d->SetDoubleAttribute("x3D", config->getSize3D()._x);
+		config3d->SetDoubleAttribute("y3D", config->getSize3D()._y);
+		config3d->SetDoubleAttribute("z3D", config->getSize3D()._z);
+
+		currentAgent->LinkEndChild(config2d);
+		currentAgent->LinkEndChild(config3d);
+		agents->LinkEndChild(currentAgent);
+	}
+	return agents;
+}
+
+TiXmlElement * ProjectConfiguration::storeRastersConfigs()
+{
+	TiXmlElement * rasters = new TiXmlElement("rasters");
+	for(RastersConfigurationMap::iterator it=_rastersConfig.begin(); it!=_rastersConfig.end(); it++)
+	{
+		RasterConfiguration * config = it->second;
+		TiXmlElement * currentRaster = new TiXmlElement("raster");
+		currentRaster->SetAttribute("name", it->first);
+		currentRaster->SetAttribute("transparentValue", config->getTransparentValue());
+		currentRaster->SetAttribute("transparentEnabled", config->isTransparentEnabled());
+		currentRaster->SetAttribute("minRaster", config->getMinValue());
+		currentRaster->SetAttribute("maxRaster", config->getMaxValue());
+
+		TiXmlElement * colorRamp = new TiXmlElement("colorRamp");
+		ColorSelector & selector = config->getColorRamp();
+		for(unsigned int i=0; i<selector.getNumIntervals(); i++)
+		{
+			int breakStep = selector.getBreak(i);
+			TiXmlElement * colorInterval = new TiXmlElement("colorInterval");
+			colorInterval->SetAttribute("break", breakStep);
+			colorInterval->SetAttribute("color", selector.getColor(breakStep).name().toStdString());
+			colorRamp->LinkEndChild(colorInterval);
+		}
+		currentRaster->LinkEndChild(colorRamp);
+		rasters->LinkEndChild(currentRaster);
+	}
+	return rasters;
+}
+
+void ProjectConfiguration::storeProject()
 {
 	TiXmlDocument fileProject;
 	TiXmlDeclaration * declaration = new TiXmlDeclaration( "1.0", "", "" );
 	TiXmlElement * simulation = new TiXmlElement( "simulation" );
 	simulation->SetAttribute("execution", _simulationFileName);
 	simulation->SetAttribute("resolution", _resolution);
+
+	simulation->LinkEndChild(storeAgentsConfigs());
+	simulation->LinkEndChild(storeRastersConfigs());
+
+	// store agents configs
+	// store rasters configs
 	
 	fileProject.LinkEndChild( declaration );
 	fileProject.LinkEndChild( simulation );
@@ -156,23 +294,28 @@ void ProjectConfiguration::cleanConfigs()
 	_rastersConfig.clear();
 }
 
-void ProjectConfiguration::resetConfigs()
-{
-	cleanConfigs();
-	
-	Engine::SimulationRecord * simulationRecord = ProjectConfiguration::instance()->getSimulationRecord();
-	if(!simulationRecord)
+void ProjectConfiguration::checkConfigs()
+{	
+	if(!_simulationRecord)
 	{
+		cleanConfigs();
 		return;
 	}
+	// if config already present don't create default configs
+	if(_agentsConfig.size()!=0 || _rastersConfig.size()!=0)
+	{
+		std::cout << "configs already created" << std::endl;
+		return;
+	}
+	std::cout << "creating default configs" << std::endl;
 
-	for(Engine::SimulationRecord::AgentTypesMap::iterator itType = simulationRecord->beginTypes(); itType!=simulationRecord->endTypes(); itType++)
+	for(Engine::SimulationRecord::AgentTypesMap::iterator itType = _simulationRecord->beginTypes(); itType!=_simulationRecord->endTypes(); itType++)
 	{
 		_agentsConfig.insert(make_pair( itType->first, new AgentConfiguration() ));
 	}	
 	
 	std::list<std::string> rastersNames;
-	for(Engine::SimulationRecord::RasterMap::iterator itRaster = simulationRecord->beginRasters(); itRaster!=simulationRecord->endRasters(); itRaster++)
+	for(Engine::SimulationRecord::RasterMap::iterator itRaster = _simulationRecord->beginRasters(); itRaster!=_simulationRecord->endRasters(); itRaster++)
 	{
 		int minValue = itRaster->second[0].getMinValue();
 		int maxValue = itRaster->second[0].getMaxValue();
@@ -181,7 +324,7 @@ void ProjectConfiguration::resetConfigs()
 		rastersNames.push_back(itRaster->first);
 	}
 
-	for(Engine::SimulationRecord::StaticRasterMap::iterator itRaster = simulationRecord->beginStaticRasters(); itRaster!=simulationRecord->endStaticRasters(); itRaster++)
+	for(Engine::SimulationRecord::StaticRasterMap::iterator itRaster = _simulationRecord->beginStaticRasters(); itRaster!=_simulationRecord->endStaticRasters(); itRaster++)
 	{
 		int minValue = itRaster->second.getMinValue();
 		int maxValue = itRaster->second.getMaxValue();

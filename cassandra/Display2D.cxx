@@ -119,7 +119,7 @@ void Display2D::paintEvent(QPaintEvent *event)
 		AgentConfiguration * agentConfig = ProjectConfiguration::instance()->getAgentConfig(itType->first);
 		for(Engine::SimulationRecord::AgentRecordsMap::iterator it= _simulationRecord->beginAgents(itType); it!=_simulationRecord->endAgents(itType); it++)
 		{
-			if(agentConfig->useIcon())
+			if(agentConfig->useIcon() && !agentConfig->getFileName2D().empty())
 			{	
 				Engine::AgentRecord * agent = it->second;
 				bool exists = agent->getState(_viewedStep/_simulationRecord->getResolution(), "exists");

@@ -312,7 +312,6 @@ void MainWindow::selectSimulation()
 void MainWindow::adjustGUI()
 {
 	std::cout << "adjusting GUI" << std::endl;
-	ProjectConfiguration::instance()->resetConfigs();	
 
 	_display2D->setSimulationRecord(ProjectConfiguration::instance()->getSimulationRecord());
 	_agentTypeSelection->setSimulationRecord(ProjectConfiguration::instance()->getSimulationRecord());
@@ -502,7 +501,7 @@ void MainWindow::loadProject()
 	}
 	else
 	{
-		ProjectConfiguration::instance()->loadParameters(fileName.toStdString());
+		ProjectConfiguration::instance()->loadProject(fileName.toStdString());
 		setEnabled(false);
 
 		QRect windowSize(geometry());
@@ -519,7 +518,7 @@ void MainWindow::saveProject()
 {
 	if(ProjectConfiguration::instance()->alreadySaved())
 	{
-		ProjectConfiguration::instance()->store();
+		ProjectConfiguration::instance()->storeProject();
 		return;
 	}
 	saveProjectAs();
@@ -534,7 +533,7 @@ void MainWindow::saveProjectAs()
 	}
 	else
 	{
-		ProjectConfiguration::instance()->store(fileName.toStdString());
+		ProjectConfiguration::instance()->storeProject(fileName.toStdString());
 	}
 }
 	

@@ -9,25 +9,22 @@
 namespace GUI
 {
 
-AgentConfiguration::AgentConfiguration() : _color(rand()%256,rand()%256,rand()%256), _icon(0), _useIcon(false), _fileName2D(""), _size(1.0f), _size3D(1.0f, 1.0f, 1.0f), _fileName3D("resources/3dmodels/spaceship.3ds"), _model(0)
+AgentConfiguration::AgentConfiguration() : _color(rand()%256,rand()%256,rand()%256), _icon(0), _useIcon(false), _fileName2D(""), _size(1.0f), _size3D(1.0f, 1.0f, 1.0f), _fileName3D(""), _model(0)
 {
-	// there are 10 icons, from 1 to 10
-	int index = 1+rand()%10;
-	std::stringstream fileNameStream;
-	fileNameStream << "default_agent_" << index << ".png";
-	_fileName2D = "~/workspace/SCSim/cassandra/resources/agentIcons/" + fileNameStream.str();
-	std::stringstream resourceNameStream;
-	resourceNameStream << ":/resources/agentIcons/" << fileNameStream.str();
-	_icon = new QIcon(resourceNameStream.str().c_str());
-	_model = Loader3DS::instance()->loadModel(_fileName3D);
-	_model->setModelScale(_size3D);
 }
 
-AgentConfiguration::AgentConfiguration( const AgentConfiguration & prototype ) : _color(prototype.getColor()), _icon(0), _useIcon(prototype.useIcon()), _fileName2D(prototype.getFileName2D()), _size(prototype.getSize()), _size3D(prototype.getSize3D()), _fileName3D(prototype.getFileName3D())
+AgentConfiguration::AgentConfiguration( const AgentConfiguration & prototype ) : _color(prototype.getColor()), _icon(0), _useIcon(prototype.useIcon()), _fileName2D(prototype.getFileName2D()), _size(prototype.getSize()), _size3D(prototype.getSize3D()), _fileName3D(prototype.getFileName3D()), _model(0)
 {
-	_icon = new QIcon(prototype.getIcon());
-	_model = Loader3DS::instance()->loadModel(_fileName3D);
-	_model->setModelScale(_size3D);
+	if(!_fileName2D.empty())
+	{
+		_icon = new QIcon(prototype.getIcon());
+	}
+	
+	if(!_fileName3D.empty())
+	{
+		_model = Loader3DS::instance()->loadModel(_fileName3D);
+		_model->setModelScale(_size3D);
+	}
 }
 
 AgentConfiguration::~AgentConfiguration()
@@ -46,18 +43,6 @@ void AgentConfiguration::setColor( const QColor & color )
 {
 	_color = color;
 }
-
-/*
-void AgentConfiguration::setIcon( const std::string & fileName )
-{
-	if(fileName.compare(_fileName2D)==0)
-	{
-		return;
-	}
-	delete _icon;
-	_icon = new QIcon(fileName.c_str());
-}
-*/
 
 void AgentConfiguration::setUseIcon( const bool & useIcon )
 {
@@ -97,10 +82,11 @@ const Engine::Point3D<float> & AgentConfiguration::getSize3D() const
 void AgentConfiguration::setSize3D( const Engine::Point3D<float> & size3D )
 {
 	_size3D = size3D;
-	if(_model)
+	if(_fileName3D.empty())
 	{
-		_model->setModelScale(_size3D);
+		return;
 	}
+	_model->setModelScale(_size3D);
 }
 
 void AgentConfiguration::setFileName3D( const std::string & fileName3D)
@@ -110,9 +96,18 @@ void AgentConfiguration::setFileName3D( const std::string & fileName3D)
 	{
 		return;
 	}
+	if(!_fileName3D.empty())
+	{
+		delete _model;
+		_model = 0;
+	}
 	_fileName3D = fileName3D;
-	delete _model;
+	if(_fileName3D.empty())
+	{
+		return;
+	}
 	_model = Loader3DS::instance()->loadModel(_fileName3D);
+	_model->setModelScale(_size3D);
 }
 
 const std::string & AgentConfiguration::getFileName3D() const
@@ -126,8 +121,16 @@ void AgentConfiguration::setFileName2D( const std::string & fileName2D)
 	{
 		return;
 	}
+	if(!_fileName2D.empty())
+	{
+		delete _icon;
+		_icon = 0;
+	}
 	_fileName2D = fileName2D;	
-	delete _icon;
+	if(_fileName2D.empty())
+	{
+		return;
+	}
 	_icon = new QIcon(_fileName2D.c_str());
 }
 

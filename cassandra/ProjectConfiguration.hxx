@@ -6,6 +6,8 @@
 #include <map>
 #include "Configuration3D.hxx"
 
+class TiXmlElement;
+
 namespace Engine
 {
 	class SimulationRecord;
@@ -41,17 +43,27 @@ private:
 	
 	void cleanConfigs();
 
+	TiXmlElement * storeAgentsConfigs();
+	TiXmlElement * storeRastersConfigs();
+
+	void loadAgentsConfigs( TiXmlElement * agents );
+	void loadRastersConfigs( TiXmlElement * rasters );
+
+	// this method checks whether default configs are needed for a simulation
+	// if this is the case, they are created
+	void checkConfigs();
+
 public:
 	static ProjectConfiguration * instance();
 	virtual ~ProjectConfiguration();
 
 	void reset();
 
-	void loadParameters( const std::string & fileName );
+	void loadProject( const std::string & fileName );
 	// this function is used to store the project to a fileName different from _fileName
-	void store( const std::string & fileName );
+	void storeProject( const std::string & fileName );
 	// this function is used to store the project to _fileName
-	void store();
+	void storeProject();
 
 	void setResolution( const int & resolution );
 	int getResolution();
@@ -70,7 +82,7 @@ public:
 	AgentConfiguration * getAgentConfig( const std::string & type );
 	RasterConfiguration * getRasterConfig( const std::string & type );
 	Configuration3D & getConfig3D();
-	void resetConfigs();
+
 };
 
 } // namespace GUI
