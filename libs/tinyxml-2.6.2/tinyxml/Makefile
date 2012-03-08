@@ -4,6 +4,9 @@
 # Lee Thomason
 # www.grinninglizard.com
 #
+# Modified by Miquel Ramirez in order to add library building and installing
+# rules.
+#
 # This is a GNU make (gmake) makefile
 #****************************************************************************
 
@@ -17,6 +20,11 @@ PROFILE        := NO
 # will not be used. YES will include the STL files.
 TINYXML_USE_STL := NO
 
+# PREFIX directory
+PREFIX := /usr
+
+
+
 #****************************************************************************
 
 CC     := gcc
@@ -25,8 +33,8 @@ LD     := g++
 AR     := ar rc
 RANLIB := ranlib
 
-DEBUG_CFLAGS     := -Wall -Wno-format -g -DDEBUG
-RELEASE_CFLAGS   := -Wall -Wno-unknown-pragmas -Wno-format -O3
+DEBUG_CFLAGS     := -Wall -Wno-format -fPIC -g -DDEBUG
+RELEASE_CFLAGS   := -Wall -Wno-unknown-pragmas -fPIC -Wno-format -O3
 
 LIBS		 :=
 
@@ -82,9 +90,14 @@ CXXFLAGS := ${CXXFLAGS} ${DEFS}
 #****************************************************************************
 
 OUTPUT := xmltest
+TINYXML_LIB := libtinyxml.a
 
-all: ${OUTPUT}
+all: ${OUTPUT} ${TINYXML_LIB}
 
+install: ${TINYXML_LIB}
+	cp $< ${PREFIX}/lib
+	cp tinystr.h ${PREFIX}/include
+	cp tinyxml.h ${PREFIX}/include
 
 #****************************************************************************
 # Source files
@@ -103,6 +116,10 @@ OBJS := $(addsuffix .o,$(basename ${SRCS}))
 
 ${OUTPUT}: ${OBJS}
 	${LD} -o $@ ${LDFLAGS} ${OBJS} ${LIBS} ${EXTRA_LIBS}
+
+${TINYXML_LIB}: ${OBJS}
+	${AR} $@ ${OBJS}
+	${RANLIB} $@
 
 #****************************************************************************
 # common rules
