@@ -12,10 +12,10 @@ else:
 	env = Environment(CXX='mpicxx')
 
 if int(release) == 0:
-	env['CCFLAGS'] = Split('-g -O1 -Wall')
+	env['CCFLAGS'] = Split('-g -O1 -Wall -DTIXML_USE_STL')
 	libs = Split('pthread mpich pandorad gdal hdf5 tinyxml')
 else:
-	env['CCFLAGS'] = Split('-O3')
+	env['CCFLAGS'] = Split('-O3 -DTIXML_USE_STL')
 	libs = Split('pthread mpich pandora gdal hdf5 tinyxml')
 
 #srcFiles = Split('main.cxx GujaratWorld.cxx GujaratConfig.cxx Climate.cxx GujaratAgent.cxx HunterGatherer.cxx AgroPastoralist.cxx Action.cxx HuntAction.cxx GatherAction.cxx')
