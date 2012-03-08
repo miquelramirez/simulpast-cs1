@@ -33,8 +33,8 @@ LD     := g++
 AR     := ar rc
 RANLIB := ranlib
 
-DEBUG_CFLAGS     := -Wall -Wno-format -g -DDEBUG
-RELEASE_CFLAGS   := -Wall -Wno-unknown-pragmas -Wno-format -O3
+DEBUG_CFLAGS     := -Wall -Wno-format -fPIC -g -DDEBUG
+RELEASE_CFLAGS   := -Wall -Wno-unknown-pragmas -fPIC -Wno-format -O3
 
 LIBS		 :=
 
