@@ -3,6 +3,7 @@
 #include "Agent.hxx"
 #include "Exceptions.hxx"
 #include "Statistics.hxx"
+#include "MpiFactory.hxx"
 
 #include <cstdlib>
 #include <iostream>
@@ -37,14 +38,6 @@ World::~World()
 	}
 }
 
-void World::cleanTypes()
-{
-	for(TypesMap::iterator it=_types.begin(); it!=_types.end(); it++)
-	{
-		MPI_Datatype * type = it->second;
-		MPI_Type_free(type);
-	}
-}
 
 void World::init( int argc, char *argv[] )
 {
@@ -63,7 +56,7 @@ void World::init( int argc, char *argv[] )
 	_serializer.init(_simulation, _staticRasters, _dynamicRasters, *this);
 	serializeStaticRasters();
 	createAgents();
-	registerTypes();
+	MpiFactory::instance()->registerTypes();
 	std::cout << _simulation.getId() << " finished init at: " << MPI_Wtime() - _initialTime << std::endl;
 }
 
@@ -186,7 +179,7 @@ void World::sendGhostAgents( const int & sectionIndex )
 	}
 
 	// for each type of agent we will send the collection of agents of the particular type to neighbors
-	for(TypesMap::iterator itType=_types.begin(); itType!=_types.end(); itType++)
+	for(MpiFactory::TypesMap::iterator itType=MpiFactory::instance()->beginTypes(); itType!=MpiFactory::instance()->endTypes(); itType++)
 	{
 		MPI_Datatype * agentType = itType->second;
 
@@ -235,7 +228,7 @@ void World::sendGhostAgents( const int & sectionIndex )
 			for(AgentsList::iterator it=agentsToNeighbors[i].begin(); it!=agentsToNeighbors[i].end(); it++)
 			{
 				Agent * agent = *it;
-				void * package = agent->createPackage();
+				void * package = agent->fillPackage();
 				//std::cout << _simulation.getId() << " sending ghost agent: " << *it << " from: " << _simulation.getId() << " to: " << neighborsToUpdate[i] << std::endl;
 				error = MPI_Send(package, 1, *agentType, neighborsToUpdate[i], 5, MPI_COMM_WORLD);
 				delete package;
@@ -262,8 +255,8 @@ void World::receiveGhostAgents( const int & sectionIndex )
 		}
 	}
 
-	// for each type of agent we will send the collection of agents of the particular type to neighbors
-	for(TypesMap::iterator itType=_types.begin(); itType!=_types.end(); itType++)
+	// for each type of agent we will send the collection of agents of the particular type to neighbors	
+	for(MpiFactory::TypesMap::iterator itType=MpiFactory::instance()->beginTypes(); itType!=MpiFactory::instance()->endTypes(); itType++)
 	{
 		MPI_Datatype * agentType = itType->second;
 
@@ -282,7 +275,7 @@ void World::receiveGhostAgents( const int & sectionIndex )
 			//std::cout << _simulation.getId() << " has received message from " << neighborsToUpdate[i] << ", num ghost agents: " << numAgentsToReceive << std::endl;
 			for(int j=0; j<numAgentsToReceive; j++)
 			{
-				void * package = createPackage(itType->first);
+				void * package = MpiFactory::instance()->createDefaultPackage(itType->first);
 				error = MPI_Recv(package, 1, *agentType, neighborsToUpdate[i], 5, MPI_COMM_WORLD, &status);					
 				if(error!=MPI_SUCCESS)
 				{
@@ -290,7 +283,7 @@ void World::receiveGhostAgents( const int & sectionIndex )
 					oss << "World::receiveGhostAgents - " << _simulation.getId() << " error in MPI_Recv: " << error;
 					throw Exception(oss.str());
 				}
-				Agent * agent = createAgentFromPackage(itType->first, package);
+				Agent * agent = MpiFactory::instance()->createAndFillAgent(itType->first, package);
 				//std::cout << _simulation.getId() << " has received ghost agent: " << agent << " number: " << j << " from: " << neighborsToUpdate[i] << " in section index: " << sectionIndex << " and step: " << _step << std::endl;
 				delete package;
 				// we must check if it is an update of an agent, or a ghost agent
@@ -455,7 +448,7 @@ void World::sendAgents( AgentsList & agentsToSend )
 
 //	MPI_Datatype * agentType = createType();
 	// for each neighbor, we send the number of agents to send
-	for(TypesMap::iterator itType=_types.begin(); itType!=_types.end(); itType++)
+	for(MpiFactory::TypesMap::iterator itType=MpiFactory::instance()->beginTypes(); itType!=MpiFactory::instance()->endTypes(); itType++)
 	{
 		// add each agent to the list of the neighbour where it will be sent
 		std::vector< AgentsList > agentsToNeighbors;
@@ -488,7 +481,7 @@ void World::sendAgents( AgentsList & agentsToSend )
 			while(it!=agentsToNeighbors[i].end())
 			{
 				Agent * agent = *it;
-				void * package = agent->createPackage();
+				void * package = agent->fillPackage();
 				//std::cout << _simulation.getId() << " sending agent: " << *it << " from: " << _simulation.getId() << " to: " << _neighbors[i] << std::endl;
 				error = MPI_Send(package, 1, *agentType, _neighbors[i], 2, MPI_COMM_WORLD);
 				delete package;
@@ -607,7 +600,7 @@ int World::getNeighborIndex( const int & id )
 void World::receiveAgents( const int & sectionIndex )
 {
 	//MPI_Datatype * agentType = createType();
-	for(TypesMap::iterator itType=_types.begin(); itType!=_types.end(); itType++)
+	for(MpiFactory::TypesMap::iterator itType=MpiFactory::instance()->beginTypes(); itType!=MpiFactory::instance()->endTypes(); itType++)
 	{
 		MPI_Datatype * agentType = itType->second;
 
@@ -625,7 +618,7 @@ void World::receiveAgents( const int & sectionIndex )
 			//std::cout << _simulation.getId() << " has received message from " << _neighbors[i] << ", num agents: " << numAgentsToReceive << std::endl;
 			for(int j=0; j<numAgentsToReceive; j++)
 			{
-				void * package = createPackage(itType->first);
+				void * package = MpiFactory::instance()->createDefaultPackage(itType->first);
 				error = MPI_Recv(package, 1, *agentType, _neighbors[i], 2, MPI_COMM_WORLD, &status);					
 				if(error!=MPI_SUCCESS)
 				{
@@ -633,7 +626,7 @@ void World::receiveAgents( const int & sectionIndex )
 					oss << "World::receiveAgents - " << _simulation.getId() << " error in MPI_Recv: " << error;
 					throw Exception(oss.str());
 				}
-				Agent * agent = createAgentFromPackage(itType->first, package);
+				Agent * agent = MpiFactory::instance()->createAndFillAgent(itType->first, package);
 				//std::cout << _simulation.getId() << " has received agent: " << agent << " number: " << j << " from: " << _neighbors[i] << std::endl;
 				delete package;
 				addAgent(agent);
@@ -807,7 +800,7 @@ void World::run()
 	std::cout << _simulation.getId() << " closing files at: " << MPI_Wtime() - _initialTime << std::endl;
 	_serializer.finish();
 
-	cleanTypes();
+	MpiFactory::instance()->cleanTypes();
 	std::cout << _simulation.getId() << " finished simulation at: " << MPI_Wtime() - _initialTime << std::endl; 
 	MPI_Finalize();
 }

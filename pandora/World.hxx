@@ -16,7 +16,6 @@
 #include <algorithm>
 
 //#include "hdf5.h"
-#include <mpi.h>
 
 namespace Engine
 {
@@ -29,7 +28,6 @@ public:
 	typedef std::map< std::string, StaticRaster > StaticRastersMap;
 	typedef std::map< std::string, Raster > RastersMap;
 	typedef std::list< Agent* > AgentsList;
-	typedef std::map< std::string, MPI_Datatype *> TypesMap;
 protected:		
 	Simulation _simulation;
 	// MPI
@@ -70,8 +68,8 @@ protected:
 	//! random number generator
 	Statistics _statistics;
 
-	virtual void * createPackage( const std::string & type ) = 0;
-	virtual Agent * createAgentFromPackage(  const std::string & type, void * package ) = 0;
+	//virtual void * createPackage( const std::string & type ) = 0;
+	//virtual Agent * createAgentFromPackage(  const std::string & type, void * package ) = 0;
 
 	//! this method returns true if neighbor is corner of _id
 	bool isCorner(const int & neighbor);
@@ -92,20 +90,12 @@ protected:
 	//! current simulation step
 	int _step;
 
-	// TODO
-	TypesMap _types;
-	//! method used in derived classes to add custom mpi types for each agent
-	virtual void registerTypes() = 0;
-	//! method to delete from mpi stack all the created types
-	void cleanTypes();
 
 	//! provides a random valid position inside boundaries
 	Point2D<int> getRandomPosition();
 private:
 	//! PENDENT amount of width around one boundary considering the side of the World object that owns _overlap
 	int _overlap;
-
-
 	
 	Serializer _serializer;
 

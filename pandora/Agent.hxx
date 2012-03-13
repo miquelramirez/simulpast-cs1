@@ -70,7 +70,7 @@ public:
 
 	// TODO fix? when an agent is modified we need to alert the original in case of being an overlap copy
 	//void interactionWithAgent(Agent * agent);
-	virtual void * createPackage() = 0;
+	virtual void * fillPackage() = 0;
 	// this function returns true if the type of the agent is the one passed by reference
 	bool isType( const std::string & type );
 	std::string getType();
