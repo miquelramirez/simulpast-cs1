@@ -37,17 +37,17 @@ class GujaratAgent : public Engine::Agent
 	virtual void serializeAdditionalAttributes() = 0;
 
 protected:
-	int _availableTime;
-	int _spentTime;
-	int _collectedResources;
-	
+	int _availableTime; // MpiAttribute
+	int _spentTime; // MpiAttribute
+	int _collectedResources; // MpiAttribute
 
 	// age of the agent in num steps (years*3)
-	int _age;
-	// allowed range for social interaction
-	int _socialRange;
+	int _age; // MpiAttribute
 
-	int _homeMobilityRange;
+	// allowed range for social interaction
+	int _socialRange; // MpiAttribute
+
+	int _homeMobilityRange; // MpiAttribute
 
 	std::list<Action*> _actions;
 	Engine::Point2D<int> getNearLocation( int range );

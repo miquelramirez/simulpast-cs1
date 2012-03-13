@@ -191,11 +191,6 @@ void HunterGatherer::evaluateIntraSeasonalActions()
 
 }
 
-void * HunterGatherer::createPackage()
-{
-	return 0;
-}
-
 void HunterGatherer::serializeAdditionalAttributes()
 {
 	serializeAttribute("collected resources", _collectedResources);

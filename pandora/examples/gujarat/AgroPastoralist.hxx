@@ -35,6 +35,10 @@ public:
 	void maintainPlot();
 	void harvest();
 	void abandonPlot();
+
+	// MPI Script Generated code
+	AgroPastoralist( void * );
+	void * fillPackage();
 };
 
 } // namespace Gujarat

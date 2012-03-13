@@ -10,6 +10,10 @@ namespace Gujarat
 
 	}
 
+SettlementAreas::~SettlementAreas()
+{
+}
+
 
 	void SettlementAreas::updateArea(Engine::Point2D<int> & newPoint, Engine::Rectangle<int> & r)
 	{
@@ -59,7 +63,7 @@ namespace Gujarat
 			for(int x = currentLoc->_x -1; x <= currentLoc->_x +1; x++)
 				for(int y = currentLoc->_y -1; y <= currentLoc->_y +1; y++)
 				{
-					if ( !newArea.isInside(x,y) && w.getValue("resourceType",loc)==DUNE )
+					if ( !newArea.isInside(Engine::Point2D<int>(x,y)) && w.getValue("resourceType",loc)==DUNE )						
 					{	  
 						targets.push(new Engine::Point2D<int>(x,y));
 					}
@@ -83,7 +87,7 @@ namespace Gujarat
 		{
 			for(loc._y = Yorigin; loc._y< Yorigin+Ysize; loc._y++)		
 			{
-				if (w.getValue("resourceType",loc)==DUNE && !duneInArea[loc.i*w.Xsize + loc.j])
+				if (w.getValue("resourceType",loc)==DUNE && !duneInArea[loc._x*Xsize + loc._y])
 				{
 					setNewArea(loc,w,duneInArea);
 				}

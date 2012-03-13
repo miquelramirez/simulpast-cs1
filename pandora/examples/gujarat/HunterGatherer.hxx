@@ -11,10 +11,10 @@ class ForageAction;
 
 class HunterGatherer : public GujaratAgent
 {	
-	int 					_surplusForReproductionThreshold;
-	int 					_surplusWanted;
-	int 					_homeRange;
-	int 					_numSectors;
+	int 					_surplusForReproductionThreshold; // MpiAttribute
+	int 					_surplusWanted; // MpiAttribute
+	int 					_homeRange; // MpiAttribute
+	int 					_numSectors; // MpiAttribute
 	std::vector< std::vector< int > >	_sectorsMask;
 
 	void updateKnowledge();
@@ -38,8 +38,6 @@ public:
 	HunterGatherer( const std::string & id );
 	virtual ~HunterGatherer();
 
-	void * createPackage();
-	
 	void setHomeRange( int v ) { _homeRange = v; }
 	int  getHomeRange() const { return _homeRange; }
 	void setNumSectors( int v ) { _numSectors = v; }
@@ -53,6 +51,10 @@ public:
 
 	void		updateResources( int v ) { _collectedResources += v; }
 	void 		createSectorsMask();
+	
+	// MPI Script Generated code
+	HunterGatherer( void * );
+	void * fillPackage();
 };
 
 } // namespace Gujarat

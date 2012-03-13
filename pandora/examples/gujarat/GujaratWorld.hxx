@@ -46,12 +46,6 @@ class GujaratWorld : public Engine::World
 	void createAgents();
 
 	void loadFile( const std::string & fileName, const std::string & rasterKey);
-	// MPI
-	MPI_Datatype * createTypeGujaratHuntGath();
-	MPI_Datatype * createTypeGujaratAgroPast();
-	void registerTypes();
-	void * createPackage( const std::string & type );
-	Engine::Agent * createAgentFromPackage( const std::string & type, void * package );
 
 	void updateRainfall();
 	void updateMoisture();
@@ -68,11 +62,11 @@ public:
 	float moistureFunction(const Soils & soilType, const float & rain, const Seasons & season );
 	void stepEnvironment();
 	//void stepGeneralUpdate( int step );
-	long int getNewKey();
 	const Climate & getClimate() const;
 	const GujaratConfig& getConfig() const { return _config; }
 
 	int  convertToCalories( int mass );
+	long int getNewKey();
 };
 
 } // namespace Gujarat
