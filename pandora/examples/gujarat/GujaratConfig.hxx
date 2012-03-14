@@ -27,8 +27,12 @@ class GujaratConfig : public Config
 	// # meters corresponding to the side of a cell
 	float _cellResolution;
 
+	// MRJ: Hunter Gatherers attributes
 	int		_surplusForReproductionThreshold;
 	int		_surplusWanted;
+
+	// MRJ: Agro Pastoralists attributes
+	int		_maxCropHomeDistance;
 
 	int		_numSectors;
 	float		_massToEnergyRate;

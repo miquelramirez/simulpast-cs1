@@ -48,9 +48,12 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	_surplusForReproductionThreshold = atoi( element->Attribute("surplusForReproductionThreshold") );
 	_surplusWanted = atoi( element->Attribute("surplusWanted") );
 	_numSectors = atoi( element->Attribute("numSectors") );
-	
+
+	// MRJ: Loading agro pastoralists attributes	
 	element = root->FirstChildElement("agroPastoralists");
 	_numAP = atoi(element->Attribute("num"));
+	_maxCropHomeDistance = atoi(element->Attribute("maxCropHomeDistance"));
+
 
 	element = root->FirstChildElement("daysPerSeason");
 	_daysPerSeason = atoi( element->Attribute("value") );

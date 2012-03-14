@@ -85,6 +85,7 @@ void GujaratWorld::createAgents()
 			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
 			agent->setHomeMobilityRange( _config._socialRange );
+			agent->setMaxCropHomeDistance( _config._maxCropHomeDistance );
 			addAgent(agent); 
 			agent->initializePosition(getRandomPosition());
 			std::cout << _simulation.getId() << " new AgroPastoralist: " << agent << std::endl;
@@ -343,6 +344,21 @@ const Climate & GujaratWorld::getClimate() const
 long int GujaratWorld::getNewKey()
 {
 	return _agentKey++;
+}
+
+bool	GujaratWorld::isInterdune( Engine::Point2D<int> p )
+{
+	return getValue("soils", p) == INTERDUNE;
+}
+
+bool	GujaratWorld::isWild( Engine::Point2D<int> p )
+{
+	return getValue( "resourceType", p ) == WILD;
+}
+
+bool	GujaratWorld::isColdDrySeason()
+{
+	return getClimate().getSeason() == COLDDRY;
 }
 
 } // namespace Gujarat

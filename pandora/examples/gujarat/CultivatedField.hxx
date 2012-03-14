@@ -19,6 +19,9 @@ public:
 	void sow();
 	void harvest();
 	bool isSown();
+	bool requiresFallow();
+	bool isDomesticated();
+	
 	const Engine::Point2D<int> getPosition();
 };
 

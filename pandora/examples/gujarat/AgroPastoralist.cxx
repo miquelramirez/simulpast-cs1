@@ -6,7 +6,7 @@
 
 #include "MoveHomeAction.hxx"
 #include "AbandonPlotAction.hxx"
-#include "StablishPlotAction.hxx"
+#include "EstablishPlotAction.hxx"
 #include "SowAction.hxx"
 #include "MaintainPlotAction.hxx"
 #include "HarvestAction.hxx"
@@ -31,29 +31,73 @@ void AgroPastoralist::evaluateYearlyActions()
 	//std::cout << this << " evaluating yearly actions" << std::endl;	
 	// 20% of chance
 	// MRJ: Commenting out until fixed
-	/*
+	
 	if(_world->getStatistics().getUniformDistValue(0,4)==0)
 	{
-		_actions.push_back(new MoveHomeAction());
+		std::vector< MoveHomeAction* > possibleActions;
+		MoveHomeAction::generatePossibleActions( *this, possibleActions );
+		
+		int dice = _world->getStatistics().getUniformDistValue( 0, possibleActions.size() - 1 );
+
+		MoveHomeAction* selectedAction = possibleActions[dice];
+		possibleActions[dice] = NULL;
+		_actions.push_back( selectedAction );
+		for ( unsigned i = 0; i < possibleActions.size(); i++ )
+			if ( possibleActions[i] != NULL )
+				delete possibleActions[i];
+
+		return;
 	}
-	*/
-	if(!_cultivatedField || _world->getValue("resourceType", _cultivatedField->getPosition())==FALLOW)
+	if(_cultivatedField == NULL || _cultivatedField->requiresFallow() )
 	{
-		_actions.push_back(new AbandonPlotAction());
-		_actions.push_back(new StablishPlotAction());
+		std::vector< EstablishPlotAction* > possibleEPActions;
+		EstablishPlotAction::generatePossibleActions( *this, possibleEPActions );
+
+		if ( possibleEPActions.empty() )
+		{
+			std::vector< MoveHomeAction* > possibleMHActions;
+			MoveHomeAction::generatePossibleActions( *this, possibleMHActions );
+			
+			int dice = _world->getStatistics().getUniformDistValue( 0, possibleMHActions.size() - 1 );
+	
+			MoveHomeAction* selectedAction = possibleMHActions[dice];
+			possibleMHActions[dice] = NULL;
+			_actions.push_back( selectedAction );
+			for ( unsigned i = 0; i < possibleMHActions.size(); i++ )
+				if ( possibleMHActions[i] != NULL )
+					delete possibleMHActions[i];
+			return;
+		}
+
+
+		int dice = _world->getStatistics().getUniformDistValue( 0, possibleEPActions.size() - 1 );
+		
+		EstablishPlotAction* selectedAction = possibleEPActions[dice];
+		possibleEPActions[dice] = NULL;
+		_actions.push_back( selectedAction );
+		for ( unsigned i = 0; i < possibleEPActions.size(); i++ )
+			if ( possibleEPActions[i] != NULL )
+				delete possibleEPActions[i];
+
 	}
 }
 
 void AgroPastoralist::evaluateSeasonalActions()
 {
-	GujaratWorld * world = (GujaratWorld*)_world;
-	if(world->getClimate().getSeason()==COLDDRY && _world->getValue("resourceType", _cultivatedField->getPosition())==DOMESTICATED)
+	// MRJ: This is a HORRIBLE thing to do!!!
+	GujaratWorld* world = dynamic_cast<GujaratWorld*>( _world );
+	if( world->isColdDrySeason() && _cultivatedField->isDomesticated() )
 	{
 		_actions.push_back(new SowAction());
 		_actions.push_back(new MaintainPlotAction());
 		_actions.push_back(new HarvestAction());
 	}
 
+}
+
+bool AgroPastoralist::cultivatedFieldOutOfReach()
+{
+	return _position.distance(_cultivatedField->getPosition()) > getMaxCropHomeDistance();
 }
 
 void AgroPastoralist::evaluateIntraSeasonalActions()
@@ -77,62 +121,17 @@ GujaratAgent * AgroPastoralist::createNewAgent()
 	return new AgroPastoralist(oss.str());
 }
 
-void AgroPastoralist::stablishPlot()
+void AgroPastoralist::abandonCultivatedField()
 {
-	// TODO by now all crops are of the same efficiency
-	Engine::Point2D<int> newPosition(-1,-1);
-	std::vector<Engine::Point2D<int> > possiblePositions;
-	for(newPosition._x=_position._x-_maxCropHomeDistance; newPosition._x<=_position._x+_maxCropHomeDistance; newPosition._x++)
-	{
-		for(newPosition._y=_position._y-_maxCropHomeDistance; newPosition._y<=_position._y+_maxCropHomeDistance; newPosition._y++)
-		{
-			// by now common home is excluded
-			if(_world->getOverlapBoundaries().isInside(newPosition) && _world->checkPosition(newPosition))
-			{
-				if(_world->getValue("soils", newPosition)==INTERDUNE && _world->getValue("resourceType", newPosition)==WILD)
-				{
-					
-					possiblePositions.push_back(newPosition);
-				}
-			}
-		}
-	}
-	// if there are no possible places, move home and stablish plot again
-	if(possiblePositions.size()==0)
-	{
-		throw Engine::Exception("agent without crop");
+	_world->setValue("resourceType", _cultivatedField->getPosition(), FALLOW);
+	delete _cultivatedField;
+}
 
-		// MRJ: Commenting until fixed
-		//_actions.push_back(new MoveHomeAction());
-		_actions.push_back(new StablishPlotAction());
-		return;
-	}
-	std::random_shuffle(possiblePositions.begin(), possiblePositions.end());
-	_cultivatedField = new CultivatedField((GujaratWorld&)(*_world), possiblePositions[0]);	
-	//std::cout << this << " stablishing plot at position: " << _cultivatedField->getPosition() << std::endl;
-
-	/*
-	Engine::Point2D<int> newPosition(-1,-1);
-	Engine::Point2D<int> bestPosition(-1,-1);
-	for(newPosition._x=_position._x-_maxCropHomeDistance; newPosition._x<=_position._x+_maxCropHomeDistance; newPosition._x++)
-	{
-		for(newPosition._y=_position._y-_maxCropHomeDistance; newPosition._y<=_position._y+_maxCropHomeDistance; newPosition._y++)
-		{
-			// by now common home is excluded
-			if(_world->getOverlapBoundaries().isInside(newPosition) && _world->checkPosition(newPosition))
-			{
-				if(_world->getValue("soils", newPosition)==INTERDUNE && _world->getValue("resourceType", newPosition)==WILD)
-				{
-					if(bestPosition._x==-1 || (_world->getValue("resources", newPosition)>_world->getValue("resources", bestPosition)))
-					{
-						bestPosition = newPosition;
-					}
-				}
-			}
-		}
-	}
-	_cultivatedField = new CultivatedField((GujaratWorld&)(*_world), bestPosition);	
-	*/
+void AgroPastoralist::acquireCultivatedField( Engine::Point2D<int> p )
+{
+	if ( _cultivatedField != NULL )
+		abandonCultivatedField();
+	_cultivatedField = new CultivatedField( (GujaratWorld&)(*_world), p );
 }
 
 void AgroPastoralist::sow()
@@ -145,7 +144,7 @@ void AgroPastoralist::sow()
 
 void AgroPastoralist::maintainPlot()
 {
-	//std::cout << "agent maintains plot" << std::endl;
+	std::cout << "agent maintains plot" << std::endl;
 }
 
 void AgroPastoralist::harvest()
@@ -154,25 +153,6 @@ void AgroPastoralist::harvest()
 	{
 		_cultivatedField->harvest();
 		_collectedResources += _world->getValue("resources", _cultivatedField->getPosition());
-	}
-}
-
-void AgroPastoralist::abandonPlot()
-{	
-	if(_cultivatedField)
-	{
-		_world->setValue("resourceType", _cultivatedField->getPosition(), FALLOW);
-		delete _cultivatedField;
-	}
-}
-
-void AgroPastoralist::moveHome()
-{
-	_position = getNearLocation(getSocialRange());	
-	if(_cultivatedField && _position.distance(_cultivatedField->getPosition())>_maxCropHomeDistance)
-	{
-		_actions.push_back(new AbandonPlotAction());
-		_actions.push_back(new StablishPlotAction());
 	}
 }
 

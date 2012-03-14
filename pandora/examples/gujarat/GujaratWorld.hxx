@@ -67,6 +67,10 @@ public:
 
 	int  convertToCalories( int mass );
 	long int getNewKey();
+
+	bool	isInterdune( Engine::Point2D<int> p );
+	bool	isWild( Engine::Point2D<int> p );
+	bool	isColdDrySeason();
 };
 
 } // namespace Gujarat

@@ -35,5 +35,15 @@ bool CultivatedField::isSown()
 	return _sown;
 }
 
+bool  CultivatedField::requiresFallow()
+{
+	return _world.getValue("resourceType", getPosition())==FALLOW;
+}
+
+bool  CultivatedField::isDomesticated()
+{
+	return _world.getValue("resourceType", getPosition())==DOMESTICATED;
+}
+
 } // namespace Gujarat
 
