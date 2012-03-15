@@ -1,0 +1,37 @@
+# Ignore moc cpp files
+moc_*.*
+ui_*.*
+qrc_*.*
+# Ignore objects
+*.o
+*.os
+*.lo
+# Ignore archives, libraries
+*.a
+*.la
+*.so
+# Temporaries and miscellaneous stuff
+*.swp
+*.dblite
+*.log
+*.opt
+*.status
+*.pyc
+libs/gdal-1.9.0/apps/*
+libs/tinyxml-2.6.2/tinyxml/*.xml
+cassandra/Makefile
+cassandra/cassandra
+libs/gdal-1.9.0/libtool
+libs/gdal-1.9.0/port/cpl_config.h
+libs/qwt-6.0.0/Makefile
+libs/qwt-6.0.0/designer/Makefile
+libs/qwt-6.0.0/src/Makefile
+libs/qwt-6.0.0/lib/
+libs/qwt-6.0.0/textengines/Makefile
+libs/qwt-6.0.0/textengines/mathml/Makefile
+libs/tinyxml-2.6.2/tinyxml/textfile.txt
+libs/tinyxml-2.6.2/tinyxml/xmltest
+pandora/examples/gujarat/mpiCode/
+pandora/examples/gujarat/gujarat
+libs/gdal-1.9.0/.libs/
+pandora/examples/gujarat/data/

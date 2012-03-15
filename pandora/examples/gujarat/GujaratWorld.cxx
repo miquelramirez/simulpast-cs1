@@ -27,26 +27,28 @@ GujaratWorld::~GujaratWorld()
 
 void GujaratWorld::createRasters()
 {
-	registerStaticRaster("soils", true);
+	registerStaticRaster("soils", _config.isStorageRequired("soils"));
 	getStaticRaster("soils").loadGDALFile(_config._soilFile, *this);
 
-	registerStaticRaster("dem", true);
+	registerStaticRaster("dem", _config.isStorageRequired("dem"));
 	getStaticRaster("dem").loadGDALFile(_config._demFile, *this);
 	
-	registerDynamicRaster("moisture", false);
+	registerDynamicRaster("moisture", _config.isStorageRequired("moisture"));
 	getDynamicRaster("moisture").setInitValues(0, std::numeric_limits<int>::max(), 0);
-	registerDynamicRaster("resources", true); // DEBUG Resources will be generated with an explicit function
+	registerDynamicRaster("resources", _config.isStorageRequired("resources")); // DEBUG Resources will be generated with an explicit function
 	getDynamicRaster("resources").setInitValues(0, std::numeric_limits<int>::max(), 0);
-	registerDynamicRaster("forageActivity", false); 
+	registerDynamicRaster("forageActivity", _config.isStorageRequired("forageActivity")); 
 	getDynamicRaster("forageActivity").setInitValues(0, std::numeric_limits<int>::max(), 0);
-	registerDynamicRaster("homeActivity", false);
+	registerDynamicRaster("homeActivity", _config.isStorageRequired("homeActivity"));
 	getDynamicRaster("homeActivity").setInitValues(0, std::numeric_limits<int>::max(), 0);
+	registerDynamicRaster("farmingActivity", _config.isStorageRequired("farmingActivity"));
+	getDynamicRaster("farmingActivity").setInitValues(0, std::numeric_limits<int>::max(), 0);
 	
-	registerDynamicRaster("resourceType", false); // type of resources: wild, domesticated or fallow
+	registerDynamicRaster("resourceType", _config.isStorageRequired("resourceType")); // type of resources: wild, domesticated or fallow
 	getDynamicRaster("resourceType").setInitValues(0, SEASONALFALLOW, WILD);
-	registerDynamicRaster("consecutiveYears", false); // years passed using a given cell for a particular use
+	registerDynamicRaster("consecutiveYears", _config.isStorageRequired("consecutiveYears")); // years passed using a given cell for a particular use
 	getDynamicRaster("consecutiveYears").setInitValues(0, 3, 0);
-	registerDynamicRaster("sectors", false); 
+	registerDynamicRaster("sectors", _config.isStorageRequired("sectors")); 
 	getDynamicRaster("sectors").setInitValues(0, _config._numSectors, 0);
 
 	registerStaticRaster( "DuneAreas", true );
@@ -108,6 +110,7 @@ void GujaratWorld::createAgents()
 			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
 			agent->setHomeMobilityRange( _config._socialRange );
+			agent->setMaxCropHomeDistance( _config._maxCropHomeDistance );
 			addAgent(agent); 
 			agent->initializePosition(getRandomPosition());
 			std::cout << _simulation.getId() << " new AgroPastoralist: " << agent << std::endl;
@@ -366,6 +369,21 @@ const Climate & GujaratWorld::getClimate() const
 long int GujaratWorld::getNewKey()
 {
 	return _agentKey++;
+}
+
+bool	GujaratWorld::isInterdune( Engine::Point2D<int> p )
+{
+	return getValue("soils", p) == INTERDUNE;
+}
+
+bool	GujaratWorld::isWild( Engine::Point2D<int> p )
+{
+	return getValue( "resourceType", p ) == WILD;
+}
+
+bool	GujaratWorld::isColdDrySeason()
+{
+	return getClimate().getSeason() == COLDDRY;
 }
 
 } // namespace Gujarat

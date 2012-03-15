@@ -12,13 +12,19 @@ class CultivatedField
 {
 	Engine::Point2D<int> _position;
 	GujaratWorld & _world;
-	bool _sown;
+	bool 	_sown;
+	int	_potential;	
 public:
 	CultivatedField( GujaratWorld & world, const Engine::Point2D<int> & position );
 	virtual ~CultivatedField();
 	void sow();
-	void harvest();
+	int harvest();
 	bool isSown();
+	bool requiresFallow();
+	bool isDomesticated();
+	int  evaluatePotential() { return _potential; }
+	void increasePotential();
+	
 	const Engine::Point2D<int> getPosition();
 };
 

@@ -6,6 +6,7 @@
 
 namespace Gujarat
 {
+
 class CultivatedField;
 
 class AgroPastoralist : public GujaratAgent
@@ -30,15 +31,25 @@ public:
 	void * createPackage();
 
 	void moveHome();
-	void stablishPlot();
+	void establishPlot();
 	void sow();
 	void maintainPlot();
 	void harvest();
 	void abandonPlot();
+	void acquireCultivatedField( Engine::Point2D<int> p );
+	void abandonCultivatedField();
+	bool hasCultivatedField() { return _cultivatedField != NULL; }
+	bool cultivatedFieldOutOfReach();
+	void acquireResources( int amount ) { _collectedResources += amount; }
 
 	// MPI Script Generated code
 	AgroPastoralist( void * );
 	void * fillPackage();
+
+	void	setMaxCropHomeDistance( int v ) { _maxCropHomeDistance = v; }
+	int	getMaxCropHomeDistance() const { return _maxCropHomeDistance; }
+	bool	isColdDrySeason();
+	CultivatedField& getCultivatedField() { return *_cultivatedField; }
 };
 
 } // namespace Gujarat

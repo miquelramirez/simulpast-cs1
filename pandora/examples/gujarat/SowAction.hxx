@@ -12,7 +12,7 @@ class GujaratAgent;
 class SowAction : public Action
 {
 public:
-	SowAction();
+	SowAction( );
 	virtual ~SowAction();
 	// TODO templatitzar classe per agent
 	void execute( GujaratAgent & agent );

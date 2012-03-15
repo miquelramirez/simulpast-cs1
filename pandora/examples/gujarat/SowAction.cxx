@@ -2,6 +2,7 @@
 #include "SowAction.hxx"
 #include "GujaratAgent.hxx"
 #include "AgroPastoralist.hxx"
+#include "CultivatedField.hxx"
 
 namespace Gujarat
 {
@@ -17,7 +18,10 @@ SowAction::~SowAction()
 void SowAction::execute( GujaratAgent & agent )
 {
 	AgroPastoralist & agroPastoralist = (AgroPastoralist&)agent;
-	agroPastoralist.sow();
+	if ( !agroPastoralist.getCultivatedField().isDomesticated() )
+		return;
+	agroPastoralist.getCultivatedField().sow();
+ 	std::cout << "DEBUG: Agent " << agent.getId() << " executing Sow action..." << std::endl;
 }
 
 int SowAction::getTimeNeeded()
