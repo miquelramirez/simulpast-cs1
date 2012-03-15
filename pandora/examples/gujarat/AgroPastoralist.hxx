@@ -40,6 +40,7 @@ public:
 	void abandonCultivatedField();
 	bool hasCultivatedField() { return _cultivatedField != NULL; }
 	bool cultivatedFieldOutOfReach();
+	void acquireResources( int amount ) { _collectedResources += amount; }
 
 	// MPI Script Generated code
 	AgroPastoralist( void * );
@@ -48,7 +49,7 @@ public:
 	void	setMaxCropHomeDistance( int v ) { _maxCropHomeDistance = v; }
 	int	getMaxCropHomeDistance() const { return _maxCropHomeDistance; }
 	bool	isColdDrySeason();
-
+	CultivatedField& getCultivatedField() { return *_cultivatedField; }
 };
 
 } // namespace Gujarat
