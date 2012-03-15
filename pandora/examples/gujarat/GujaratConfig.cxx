@@ -70,27 +70,35 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	{
 		if ( n->Type() != TiXmlNode::TINYXML_ELEMENT ) continue;
 		TiXmlElement* elem = n->ToElement();
-		if ( elem->ValueStr().compare("cellBiomass") )
-			continue;
-		std::string elemType = elem->Attribute("type");
-		if ( !elemType.compare("dune" ) )
+		if ( !elem->ValueStr().compare("cellBiomass") )
 		{
-			_duneBiomass = atof( elem->Attribute("mean") );
-			_duneBiomassStdDev = atof( elem->Attribute("stddev") );
-			_duneEfficiency = atof( elem->Attribute("efficiency"));	
+			std::string elemType = elem->Attribute("type");
+			if ( !elemType.compare("dune" ) )
+			{
+				_duneBiomass = atof( elem->Attribute("mean") );
+				_duneBiomassStdDev = atof( elem->Attribute("stddev") );
+				_duneEfficiency = atof( elem->Attribute("efficiency"));	
+			}
+			else if ( !elemType.compare("interdune") )
+			{
+				_interduneBiomass = atof( elem->Attribute("mean") );
+				_interduneBiomassStdDev = atof( elem->Attribute("stddev"));
+				_interduneEfficiency = atof( elem->Attribute("efficiency"));
+			}
+			else
+			{
+				std::stringstream sstr;
+				sstr << "ERROR: Loading simulation config document" << std::endl;
+				sstr << "Unknown cellBiomass type " << elemType << " found!!!" << std::endl;
+				throw Engine::Exception( sstr.str() ); 
+			}
 		}
-		else if ( !elemType.compare("interdune") )
+		else if ( !elem->ValueStr().compare( "storeRaster" ) ) 
 		{
-			_interduneBiomass = atof( elem->Attribute("mean") );
-			_interduneBiomassStdDev = atof( elem->Attribute("stddev"));
-			_interduneEfficiency = atof( elem->Attribute("efficiency"));
-		}
-		else
-		{
-			std::stringstream sstr;
-			sstr << "ERROR: Loading simulation config document" << std::endl;
-			sstr << "Unknown cellBiomass type " << elemType << " found!!!" << std::endl;
-			throw Engine::Exception( sstr.str() ); 
+			std::string name = elem->Attribute( "name" );
+			std::string valueStr = elem->Attribute( "value" );
+			bool value = ( valueStr == "yes" ? true : false );
+			_storeRasters[name] = value;
 		}
 	}
 

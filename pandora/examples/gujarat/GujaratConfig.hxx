@@ -6,6 +6,7 @@
 #include <tinyxml.h>
 #include <string>
 #include <sstream>
+#include <map>
 
 namespace Gujarat
 {
@@ -50,6 +51,7 @@ class GujaratConfig : public Config
 
 	int _numHG;
 	int _numAP;
+	std::map< std::string, bool > _storeRasters;
 
 	void parseSoilInfo(TiXmlElement * element);
 public:
@@ -63,7 +65,12 @@ public:
 		return stream << "Config(" << "path:" << config._path << "," << "size:" << config._size << "," << "steps:" << config._numSteps << " soil file: " << config._soilFile << ")";
 	}  
 	const int & getSize() const;
-
+	bool	isStorageRequired( std::string key ) const
+	{
+		std::map<std::string,bool>::const_iterator it = _storeRasters.find( key );
+		if ( it == _storeRasters.end() ) return false;
+		return it->second;
+	}
 	
 
 	friend class GujaratWorld;
