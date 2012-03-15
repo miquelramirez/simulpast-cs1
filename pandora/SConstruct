@@ -7,7 +7,7 @@ mareNostrum = ARGUMENTS.get('mn', 0)
 env = Environment(ENV=os.environ, CXX='mpicxx')
 
 if int(release) == 0:
-	env['CCFLAGS'] = Split('-g -O1 -Wall -DTIXML_USE_STL')    
+	env['CCFLAGS'] = Split('-g -Wall -DTIXML_USE_STL')    
 	if int(mareNostrum) == 1:
 		libs = Split('pthread mpich gdal hdf5')
 	else:

@@ -66,7 +66,7 @@ GujaratAgent * GujaratAgent::getMarriageCandidate()
 	for(Engine::World::AgentsList::iterator it=listOfNeighbors.begin(); it!=listOfNeighbors.end(); it++)
 	{
 		GujaratAgent * possibleAgent = (GujaratAgent*)(*it);
-		for(int i=2; i<possibleAgent->_populationAges.size(); i++)
+		for(unsigned i=2; i<possibleAgent->_populationAges.size(); i++)
 		{	
 			// it avoids dead children (-1)
 			if(possibleAgent->_populationAges[i]>15)
@@ -86,7 +86,7 @@ GujaratAgent * GujaratAgent::getMarriageCandidate()
 
 void GujaratAgent::checkMarriage()
 {
-	for(int i=2; i<_populationAges.size(); i++)
+	for(unsigned i=2; i<_populationAges.size(); i++)
 	{
 		if(_populationAges[i]>15)
 		{
@@ -311,7 +311,7 @@ void GujaratAgent::serialize()
 	}
 
 	int numChildren = 0;
-	for(int i=2; i<_populationAges.size(); i++)
+	for(unsigned i=2; i<_populationAges.size(); i++)
 	{
 		if(_populationAges[i]!=-1)
 		{
@@ -331,7 +331,7 @@ void	GujaratAgent::initializePosition( Engine::Point2D<int> randomPos )
 int	GujaratAgent::getNrAvailableAdults()
 {
 	int numAdults = 0;
-	for(int i=0; i<_populationAges.size(); i++)
+	for(unsigned i=0; i<_populationAges.size(); i++)
 	{
 		if(_populationAges[i] >= 15)
 		{

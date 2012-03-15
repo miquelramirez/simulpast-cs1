@@ -26,7 +26,7 @@ public:
 	virtual void resize( const Point2D<int> & size );
 	//! Reads the value in the cell located by parameter "position". Returns -1 if "position" is out of the area of the raster.
 	const int & getValue( Point2D<int> position ) const;
-	
+
 	//! Returns size of the raster codifying the horizontal and vertical dimensions in a Point2D object. 
 	Point2D<int> getSize() const;
 	// load a GDAL file conforming World position
@@ -35,7 +35,10 @@ public:
 	void loadHDF5File( const std::string & fileName, const std::string & rasterName );
 	// load an HDF5 conforming World position
 	void loadHDF5File( const std::string & fileName, const std::string & rasterName, World & world );
-
+	//! Initializes the components of vector '_values' to defaultValue, and to maxValue the ones from vector _maxValue.
+	void setDefaultInitValues( int minValue, int maxValue, int defaultValue );	
+	//! Assigns the value "value" to the cell located by parameter "position". Does nothing if "position" is out of the area of the raster.
+	void setInitValue( Point2D<int> position, int value );
 	//! Reads attribute _maxValue.
 	const int & getMaxValue() const;
 	//! Reads the '_minValue' attribute.

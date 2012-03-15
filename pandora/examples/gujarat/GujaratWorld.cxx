@@ -49,7 +49,30 @@ void GujaratWorld::createRasters()
 	registerDynamicRaster("sectors", false); 
 	getDynamicRaster("sectors").setInitValues(0, _config._numSectors, 0);
 
+	registerStaticRaster( "DuneAreas", true );
+	getStaticRaster( "DuneAreas" ).setDefaultInitValues( -1,std::numeric_limits<int>::max(), -1 );
+
 	updateMoisture();
+	setSettlementAreasInRaster();
+}
+
+void GujaratWorld::setSettlementAreasInRaster()
+{
+	_settlementAreas.generateAreas( *this );
+	const std::vector< Engine::Rectangle<int> >& areas = _settlementAreas.getAreas();
+	
+	for( unsigned i = 0; i < areas.size(); i++ )
+	{
+		const Engine::Rectangle<int>& currentArea = areas[i];		
+		Engine::Point2D<int> index;
+		for(index._x=currentArea._origin._x; index._x<currentArea._origin._x+currentArea._size._x; index._x++)		
+		{
+			for(index._y=currentArea._origin._y; index._y<currentArea._origin._y+currentArea._size._y; index._y++)			
+			{
+				getStaticRaster( "DuneAreas" ).setInitValue( index, 1 );
+			}
+		}
+	}
 }
 
 void GujaratWorld::createAgents()

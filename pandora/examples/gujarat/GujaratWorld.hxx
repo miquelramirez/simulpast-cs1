@@ -4,11 +4,13 @@
 
 #include "World.hxx"
 #include "Climate.hxx"
+#include "SettlementAreas.hxx"
 #include <string>
 
 namespace Gujarat
 {
 class GujaratConfig;
+class SettlementAreas;
 
 // id's depends on GIS data
 enum Soils
@@ -37,9 +39,11 @@ class GujaratWorld : public Engine::World
 	std::vector<float> _dailyRainSeasonBiomassIncrease;
 	// biomass decrease for each day of rain season per cell
 	std::vector<float> _dailyDrySeasonBiomassDecrease;
-	
+	// rectangular Areas surrounding Dunes
+	SettlementAreas    _settlementAreas;
 	//*********************************************
 	void createRasters();
+	void setSettlementAreasInRaster();
 	/*! \callgraph 
 	* fill the world with agents
 	*/

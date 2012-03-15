@@ -2,7 +2,7 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<path 	name="path" 	type="string"  value="./data/"/>
-	<numSteps 	name="numSteps" 	type="int"  value="361"/>
+	<numSteps 	name="numSteps" 	type="int"  value="3"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4184 -->

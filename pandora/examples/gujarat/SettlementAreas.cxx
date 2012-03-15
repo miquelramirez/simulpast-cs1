@@ -1,6 +1,8 @@
 
 #include <queue>
+#include "GujaratWorld.hxx"
 #include "SettlementAreas.hxx"
+#include <assert.h>
 
 namespace Gujarat
 {
@@ -10,9 +12,9 @@ namespace Gujarat
 
 	}
 
-SettlementAreas::~SettlementAreas()
-{
-}
+	SettlementAreas::~SettlementAreas()
+	{
+	}
 
 
 	void SettlementAreas::updateArea(Engine::Point2D<int> & newPoint, Engine::Rectangle<int> & r)
@@ -20,56 +22,82 @@ SettlementAreas::~SettlementAreas()
 
 		if (newPoint._x < r._origin._x)
 		{
-			r._origin._x = newPoint._x;
 			r._size._x += r._origin._x - newPoint._x;
+			r._origin._x = newPoint._x;
 		}
-		else if (newPoint._x > r._origin._x + r._size._x)
+		else if (newPoint._x > r._origin._x + (r._size._x -1) )
 		{
-			r._size._x = r._origin._x - newPoint._x;    
+			r._size._x = newPoint._x - r._origin._x + 1;    
 		}
-  
-  
+
 		if (newPoint._y < r._origin._y)
 		{
-			r._origin._y = newPoint._y;
 			r._size._y += r._origin._y - newPoint._y;
-		}   
-		else if (newPoint._y > r._origin._y + r._size._y)
-		{
-			r._size._y = r._origin._y - newPoint._y;    
+			r._origin._y = newPoint._y;
 		}
-    
+		else if (newPoint._y > r._origin._y + (r._size._y -1) )
+		{
+			r._size._y = newPoint._y - r._origin._y + 1;    
+		}
 	}
 
 	void SettlementAreas::setNewArea(Engine::Point2D<int> loc,GujaratWorld &w,std::vector<bool> & duneInArea)
 	{
 		int Xsize = w.getBoundaries()._size._x;
-
-		Engine::Rectangle<int> newArea(loc,loc);  
+		int Ysize = w.getBoundaries()._size._y;
+		
+		Engine::Rectangle<int> newArea(loc,Engine::Point2D<int>(1,1));  
 		std::queue<Engine::Point2D<int> *> targets;
   
+		updateArea( loc, newArea );
+		duneInArea[ loc._x*Xsize + loc._y ] = true;
+
 		targets.push( new Engine::Point2D<int>(loc._x, loc._y) );  
 
 		while(!targets.empty())
 		{
 			Engine::Point2D<int> * currentLoc = targets.front();
 			targets.pop();
-			updateArea( *currentLoc, newArea );
-			duneInArea[ currentLoc->_x*Xsize + currentLoc->_y ] = true;
-			//currentx  = currentLoc->_x
-			//currenty  = currentLoc->_y
-			//change currentLoc to feed to isInside ( currentLoc ).
-			// for should range from currentx and currenty
-			for(int x = currentLoc->_x -1; x <= currentLoc->_x +1; x++)
-				for(int y = currentLoc->_y -1; y <= currentLoc->_y +1; y++)
+
+			for(int childX = currentLoc->_x - 1; childX <= currentLoc->_x +1; childX++)
+				for(int childY = currentLoc->_y - 1; childY <= currentLoc->_y +1; childY++)
 				{
-					if ( !newArea.isInside(Engine::Point2D<int>(x,y)) && w.getValue("resourceType",loc)==DUNE )						
-					{	  
-						targets.push(new Engine::Point2D<int>(x,y));
+					if( childX < 0 || childY < 0 ) continue;
+					if( childX >= Xsize || childY >= Ysize ) continue;
+		
+					Engine::Point2D<int> newPoint = Engine::Point2D<int>(childX,childY);
+	      
+					//std::cout << "new  location: childX = "<<childX <<" childY= "<< childY << " IsDune: " << (w.getValue("soils",newPoint) == DUNE) <<std::endl;											
+					if ( duneInArea[ newPoint._x*Xsize + newPoint._y ] == false && w.getValue("soils",newPoint)==DUNE ) //!newArea.isInside( newPoint ) 						
+					{	
+//						assert( w.getValue("soils",*currentLoc)==DUNE );
+//						assert( ! ( (childX >= newArea._origin._x) && (childX <= newArea._origin._x + newArea._size._x -1) && (childY >= newArea._origin._y) && (childY <= newArea._origin._y + newArea._size._y -1)));
+
+
+						//std::cout << "\t Checking new dune location: childX = "<<childX <<" childY= "<< childY <<std::endl;						
+						//std::cout<<"\t\t childX "<< childX <<" in [ " << newArea._origin._x <<",.., "<<  newArea._origin._x + newArea._size._x -1<<" ]"<<std::endl;
+						//std::cout<<"\t\t childY "<< childY <<" in [ " << newArea._origin._y <<",.., "<<  newArea._origin._y + newArea._size._y -1<<" ]"<<std::endl;
+
+						
+						updateArea( newPoint, newArea );
+						duneInArea[ newPoint._x*Xsize + newPoint._y ] = true;
+						
+						
+						//					std::cout<< " Area Updated: "<< newArea << std::endl;
+
+
+						targets.push( new Engine::Point2D<int>( newPoint._x, newPoint._y ) );
 					}
+
 				}
 			delete currentLoc;
+
+//			std::cout<<"targets size: "<< targets.size()<<std::endl;
+
+			
 		}
+		std::cout << loc._x << " "<< loc._y << " newArea: "<<newArea<<std::endl;
+	
 		_Areas.push_back(newArea);
 	}
 
@@ -87,9 +115,11 @@ SettlementAreas::~SettlementAreas()
 		{
 			for(loc._y = Yorigin; loc._y< Yorigin+Ysize; loc._y++)		
 			{
-				if (w.getValue("resourceType",loc)==DUNE && !duneInArea[loc._x*Xsize + loc._y])
+				if (w.getValue("soils",loc)==DUNE && !duneInArea[loc._x*Xsize + loc._y])
 				{
+					//std::cout <<"origin area: "<< loc << std::endl;
 					setNewArea(loc,w,duneInArea);
+					
 				}
 			}
 		}

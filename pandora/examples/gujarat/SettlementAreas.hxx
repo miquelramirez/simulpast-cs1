@@ -1,9 +1,6 @@
-
-
 #ifndef __SettlementAreas_hxx__
 #define __SettlementAreas_hxx__
 
-#include "GujaratWorld.hxx"
 #include "Rectangle.hxx"
 #include "Point2D.hxx"
 #include <vector>
@@ -13,7 +10,7 @@
 namespace Gujarat
 {
 
-
+	class GujaratWorld;
 	class SettlementAreas
 	{
 
