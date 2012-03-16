@@ -51,7 +51,7 @@ void GujaratWorld::createRasters()
 	registerDynamicRaster("sectors", _config.isStorageRequired("sectors")); 
 	getDynamicRaster("sectors").setInitValues(0, _config._numSectors, 0);
 
-	registerStaticRaster( "DuneAreas", true );
+	registerStaticRaster( "DuneAreas", _config.isStorageRequired( "DuneAreas" ) );
 	getStaticRaster( "DuneAreas" ).setDefaultInitValues( -1,std::numeric_limits<int>::max(), -1 );
 
 	updateMoisture();
