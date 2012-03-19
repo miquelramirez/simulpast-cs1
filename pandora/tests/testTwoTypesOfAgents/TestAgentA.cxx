@@ -1,9 +1,27 @@
+/*
+ * Copyright (c) 2012
+ * COMPUTER APPLICATIONSN IN SCIENCE & ENGINEERING
+ * BARCELONA SUPERCOMPUTING CENTRE - CENTRO NACIONAL DE SUPERCOMPUTACIÓN
+ * http://www.bsc.es
+
+ * This file is part of Pandora Library. This library is free software; 
+ * you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation;
+ * either version 3.0 of the License, or (at your option) any later version.
+ * 
+ * Pandora is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 
 #include "TestAgentA.hxx"
 #include "World.hxx"
-#include "Exceptions.hxx"
-#include "Statistics.hxx"
-#include <cstring>
+#include "Point2D.hxx"
 
 namespace Test
 {
@@ -13,20 +31,13 @@ TestAgentA::TestAgentA( const std::string & id ) : Agent(id), _testValueA(10)
 	_testId = "test agent A";
 }
 
-TestAgentA::TestAgentA( const TestAgentAPackage & package ) : Agent(package._id)
-{
-	_position = package._position;
-	_testValueA = package._testValueA;
-	_testId = package._testId;		
-}
-
 TestAgentA::~TestAgentA()
 {
 }
 
 void TestAgentA::move()
 {
-	Engine::Position<int> newPosition = _position;
+	Engine::Point2D<int> newPosition = _position;
 	newPosition._x++;
 
 	if(_world->checkPosition(newPosition))
@@ -41,24 +52,8 @@ void TestAgentA::step()
 	move();
 }
 
-void * TestAgentA::createPackage()
+void TestAgentA::serialize()
 {
-	TestAgentAPackage * package = new TestAgentAPackage;	
-	memcpy(&package->_id, _id.c_str(), sizeof(char)*_id.size());
-	package->_id[_id.size()] = '\0';
-	package->_position = _position;
-	package->_testValueA= _testValueA;
-	
-	memcpy(&package->_testId, _testId.c_str(), sizeof(char)*_testId.size());
-	package->_testId[_testId.size()] = '\0';
-
-	return package;
-}
-
-void TestAgentA::store()
-{
-	storeAttribute("testValueA", _testValueA);
-	//storeAttribute("testId", _testId);
 }
 	
 const std::string & TestAgentA::getTestId()

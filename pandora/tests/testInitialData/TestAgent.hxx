@@ -1,3 +1,23 @@
+/*
+ * Copyright (c) 2012
+ * COMPUTER APPLICATIONSN IN SCIENCE & ENGINEERING
+ * BARCELONA SUPERCOMPUTING CENTRE - CENTRO NACIONAL DE SUPERCOMPUTACIÓN
+ * http://www.bsc.es
+
+ * This file is part of Pandora Library. This library is free software; 
+ * you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation;
+ * either version 3.0 of the License, or (at your option) any later version.
+ * 
+ * Pandora is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 
 #ifndef __TestAgent_hxx__
 #define __TestAgent_hxx__
@@ -5,34 +25,23 @@
 #include "Agent.hxx"
 #include <string>
 
-#include "Position.hxx"
-
-namespace Engine
-{
-	class Agent;
-}
-
 namespace Test
 {
-
-typedef struct
-{
-	char _id[100];	
-	Engine::Position<int> _position;
-} TestAgentPackage;
 
 class TestAgent: public Engine::Agent
 {	
 	void move();
-	void store();
+	void serialize();
 
 public:
 	TestAgent( const std::string & id );
-	TestAgent( const TestAgentPackage & package );
 	virtual ~TestAgent();
 	
 	void step();
-	void * createPackage();
+	
+	// Mpi related
+	TestAgent( void * package );
+	void * fillPackage();
 };
 
 } // namespace Test

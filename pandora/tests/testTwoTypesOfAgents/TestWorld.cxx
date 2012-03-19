@@ -1,11 +1,30 @@
+/*
+ * Copyright (c) 2012
+ * COMPUTER APPLICATIONSN IN SCIENCE & ENGINEERING
+ * BARCELONA SUPERCOMPUTING CENTRE - CENTRO NACIONAL DE SUPERCOMPUTACIÓN
+ * http://www.bsc.es
+
+ * This file is part of Pandora Library. This library is free software; 
+ * you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation;
+ * either version 3.0 of the License, or (at your option) any later version.
+ * 
+ * Pandora is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 
 #include "TestWorld.hxx"
 
 #include "Raster.hxx"
-#include "Position.hxx"
+#include "Point2D.hxx"
 #include "Exceptions.hxx"
 
-#include "Agent.hxx"
 #include "TestAgentA.hxx"
 #include "TestAgentB.hxx"
 
@@ -15,7 +34,7 @@
 namespace Test
 {
 
-TestWorld::TestWorld() : World(64, 64, 4, true, "data/test.h5")
+TestWorld::TestWorld( const Engine::Simulation & sim ) : World(sim, 4, true, "data/test.h5")
 {
 }
 
@@ -25,23 +44,21 @@ TestWorld::~TestWorld()
 
 void TestWorld::createRasters()
 {
-	registerRaster("test");
-	getRaster("test").setInitValues(0,0);
 }
 
 void TestWorld::stepAgents()
 {
-	if(_id==2 || _id==3)
+	if(_simulation.getId()==2 || _simulation.getId()==3)
 	{
 		return;
 	}
-	if(_numTasks==1)
+	if(_simulation.getNumTasks()==1)
 	{
 		assert(_agents.size()==2);
 	}
-	else if(_numTasks==4)
+	else if(_simulation.getNumTasks()==4)
 	{
-		if(_id==0)
+		if(_simulation.getId()==0)
 		{
 			if(_step<32)
 			{
@@ -59,7 +76,7 @@ void TestWorld::stepAgents()
 				assert(_overlapAgents.size()==0);
 			}
 		}
-		else if(_id==1)
+		else if(_simulation.getId()==1)
 		{
 			if(_step<28)				
 			{
@@ -95,149 +112,17 @@ void TestWorld::stepAgents()
 
 void TestWorld::createAgents()
 {
-	if(_id==0)
+	if(_simulation.getId()==0)
 	{
 		TestAgentA * agent = new TestAgentA("testA_1");
-		agent->setPosition(Engine::Position<int>(0,10));
+		agent->setPosition(Engine::Point2D<int>(0,10));
 		addAgent(agent);
 		
 		TestAgentB * agent2 = new TestAgentB("testB_1");
-		agent2->setPosition(Engine::Position<int>(0,20));
+		agent2->setPosition(Engine::Point2D<int>(0,20));
 		addAgent(agent2);
 		return;
 	}
-}
-
-Engine::Agent * TestWorld::createAgentFromPackage( const std::string & type, void * package )
-{
-	if(type.compare("testA")==0)
-	{
-		TestAgentAPackage * formattedPackage = 0;
-		try
-		{
-			formattedPackage = (TestAgentAPackage *)package;
-		}
-		catch(std::exception & e)
-		{
-			std::cout << "TestWorld::createAgentFromPackage, wrong cast with type: " << type << " and exception: " << e.what() << std::endl;
-		}
-		return (Engine::Agent*)(new TestAgentA(*formattedPackage));
-	}
-	else if(type.compare("testB")==0)
-	{
-		TestAgentBPackage * formattedPackage = 0;
-		try
-		{
-			formattedPackage = (TestAgentBPackage *)package;
-		}
-		catch(std::exception & e)
-		{
-			std::cout << "TestWorld::createAgentFromPackage, wrong cast with type: " << type << " and exception: " << e.what() << std::endl;
-		}
-		return (Engine::Agent*)(new TestAgentB(*formattedPackage));
-	}
-	else
-	{	
-		std::stringstream oss;
-		oss << "TestWorld::createAgentFromPackage - unknown agent type: " << type;
-		throw Engine::Exception(oss.str());
-	}
-}
-
-void * TestWorld::createPackage( const std::string & type )
-{
-	if(type.compare("testA")==0)
-	{
-		return new TestAgentAPackage;
-	}
-	else if(type.compare("testB")==0)
-	{
-		return new TestAgentBPackage;
-	}
-	else
-	{	
-		std::stringstream oss;
-		oss << "TestWorld::createPackage - unknown agent type: " << type;
-		throw Engine::Exception(oss.str());
-	}
-}
-
-void TestWorld::registerTypes()
-{
-	_types.insert( std::make_pair( "testA", createTypeA()));
-	_types.insert( std::make_pair( "testB", createTypeB()));
-}
-
-MPI_Datatype * TestWorld::createTypeA()
-{
-	TestAgentAPackage package;
-	// we will send id, x and y
-	int blockLengths[5];
-
-	// 100 chars
-	blockLengths[0] = blockLengths[4] = 100;
-	blockLengths[1] = blockLengths[2]  = blockLengths[3] = 1;
-
-	// typelist
-	MPI_Datatype typelist[5];
-	typelist[0] = typelist[4] = MPI_CHAR;
-	typelist[1] = typelist[2] = typelist[3] = MPI_INT;
-
-	MPI_Aint displacements[5];
-	displacements[0] = 0;
-
-	MPI_Aint startAddress;
-	MPI_Aint address;
-	MPI_Address(package._id, &startAddress); 
-
-	MPI_Address(&package._position._x, &address);
-	displacements[1] = address-startAddress;
-	MPI_Address(&package._position._y, &address);
-	displacements[2] = address-startAddress;
-	MPI_Address(&package._testValueA, &address);
-	displacements[3] = address-startAddress;
-	MPI_Address(&package._testId, &address);
-	displacements[4] = address-startAddress;
-
-	MPI_Datatype * newDataType = new MPI_Datatype;
-	MPI_Type_struct(5, blockLengths, displacements, typelist, newDataType);
-	MPI_Type_commit(newDataType);
-	return newDataType;
-}
-
-MPI_Datatype * TestWorld::createTypeB()
-{
-	TestAgentBPackage package;
-	// we will send id, x and y
-	int blockLengths[4];
-
-	// 100 chars
-	blockLengths[0] = 100;
-	blockLengths[1] = blockLengths[2]  = blockLengths[3] = 1;
-
-	// typelist
-	MPI_Datatype typelist[4];
-	typelist[0] = MPI_CHAR;
-	typelist[1] = typelist[2] = typelist[3] = MPI_INT;
-
-	MPI_Aint displacements[4];
-	displacements[0] = 0;
-
-	MPI_Aint startAddress;
-	MPI_Aint address;
-	MPI_Address(package._id, &startAddress); 
-
-	MPI_Address(&package._position._x, &address);
-	displacements[1] = address-startAddress;
-	MPI_Address(&package._position._y, &address);
-	displacements[2] = address-startAddress;
-	MPI_Address(&package._testValueB, &address);
-	displacements[3] = address-startAddress;
-
-	MPI_Datatype * newDataType = new MPI_Datatype;
-	MPI_Type_struct(4, blockLengths, displacements, typelist, newDataType);
-	MPI_Type_commit(newDataType);
-	return newDataType;
 }
 
 } // namespace Test 

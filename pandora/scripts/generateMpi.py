@@ -135,6 +135,7 @@ def createFactoryMethods( listAgents, factoryFile, namespaces, listAttributesMap
 	f.write('\n')
 	f.write('#include "MpiFactory.hxx"\n')
 	f.write('#include "Exceptions.hxx"\n')
+	f.write('#include <sstream>\n')
 	f.write('\n')
 	for i in range(0, len(listAgents)):
 		print '\t\tadding: ' + listAgents[i] + ' to factory file: ' + factoryFile
@@ -147,6 +148,7 @@ def createFactoryMethods( listAgents, factoryFile, namespaces, listAttributesMap
 	
 	for i in range(0, len(listAgents)):
 		writeCreateType( f, listAgents[i], listAttributesMaps[i])
+
 	writeRegisterTypes( f, listAgents )
 	writeCreateDefaultPackage( f, listAgents )
 	writeCreateAndFillAgents( f, listAgents, namespaces )

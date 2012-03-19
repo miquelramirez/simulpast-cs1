@@ -1,9 +1,26 @@
+/*
+ * Copyright (c) 2012
+ * COMPUTER APPLICATIONSN IN SCIENCE & ENGINEERING
+ * BARCELONA SUPERCOMPUTING CENTRE - CENTRO NACIONAL DE SUPERCOMPUTACIÓN
+ * http://www.bsc.es
 
+ * This file is part of Pandora Library. This library is free software; 
+ * you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation;
+ * either version 3.0 of the License, or (at your option) any later version.
+ * 
+ * Pandora is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 #include "TestAgent.hxx"
 #include "World.hxx"
-#include "Exceptions.hxx"
-#include "Statistics.hxx"
-#include <cstring>
+#include "Point2D.hxx"
 
 namespace Test
 {
@@ -12,19 +29,13 @@ TestAgent::TestAgent( const std::string & id, const bool & horizontalMovement ) 
 {
 }
 
-TestAgent::TestAgent( const TestAgentPackage & package ) : Agent(package._id)
-{
-	_position = package._position;
-	_horizontalMovement = package._horizontalMovement;
-}
-
 TestAgent::~TestAgent()
 {
 }
 
 void TestAgent::move()
 {
-	Engine::Position<int> newPosition = _position;
+	Engine::Point2D<int> newPosition = _position;
 	if(_horizontalMovement)
 	{
 		newPosition._x++;
@@ -33,7 +44,6 @@ void TestAgent::move()
 	{
 		newPosition._y++;
 	}
-	//std::cout << "agent : " << this << " trying to move to: " << newPosition << std::endl;
 
 	if(_world->checkPosition(newPosition))
 	{
@@ -47,18 +57,7 @@ void TestAgent::step()
 	move();
 }
 
-void * TestAgent::createPackage()
-{
-	TestAgentPackage * package = new TestAgentPackage;	
-	memcpy(&package->_id, _id.c_str(), sizeof(char)*_id.size());
-	package->_id[_id.size()] = '\0';
-	package->_position = _position;
-	package->_horizontalMovement = _horizontalMovement;
-	
-	return package;
-}
-
-void TestAgent::store()
+void TestAgent::serialize()
 {
 }
 

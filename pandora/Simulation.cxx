@@ -35,27 +35,27 @@ void Simulation::init()
 	
 }
 	
-const int & Simulation::getId()
+const int & Simulation::getId() const
 {
 	return _id;
 }
 
-const int & Simulation::getNumTasks()
+const int & Simulation::getNumTasks() const
 {
 	return _numTasks;
 }
 
-const int & Simulation::getSize()
+const int & Simulation::getSize() const
 {
 	return _size;
 }
 
-const int & Simulation::getNumSteps()
+const int & Simulation::getNumSteps() const
 {
 	return _numSteps;
 }
 
-const int & Simulation::getLocalRasterSize()
+const int & Simulation::getLocalRasterSize() const
 {
 	return _localRasterSize;
 }

@@ -1,11 +1,29 @@
+/*
+ * Copyright (c) 2012
+ * COMPUTER APPLICATIONSN IN SCIENCE & ENGINEERING
+ * BARCELONA SUPERCOMPUTING CENTRE - CENTRO NACIONAL DE SUPERCOMPUTACIÓN
+ * http://www.bsc.es
+
+ * This file is part of Pandora Library. This library is free software; 
+ * you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation;
+ * either version 3.0 of the License, or (at your option) any later version.
+ * 
+ * Pandora is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 
 #include "TestWorld.hxx"
 
 #include "Raster.hxx"
-#include "Position.hxx"
+#include "Point2D.hxx"
 #include "Exceptions.hxx"
-
-#include "Agent.hxx"
 
 #include <assert.h>
 #include <iostream>
@@ -13,7 +31,7 @@
 namespace Test
 {
 
-TestWorld::TestWorld() : World(10, 64, 4, true, "data/test.h5")
+TestWorld::TestWorld( const Engine::Simulation & sim ) : World(sim, 4, true, "data/test.h5")
 {
 }
 
@@ -21,9 +39,9 @@ TestWorld::~TestWorld()
 {
 }
 
-void TestWorld::stepAgents()
+void TestWorld::stepRasters()
 {
-	Engine::Position<int> index(0,0);
+	Engine::Point2D<int> index(0,0);
 	for(index._x=_boundaries._origin._x; index._x<_boundaries._origin._x+_boundaries._size._x; index._x++)		
 	{
 		for(index._y=_boundaries._origin._y; index._y<_boundaries._origin._y+_boundaries._size._y; index._y++)			
@@ -36,17 +54,16 @@ void TestWorld::stepAgents()
 
 void TestWorld::createRasters()
 {	
-	registerRaster("testX");
-	registerRaster("testY");
-	getRaster("testX").setInitValues(0,_globalBoundaries._size._x);
-	getRaster("testY").setInitValues(0,_globalBoundaries._size._y);
+	registerDynamicRaster("testX", false);
+	registerDynamicRaster("testY", false);
+	getDynamicRaster("testX").setInitValues(0,_globalBoundaries._size._x, 0);
+	getDynamicRaster("testY").setInitValues(0,_globalBoundaries._size._y, 0);
 
-	Engine::Position<int> index(0,0);
+	Engine::Point2D<int> index(0,0);
 	for(index._x=_boundaries._origin._x; index._x<_boundaries._origin._x+_boundaries._size._x; index._x++)		
 	{
 		for(index._y=_boundaries._origin._y; index._y<_boundaries._origin._y+_boundaries._size._y; index._y++)			
 		{
-			//std::cout << _id << " setting value: " << index << " with boundaries: " << _boundaries << " at pos: " << index-_overlapBoundaries._origin << std::endl;
 			setMaxValue("testX", index, index._x);
 			setMaxValue("testY", index, index._y);
 		}
@@ -56,20 +73,6 @@ void TestWorld::createRasters()
 }
 
 void TestWorld::createAgents()
-{
-}
-
-Engine::Agent * TestWorld::createAgentFromPackage( const std::string & key, void * package )
-{
-	return 0;
-}
-
-void * TestWorld::createPackage(const std::string & key)
-{
-	return 0;
-}
-
-void TestWorld::registerTypes()
 {
 }
 
