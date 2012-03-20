@@ -12,16 +12,15 @@
 namespace Engine
 {
 
-World::World( Simulation & simulation, const int & overlap, const bool & allowMultipleAgentsPerCell, const std::string & fileName ) 
+World::World( const Simulation & simulation, const int & overlap, const bool & allowMultipleAgentsPerCell, const std::string & fileName ) 
     : _simulation(simulation)
     , _worldPos(-1,-1)
-    , _globalBoundaries(Point2D<int>(0,0)
-    , Point2D<int>(simulation.getSize(), simulation.getSize()))
+    , _globalBoundaries(Point2D<int>(0,0) , Point2D<int>(simulation.getSize(), simulation.getSize()))
     , _allowMultipleAgentsPerCell(allowMultipleAgentsPerCell)
     , _step(0)
     , _overlap(overlap)
-    , _initialTime(0.0f)
     , _serializer(fileName)
+    , _initialTime(0.0f)
     , _searchAgents(true)
 {
 
@@ -372,7 +371,6 @@ void World::stepSection( const int & sectionIndex )
 	int numExecutedAgents = 0;
 	AgentsList agentsToSend;
 
-#pragma omp for
 	for(int i=0; i<agentsToExecute.size(); i++)
 	{
 //	while(it!=_agents.end())

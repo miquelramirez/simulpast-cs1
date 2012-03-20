@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012
- * COMPUTER APPLICATIONS IN SCIENCE & ENGINEERING
+ * COMPUTER APPLICATIONSN IN SCIENCE & ENGINEERING
  * BARCELONA SUPERCOMPUTING CENTRE - CENTRO NACIONAL DE SUPERCOMPUTACIÓN
  * http://www.bsc.es
  *
@@ -19,27 +19,3 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-
-#ifndef __SumDataPlot_hxx__
-#define __SumDataPlot_hxx__
-
-#include "DataPlot.hxx"
-
-#include <string>
-class QWidget;
-
-namespace GUI
-{
-
-class SumDataPlot : public DataPlot
-{ 
-public:
-	SumDataPlot( QWidget * parent );
-	virtual ~SumDataPlot();
-	void calculateValues( const std::string & type, const std::string & state );
-};
-
-} // namespace GUI
-
-#endif // __SumDataPlot_hxx__
-

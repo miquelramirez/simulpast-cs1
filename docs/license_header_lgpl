@@ -18,32 +18,4 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-#ifndef __TestAgent_hxx__
-#define __TestAgent_hxx__
-
-#include "Agent.hxx"
-#include <string>
-
-namespace Test
-{
-
-class TestAgent: public Engine::Agent
-{	
-	void move();
-	void serialize();
-
-public:
-	TestAgent( const std::string & id );
-	virtual ~TestAgent();
-	
-	void step();
-	
-	// Mpi related
-	TestAgent( void * package );
-	void * fillPackage();
-};
-
-} // namespace Test
-
-#endif // __TestAgent_hxx__
 

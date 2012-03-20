@@ -11,10 +11,8 @@ FORMS += uis/ColorInterval.ui
 FORMS += uis/Configurator3D.ui
 FORMS += uis/LoadingProgressBar.ui
 DEPENDPATH += .
-DEFINES += "TIXML_USE_STL"
 INCLUDEPATH += .
 INCLUDEPATH += ../pandora/
-INCLUDEPATH += ../../libs/tinyxml-2.6.2/tinyxml
 INCLUDEPATH += /usr/include/qwt/
 INCLUDEPATH += /usr/include/mpich2/ 
 INCLUDEPATH += /usr/include/GL/
@@ -26,8 +24,8 @@ INCLUDEPATH += /usr/local/qwt-6.0.0/include/
 
 CONFIG += qt
 
-# Required when installing qwt-6.0.0 and tinyxml 2.6.2 from sources
-LIBS += -L../pandora/ -lpandora -L/usr/local/qwt-6.0.0/lib/ -L../../libs/tinyxml-2.6.2/tinyxml -lqwt -lhdf5 -lmpich -lmpi -lGL -lGLU -lQtOpenGL -lIL -ltinyxml
+# Required when installing qwt-6.0.0 from sources
+LIBS += -L../pandora/ -lpandora -L/usr/local/qwt-6.0.0/lib/ -lqwt -lhdf5 -lmpich -lmpi -lGL -lGLU -lQtOpenGL -lIL -ltinyxml
 
 # LIBS += -L../pandora/ -lpandora -lqwt -lhdf5 -lmpich -lmpi -lGL -lGLU -lQtOpenGL -lIL -ltinyxml
 

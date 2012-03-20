@@ -1,9 +1,27 @@
+/*
+ * Copyright (c) 2012
+ * COMPUTER APPLICATIONSN IN SCIENCE & ENGINEERING
+ * BARCELONA SUPERCOMPUTING CENTRE - CENTRO NACIONAL DE SUPERCOMPUTACIÓN
+ * http://www.bsc.es
+
+ * This file is part of Pandora Library. This library is free software; 
+ * you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation;
+ * either version 3.0 of the License, or (at your option) any later version.
+ * 
+ * Pandora is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 
 #include "TestAgentB.hxx"
 #include "World.hxx"
-#include "Exceptions.hxx"
-#include "Statistics.hxx"
-#include <cstring>
+#include "Point2D.hxx"
 
 namespace Test
 {
@@ -12,19 +30,13 @@ TestAgentB::TestAgentB( const std::string & id ) : Agent(id), _testValueB(5)
 {
 }
 
-TestAgentB::TestAgentB( const TestAgentBPackage & package ) : Agent(package._id)
-{
-	_position = package._position;
-	_testValueB = package._testValueB;
-}
-
 TestAgentB::~TestAgentB()
 {
 }
 
 void TestAgentB::move()
 {
-	Engine::Position<int> newPosition = _position;
+	Engine::Point2D<int> newPosition = _position;
 	newPosition._x++; // += 2;
 
 	if(_world->checkPosition(newPosition))
@@ -39,20 +51,8 @@ void TestAgentB::step()
 	move();
 }
 
-void * TestAgentB::createPackage()
+void TestAgentB::serialize()
 {
-	TestAgentBPackage * package = new TestAgentBPackage;	
-	memcpy(&package->_id, _id.c_str(), sizeof(char)*_id.size());
-	package->_id[_id.size()] = '\0';
-	package->_position = _position;
-	package->_testValueB = _testValueB;	
-	
-	return package;
-}
-
-void TestAgentB::store()
-{
-	storeAttribute("testValueB", _testValueB);
 }
 
 const int & TestAgentB::getTestValueB()

@@ -18,11 +18,11 @@ public:
 	virtual ~Simulation();
 	void init();
 
-	const int & getId();
-	const int & getNumTasks();
-	const int & getSize();
-	const int & getNumSteps();
-	const int & getLocalRasterSize();
+	const int & getId() const;
+	const int & getNumTasks() const;
+	const int & getSize() const;
+	const int & getNumSteps() const;
+	const int & getLocalRasterSize() const;
 }; 
 
 } // namespace Engine

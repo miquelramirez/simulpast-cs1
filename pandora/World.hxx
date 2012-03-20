@@ -130,7 +130,6 @@ protected:
 	//! stablish position of world inside the space of the simulation
 	void stablishPosition();
 
-
 	// rasters that won't change values during the simulation
 	StaticRastersMap _staticRasters;
 	//! map of all the dynamic rasters used by the simulation
@@ -168,7 +167,7 @@ public:
 	
 	The parameter 'fileName' references the file where the simulation will be dumped to.
 	*/
-	World( Simulation & simulation, const int & overlap, const bool & allowMultipleAgentsPerCell, const std::string & fileName );
+	World( const Simulation & simulation, const int & overlap, const bool & allowMultipleAgentsPerCell, const std::string & fileName );
 	
 	virtual ~World();
 	//! initialization of the object World for the simulation. Required to be called before calling run.
