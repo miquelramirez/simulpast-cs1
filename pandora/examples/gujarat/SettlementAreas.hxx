@@ -11,11 +11,24 @@ namespace Gujarat
 {
 
 	class GujaratWorld;
+	
+	class compareSettlementAreas
+	{
+		/* TODO
+		Gujarat::GujaratWorld * _world;	
+	
+		bool operator()(const int& idArea1, const int& idArea2) const
+		{
+			return _world->getSettlementAreaScore(idArea1) < _world->getSettlementAreaScore(idArea2);
+		}
+		*/
+	};	
+	
 	class SettlementAreas
 	{
 
-		std::vector< Engine::Rectangle<int> > _Areas;
-
+		std::vector< Engine::Rectangle<int> > _areas;
+		std::vector<int> _scoreAreas;
 
 	protected: 
 		void updateArea(Engine::Point2D<int> & newPoint, Engine::Rectangle<int> & r);
@@ -27,12 +40,20 @@ namespace Gujarat
 		virtual ~SettlementAreas();
   
 		void generateAreas(GujaratWorld &w);
-		const std::vector< Engine::Rectangle<int> >& getAreas() const { return _Areas; } 
+		const std::vector< Engine::Rectangle<int> >& getAreas() const { return _areas; } 
+		const Engine::Rectangle<int> & getAreaById(int id) const { return _areas[id]; }
+		const int getScoreByAreaId(int id) const { return _scoreAreas[id]; } 
   
+		int ComputeAreaScore(const Engine::Rectangle<int> & newArea, GujaratWorld &w);
+  
+		void intersectionFilter(Engine::Rectangle<int> & r, std::vector<int> & candidates);
+		//!! Returns a list of Area/Rectngle identifiers. The corresponding Areas have non empty
+		//!! intersection with the Rectangle 'r'.
+		
 		friend std::ostream & operator<<( std::ostream & stream, SettlementAreas & sa )
 		{
-			std::vector< Engine::Rectangle<int> >:: iterator it = sa._Areas.begin();
-			while( it != sa._Areas.end() )
+			std::vector< Engine::Rectangle<int> >:: iterator it = sa._areas.begin();
+			while( it != sa._areas.end() )
 			{	  
 				stream << "area:[" << *it << "]";
 				it++;

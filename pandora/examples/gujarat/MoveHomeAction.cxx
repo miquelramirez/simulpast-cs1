@@ -3,6 +3,9 @@
 #include "MoveHomeAction.hxx"
 #include "GujaratAgent.hxx"
 #include "HunterGatherer.hxx"
+#include <algorithm>
+#include <vector>
+#include <stdint.h>
 
 namespace Gujarat
 {
@@ -44,13 +47,88 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 {
 	std::cout << "DEBUG: MoveHome action executing..." << std::endl;
 	int prevHomeActivity = agent.getWorld()->getValue( "homeActivity", _newHomeLoc );
+	
+	// Put a BOX around the home range.
+	// TODO check +1 or +0 for the params
+	Engine::Point2D<int> boxOrigin(agent.getPosition()._x - agent.getHomeMobilityRange(), agent.getPosition()._y - agent.getHomeMobilityRange());
+	// TODO check +1 or +0 for the params
+	Engine::Point2D<int> boxSize(2*agent.getHomeMobilityRange()+1,2*agent.getHomeMobilityRange()+1);	
+	Engine::Rectangle<int> homeBox(boxOrigin,boxSize); 
+	
+	// Retrieve the areas that have intersection non zero with homeBox
+	GujaratWorld * world              = (GujaratWorld *)agent.getWorld();
+	SettlementAreas * settlementAreas = world->getSettlementAreas();
+	std::vector<int> candidates(0);
+	settlementAreas->intersectionFilter(homeBox,candidates);
+	
+	// Select Areas with maximum score.
+	// Sort candidates following scores	
+// uncomment it!!! make_heap(candidates->begin(),candidates->end(),compareSettlementAreas());		
+	
+	// Choosing one RANDOM richest area to pick a dune from it. TODO
+	// richestCandidates.shuffle();
+	int i = 0;	
+	bool foundDune = false;
+	while(!foundDune && i < candidates.size())
+	{		
+		Engine::Rectangle<int> selectedArea = settlementAreas->getAreaById(candidates[i]);
+		Engine::Rectangle<int> intersection;
+		bool foo = homeBox.intersection(selectedArea, intersection);
+		// Extract one random dune cell which is inside the homeRange and inside the selected area.
+		
+		// count dunes from candidate area "i", 'selectedArea' variable
+		uint32_t countDunes = 0;
+		Engine::Point2D<int> index;
+		for (index._x = intersection._origin._x; index._x < intersection._origin._x+intersection._size._x; index._x++)			
+		{
+			for (index._y = intersection._origin._y; index._y < intersection._origin._y+intersection._size._y; index._y++)			
+			{
+				if ((world->getValue("soils",index) == DUNE) 
+					&& (agent.getPosition().distance(index) <= (double)agent.getHomeMobilityRange()))
+				{
+				countDunes = countDunes++;
+				}
+			}
+		}		
+		
+		// pick one dune at random		
+		uint32_t diceSelectOneRandomDune = world->getStatistics().getUniformDistValue(0, countDunes-1);
+		for (index._x = intersection._origin._x; 
+			 index._x < intersection._origin._x+intersection._size._x;
+			 index._x++)			
+		{
+			for (index._y = intersection._origin._y; 
+				 index._y < intersection._origin._y+intersection._size._y;
+				 index._y++)				
+			{
+				if (world->getValue("soils",index) == DUNE
+					&& (agent.getPosition().distance(index) <= (double)agent.getHomeMobilityRange())
+					&& diceSelectOneRandomDune == 0.0)
+				{		
+					_newHomeLoc = index;
+					foundDune   = true;
+					break;
+				}
+				diceSelectOneRandomDune--;
+			}
+			if (foundDune)	
+			{
+				break;
+			}
+		}		
+		if ( !foundDune )	// keep searching for a dune in next area
+			{
+			i++;
+			}		
+	}
+	
 	agent.getWorld()->setValue( "homeActivity", _newHomeLoc, prevHomeActivity + 1 );
 	agent.setPosition( _newHomeLoc );
 }
 
 int MoveHomeAction::getTimeNeeded()
 {
-	return 5;
+	return 5;//issue: set it in configuration file
 }
 
 } // namespace Gujarat

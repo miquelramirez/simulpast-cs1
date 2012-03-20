@@ -75,6 +75,8 @@ public:
 	bool	isInterdune( Engine::Point2D<int> p );
 	bool	isWild( Engine::Point2D<int> p );
 	bool	isColdDrySeason();
+	
+	SettlementAreas * getSettlementAreas() { return & _settlementAreas; }
 };
 
 } // namespace Gujarat

@@ -8,12 +8,11 @@ namespace Gujarat
 {
 
 	SettlementAreas::SettlementAreas()
-	{
-
+	{		
 	}
 
 	SettlementAreas::~SettlementAreas()
-	{
+	{	
 	}
 
 
@@ -40,7 +39,25 @@ namespace Gujarat
 			r._size._y = newPoint._y - r._origin._y + 1;    
 		}
 	}
-
+	
+	int SettlementAreas::ComputeAreaScore(const Engine::Rectangle<int> & newArea, GujaratWorld &w)
+	{
+	int result = 0;
+	
+		Engine::Point2D<int> index;
+		for(index._x = newArea._origin._x; index._x < newArea._origin._x + newArea._size._x ; index._x++)
+		{
+			for(index._y = newArea._origin._y; index._y < newArea._origin._y + newArea._size._y ; index._y++)
+			{		
+				if (w.getValue("soils",index) == WILD)
+				{
+					result++;
+				}
+			}
+		}
+	return result;
+	}
+	
 	void SettlementAreas::setNewArea(Engine::Point2D<int> loc,GujaratWorld &w,std::vector<bool> & duneInArea)
 	{
 		int Xsize = w.getBoundaries()._size._x;
@@ -97,8 +114,9 @@ namespace Gujarat
 			
 		}
 		std::cout << loc._x << " "<< loc._y << " newArea: "<<newArea<<std::endl;
-	
-		_Areas.push_back(newArea);
+		
+		_areas.push_back(newArea);
+		_scoreAreas.push_back(ComputeAreaScore(newArea,w));
 	}
 
 	void SettlementAreas::generateAreas(GujaratWorld &w)
@@ -125,4 +143,20 @@ namespace Gujarat
 		}
 	}
 
+	void SettlementAreas::intersectionFilter(Engine::Rectangle<int> & r, std::vector<int> & candidates)
+	{	
+		// looping in search of candidates
+		Engine::Rectangle<int> intersection;
+		for(unsigned long i=0; i < _areas.size(); i++)
+		{
+			if(r.intersection(_areas[i],intersection))
+			{
+			//	if( insideTheCircle(intersection,a._location,a._homeRange) )
+			//		insideTheCircle, an extra filter, future issue	
+				candidates.push_back(i);
+			}
+			
+		}
+	}
+		
 }//namespace
