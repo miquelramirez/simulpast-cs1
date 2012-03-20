@@ -1,13 +1,16 @@
+nameProgram = 'gujarat'
+
+agents = ['HunterGatherer','AgroPastoralist']
+namespaceAgents = ['Gujarat','Gujarat']
+parents = ['GujaratAgent', 'GujaratAgent']
+
+srcFiles = Split('main.cxx GujaratWorld.cxx GujaratConfig.cxx Climate.cxx GujaratAgent.cxx AgroPastoralist.cxx HunterGatherer.cxx Action.cxx MoveHomeAction.cxx CultivatedField.cxx EstablishPlotAction.cxx SowAction.cxx HarvestAction.cxx MaintainPlotAction.cxx HuntAction.cxx GatherAction.cxx Sector.cxx ForageAction.cxx SettlementAreas.cxx APMoveHomeAction.cxx ' )
 
 import os, sys
 from subprocess import call
 
 sys.path.append('../../scripts/')
 import generateMpi 
-
-agents = ['HunterGatherer','AgroPastoralist']
-namespaceAgents = ['Gujarat','Gujarat']
-parents = ['GujaratAgent', 'GujaratAgent']
 
 release = ARGUMENTS.get('release', 1)
 mareNostrum = ARGUMENTS.get('mn', 0)
@@ -28,7 +31,6 @@ else:
 	env['CCFLAGS'] = Split('-O3 -DTIXML_USE_STL')
 	libs = Split('pthread mpich pandora gdal hdf5 tinyxml')
 
-srcFiles = Split('main.cxx GujaratWorld.cxx GujaratConfig.cxx Climate.cxx GujaratAgent.cxx AgroPastoralist.cxx HunterGatherer.cxx Action.cxx MoveHomeAction.cxx CultivatedField.cxx EstablishPlotAction.cxx SowAction.cxx HarvestAction.cxx MaintainPlotAction.cxx HuntAction.cxx GatherAction.cxx Sector.cxx ForageAction.cxx SettlementAreas.cxx APMoveHomeAction.cxx ' )
 
 includeDirs = Split('./ ../../')
 
@@ -53,9 +55,10 @@ if int(release)==0 and int(mareNostrum)==1:
 # add the list of mpi code that must be generated & compiled
 mpiAgentsSrc = ['mpiCode/FactoryCode.cxx']
 agentsSrc = ['main.cxx']
-for agent in agents:
-	agentsSrc.append(agent+".cxx")
-	mpiAgentsSrc.append("mpiCode/"+agent+"_mpi.cxx")
+for agent in agents:	
+	if agent != '':
+		agentsSrc.append(agent+".cxx")
+		mpiAgentsSrc.append("mpiCode/"+agent+"_mpi.cxx")
 env['namespaces'] = namespaceAgents
 env['parents'] = parents 
 env.GenerateMPICode( target=mpiAgentsSrc, source=agentsSrc)
