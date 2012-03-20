@@ -48,12 +48,17 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 	std::cout << "DEBUG: MoveHome action executing..." << std::endl;
 	int prevHomeActivity = agent.getWorld()->getValue( "homeActivity", _newHomeLoc );
 	
-	// Put a BOX around the home range.
-	// TODO check +1 or +0 for the params
-	Engine::Point2D<int> boxOrigin(agent.getPosition()._x - agent.getHomeMobilityRange(), agent.getPosition()._y - agent.getHomeMobilityRange());
-	// TODO check +1 or +0 for the params
-	Engine::Point2D<int> boxSize(2*agent.getHomeMobilityRange()+1,2*agent.getHomeMobilityRange()+1);	
-	Engine::Rectangle<int> homeBox(boxOrigin,boxSize); 
+	// Put a BOX around the home range.	
+	int boxOriginX = agent.getPosition()._x - agent.getHomeMobilityRange();
+	int boxOriginY = agent.getPosition()._y - agent.getHomeMobilityRange();
+	int boxSizeX = 2*agent.getHomeMobilityRange()+1;
+	int boxSizeY = 2*agent.getHomeMobilityRange()+1;
+	Engine::Point2D<int> boxOrigin(boxOriginX, boxOriginY);	
+	Engine::Point2D<int> boxSize(boxSizeX,boxSizeY);	
+	Engine::Rectangle<int> unTrimmedHomeBox(boxOrigin,boxSize); 
+	Engine::Rectangle<int> homeBox;
+	unTrimmedHomeBox.intersection(agent.getWorld()->getBoundaries(),homeBox);
+	//TODO look out sectors, MPI regions, etc... Decide getBoundaries? or getOverlapBoundaries?
 	
 	// Retrieve the areas that have intersection non zero with homeBox
 	GujaratWorld * world              = (GujaratWorld *)agent.getWorld();

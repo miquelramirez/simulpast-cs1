@@ -5,6 +5,9 @@
 #include <sstream>
 #include <cmath>
 
+#include <iostream>
+#include <cstdlib>
+
 namespace Engine
 {
 
@@ -29,41 +32,48 @@ public:
 	}
 	
 	bool intersection(Interval other, Interval & result)
-	{	
+	{			
 		Type left;
-		if(_max >= other._max)
+		if(_min >= other._min)
 		{
-			left = _max;
+			left = _min;
 		}
 		else
 		{
-			left = other._max;
+			left = other._min;
 		}
 		
 		if(!(isInside(left) && other.isInside(left)))
 		{
 			return false;
 		}
-	
+		
 		Type right;
-		if(_min <= other._min)
+		if(_max <= other._max)
 		{
-			right = _min;
+			right = _max;
 		}
 		else
 		{
-			right = other._min;
+			right = other._max;
 		}
-	
+		
 		if(!(isInside(right) && other.isInside(right)))
 		{
 			return false;
 		}
 	
+	
 		result._min = left;
 		result._max = right;
 	
 	return true;	
+	}
+	
+	
+	friend std::ostream & operator<<( std::ostream & stream, Interval<Type> & intv )
+	{
+		return stream << "[" << intv._min << ".." << intv._max << "]";
 	}
 	
 };
@@ -113,6 +123,7 @@ public:
 		_size._x = iOX._max - iOX._min +1;
 		_size._y = iOY._max - iOY._min +1;		
 		
+		std::cout << "intev2Rect:"<<  iOX._min << "," <<  iOY._min << "|" <<  iOX._max << "," <<  iOY._max << std::endl;
 	}	
 	
 	bool intersection(const Rectangle<Type> other, Rectangle<Type> & result)
@@ -124,6 +135,13 @@ public:
 		// Interval caracterization for Rectangle "other"
 		Interval<Type> R2_OX(other._origin._x,other._origin._x + other._size._x -1);		
 		Interval<Type> R2_OY(other._origin._y,other._origin._y + other._size._y -1);	
+
+		if(_origin._y <0)
+		{
+			std::cout << "NEGATIU" << std::endl;
+		}
+		
+std::cout << R1_OX << R1_OY	<< "&&" <<R2_OX << R2_OY << "?" << std::endl;
 		
 		Interval<Type> Intersection_OX;
 		if (! R1_OX.intersection(R2_OX,Intersection_OX) )
@@ -131,12 +149,15 @@ public:
 			return false;
 		}
 		
+		
 		Interval<Type> Intersection_OY;
 		if (! R1_OY.intersection(R2_OY,Intersection_OY) )
 		{
 			return false;
 		}
 		
+std::cout << Intersection_OX << Intersection_OY << std::endl;
+
 		result.intervals2Rectangle(Intersection_OX,Intersection_OY);
 		
 	return true;	
