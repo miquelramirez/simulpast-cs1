@@ -10,6 +10,7 @@
 #include "Sector.hxx"
 #include "Point3D.hxx"
 #include <cmath>
+#include <cassert>
 
 namespace Gujarat
 {
@@ -102,6 +103,7 @@ void HunterGatherer::createSectorsMask()
 	}
 
 	_sectors.resize( _numSectors );
+	assert( _world != NULL );
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
 		_sectors[k] = new Sector( *_world );
@@ -203,6 +205,8 @@ GujaratAgent * HunterGatherer::createNewAgent()
 	oss << "HunterGatherer_" << world->getId() << "-" << world->getNewKey();
 	
 	HunterGatherer * agent = new HunterGatherer(oss.str());
+	// MRJ: Nobody setting the world pointer to newly created agents? How so?
+	agent->setWorld( _world );
 	agent->setAvailableTime( _availableTime );
 	agent->setSocialRange( _socialRange );
 	agent->setHomeMobilityRange( _homeMobilityRange );
