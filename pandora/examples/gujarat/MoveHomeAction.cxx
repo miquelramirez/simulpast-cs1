@@ -91,7 +91,7 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 				if ((world->getValue("soils",index) == DUNE) 
 					&& (agent.getPosition().distance(index) <= (double)agent.getHomeMobilityRange()))
 				{
-				countDunes = countDunes++;
+					countDunes++;
 				}
 			}
 		}		
