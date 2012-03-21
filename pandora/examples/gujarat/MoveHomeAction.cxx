@@ -59,8 +59,9 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 	Engine::Point2D<int> boxSize(boxSizeX,boxSizeY);	
 	Engine::Rectangle<int> unTrimmedHomeBox(boxOrigin,boxSize); 
 	Engine::Rectangle<int> homeBox;
-	unTrimmedHomeBox.intersection(agent.getWorld()->getBoundaries(),homeBox);
 	//TODO look out sectors, MPI regions, etc... Decide getBoundaries? or getOverlapBoundaries?
+	// MRJ: As I understand it, this should be getOverlapBoundaries(), very much as it was before
+	unTrimmedHomeBox.intersection(agent.getWorld()->getOverlapBoundaries(),homeBox);
 	
 	// Retrieve the areas that have intersection non zero with homeBox
 	GujaratWorld * world              = (GujaratWorld *)agent.getWorld();
@@ -81,7 +82,9 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 	{		
 		Engine::Rectangle<int> selectedArea = settlementAreas->getAreaById(candidates[i]);
 		Engine::Rectangle<int> intersection;
-		bool foo = homeBox.intersection(selectedArea, intersection);
+		// MRJ: If the selected area is outside of the "homeBox" then why caring about it all?
+		//bool foo = homeBox.intersection(selectedArea, intersection);
+		if ( !homeBox.intersection(selectedArea, intersection) ) continue;
 		// Extract one random dune cell which is inside the homeRange and inside the selected area.
 		
 		// count dunes from candidate area "i", 'selectedArea' variable
@@ -94,7 +97,7 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 				if ((world->getValue("soils",index) == DUNE) 
 					&& (agent.getPosition().distance(index) <= (double)agent.getHomeMobilityRange()))
 				{
-				countDunes = countDunes++;
+					countDunes++;
 				}
 			}
 		}		
