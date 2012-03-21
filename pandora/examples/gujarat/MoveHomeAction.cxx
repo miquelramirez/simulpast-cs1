@@ -5,7 +5,9 @@
 #include "HunterGatherer.hxx"
 #include <algorithm>
 #include <vector>
+
 #include <stdint.h>
+
 
 namespace Gujarat
 {
@@ -68,7 +70,8 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 	
 	// Select Areas with maximum score.
 	// Sort candidates following scores	
-// uncomment it!!! make_heap(candidates->begin(),candidates->end(),compareSettlementAreas());		
+// uncomment it!!! 	
+	std::make_heap(candidates.begin(),candidates.end(),compareSettlementAreas());		
 	
 	// Choosing one RANDOM richest area to pick a dune from it. TODO
 	// richestCandidates.shuffle();

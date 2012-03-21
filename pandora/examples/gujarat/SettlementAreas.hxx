@@ -14,14 +14,15 @@ namespace Gujarat
 	
 	class compareSettlementAreas
 	{
-		/* TODO
-		Gujarat::GujaratWorld * _world;	
-	
+		// /* TODO
+		//Gujarat::GujaratWorld * _world;	
+	public:
 		bool operator()(const int& idArea1, const int& idArea2) const
 		{
-			return _world->getSettlementAreaScore(idArea1) < _world->getSettlementAreaScore(idArea2);
+			//return _world->getSettlementAreaScore(idArea1) < _world->getSettlementAreaScore(idArea2);
+			return idArea1 < idArea2;
 		}
-		*/
+		
 	};	
 	
 	class SettlementAreas
