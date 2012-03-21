@@ -67,7 +67,7 @@ public:
 		result._min = left;
 		result._max = right;
 	
-	return true;	
+		return true;	
 	}
 	
 	
