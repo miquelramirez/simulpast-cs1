@@ -53,9 +53,14 @@ namespace Gujarat
 	
 	class compareSettlementAreas
 	{	
+		SettlementAreas * _settlementAreas;	
 	public:
-		static SettlementAreas * _settlementAreas;	
-		
+	
+		compareSettlementAreas( SettlementAreas* areas )
+		{
+			_settlementAreas = areas;
+		}
+	
 		bool operator()(const int& idArea1, const int& idArea2) const
 		{
 			return 	_settlementAreas->getScoreByAreaId(idArea1) 

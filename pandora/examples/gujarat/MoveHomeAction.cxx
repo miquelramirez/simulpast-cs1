@@ -72,8 +72,7 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 	// Select Areas with maximum score.
 	// Sort candidates following scores	
 // uncomment it!!! 	
-	Gujarat::compareSettlementAreas::_settlementAreas = settlementAreas;
-	std::make_heap(candidates.begin(),candidates.end(),Gujarat::compareSettlementAreas());		
+	std::make_heap(candidates.begin(),candidates.end(),Gujarat::compareSettlementAreas(settlementAreas));		
 	
 	// Choosing one RANDOM richest area to pick a dune from it. TODO
 	// richestCandidates.shuffle();
