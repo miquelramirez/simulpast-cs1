@@ -18,7 +18,7 @@ PROFILE        := NO
 
 # TINYXML_USE_STL can be used to turn on STL support. NO, then STL
 # will not be used. YES will include the STL files.
-TINYXML_USE_STL := NO
+TINYXML_USE_STL := YES
 
 # PREFIX directory
 PREFIX := /usr
