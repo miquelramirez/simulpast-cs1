@@ -32,6 +32,7 @@
 #include <QMessageBox>
 
 #include <tinyxml.h>
+#include <iostream>
 
 namespace GUI
 {
