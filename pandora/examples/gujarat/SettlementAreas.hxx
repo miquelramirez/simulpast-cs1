@@ -11,20 +11,7 @@ namespace Gujarat
 {
 
 	class GujaratWorld;
-	
-	class compareSettlementAreas
-	{
-		// /* TODO
-		//Gujarat::GujaratWorld * _world;	
-	public:
-		bool operator()(const int& idArea1, const int& idArea2) const
-		{
-			//return _world->getSettlementAreaScore(idArea1) < _world->getSettlementAreaScore(idArea2);
-			return idArea1 < idArea2;
-		}
 		
-	};	
-	
 	class SettlementAreas
 	{
 
@@ -63,7 +50,25 @@ namespace Gujarat
 		}
   
 	};
-
+	
+	class compareSettlementAreas
+	{	
+	public:
+		static SettlementAreas * _settlementAreas;	
+		
+		bool operator()(const int& idArea1, const int& idArea2) const
+		{
+			return 	_settlementAreas->getScoreByAreaId(idArea1) 
+					< 
+					_settlementAreas->getScoreByAreaId(idArea2);
+			//return idArea1 < idArea2;
+		}
+		
+		//static setWorld(Gujarat::GujaratWorld *w) { _world = w; }
+	};	
+	
+	
+	
 }//namespace
 
 #endif

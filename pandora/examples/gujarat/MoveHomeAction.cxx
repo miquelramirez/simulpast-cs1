@@ -72,7 +72,8 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 	// Select Areas with maximum score.
 	// Sort candidates following scores	
 // uncomment it!!! 	
-	std::make_heap(candidates.begin(),candidates.end(),compareSettlementAreas());		
+	Gujarat::compareSettlementAreas::_settlementAreas = settlementAreas;
+	std::make_heap(candidates.begin(),candidates.end(),Gujarat::compareSettlementAreas());		
 	
 	// Choosing one RANDOM richest area to pick a dune from it. TODO
 	// richestCandidates.shuffle();
@@ -132,7 +133,7 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 			i++;
 			}		
 	}
-	
+	candidates.clear();
 	agent.getWorld()->setValue( "homeActivity", _newHomeLoc, prevHomeActivity + 1 );
 	agent.setPosition( _newHomeLoc );
 }
