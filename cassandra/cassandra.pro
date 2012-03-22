@@ -10,6 +10,7 @@ FORMS += uis/RasterConfigurator.ui
 FORMS += uis/ColorInterval.ui
 FORMS += uis/Configurator3D.ui
 FORMS += uis/LoadingProgressBar.ui
+DEFINES += TIXML_USE_STL
 DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += ../pandora/
