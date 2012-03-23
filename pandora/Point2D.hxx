@@ -102,6 +102,11 @@ public:
 	{
 		return Point2D<Type>(_x/point._x,_y/point._y);
 	}	
+
+	bool	operator<( const Point2D<Type>& point ) const
+	{
+		return (_x < point._x) || ((_x == point._x) && ( _y < point._y ));
+	}
 	
 	Type dot( const Point2D<Type> & point ) const
 	{

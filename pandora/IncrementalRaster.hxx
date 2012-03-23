@@ -1,0 +1,44 @@
+#ifndef __IncrementalRaster_hxx__
+#define __IncrementalRaster_hxx__
+
+#include "Raster.hxx"
+#include <map>
+
+namespace Engine
+{
+
+class IncrementalRaster
+{
+	typedef std::map< Point2D<int>, int >	ChangeTable;	
+
+public:
+
+	IncrementalRaster( Raster& baseRaster );
+	IncrementalRaster( const IncrementalRaster& other );
+
+	virtual ~IncrementalRaster();
+
+	virtual void 		setValue( Point2D<int> pos, int value );
+	virtual const int& 	getValue( Point2D<int> pos );
+
+	int			getCurrentMinValue() const { return _currentMinValue; }
+	int			getCurrentMaxValue() const { return _currentMaxValue; }
+
+	virtual	void		updateCurrentMinMaxValues();
+
+	typedef ChangeTable::const_iterator	ChangeIterator;
+
+	ChangeIterator		firstChange() const { return _changes.begin(); }
+	ChangeIterator		endOfChanges() const { return _changes.end(); }	
+
+private:
+
+	ChangeTable	_changes;
+	Raster&		_baseRaster;
+	int		_currentMinValue;
+	int		_currentMaxValue;
+};
+
+}
+
+#endif // IncrementalRaster.hxx
