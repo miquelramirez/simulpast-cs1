@@ -71,7 +71,6 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 	
 	// Select Areas with maximum score.
 	// Sort candidates following scores	
-// uncomment it!!! 	
 	std::make_heap(candidates.begin(),candidates.end(),Gujarat::compareSettlementAreas(settlementAreas));		
 	
 	// Choosing one RANDOM richest area to pick a dune from it. TODO
@@ -83,8 +82,12 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 		Engine::Rectangle<int> selectedArea = settlementAreas->getAreaById(candidates[i]);
 		Engine::Rectangle<int> intersection;
 		// MRJ: If the selected area is outside of the "homeBox" then why caring about it all?
-		//bool foo = homeBox.intersection(selectedArea, intersection);
-		if ( !homeBox.intersection(selectedArea, intersection) ) continue;
+		// ATM: above you will find settlementAreas->intersectionFilter method call. This ensures any
+		// item inside candidates vector has intersection with homeBox. So the 'if' is not
+		// needed, we just recompute the intersection to use it.
+		bool foo = homeBox.intersection(selectedArea, intersection);
+		//if ( !homeBox.intersection(selectedArea, intersection) ) continue;
+		
 		// Extract one random dune cell which is inside the homeRange and inside the selected area.
 		
 		// count dunes from candidate area "i", 'selectedArea' variable
