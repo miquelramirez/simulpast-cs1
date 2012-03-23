@@ -1,15 +1,20 @@
 #include "GujaratConfig.hxx"
 #include <sstream>
 #include "Exceptions.hxx"
+#include "HunterGathererMDPConfig.hxx"
 
 namespace Gujarat
 {
 
-GujaratConfig::GujaratConfig() : _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _climateSeed(1)
+GujaratConfig::GujaratConfig() 
+	: _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _climateSeed(1),
+	_hunterGathererController( "Rule-Based" ), _controllerConfig(NULL)
 {
 }
   
-GujaratConfig::GujaratConfig(const std::string & filename) : _size(0), _soilFile(""), _climateSeed(1)
+GujaratConfig::GujaratConfig(const std::string & filename) 
+	: _size(0), _soilFile(""), _climateSeed(1), _hunterGathererController( "Rule-Based" ),
+	_controllerConfig( NULL )
 {     
 //    Config::_path      = (char*)0;
 //    Config::_numAgents = 0;
@@ -48,6 +53,9 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	_surplusForReproductionThreshold = atoi( element->Attribute("surplusForReproductionThreshold") );
 	_surplusWanted = atoi( element->Attribute("surplusWanted") );
 	_numSectors = atoi( element->Attribute("numSectors") );
+	_hunterGathererController = element->Attribute("controllerType");
+	parseHGMDPConfig( element->FirstChildElement("controllerConfig") );
+
 
 	// MRJ: Loading agro pastoralists attributes	
 	element = root->FirstChildElement("agroPastoralists");
@@ -110,9 +118,24 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	std::cout << "[CONFIG]: Interdune Cell: Biomass: Mass: " << _interduneBiomass << std::endl;
 	std::cout << "[CONFIG]: Interdune Cell: Biomass: Std. Dev: " << _interduneBiomassStdDev << std::endl;
 	std::cout << "[CONFIG]: Interdune Cell: Biomass: Efficiency: " << _interduneEfficiency << std::endl;
+	std::cout << "[CONFIG]: Hunter Gatherer Controller: " << _hunterGathererController << std::endl;
+	if ( _controllerConfig != NULL )
+		_controllerConfig->dump( std::cout ); 
 
 }
-  
+ 
+void GujaratConfig::parseHGMDPConfig( TiXmlElement* element )
+{
+	// Agent controller is not set to be model-based action selection
+	if ( _hunterGathererController != std::string("MDP") ) return;
+	// Element is not a controllerConfig element
+	if (  element->ValueStr().compare("controllerConfig") ) return;
+	// Not model-based controller config
+	if ( element->Attribute("type") != std::string("MDP") ) return;
+
+	_controllerConfig = new HunterGathererMDPConfig(element);
+}
+ 
 void GujaratConfig::parseSoilInfo( TiXmlElement * element )
 {    
 	// TODO use STL

@@ -10,7 +10,9 @@
 
 namespace Gujarat
 {
-    class GujaratWorld;
+
+class GujaratWorld;
+class HunterGathererMDPConfig;
 
 class GujaratConfig : public Config
 { 
@@ -49,11 +51,16 @@ class GujaratConfig : public Config
 	float _rainHistoricalDistribScale;
 	float _rainHistoricalDistribMean;
 
+	std::string	_hunterGathererController;
+
+	HunterGathererMDPConfig*	_controllerConfig;
+
 	int _numHG;
 	int _numAP;
 	std::map< std::string, bool > _storeRasters;
 
-	void parseSoilInfo(TiXmlElement * element);
+	void 	parseSoilInfo(TiXmlElement * element);
+	void	parseHGMDPConfig( TiXmlElement* element );
 public:
 	GujaratConfig();  
 	GujaratConfig(const std::string & filename);  
