@@ -31,6 +31,18 @@ public:
 	ChangeIterator		firstChange() const { return _changes.begin(); }
 	ChangeIterator		endOfChanges() const { return _changes.end(); }	
 
+	bool			operator==( const IncrementalRaster& other ) const;
+
+	bool			operator!=( const IncrementalRaster& other ) const
+	{
+		return !(this->operator==( other));
+	}
+
+	bool			operator<( const IncrementalRaster& other ) const
+	{
+		return _changes.size() < other._changes.size();
+	}
+
 private:
 
 	ChangeTable	_changes;

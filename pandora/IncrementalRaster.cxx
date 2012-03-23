@@ -51,4 +51,16 @@ void	IncrementalRaster::updateCurrentMinMaxValues()
 		}
 }
 
+bool	IncrementalRaster::operator==( const IncrementalRaster& other ) const
+{
+	for ( ChangeIterator i = firstChange(); 
+		i != endOfChanges(); i++ )
+	{
+		ChangeIterator j = other._changes.find( i->first );
+		if ( j == other.endOfChanges() ) return false;
+		if ( i->second != j->second ) return false;
+	}
+	return true;
+}
+
 }
