@@ -61,6 +61,15 @@ class GujaratConfig : public Config
 
 	void 	parseSoilInfo(TiXmlElement * element);
 	void	parseHGMDPConfig( TiXmlElement* element );
+
+
+	void	retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, std::string& value );
+	void	retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, std::string& value );
+	void	retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, int& value );
+	void	retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, int& value );
+	void	retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, float& value );
+	void	retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, float& value );
+	
 public:
 	GujaratConfig();  
 	GujaratConfig(const std::string & filename);  
