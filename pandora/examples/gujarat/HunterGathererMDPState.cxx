@@ -27,7 +27,10 @@ HunterGathererMDPState::~HunterGathererMDPState()
 		delete _availableActions[k];
 }
 
-
+void	HunterGathererMDPState::addAction( Action* a )
+{
+	_availableActions.push_back(a);
+}
 
 void	HunterGathererMDPState::computeHash()
 {
