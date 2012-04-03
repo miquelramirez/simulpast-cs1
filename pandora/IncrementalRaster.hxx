@@ -13,7 +13,7 @@ class IncrementalRaster
 
 public:
 
-	IncrementalRaster( Raster& baseRaster );
+	IncrementalRaster( const Raster& baseRaster );
 	IncrementalRaster( const IncrementalRaster& other );
 
 	virtual ~IncrementalRaster();
@@ -45,10 +45,10 @@ public:
 
 private:
 
-	ChangeTable	_changes;
-	Raster&		_baseRaster;
-	int		_currentMinValue;
-	int		_currentMaxValue;
+	ChangeTable		_changes;
+	const Raster*		_baseRaster;
+	int			_currentMinValue;
+	int			_currentMaxValue;
 };
 
 }
