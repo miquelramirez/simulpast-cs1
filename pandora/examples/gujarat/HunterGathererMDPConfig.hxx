@@ -1,5 +1,5 @@
 #ifndef __HunterGathererMDPConfig_hxx__
-#define __HutnerGathererMDPConfig_hxx__
+#define __HunterGathererMDPConfig_hxx__
 
 #include <iosfwd>
 
@@ -11,6 +11,7 @@ namespace Gujarat
 class HunterGathererMDPConfig
 {
 public:
+	HunterGathererMDPConfig();
 	HunterGathererMDPConfig( TiXmlElement* elem );
 	~HunterGathererMDPConfig();	
 

@@ -7,6 +7,12 @@
 namespace Gujarat
 {
 
+HunterGathererMDPConfig::HunterGathererMDPConfig()
+	: _nrForageActions( 2 ), _nrMoveHomeActions( 2 ), _doNothingAllowed( true ),
+	_horizon( 7 )
+{
+}
+
 HunterGathererMDPConfig::HunterGathererMDPConfig( TiXmlElement* elem )
 {
 	// MRJ: Let's unmarshall the config right here
