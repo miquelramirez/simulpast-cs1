@@ -1,4 +1,6 @@
 #include "DoNothingAction.hxx"
+#include "GujaratAgent.hxx"
+#include "HunterGathererMDPState.hxx"
 
 namespace Gujarat
 {
@@ -19,5 +21,12 @@ void	DoNothingAction::generatePossibleActions( GujaratAgent& agent, std::vector<
 {
 	actions.push_back( new DoNothingAction() );
 }
+
+void	DoNothingAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
+{
+	sp.decreaseResources( agent.computeConsumedResources(1) );
+	sp.increaseTimeIndex();	
+}
+
 
 }

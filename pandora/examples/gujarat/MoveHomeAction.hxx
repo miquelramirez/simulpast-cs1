@@ -25,6 +25,9 @@ public:
 	static void	generatePossibleActions( const GujaratAgent& agent,
 						const Engine::Point2D<int>& agentPos,
 						std::vector< MoveHomeAction* >& actions );
+
+	virtual void execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
+
 };
 	
 } // namespace Gujarat

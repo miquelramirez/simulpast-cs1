@@ -2,6 +2,7 @@
 #include "GujaratAgent.hxx"
 #include "HunterGatherer.hxx"
 #include "GujaratWorld.hxx"
+#include "HunterGathererMDPState.hxx"
 #include <cassert>
 
 namespace Gujarat
@@ -23,47 +24,80 @@ void	ForageAction::execute( GujaratAgent& a )
 	HunterGatherer& agent = (HunterGatherer&) a;
 
 	// 1. collect nr adults
-	int 	nAdults = agent.getNrAvailableAdults();		
-	double  walkingSpeedHour = 3.0;
-	double  availTime = 4.5;
-	double  distPerAdult = walkingSpeedHour * availTime;
-	double  maxDistAgentWalk = distPerAdult * (double)nAdults;
-	
+	double  maxDistAgentWalk = agent.computeMaxForagingDistance();
+		
 	// 2. select nearest cell
 	Engine::Point2D<int> nearest = _forageArea->getNearestTo( agent.getPosition() );
 
 	// 3. execut walk
-	int    amountCollected = doWalk( nearest, maxDistAgentWalk, 
-					dynamic_cast<GujaratWorld*>(agent.getWorld()) );
+	int    amountCollected = doWalk( nearest, maxDistAgentWalk, agent );
 	agent.updateResources( amountCollected );
 }
 
-
-int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, GujaratWorld* world )
+void	ForageAction::selectBestNearestCell( 	const Engine::Point2D<int>& n,
+						const Engine::Raster& r,
+						double& bestScore,
+						Engine::Point2D<int>& best ) const
 {
-	assert( world != NULL );
-	double walkedDist = 0.0;
-	int    collected = 0;
+	// 1. Select adjacent cell max biomass*eff				
 	std::vector< Engine::Point2D<int> >	adjCells;
+	adjCells.clear();
+	_forageArea->getAdjacent( n, adjCells );
+	best = adjCells[0];
+	bestScore = r.getValue( best );
+
+	for ( unsigned i = 1; i < adjCells.size(); i++ ) 
+	{
+		double score = r.getValue( adjCells[i] );
+		if ( score > bestScore )
+		{
+			bestScore = score;
+			best = adjCells[i];
+		}
+	}
+	
+}
+
+void	ForageAction::doWalk( const GujaratAgent& agent, const Engine::Point2D<int>& n0, double maxDist, Engine::Raster& r, int& collected ) const
+{
+	double walkedDist = 0.0;
 	Engine::Point2D<int> n = n0;
 
 	while ( walkedDist < maxDist )
 	{
-		// 1. Select adjacent cell max biomass*eff				
-		adjCells.clear();
-		_forageArea->getAdjacent( n, adjCells );
-		Engine::Point2D<int> best = adjCells[0];
-		double bestScore = world->getValue( "resources", best );
+		Engine::Point2D<int> best;
+		double bestScore;
+		selectBestNearestCell( n, r, bestScore, best );
+		// 2. update walk distance
+		// MRJ: Walking from one place to another will consume very little time
+		// we need to account for the time that hunting/gathering can take.
+		// As a starting proposal, I'm setting the cost in time (i.e. travelling distance)
+		// to be of 10 minutes (so the distance becomes  3 * 1 / 6 = 1/2 )
+		walkedDist += 0.5;
+		walkedDist += best.distance(n);
+		n = best;
+		
+		int amtCollected = agent.computeEffectiveBiomassForaged( bestScore );
+		collected += agent.convertBiomassToCalories(amtCollected);
 
-		for ( unsigned i = 1; i < adjCells.size(); i++ ) 
-		{
-			double score = world->getValue( "resources", adjCells[i] );
-			if ( score > bestScore )
-			{
-				bestScore = score;
-				best = adjCells[i];
-			}
-		}
+		// 4. update cell resources & amount collected
+		int prevValue = r.getValue(n); 
+		r.setValue( n, prevValue - bestScore );
+	}
+}
+
+int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, GujaratAgent& agent )
+{
+	double walkedDist = 0.0;
+	int    collected = 0;
+	Engine::Point2D<int> n = n0;
+
+	while ( walkedDist < maxDist )
+	{
+		Engine::Point2D<int> best;
+		double bestScore;
+
+		selectBestNearestCell( n, agent.getWorld()->getDynamicRaster("resources"), bestScore, best );
 		// 2. update walk distance
 		// MRJ: Walking from one place to another will consume very little time
 		// we need to account for the time that hunting/gathering can take.
@@ -74,18 +108,38 @@ int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, GujaratWorld
 		n = best;
 
 		// 3. collect resources depending on Normal( biomass*eff / 2 )
-		int amtCollected =  world->getStatistics().getNormalDistValue(0,bestScore);
-		int prevActivity = world->getValue( "forageActivity", n );
-		world->setValue( "forageActivity", n, prevActivity + 1 );
+		int amtCollected = agent.computeEffectiveBiomassForaged( bestScore );
+		int prevActivity = agent.getWorld()->getValue( "forageActivity", n );
+		agent.getWorld()->setValue( "forageActivity", n, prevActivity + 1 );
 
 		// MRJ: Mass to Cal conversion
-		collected += world->convertToCalories(amtCollected);
+		collected += agent.convertBiomassToCalories(amtCollected);
 
 		// 4. update cell resources & amount collected 
-		world->setValue( "resources", n, bestScore - amtCollected );
+		int prevValue = agent.getWorld()->getValue( "resources", n );
+		agent.getWorld()->setValue( "resources", n, prevValue - bestScore );
 	}
 	
 	return collected; 
 }
+
+void ForageAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
+{
+
+	double  maxDist= agent.computeMaxForagingDistance();
+		
+	Engine::Point2D<int> nearest = _forageArea->getNearestTo( agent.getPosition() );
+
+	int collected = 0;
+
+	doWalk( agent, sp.getLocation(), maxDist, sp.getResourcesRaster(), collected );
+
+	sp.addResources( collected );
+
+	sp.decreaseResources( agent.computeConsumedResources(1) );
+
+	sp.increaseTimeIndex();	
+}
+
 
 }

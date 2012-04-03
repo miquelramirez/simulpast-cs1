@@ -19,6 +19,8 @@ public:
 	int	getTimeNeeded() const { return 0; }
 
 	static	void	generatePossibleActions( GujaratAgent& agent, std::vector< DoNothingAction* >& actions );
+	
+	virtual void execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
 
 protected:
 	

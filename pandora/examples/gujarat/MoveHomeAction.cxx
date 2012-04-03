@@ -3,6 +3,7 @@
 #include "MoveHomeAction.hxx"
 #include "GujaratAgent.hxx"
 #include "HunterGatherer.hxx"
+#include "HunterGathererMDPState.hxx"
 #include <algorithm>
 #include <vector>
 
@@ -200,6 +201,13 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 	int prevHomeActivity = agent.getWorld()->getValue( "homeActivity", _newHomeLoc );
 	agent.getWorld()->setValue( "homeActivity", _newHomeLoc, prevHomeActivity + 1 );
 	agent.setPosition( _newHomeLoc );
+}
+
+void MoveHomeAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
+{
+	sp.setLocation( _newHomeLoc );
+	sp.decreaseResources( agent.computeConsumedResources(1) );
+	sp.increaseTimeIndex();
 }
 
 int MoveHomeAction::getTimeNeeded() const
