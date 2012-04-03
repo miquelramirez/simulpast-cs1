@@ -26,7 +26,7 @@ public:
 	virtual ~ForageAction();
 
 	void	execute( GujaratAgent& agent );
-	int	getTimeNeeded() { return 1; }
+	int	getTimeNeeded() const { return 1; }
 };
 
 }

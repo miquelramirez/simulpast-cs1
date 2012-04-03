@@ -22,7 +22,7 @@ void MaintainPlotAction::execute( GujaratAgent & agent )
 	agroPastoralist.getCultivatedField().increasePotential();
 }
 
-int MaintainPlotAction::getTimeNeeded()
+int MaintainPlotAction::getTimeNeeded() const
 {
 	return 5;
 }

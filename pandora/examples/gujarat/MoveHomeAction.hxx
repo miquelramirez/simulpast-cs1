@@ -19,7 +19,7 @@ public:
 	virtual ~MoveHomeAction();
 	// TODO templatitzar classe per agent
 	void execute( GujaratAgent & agent );
-	int getTimeNeeded();
+	int getTimeNeeded() const;
 
 	static void	generatePossibleActions( GujaratAgent& agent, std::vector< MoveHomeAction* >& actions );
 };

@@ -140,7 +140,7 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 	agent.setPosition( _newHomeLoc );
 }
 
-int MoveHomeAction::getTimeNeeded()
+int MoveHomeAction::getTimeNeeded() const
 {
 	return 5;//issue: set it in configuration file
 }

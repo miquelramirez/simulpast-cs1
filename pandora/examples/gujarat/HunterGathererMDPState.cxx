@@ -3,7 +3,12 @@
 namespace Gujarat
 {
 
-HunterGathererMDPState::HunterGathererMDPState(Engine::Point2D<int> loc, unsigned initResources, Engine::Raster& resourcesRaster)
+HunterGathererMDPState::HunterGathererMDPState()
+	: _timeIndex(0), _onHandResources(0), _resources( *((Engine::Raster*)NULL) )
+{
+}
+
+HunterGathererMDPState::HunterGathererMDPState(Engine::Point2D<int> loc, int initResources, const Engine::Raster& resourcesRaster)
 	: _timeIndex(0), _mapLocation( loc ), _onHandResources( initResources ), _resources( resourcesRaster ) 
 {
 	computeHash();
@@ -18,7 +23,11 @@ HunterGathererMDPState::HunterGathererMDPState( const HunterGathererMDPState& s 
 
 HunterGathererMDPState::~HunterGathererMDPState()
 {
+	for ( unsigned k = 0; k < _availableActions.size(); k++ )
+		delete _availableActions[k];
 }
+
+
 
 void	HunterGathererMDPState::computeHash()
 {
@@ -66,6 +75,13 @@ bool	HunterGathererMDPState::operator<( const HunterGathererMDPState& s )
 			  ( _mapLocation < s._mapLocation) ) ||
 			( ( _timeIndex == s._timeIndex ) && ( _onHandResources == s._onHandResources) &&
 			  ( _mapLocation == s._mapLocation) && ( _resources < s._resources ) );
+}
+
+void	HunterGathererMDPState::print( std::ostream& os ) const
+{
+	os << "<loc=(" << _mapLocation._x << ", " << _mapLocation._y << "), ";
+	os << "res=" << _onHandResources << ", ";
+	os << "t=" << _timeIndex << ">" << std::endl;	
 }
 
 

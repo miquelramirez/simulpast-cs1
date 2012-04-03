@@ -26,7 +26,7 @@ void HarvestAction::execute( GujaratAgent & agent )
 	std::cout << "DEBUG: Agent " << agent.getId() << " executing Harvest action..." << std::endl;
 }
 
-int HarvestAction::getTimeNeeded()
+int HarvestAction::getTimeNeeded() const
 {
 	return 5;
 }
