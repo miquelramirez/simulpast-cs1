@@ -106,8 +106,45 @@ void HunterGatherer::createSectorsMask()
 	assert( _world != NULL );
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
-		_sectors[k] = new Sector( *_world );
+		_sectors[k] = new Sector( _world );
 	}
+}
+
+void HunterGatherer::updateKnowledge( 	const Engine::Point2D<int>& agentPos,
+					const Engine::Raster& dataRaster, 
+					std::vector<Sector*>& sectors ) const
+{
+	for ( unsigned k = 0; k < _numSectors; k++ )
+	{
+		sectors[k] = new Sector;
+	}
+
+	for ( int x=-_homeRange; x<=_homeRange; x++ )
+	{
+		for ( int y=-_homeRange; y<=_homeRange; y++ )
+		{
+			int indexSector = _sectorsMask[x+_homeRange][y+_homeRange];
+			if ( indexSector == - 1 )
+			{
+				continue;
+			}
+
+			Engine::Point2D<int> p;
+			p._x = agentPos._x + x;
+			p._y = agentPos._y + y;
+			if ( !_world->getBoundaries().isInside(p) )
+			{
+				continue;
+			}
+			sectors[indexSector]->addCell( p );
+		}
+	}
+
+	for ( unsigned k = 0; k < _numSectors; k++ )
+	{
+		sectors[k]->updateFeatures(dataRaster);
+	}
+
 }
 
 void HunterGatherer::updateKnowledge()
