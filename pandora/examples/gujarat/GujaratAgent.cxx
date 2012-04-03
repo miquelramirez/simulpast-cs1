@@ -21,6 +21,18 @@ GujaratAgent::~GujaratAgent()
 {
 }
 
+int	GujaratAgent::convertBiomassToCalories( int biomass ) const
+{
+	float fMass = (float)biomass;
+	return fMass* _massToCaloriesRate;	
+}
+
+int	GujaratAgent::computeEffectiveBiomassForaged( int nominal ) const
+{
+	return _world->getStatistics().getNormalDistValue(0, nominal);
+	
+}
+
 void GujaratAgent::setAvailableTime( int daysPerSeason )
 {
 	_availableTime = 120 / daysPerSeason;
@@ -57,6 +69,16 @@ void GujaratAgent::step()
 		checkAgentRemoval();
 		_collectedResources = 0;
 	}
+}
+
+double	GujaratAgent::computeMaxForagingDistance() const
+{
+	int 	nAdults = getNrAvailableAdults();		
+	double  walkingSpeedHour = 3.0;
+	double  availTime = 4.5;
+	double  distPerAdult = walkingSpeedHour * availTime;
+
+	return  distPerAdult * (double)nAdults;
 }
 
 GujaratAgent * GujaratAgent::getMarriageCandidate()
@@ -206,6 +228,19 @@ void GujaratAgent::checkReproduction()
 		}
 		_populationAges.push_back(0);
 	}
+}
+
+int GujaratAgent::computeConsumedResources( int timeSteps ) const
+{
+	int popSize = 0;
+	for(unsigned int index=0; index<_populationAges.size(); index++)
+	{
+		if(_populationAges[index]!=-1)
+		{
+			popSize++;
+		}
+	}
+	return 10.0f * popSize;	
 }
 
 void GujaratAgent::checkMortality()
