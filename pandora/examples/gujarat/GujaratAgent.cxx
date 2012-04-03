@@ -328,7 +328,7 @@ void	GujaratAgent::initializePosition( Engine::Point2D<int> randomPos )
 	setPosition(getNearLocation(50));
 }
 
-int	GujaratAgent::getNrAvailableAdults()
+int	GujaratAgent::getNrAvailableAdults() const
 {
 	int numAdults = 0;
 	for(unsigned i=0; i<_populationAges.size(); i++)
