@@ -74,7 +74,7 @@ void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s,
 					action_t a, 
 					OutcomeVector& outcomes ) const
 {
-	HunterGathererMDPState sp;
+	HunterGathererMDPState sp(s);
 	s.availableActions(a)->execute( agentRef(), s, sp );
 	makeActionsForState( sp );
 	outcomes.push_back( std::make_pair(sp, 1.0) );
