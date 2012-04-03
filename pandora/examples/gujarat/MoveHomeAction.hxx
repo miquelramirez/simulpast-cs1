@@ -22,6 +22,9 @@ public:
 	int getTimeNeeded() const;
 
 	static void	generatePossibleActions( GujaratAgent& agent, std::vector< MoveHomeAction* >& actions );
+	static void	generatePossibleActions( const GujaratAgent& agent,
+						const Engine::Point2D<int>& agentPos,
+						std::vector< MoveHomeAction* >& actions );
 };
 	
 } // namespace Gujarat
