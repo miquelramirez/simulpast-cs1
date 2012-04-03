@@ -1,11 +1,12 @@
 #include <iostream>
 #include "Sector.hxx"
 #include "World.hxx"
+#include "Exceptions.hxx"
 
 namespace Gujarat
 {
 
-Sector::Sector( Engine::World & world ) 
+Sector::Sector( Engine::World * world ) 
 	: _world(world), _biomassAmount(0)
 {
 }
@@ -32,16 +33,15 @@ Engine::Point2D<int>	Sector::getNearestTo( Engine::Point2D<int> p )
 	return nearest;
 }
 
-void	Sector::computeBiomassAmount()
+void	Sector::computeBiomassAmount( const Engine::Raster& r )
 {
 	_biomassAmount = 0;
-	int maxBiomassAmount = _world.getDynamicRaster("resources").getCurrentMaxValue();
+	int maxBiomassAmount = r.getCurrentMaxValue();
 
-	std::cout << "DEBUG: Max Timestep biomass amount" << maxBiomassAmount << std::endl;
 
 	for ( unsigned i = 0; i < _cells.size(); i++ )
 	{
-		_biomassAmount += _world.getValue( "resources", _cells[i] );
+		_biomassAmount += r.getValue( _cells[i] );
 	}
 	
 	double normAmount = (double)_biomassAmount;
@@ -50,11 +50,6 @@ void	Sector::computeBiomassAmount()
 	else
 		normAmount = 0.0;
 
-	std::cout << "DEBUG: biomass amount: " << _biomassAmount;
-	std::cout << " # cells: " << _cells.size() << " max bio: " << maxBiomassAmount;
-	std::cout << " (" << _cells.size()*maxBiomassAmount << ")" << std::endl;
-	std::cout << "DEBUG: normalized biomass amount" << normAmount << std::endl;
-	
 	if ( normAmount <= 1.0/3.0)
 		_biomassAmountClass = BIOMASS_AMOUNT_LOW;
 	else if ( normAmount <= 2.0/3.0 )
@@ -64,9 +59,16 @@ void	Sector::computeBiomassAmount()
 	
 }
 
+void	Sector::updateFeatures( const Engine::Raster& r )
+{
+	computeBiomassAmount( r ); 
+}
+
 void	Sector::updateFeatures()
 {
-	computeBiomassAmount();
+	assert( _world != NULL );
+	if ( _world == NULL ) throw Engine::Exception( "Sector::updateFeatures() : _world is NULL" );
+	computeBiomassAmount(_world->getDynamicRaster("resources"));
 }
 
 void	Sector::showFeatures( std::ostream& stream )
