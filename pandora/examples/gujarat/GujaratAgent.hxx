@@ -67,6 +67,7 @@ public:
 	
 	void	initializePosition( Engine::Point2D<int> randomPos );
 	int	getNrAvailableAdults();
+	int	getOnHandResources() const { return _collectedResources; }
 };
 
 } // namespace Gujarat
