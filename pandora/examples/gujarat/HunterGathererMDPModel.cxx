@@ -4,6 +4,7 @@
 #include "ForageAction.hxx"
 #include "MoveHomeAction.hxx"
 #include "DoNothingAction.hxx"
+#include "Exceptions.hxx"
 
 using Problem::action_t;
 
@@ -42,8 +43,7 @@ void	HunterGathererMDPModel::reset()
 
 action_t	HunterGathererMDPModel::number_actions( const HunterGathererMDPState& s ) const
 {
-	return _config.getNumberForageActions() + _config.getNumberMoveHomeActions() +
-		( _config.isDoNothingAllowed() ? 1 : 0 );
+	return s.numAvailableActions();
 }
 
 const HunterGathererMDPState& HunterGathererMDPModel::init() const
@@ -82,6 +82,48 @@ void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s,
 
 void	HunterGathererMDPModel::makeActionsForState( HunterGathererMDPState& s ) const
 {
+	// Make Do Nothing
+	s.addAction( new DoNothingAction() );	
+	
+	// Make Forage actions
+	std::vector< Sector* > actionSectors;
+
+	agentRef().updateKnowledge( s.getLocation(), s.getResourcesRaster(), actionSectors );
+
+	if ( _config.getNumberForageActions() > actionSectors.size() )
+	{
+		throw Engine::Exception( "HunterGathererMDPModel::makeActionsForState() : nr. forage actions in model > nr. available sectors" );
+	}	
+	else if ( _config.getNumberForageActions() == actionSectors.size() )
+	{
+		for ( unsigned i = 0; i < actionSectors.size(); i++ )
+			s.addAction( new ForageAction( actionSectors[i], true ) );	
+	}
+	else
+	{
+		std::sort( actionSectors.begin(), actionSectors.end(), SectorBestFirstSortPtrVecPredicate() );
+		for ( unsigned i = 0; i < _config.getNumberForageActions(); i++ )
+			s.addAction( new ForageAction( actionSectors[i], true ) );
+		for ( unsigned i = _config.getNumberForageActions(); i < actionSectors.size(); i++ )
+			delete actionSectors[i];
+	}
+	
+	// Make Move Home
+	std::vector< MoveHomeAction* > possibleMoveHomeActions;
+	MoveHomeAction::generatePossibleActions( agentRef(), s.getLocation(), possibleMoveHomeActions );
+
+	if ( _config.getNumberMoveHomeActions() >=  possibleMoveHomeActions.size() )
+	{
+		for ( unsigned i = 0; i < possibleMoveHomeActions.size(); i++ )
+			s.addAction( possibleMoveHomeActions[i] );
+	}
+	else
+	{
+		for ( unsigned i = 0; i < _config.getNumberMoveHomeActions(); i++ )
+			s.addAction( possibleMoveHomeActions[i] );
+		for ( unsigned i = _config.getNumberMoveHomeActions(); i < possibleMoveHomeActions.size(); i++ )
+			delete possibleMoveHomeActions[i];
+	}
 } 
 
 }
