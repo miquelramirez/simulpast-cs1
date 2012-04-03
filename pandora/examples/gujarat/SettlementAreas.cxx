@@ -163,7 +163,7 @@ namespace Gujarat
 		}
 	}
 
-	void SettlementAreas::intersectionFilter(Engine::Rectangle<int> & r, std::vector<int> & candidates)
+	void SettlementAreas::intersectionFilter(Engine::Rectangle<int> & r, std::vector<int> & candidates) const
 	{	
 		// looping in search of candidates
 		Engine::Rectangle<int> intersection;
