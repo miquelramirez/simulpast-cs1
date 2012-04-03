@@ -43,18 +43,38 @@ namespace Gujarat
 	int SettlementAreas::ComputeAreaScore(const Engine::Rectangle<int> & newArea, GujaratWorld &w)
 	{
 	int result = 0;
+/*
+	int wilds    = 0;
+	float dunes  = 0;
+	float cells  = 0;
+*/	
+	float wilds  = 0.0;
+	float dunes  = 0.0;
+	float cells  = 0.0;	
 	
 		Engine::Point2D<int> index;
 		for(index._x = newArea._origin._x; index._x < newArea._origin._x + newArea._size._x ; index._x++)
 		{
 			for(index._y = newArea._origin._y; index._y < newArea._origin._y + newArea._size._y ; index._y++)
-			{		
+			{	
+				cells++;
 				if (w.getValue("soils",index) == WILD)
 				{
-					result++;
+					wilds++;
+				}
+				if (w.getValue("soils",index) == DUNE)
+				{
+					dunes++;
 				}
 			}
 		}
+		dunes++;
+		cells++;
+		wilds++;
+		result = (int)(1000.0*(   (cells/dunes) + (wilds/cells) + (1.0/cells)  ));
+		//result = wilds;
+		std::cout << "SET SCORE:" << result << std::endl;
+		
 	return result;
 	}
 	
