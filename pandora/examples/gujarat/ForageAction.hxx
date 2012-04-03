@@ -16,13 +16,14 @@ class ForageAction : public Action
 private:
 
 	Sector*		_forageArea;
+	bool		_ownsForageAreaPointer;
 
 	int		doWalk( Engine::Point2D<int>& start, 
 				double maxDist,
 				GujaratWorld* world );
 
 public:
-	ForageAction( Sector* loc );
+	ForageAction( Sector* loc, bool ownsPointer = false );
 	virtual ~ForageAction();
 
 	void	execute( GujaratAgent& agent );

@@ -7,13 +7,15 @@
 namespace Gujarat
 {
 
-ForageAction::ForageAction( Sector* loc )
-	: _forageArea( loc )
+ForageAction::ForageAction( Sector* loc, bool ownsPointer )
+	: _forageArea( loc ), _ownsForageAreaPointer( ownsPointer )
 {
 }
 
 ForageAction::~ForageAction()
 {
+	if ( _ownsForageAreaPointer )
+		delete _forageArea;
 }
 
 void	ForageAction::execute( GujaratAgent& a )
