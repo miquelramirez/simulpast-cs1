@@ -49,10 +49,10 @@ public:
 		_cells.clear();
 	}
 
-	Engine::Point2D<int> getNearestTo( Engine::Point2D<int> p );
+	Engine::Point2D<int> getNearestTo( Engine::Point2D<int> p ) const;
 
 	void	getAdjacent( Engine::Point2D<int> p,
-				std::vector<Engine::Point2D<int> >& adjList );
+				std::vector<Engine::Point2D<int> >& adjList ) const;
 
 	int	getBiomassAmount() const
 	{

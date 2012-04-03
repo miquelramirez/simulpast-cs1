@@ -15,7 +15,7 @@ Sector::~Sector()
 {
 }
 
-Engine::Point2D<int>	Sector::getNearestTo( Engine::Point2D<int> p )
+Engine::Point2D<int>	Sector::getNearestTo( Engine::Point2D<int> p ) const
 {
 	Engine::Point2D<int> nearest = _cells[0];
 	double nearestDist = nearest.distance( p );
@@ -91,7 +91,7 @@ void	Sector::showFeatures( std::ostream& stream )
 	stream << "\tFeature: BioMassAmountClass: " << bioclass << std::endl;
 }
 
-void	Sector::getAdjacent( Engine::Point2D<int> p, std::vector<Engine::Point2D<int> >& adjList )
+void	Sector::getAdjacent( Engine::Point2D<int> p, std::vector<Engine::Point2D<int> >& adjList ) const
 {
 	for ( unsigned i = 0; i < _cells.size(); i++ )
 	{
