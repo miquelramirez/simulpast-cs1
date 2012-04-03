@@ -574,7 +574,7 @@ int World::getIdFromPosition( const Point2D<int> & position )
 	return nodePosition._y*sqrt(_simulation.getNumTasks())+nodePosition._x;
 }
 
-Point2D<int> World::getPositionFromId( const int & id )
+Point2D<int> World::getPositionFromId( const int & id ) const
 {
 	int worldsPerRow = sqrt(_simulation.getNumTasks());	
 	Point2D<int> worldPos(id%worldsPerRow, id/worldsPerRow);
@@ -1046,6 +1046,12 @@ Statistics & World::getStatistics()
 	return _statistics;
 }
 
+const Statistics & World::getStatistics() const
+{
+	return _statistics;
+}
+
+
 Simulation & World::getSimulation()
 {
 	return _simulation;
@@ -1108,6 +1114,27 @@ StaticRaster & World::getRasterTmp( const std::string & key )
 	oss << "World::getDynamicRasterTmp - searching for unregistered raster: " << key;
 	throw Exception(oss.str());
 }
+
+const StaticRaster & World::getRasterTmp( const std::string & key ) const
+{
+	RastersMap::const_iterator it = _dynamicRasters.find(key);
+	if(it!=_dynamicRasters.end())		
+	{
+		return it->second;
+	}
+	StaticRastersMap::const_iterator itS = _staticRasters.find(key);
+	if(itS!=_staticRasters.end())
+	{
+		return itS->second;
+	}
+	// the key does not exists	
+	std::stringstream oss;
+	oss << "World::getDynamicRasterTmp - searching for unregistered raster: " << key;
+	throw Exception(oss.str());
+}
+
+
+
 void World::setValue( const std::string & key, const Point2D<int> & position, int value )
 {
 	Point2D<int> localPosition(position - _overlapBoundaries._origin);
@@ -1115,7 +1142,7 @@ void World::setValue( const std::string & key, const Point2D<int> & position, in
 	getDynamicRaster(key).setValue(localPosition, value);
 }
 
-int World::getValue( const std::string & key, const Point2D<int> & position )
+int World::getValue( const std::string & key, const Point2D<int> & position ) const
 {
 	Point2D<int> localPosition(position - _overlapBoundaries._origin);
 	return getRasterTmp(key).getValue(localPosition);
@@ -1134,18 +1161,18 @@ int World::getMaxValueAt( const std::string & key, const Point2D<int> & position
 	return getDynamicRaster(key).getMaxValueAt(localPosition);
 }
 
-const Rectangle<int> & World::getBoundaries()
+const Rectangle<int> & World::getBoundaries() const
 {
 	return _boundaries;
 }
 
-const Rectangle<int> & World::getOverlapBoundaries()
+const Rectangle<int> & World::getOverlapBoundaries() const
 {
 	return _overlapBoundaries;
 }
 
 
-bool World::isCorner( const int & neighbor )
+bool World::isCorner( const int & neighbor ) const
 {
 	Point2D<int> worldPos = getPositionFromId(neighbor);
 	Point2D<int> diff = worldPos - _worldPos;
@@ -1156,7 +1183,7 @@ bool World::isCorner( const int & neighbor )
 	return false;
 }
 
-Rectangle<int> World::getInternalOverlap( const int & id )
+Rectangle<int> World::getInternalOverlap( const int & id ) const
 {
 	Point2D<int> diff = getPositionFromId(id)-_worldPos;
 	// left
@@ -1240,7 +1267,7 @@ Rectangle<int> World::getInternalOverlap( const int & id )
 	return result;
 }
 
-Rectangle<int> World::getExternalOverlap( const int & id)
+Rectangle<int> World::getExternalOverlap( const int & id) const
 {
 	Point2D<int> diff = getPositionFromId(id)-_worldPos;
 	// left
@@ -1310,7 +1337,7 @@ Rectangle<int> World::getExternalOverlap( const int & id)
 	return result;
 }
 
-Rectangle<int> World::getOverlap( const int & id, const int & sectionIndex)
+Rectangle<int> World::getOverlap( const int & id, const int & sectionIndex) const
 {
 	Point2D<int> diff = getPositionFromId(id)-_worldPos;
 	// left

@@ -78,7 +78,7 @@ void Statistics::generateNormalDistribution()
 	}
 }
 
-float Statistics::getExponentialDistValue( float min, float max )
+float Statistics::getExponentialDistValue( float min, float max ) const
 {
 	if(_exponentialDistribution.size()!=_distributionSize)
 	{
@@ -94,7 +94,7 @@ float Statistics::getExponentialDistValue( float min, float max )
 	return value;
 }
 
-float Statistics::getNormalDistValue( float min, float max )
+float Statistics::getNormalDistValue( float min, float max ) const 
 {
 	if(_normalDistribution.size()!=_distributionSize)
 	{
@@ -110,7 +110,7 @@ float Statistics::getNormalDistValue( float min, float max )
 	return value;
 }
 
-int Statistics::getUniformDistValue( int min, int max )
+int Statistics::getUniformDistValue( int min, int max ) const
 {	
 	float value = float(_nextRandomNumber())/float(_distributionSize-1);
 	float diff = max - min;

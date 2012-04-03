@@ -72,13 +72,13 @@ protected:
 	//virtual Agent * createAgentFromPackage(  const std::string & type, void * package ) = 0;
 
 	//! this method returns true if neighbor is corner of _id
-	bool isCorner(const int & neighbor);
+	bool isCorner(const int & neighbor) const;
 	//! this method returns the general overlap zone between both worlds
-	Rectangle<int> getOverlap(const int & id, const int & sectionIndex );
+	Rectangle<int> getOverlap(const int & id, const int & sectionIndex ) const;
 	//! this method returns the external part of the strict overlap between World and id, 
-	Rectangle<int> getExternalOverlap(const int & id);	
+	Rectangle<int> getExternalOverlap(const int & id) const;	
 	//! this method returns the internal part of the strict overlap between World and id, 
-	Rectangle<int> getInternalOverlap(const int & id);	
+	Rectangle<int> getInternalOverlap(const int & id) const;	
 	//! returns true if neighbor id must be updated this section index execution
 	bool needsToBeUpdated( const int & id, const int & sectionIndex );
 	//! returns true if neighbor id will send data to _id, according to index execution
@@ -155,6 +155,8 @@ protected:
 
 	//! return a raster from the entire set (dynamic and static)
 	StaticRaster & getRasterTmp( const std::string & key );
+	
+	const StaticRaster & getRasterTmp( const std::string & key ) const;
 
 public:
 	//! constructor.
@@ -286,27 +288,29 @@ public:
 	//! returns the statistics of the simulation.
 	Statistics & getStatistics();
 
+	const Statistics& getStatistics() const;
+
 	//! returns the simulation characterization of this world
 	Simulation & getSimulation();
 
 	//! sets the value of raster "key" to value "value" in global position "position"
 	void setValue( const std::string & key, const Point2D<int> & position, int value );
 	//! returns the value of raster "key" in global position "position"
-	int getValue( const std::string & key, const Point2D<int> & position );
+	int getValue( const std::string & key, const Point2D<int> & position ) const;
 	//! sets the maximum allowed value of raster "key" to value "value" in global position "position"
 	void setMaxValue( const std::string & key, const Point2D<int> & position, int value );
 	//! gets the maximum allowed value of raster "key" in global position "position"
 	int getMaxValueAt( const std::string & key, const Point2D<int> & position );
 
 	//! returns a Rectangle<int> expressing the boundaries of the world
-	const Rectangle<int> & getBoundaries();
+	const Rectangle<int> & getBoundaries() const;
 	const Rectangle<int>& getGlobalBoundaries() const { return _globalBoundaries; }
 	//! returns the Rectangle the contains the world section boundaries plus the overlap area around that boundaries
-	const Rectangle<int> & getOverlapBoundaries();
+	const Rectangle<int> & getOverlapBoundaries() const;
 	//! returns the id of the section that contains the point 'position' 
 	int getIdFromPosition( const Point2D<int> & position );
 	//! given the id of a section returns that section position 
-	Point2D<int> getPositionFromId( const int & id );
+	Point2D<int> getPositionFromId( const int & id ) const;
 	//! given the id of a neighbour world section, returns its index, the position in the vector _neighbors
 	int getNeighborIndex( const int & id );
 	//! returns the simulation id where that World is in (??? TODO verifica això)
