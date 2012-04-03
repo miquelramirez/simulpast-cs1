@@ -274,6 +274,8 @@ public:
 	//! returns raster identified by parameter 'key'.
 	Raster & getDynamicRaster( const std::string & key );
 
+	const Raster& getDynamicRaster( const std::string& key ) const;
+
 	//! create a new static raster map with the stablished size and given key
 	void registerStaticRaster( const std::string & key, const bool & serialize );
 	//! create a new raster map with the stablished size and given key

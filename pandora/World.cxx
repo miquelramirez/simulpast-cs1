@@ -1064,6 +1064,20 @@ StaticRaster & World::getStaticRaster( const std::string & key )
 	return it->second;
 }
 
+const Raster & World::getDynamicRaster( const std::string & key ) const
+{
+	RastersMap::const_iterator it = _dynamicRasters.find(key);
+	if(it==_dynamicRasters.end())		
+	{
+		// the key does not exists	
+		std::stringstream oss;
+		oss << "World::getDynamicRaster - searching for unregistered raster: " << key;
+		throw Exception(oss.str());
+	}
+	return it->second;
+}
+
+
 Raster & World::getDynamicRaster( const std::string & key )
 {
 	RastersMap::iterator it = _dynamicRasters.find(key);
