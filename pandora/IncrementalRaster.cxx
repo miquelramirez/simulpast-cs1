@@ -23,6 +23,10 @@ IncrementalRaster::~IncrementalRaster()
 {
 }
 
+void 	IncrementalRaster::resize( const Point2D<int>& size )
+{
+}
+
 void	IncrementalRaster::setValue( Point2D<int> pos, int value )
 {
 	_changes[pos] = value;
@@ -36,6 +40,7 @@ const int&	IncrementalRaster::getValue( Point2D<int> pos )
 	return it->second;
 }
 
+/*
 void	IncrementalRaster::updateCurrentMinMaxValues()
 {
 	_currentMinValue = std::numeric_limits<int>::max();
@@ -50,6 +55,7 @@ void	IncrementalRaster::updateCurrentMinMaxValues()
 			_currentMinValue = ( v < _currentMinValue ? v : _currentMinValue );
 		}
 }
+*/
 
 bool	IncrementalRaster::operator==( const IncrementalRaster& other ) const
 {
