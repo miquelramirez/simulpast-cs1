@@ -73,7 +73,7 @@ namespace Gujarat
 		wilds++;
 		result = (int)(1000.0*(   (cells/dunes) + (wilds/cells) + (1.0/cells)  ));
 		//result = wilds;
-		std::cout << "SET SCORE:" << result << std::endl;
+		//std::cout << "SET SCORE:" << result << std::endl;
 		
 	return result;
 	}
@@ -133,7 +133,7 @@ namespace Gujarat
 
 			
 		}
-		std::cout << loc._x << " "<< loc._y << " newArea: "<<newArea<<std::endl;
+		//std::cout << loc._x << " "<< loc._y << " newArea: "<<newArea<<std::endl;
 		
 		_areas.push_back(newArea);
 		_scoreAreas.push_back(ComputeAreaScore(newArea,w));
