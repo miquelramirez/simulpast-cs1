@@ -35,9 +35,11 @@ private:
 
 public:
 	Sector( Engine::World * world = NULL );
+	Sector( const Sector& other );
 	virtual ~Sector();
 
-	bool	isEmpty() const { return _cells.empty(); }
+	bool		isEmpty() const { return _cells.empty(); }
+	unsigned	numCells() const { return _cells.size(); }
 
 	void	addCell( Engine::Point2D<int>& p )
 	{

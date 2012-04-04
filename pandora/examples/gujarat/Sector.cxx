@@ -11,6 +11,14 @@ Sector::Sector( Engine::World * world )
 {
 }
 
+Sector::Sector( const Sector& other )
+{
+	_world = other._world;
+	_cells = other._cells;
+	_biomassAmount = other._biomassAmount;
+	_biomassAmountClass = other._biomassAmountClass;
+}
+
 Sector::~Sector()
 {
 }
@@ -93,11 +101,12 @@ void	Sector::showFeatures( std::ostream& stream )
 
 void	Sector::getAdjacent( Engine::Point2D<int> p, std::vector<Engine::Point2D<int> >& adjList ) const
 {
+
 	for ( unsigned i = 0; i < _cells.size(); i++ )
 	{
 		Engine::Point2D<int> delta = p - _cells[i];
 		delta._x = abs(delta._x);
-		delta._y = abs(delta._y);	
+		delta._y = abs(delta._y);
 		if ( delta._x <= 1 && delta._y <= 1 )
 			adjList.push_back( _cells[i] );
 	}	
