@@ -57,7 +57,7 @@ public:
 		_size._x = iOX._max - iOX._min +1;
 		_size._y = iOY._max - iOY._min +1;		
 		
-		std::cout << "intev2Rect:"<<  iOX._min << "," <<  iOY._min << "|" <<  iOX._max << "," <<  iOY._max << std::endl;
+		//std::cout << "intev2Rect:"<<  iOX._min << "," <<  iOY._min << "|" <<  iOX._max << "," <<  iOY._max << std::endl;
 	}	
 	
 	bool intersection(const Rectangle<Type> other, Rectangle<Type> & result)
@@ -75,7 +75,7 @@ public:
 			std::cout << "NEGATIU" << std::endl;
 		}
 		
-std::cout << R1_OX << R1_OY	<< "&&" <<R2_OX << R2_OY << "?" << std::endl;
+//std::cout << R1_OX << R1_OY	<< "&&" <<R2_OX << R2_OY << "?" << std::endl;
 		
 		Interval<Type> Intersection_OX;
 		if (! R1_OX.intersection(R2_OX,Intersection_OX) )
@@ -90,7 +90,7 @@ std::cout << R1_OX << R1_OY	<< "&&" <<R2_OX << R2_OY << "?" << std::endl;
 			return false;
 		}
 		
-std::cout << Intersection_OX << Intersection_OY << std::endl;
+//std::cout << Intersection_OX << Intersection_OY << std::endl;
 
 		result.intervals2Rectangle(Intersection_OX,Intersection_OY);
 		
