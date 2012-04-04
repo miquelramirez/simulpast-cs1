@@ -216,6 +216,8 @@ template<typename T> class uct_t : public improvement_t<T> {
         Problem::action_t best_action = Problem::noop;
         float best_value = std::numeric_limits<float>::max();
 
+	std::cout << "UCT: Selecting one action out of " << policy_t<T>::problem().number_actions(state) << std::endl;
+
         for( Problem::action_t a = 0; a < policy_t<T>::problem().number_actions(state); ++a ) {
             if( policy_t<T>::problem().applicable(state, a) ) {
                 // if this action has never been taken in this node, select it
@@ -229,6 +231,11 @@ template<typename T> class uct_t : public improvement_t<T> {
                 float bonus = add_bonus ? par * sqrtf(2 * log_ns / data.counts_[1+a]) : 0;
                 float value = data.values_[1+a] + bonus;
 
+		std::cout << "\tIndex: " << a << std::endl;
+		std::cout << "\tpar=" << par << std::endl;
+		std::cout << "\tbonus=" << bonus << std::endl;
+		std::cout << "\tvalue=" << value << std::endl;
+
                 // update best action so far
                 if( value < best_value ) {
                     best_value = value;
@@ -236,6 +243,7 @@ template<typename T> class uct_t : public improvement_t<T> {
                 }
             }
         }
+	std::cout << "UCT: Best action: " << best_action << std::endl;
         assert(best_action != Problem::noop);
         return best_action;
     }
