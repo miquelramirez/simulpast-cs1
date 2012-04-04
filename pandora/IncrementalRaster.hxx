@@ -12,7 +12,7 @@ class IncrementalRaster : public Raster
 	typedef std::map< Point2D<int>, int >	ChangeTable;	
 
 public:
-
+	IncrementalRaster();
 	IncrementalRaster( const Raster& baseRaster );
 	IncrementalRaster( const IncrementalRaster& other );
 
@@ -21,7 +21,7 @@ public:
 	virtual void		resize(  const Point2D<int> & size );
 
 	virtual void 		setValue( Point2D<int> pos, int value );
-	virtual const int& 	getValue( Point2D<int> pos );
+	virtual const int& 	getValue( Point2D<int> pos ) const;
 
 	int			getCurrentMinValue() const { return _currentMinValue; }
 	int			getCurrentMaxValue() const { return _currentMaxValue; }

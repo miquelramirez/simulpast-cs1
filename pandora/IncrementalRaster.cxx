@@ -4,12 +4,15 @@
 namespace Engine 
 {
 
+IncrementalRaster::IncrementalRaster()
+{
+}
+
 IncrementalRaster::IncrementalRaster( const Raster& baseRaster )
 	: _baseRaster( &baseRaster )
 {
 	_currentMinValue = _baseRaster->getCurrentMinValue();
 	_currentMaxValue = _baseRaster->getCurrentMaxValue();
-
 }
 
 IncrementalRaster::IncrementalRaster( const IncrementalRaster& other ) 
@@ -32,9 +35,9 @@ void	IncrementalRaster::setValue( Point2D<int> pos, int value )
 	_changes[pos] = value;
 }
 
-const int&	IncrementalRaster::getValue( Point2D<int> pos )
+const int&	IncrementalRaster::getValue( Point2D<int> pos ) const
 {
-	ChangeTable::iterator it = _changes.find( pos );
+	ChangeTable::const_iterator it = _changes.find( pos );
 	if ( it == _changes.end() )
 		return _baseRaster->getValue( pos );
 	return it->second;
