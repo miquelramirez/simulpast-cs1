@@ -40,7 +40,7 @@ public:
 	void	execute( GujaratAgent& agent );
 	int	getTimeNeeded() const { return 1; }
 	virtual void execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
-
+	virtual Action* copy() const;
 };
 
 }

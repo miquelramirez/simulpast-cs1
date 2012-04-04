@@ -1,7 +1,7 @@
-
-
 #ifndef __Action_hxx__
 #define __Action_hxx__
+
+#include <cstdlib>
 
 namespace Gujarat
 {
@@ -18,6 +18,8 @@ public:
 	virtual void execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
 
 	virtual int getTimeNeeded() const = 0;
+
+	virtual Action*	copy() const { return NULL; }
 };
 	
 } // namespace Gujarat

@@ -19,8 +19,18 @@ ForageAction::~ForageAction()
 		delete _forageArea;
 }
 
+Action*	ForageAction::copy() const
+{
+	if ( !_ownsForageAreaPointer )
+		return new ForageAction( _forageArea, false );
+	
+	return new ForageAction( new Sector( *_forageArea ), true );
+}
+
 void	ForageAction::execute( GujaratAgent& a )
 {
+	std::cout << "[DEBUG]: Agent " << a.getId() << " is executing Forage action" << std::endl;
+
 	HunterGatherer& agent = (HunterGatherer&) a;
 
 	// 1. collect nr adults
@@ -125,14 +135,14 @@ int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, GujaratAgent
 
 void ForageAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
 {
-
+	std::cout << "FORAGE" << std::endl;
 	double  maxDist= agent.computeMaxForagingDistance();
 		
-	Engine::Point2D<int> nearest = _forageArea->getNearestTo( agent.getPosition() );
+	Engine::Point2D<int> nearest = _forageArea->getNearestTo( s.getLocation() );
 
 	int collected = 0;
 
-	doWalk( agent, sp.getLocation(), maxDist, sp.getResourcesRaster(), collected );
+	doWalk( agent, nearest, maxDist, sp.getResourcesRaster(), collected );
 
 	sp.addResources( collected );
 

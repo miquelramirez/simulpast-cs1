@@ -13,13 +13,18 @@
 namespace Gujarat
 {
 
-MoveHomeAction::MoveHomeAction( Engine::Point2D<int>& p ) 
+MoveHomeAction::MoveHomeAction( const Engine::Point2D<int>& p ) 
 	: _newHomeLoc( p )
 {
 }
 
 MoveHomeAction::~MoveHomeAction()
 {
+}
+
+Action*	MoveHomeAction::copy() const
+{
+	return new MoveHomeAction( _newHomeLoc );
 }
 
 void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
@@ -197,7 +202,7 @@ void MoveHomeAction::generatePossibleActions( 	GujaratAgent& agent,
 
 void MoveHomeAction::execute( GujaratAgent & agent )
 {
-	std::cout << "DEBUG: MoveHome action executing..." << std::endl;
+	std::cout << "DEBUG: Agent " << agent.getId() << " is executing MoveHome action..." << std::endl;
 	int prevHomeActivity = agent.getWorld()->getValue( "homeActivity", _newHomeLoc );
 	agent.getWorld()->setValue( "homeActivity", _newHomeLoc, prevHomeActivity + 1 );
 	agent.setPosition( _newHomeLoc );
@@ -205,6 +210,7 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 
 void MoveHomeAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
 {
+	std::cout << "MOVE HOME" << std::endl;
 	sp.setLocation( _newHomeLoc );
 	sp.decreaseResources( agent.computeConsumedResources(1) );
 	sp.increaseTimeIndex();
