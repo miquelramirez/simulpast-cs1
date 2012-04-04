@@ -29,7 +29,7 @@ public:
 	int getMaxValueAt( Point2D<int> position );
 	
 	//! Assigns the value "value" to the cell located by parameter "position". Does nothing if "position" is out of the area of the raster.
-	void setValue( Point2D<int> position, int value );
+	virtual void setValue( Point2D<int> position, int value );
 	//! Changes the maximum value allowed in the cell located by parameter "position" to the new amount "value". Does nothing if "position" is out of the area of the raster.
 	void setMaxValue( Point2D<int> position, int value );
 	

@@ -7,16 +7,18 @@
 namespace Engine
 {
 
-class IncrementalRaster
+class IncrementalRaster : public Raster
 {
 	typedef std::map< Point2D<int>, int >	ChangeTable;	
 
 public:
 
-	IncrementalRaster( Raster& baseRaster );
+	IncrementalRaster( const Raster& baseRaster );
 	IncrementalRaster( const IncrementalRaster& other );
 
 	virtual ~IncrementalRaster();
+
+	virtual void		resize(  const Point2D<int> & size );
 
 	virtual void 		setValue( Point2D<int> pos, int value );
 	virtual const int& 	getValue( Point2D<int> pos );
@@ -24,7 +26,7 @@ public:
 	int			getCurrentMinValue() const { return _currentMinValue; }
 	int			getCurrentMaxValue() const { return _currentMaxValue; }
 
-	virtual	void		updateCurrentMinMaxValues();
+	//virtual	void		updateCurrentMinMaxValues();
 
 	typedef ChangeTable::const_iterator	ChangeIterator;
 
@@ -45,10 +47,10 @@ public:
 
 private:
 
-	ChangeTable	_changes;
-	Raster&		_baseRaster;
-	int		_currentMinValue;
-	int		_currentMaxValue;
+	ChangeTable		_changes;
+	const Raster*		_baseRaster;
+	int			_currentMinValue;
+	int			_currentMaxValue;
 };
 
 }

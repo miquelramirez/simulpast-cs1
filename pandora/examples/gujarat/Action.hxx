@@ -5,8 +5,9 @@
 
 namespace Gujarat
 {
-class GujaratAgent;
-	
+class 	GujaratAgent;
+class 	HunterGathererMDPState;
+
 class Action
 {
 public:
@@ -14,7 +15,9 @@ public:
 	Action();
 	virtual ~Action();
 	virtual void execute( GujaratAgent & agent ) = 0;
-	virtual int getTimeNeeded() = 0;
+	virtual void execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
+
+	virtual int getTimeNeeded() const = 0;
 };
 	
 } // namespace Gujarat

@@ -16,7 +16,7 @@ public:
 	virtual ~MaintainPlotAction();
 	// TODO templatitzar classe per agent
 	void execute( GujaratAgent & agent );
-	int getTimeNeeded();
+	int getTimeNeeded() const;
 };
 	
 } // namespace Gujarat

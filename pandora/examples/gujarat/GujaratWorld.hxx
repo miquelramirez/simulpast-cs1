@@ -77,6 +77,7 @@ public:
 	bool	isColdDrySeason();
 	
 	SettlementAreas * getSettlementAreas() { return & _settlementAreas; }
+	const SettlementAreas* getSettlementAreas() const { return &_settlementAreas; }
 };
 
 } // namespace Gujarat

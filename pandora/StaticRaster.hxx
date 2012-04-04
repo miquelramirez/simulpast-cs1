@@ -25,7 +25,7 @@ public:
 	//! changes raster size. Parameter 'size' represents the new dimesions for the raster area.
 	virtual void resize( const Point2D<int> & size );
 	//! Reads the value in the cell located by parameter "position". Returns -1 if "position" is out of the area of the raster.
-	const int & getValue( Point2D<int> position ) const;
+	virtual const int & getValue( Point2D<int> position ) const;
 
 	//! Returns size of the raster codifying the horizontal and vertical dimensions in a Point2D object. 
 	Point2D<int> getSize() const;

@@ -54,7 +54,7 @@ void APMoveHomeAction::execute( GujaratAgent & agentRef )
 	
 }
 
-int APMoveHomeAction::getTimeNeeded()
+int APMoveHomeAction::getTimeNeeded() const
 {
 	return 5;
 }

@@ -24,7 +24,7 @@ void SowAction::execute( GujaratAgent & agent )
  	std::cout << "DEBUG: Agent " << agent.getId() << " executing Sow action..." << std::endl;
 }
 
-int SowAction::getTimeNeeded()
+int SowAction::getTimeNeeded() const
 {
 	return 5;
 }

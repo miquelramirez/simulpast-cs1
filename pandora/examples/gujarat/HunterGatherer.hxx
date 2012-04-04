@@ -51,6 +51,10 @@ public:
 
 	void		updateResources( int v ) { _collectedResources += v; }
 	void 		createSectorsMask();
+
+	void		updateKnowledge( 	const Engine::Point2D<int>& agentPos,
+						const Engine::Raster& dataRaster,
+						std::vector< Sector* >& sectors ) const;
 	
 	// MPI Script Generated code
 	HunterGatherer( void * );

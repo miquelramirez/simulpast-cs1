@@ -93,6 +93,7 @@ void GujaratWorld::createAgents()
 			agent->setHomeRange( _config._homeRange );
 			agent->setSurplusForReproductionThreshold( _config._surplusForReproductionThreshold );
 			agent->setSurplusWanted( _config._surplusWanted );
+			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );
 			agent->setNumSectors( _config._numSectors );
 			agent->initializePosition(getRandomPosition());
 			agent->createSectorsMask();
@@ -111,6 +112,7 @@ void GujaratWorld::createAgents()
 			agent->setSocialRange( _config._socialRange );
 			agent->setHomeMobilityRange( _config._socialRange );
 			agent->setMaxCropHomeDistance( _config._maxCropHomeDistance );
+			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );
 			addAgent(agent); 
 			agent->initializePosition(getRandomPosition());
 			std::cout << _simulation.getId() << " new AgroPastoralist: " << agent << std::endl;
@@ -353,12 +355,6 @@ void GujaratWorld::stepEnvironment()
 
 	//updateMoisture();
 	//updateSoilCondition();
-}
-
-int  GujaratWorld::convertToCalories( int mass )
-{
-	float fMass = (float)mass;
-	return fMass*_config._massToEnergyRate*_config._energyToCalRate;
 }
 
 const Climate & GujaratWorld::getClimate() const

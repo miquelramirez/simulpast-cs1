@@ -19,7 +19,7 @@ public:
 	virtual ~APMoveHomeAction();
 	// TODO templatitzar classe per agent
 	void execute( GujaratAgent & agent );
-	int getTimeNeeded();
+	virtual int getTimeNeeded() const;
 
 	static void	generatePossibleActions( GujaratAgent& agent, std::vector< APMoveHomeAction* >& actions );
 };

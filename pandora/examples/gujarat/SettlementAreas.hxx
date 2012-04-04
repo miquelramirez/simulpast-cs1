@@ -15,8 +15,8 @@ namespace Gujarat
 	class SettlementAreas
 	{
 
-		std::vector< Engine::Rectangle<int> > _areas;
-		std::vector<int> _scoreAreas;
+		std::vector< Engine::Rectangle<int> > 	_areas;
+		std::vector<int> 			_scoreAreas;
 
 	protected: 
 		void updateArea(Engine::Point2D<int> & newPoint, Engine::Rectangle<int> & r);
@@ -30,11 +30,11 @@ namespace Gujarat
 		void generateAreas(GujaratWorld &w);
 		const std::vector< Engine::Rectangle<int> >& getAreas() const { return _areas; } 
 		const Engine::Rectangle<int> & getAreaById(int id) const { return _areas[id]; }
-		const int getScoreByAreaId(int id) const { return _scoreAreas[id]; } 
-  
+		int getScoreByAreaId(int id) const { return _scoreAreas[id]; } 
+ 
 		int ComputeAreaScore(const Engine::Rectangle<int> & newArea, GujaratWorld &w);
   
-		void intersectionFilter(Engine::Rectangle<int> & r, std::vector<int> & candidates);
+		void intersectionFilter(Engine::Rectangle<int> & r, std::vector<int> & candidates) const;
 		//!! Returns a list of Area/Rectngle identifiers. The corresponding Areas have non empty
 		//!! intersection with the Rectangle 'r'.
 		
@@ -53,10 +53,10 @@ namespace Gujarat
 	
 	class compareSettlementAreas
 	{	
-		SettlementAreas * _settlementAreas;	
+		const SettlementAreas * _settlementAreas;	
 	public:
 	
-		compareSettlementAreas( SettlementAreas* areas )
+		compareSettlementAreas( const SettlementAreas* areas )
 		{
 			_settlementAreas = areas;
 		}
