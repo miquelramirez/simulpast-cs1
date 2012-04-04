@@ -5,6 +5,7 @@
 #include "MoveHomeAction.hxx"
 #include "DoNothingAction.hxx"
 #include "Exceptions.hxx"
+#include <typeinfo>
 
 using Problem::action_t;
 
@@ -38,7 +39,7 @@ void	HunterGathererMDPModel::reset()
 						agentRef().getOnHandResources(),
 						agentRef().getWorld()->getDynamicRaster( "resources" ) );
 	makeActionsForState( *_initial );
-							
+	std::cout << "Initial state: " << *_initial << std::endl;	
 }
 
 action_t	HunterGathererMDPModel::number_actions( const HunterGathererMDPState& s ) const
@@ -74,14 +75,17 @@ void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s,
 					action_t a, 
 					OutcomeVector& outcomes ) const
 {
-	HunterGathererMDPState sp(s);
-	s.availableActions(a)->execute( agentRef(), s, sp );
+	HunterGathererMDPState sp;
+	s.initializeSuccessor(sp);
+	const Action* act = s.availableActions(a);
+	act->execute( agentRef(), s, sp );
 	makeActionsForState( sp );
 	outcomes.push_back( std::make_pair(sp, 1.0) );
 }
 
 void	HunterGathererMDPModel::makeActionsForState( HunterGathererMDPState& s ) const
 {
+	assert( s.numAvailableActions() == 0 );
 	// Make Do Nothing
 	s.addAction( new DoNothingAction() );	
 	
@@ -124,6 +128,7 @@ void	HunterGathererMDPModel::makeActionsForState( HunterGathererMDPState& s ) co
 		for ( unsigned i = _config.getNumberMoveHomeActions(); i < possibleMoveHomeActions.size(); i++ )
 			delete possibleMoveHomeActions[i];
 	}
+	assert( s.numAvailableActions() > 0 );
 } 
 
 }
