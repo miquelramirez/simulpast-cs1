@@ -21,13 +21,16 @@ public:
 	// The real one
 	HunterGathererMDPState(Engine::Point2D<int> loc, int initialOnHand, const Engine::Raster& resourcesRaster);
 	HunterGathererMDPState( const HunterGathererMDPState& s );
+	const HunterGathererMDPState&	operator=(const HunterGathererMDPState& s );
 	
 	~HunterGathererMDPState();
 
+	void		initializeSuccessor( HunterGathererMDPState& s ) const;
+
 	unsigned	hash() const;
-	bool		operator==( const HunterGathererMDPState& s );
-	bool		operator!=( const HunterGathererMDPState& s );
-	bool		operator<( const HunterGathererMDPState& s );
+	bool		operator==( const HunterGathererMDPState& s ) const;
+	bool		operator!=( const HunterGathererMDPState& s ) const;
+	bool		operator<( const HunterGathererMDPState& s ) const;
 
 	void		print( std::ostream& os ) const;
 

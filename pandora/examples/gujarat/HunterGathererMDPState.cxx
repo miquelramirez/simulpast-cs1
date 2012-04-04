@@ -4,7 +4,7 @@ namespace Gujarat
 {
 
 HunterGathererMDPState::HunterGathererMDPState()
-	: _timeIndex(0), _onHandResources(0), _resources( *((Engine::Raster*)NULL) )
+	: _timeIndex(0), _onHandResources(0)
 {
 }
 
@@ -19,6 +19,36 @@ HunterGathererMDPState::HunterGathererMDPState( const HunterGathererMDPState& s 
 	_resources( s._resources )
 {
 	computeHash();
+	
+	for ( unsigned k = 0; k < s._availableActions.size(); k++ )
+	{
+		addAction( s._availableActions[k]->copy() );
+	}
+}
+
+const HunterGathererMDPState& HunterGathererMDPState::operator=( const HunterGathererMDPState& s )
+{
+	_timeIndex = s._timeIndex;
+	_mapLocation = s._mapLocation;
+	_onHandResources = s._onHandResources;
+	_resources = s._resources;
+	
+	computeHash();
+	
+	for ( unsigned k = 0; k < s._availableActions.size(); k++ )
+	{
+		addAction( s._availableActions[k]->copy() );
+	}
+
+	return *this;
+}
+
+void	HunterGathererMDPState::initializeSuccessor( HunterGathererMDPState& s ) const
+{
+	s._timeIndex = _timeIndex;
+	s._mapLocation = _mapLocation;
+	s._onHandResources = _onHandResources;
+	s._resources = _resources;
 }
 
 HunterGathererMDPState::~HunterGathererMDPState()
@@ -54,7 +84,7 @@ unsigned HunterGathererMDPState::hash() const
 	return _hashKey.code(); 
 }
 
-bool	HunterGathererMDPState::operator==( const HunterGathererMDPState& s )
+bool	HunterGathererMDPState::operator==( const HunterGathererMDPState& s ) const
 {
 	return ( _timeIndex == s._timeIndex ) &&
 			( _onHandResources == s._onHandResources ) &&
@@ -62,7 +92,7 @@ bool	HunterGathererMDPState::operator==( const HunterGathererMDPState& s )
 			( _resources == s._resources );
 }
 
-bool	HunterGathererMDPState::operator!=( const HunterGathererMDPState& s )
+bool	HunterGathererMDPState::operator!=( const HunterGathererMDPState& s ) const
 {
 	return ( _timeIndex != s._timeIndex ) &&
 			( _onHandResources != s._onHandResources ) &&
@@ -70,7 +100,7 @@ bool	HunterGathererMDPState::operator!=( const HunterGathererMDPState& s )
 			( _resources != s._resources );
 }
 
-bool	HunterGathererMDPState::operator<( const HunterGathererMDPState& s )
+bool	HunterGathererMDPState::operator<( const HunterGathererMDPState& s ) const
 {
 	return  ( _timeIndex < s._timeIndex ) ||
 			( ( _timeIndex == s._timeIndex ) && ( _onHandResources < s._onHandResources ) ) ||
@@ -82,9 +112,11 @@ bool	HunterGathererMDPState::operator<( const HunterGathererMDPState& s )
 
 void	HunterGathererMDPState::print( std::ostream& os ) const
 {
-	os << "<loc=(" << _mapLocation._x << ", " << _mapLocation._y << "), ";
+	os << "<addr = " << this << ", ";
+	os << "loc=(" << _mapLocation._x << ", " << _mapLocation._y << "), ";
 	os << "res=" << _onHandResources << ", ";
-	os << "t=" << _timeIndex << ">" << std::endl;	
+	os << "t=" << _timeIndex << ", ";
+	os << "A(s)=" << _availableActions.size() << ">" << std::endl;	
 }
 
 
