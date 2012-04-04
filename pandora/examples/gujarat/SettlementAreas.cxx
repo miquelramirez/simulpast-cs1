@@ -3,6 +3,7 @@
 #include "GujaratWorld.hxx"
 #include "SettlementAreas.hxx"
 #include <assert.h>
+#include <math.h>
 
 namespace Gujarat
 {
@@ -71,7 +72,7 @@ namespace Gujarat
 		dunes++;
 		cells++;
 		wilds++;
-		result = (int)(1000.0*(   (cells/dunes) + (wilds/cells) + (1.0/cells)  ));
+		result = (int)(1000.0*(   (1.0 - (dunes/cells)) + (wilds/cells) + exp(cells)  ));
 		//result = wilds;
 		std::cout << "SET SCORE:" << result << std::endl;
 		
