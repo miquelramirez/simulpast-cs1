@@ -21,6 +21,11 @@ GujaratAgent::~GujaratAgent()
 {
 }
 
+void	GujaratAgent::setController(  AgentController* controller )
+{
+	_controller = controller;
+}
+
 int	GujaratAgent::convertBiomassToCalories( int biomass ) const
 {
 	float fMass = (float)biomass;

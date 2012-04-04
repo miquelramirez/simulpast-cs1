@@ -10,6 +10,7 @@
 namespace Gujarat
 {
 class Action;
+class AgentController;
 
 class GujaratAgent : public Engine::Agent
 {
@@ -52,6 +53,9 @@ protected:
 	float _massToCaloriesRate;
 
 	std::list<Action*> _actions;
+
+	AgentController*	_controller;
+
 	Engine::Point2D<int> getNearLocation( int range );
 
 public:
@@ -75,7 +79,10 @@ public:
 	int	computeConsumedResources( int timeSteps ) const;
 	double	computeMaxForagingDistance( ) const;
 	int	computeEffectiveBiomassForaged( int nominal ) const;
-	int	convertBiomassToCalories( int biomass ) const; 
+	int	convertBiomassToCalories( int biomass ) const;
+
+	void			setController( AgentController* controller ); 
+	AgentController* 	activeController() { return _controller; }
 	
 };
 

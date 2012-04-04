@@ -6,6 +6,8 @@
 #include "Exceptions.hxx"
 #include "Statistics.hxx"
 #include "GujaratConfig.hxx"
+#include "HunterGathererProgrammedController.hxx"
+#include "HunterGathererMDPController.hxx"
 #include <limits>
 
 namespace Gujarat
@@ -95,6 +97,16 @@ void GujaratWorld::createAgents()
 			agent->setSurplusWanted( _config._surplusWanted );
 			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );
 			agent->setNumSectors( _config._numSectors );
+
+			if ( _config._hunterGathererController == "MDP" )
+			{
+				agent->setController( new HunterGathererMDPController( agent, *_config._controllerConfig ) );
+			}
+			else
+			{
+				agent->setController( new HunterGathererProgrammedController( agent ) );
+			}
+			
 			agent->initializePosition(getRandomPosition());
 			agent->createSectorsMask();
 			std::cout << _simulation.getId() << " new HunterGathrer: " << agent << std::endl;
