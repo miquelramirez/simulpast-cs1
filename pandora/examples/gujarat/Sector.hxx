@@ -3,6 +3,7 @@
 #define __Sector_hxx__
 
 #include "Point2D.hxx"
+#include "Raster.hxx"
 #include <vector>
 #include <iosfwd>
 
@@ -23,20 +24,22 @@ enum	BiomassAmountClass
 
 class Sector
 {
-	Engine::World & 			_world;
+	Engine::World*	 			_world;
 	std::vector< Engine::Point2D<int> >	_cells;
 	int					_biomassAmount;
 	BiomassAmountClass			_biomassAmountClass;
 
 private:
 
-	void	computeBiomassAmount();
+	void	computeBiomassAmount( const Engine::Raster& r );
 
 public:
-	Sector( Engine::World & world );
+	Sector( Engine::World * world = NULL );
+	Sector( const Sector& other );
 	virtual ~Sector();
 
-	bool	isEmpty() const { return _cells.empty(); }
+	bool		isEmpty() const { return _cells.empty(); }
+	unsigned	numCells() const { return _cells.size(); }
 
 	void	addCell( Engine::Point2D<int>& p )
 	{
@@ -48,10 +51,10 @@ public:
 		_cells.clear();
 	}
 
-	Engine::Point2D<int> getNearestTo( Engine::Point2D<int> p );
+	Engine::Point2D<int> getNearestTo( Engine::Point2D<int> p ) const;
 
 	void	getAdjacent( Engine::Point2D<int> p,
-				std::vector<Engine::Point2D<int> >& adjList );
+				std::vector<Engine::Point2D<int> >& adjList ) const;
 
 	int	getBiomassAmount() const
 	{
@@ -64,8 +67,20 @@ public:
 	}
 
 	void	updateFeatures();
+	void	updateFeatures( const Engine::Raster& r );
 
 	void	showFeatures( std::ostream& );
+};
+
+class SectorBestFirstSortPtrVecPredicate
+{
+public:
+	bool operator()( const Sector* s1, const Sector* s2 ) const
+	{
+		if ( s1->getBiomassAmountClass() > s2->getBiomassAmountClass() )
+			return true;
+		return false;
+	}
 };
 
 } // namespace Gujarat

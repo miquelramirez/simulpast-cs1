@@ -24,7 +24,7 @@ void EstablishPlotAction::execute( GujaratAgent & agent )
 	std::cout << "DEBUG: Agent " << agent.getId() << " executing Establish Plot action..." << std::endl;
 }
 
-int EstablishPlotAction::getTimeNeeded()
+int EstablishPlotAction::getTimeNeeded() const
 {
 	return 5;
 }

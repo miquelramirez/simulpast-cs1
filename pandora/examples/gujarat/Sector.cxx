@@ -1,20 +1,29 @@
 #include <iostream>
 #include "Sector.hxx"
 #include "World.hxx"
+#include "Exceptions.hxx"
 
 namespace Gujarat
 {
 
-Sector::Sector( Engine::World & world ) 
+Sector::Sector( Engine::World * world ) 
 	: _world(world), _biomassAmount(0)
 {
+}
+
+Sector::Sector( const Sector& other )
+{
+	_world = other._world;
+	_cells = other._cells;
+	_biomassAmount = other._biomassAmount;
+	_biomassAmountClass = other._biomassAmountClass;
 }
 
 Sector::~Sector()
 {
 }
 
-Engine::Point2D<int>	Sector::getNearestTo( Engine::Point2D<int> p )
+Engine::Point2D<int>	Sector::getNearestTo( Engine::Point2D<int> p ) const
 {
 	Engine::Point2D<int> nearest = _cells[0];
 	double nearestDist = nearest.distance( p );
@@ -32,16 +41,15 @@ Engine::Point2D<int>	Sector::getNearestTo( Engine::Point2D<int> p )
 	return nearest;
 }
 
-void	Sector::computeBiomassAmount()
+void	Sector::computeBiomassAmount( const Engine::Raster& r )
 {
 	_biomassAmount = 0;
-	int maxBiomassAmount = _world.getDynamicRaster("resources").getCurrentMaxValue();
+	int maxBiomassAmount = r.getCurrentMaxValue();
 
-	std::cout << "DEBUG: Max Timestep biomass amount" << maxBiomassAmount << std::endl;
 
 	for ( unsigned i = 0; i < _cells.size(); i++ )
 	{
-		_biomassAmount += _world.getValue( "resources", _cells[i] );
+		_biomassAmount += r.getValue( _cells[i] );
 	}
 	
 	double normAmount = (double)_biomassAmount;
@@ -50,11 +58,6 @@ void	Sector::computeBiomassAmount()
 	else
 		normAmount = 0.0;
 
-	std::cout << "DEBUG: biomass amount: " << _biomassAmount;
-	std::cout << " # cells: " << _cells.size() << " max bio: " << maxBiomassAmount;
-	std::cout << " (" << _cells.size()*maxBiomassAmount << ")" << std::endl;
-	std::cout << "DEBUG: normalized biomass amount" << normAmount << std::endl;
-	
 	if ( normAmount <= 1.0/3.0)
 		_biomassAmountClass = BIOMASS_AMOUNT_LOW;
 	else if ( normAmount <= 2.0/3.0 )
@@ -64,9 +67,16 @@ void	Sector::computeBiomassAmount()
 	
 }
 
+void	Sector::updateFeatures( const Engine::Raster& r )
+{
+	computeBiomassAmount( r ); 
+}
+
 void	Sector::updateFeatures()
 {
-	computeBiomassAmount();
+	assert( _world != NULL );
+	if ( _world == NULL ) throw Engine::Exception( "Sector::updateFeatures() : _world is NULL" );
+	computeBiomassAmount(_world->getDynamicRaster("resources"));
 }
 
 void	Sector::showFeatures( std::ostream& stream )
@@ -89,13 +99,14 @@ void	Sector::showFeatures( std::ostream& stream )
 	stream << "\tFeature: BioMassAmountClass: " << bioclass << std::endl;
 }
 
-void	Sector::getAdjacent( Engine::Point2D<int> p, std::vector<Engine::Point2D<int> >& adjList )
+void	Sector::getAdjacent( Engine::Point2D<int> p, std::vector<Engine::Point2D<int> >& adjList ) const
 {
+
 	for ( unsigned i = 0; i < _cells.size(); i++ )
 	{
 		Engine::Point2D<int> delta = p - _cells[i];
 		delta._x = abs(delta._x);
-		delta._y = abs(delta._y);	
+		delta._y = abs(delta._y);
 		if ( delta._x <= 1 && delta._y <= 1 )
 			adjList.push_back( _cells[i] );
 	}	

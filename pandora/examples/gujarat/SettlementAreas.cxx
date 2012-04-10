@@ -3,6 +3,7 @@
 #include "GujaratWorld.hxx"
 #include "SettlementAreas.hxx"
 #include <assert.h>
+#include <math.h>
 
 namespace Gujarat
 {
@@ -43,18 +44,38 @@ namespace Gujarat
 	int SettlementAreas::ComputeAreaScore(const Engine::Rectangle<int> & newArea, GujaratWorld &w)
 	{
 	int result = 0;
+/*
+	int wilds    = 0;
+	float dunes  = 0;
+	float cells  = 0;
+*/	
+	float wilds  = 0.0;
+	float dunes  = 0.0;
+	float cells  = 0.0;	
 	
 		Engine::Point2D<int> index;
 		for(index._x = newArea._origin._x; index._x < newArea._origin._x + newArea._size._x ; index._x++)
 		{
 			for(index._y = newArea._origin._y; index._y < newArea._origin._y + newArea._size._y ; index._y++)
-			{		
+			{	
+				cells++;
 				if (w.getValue("soils",index) == WILD)
 				{
-					result++;
+					wilds++;
+				}
+				if (w.getValue("soils",index) == DUNE)
+				{
+					dunes++;
 				}
 			}
 		}
+		dunes++;
+		cells++;
+		wilds++;
+		result = (int)(1000.0*(   (1.0 - (dunes/cells)) + (wilds/cells) + exp(cells)  ));
+		//result = wilds;
+		//std::cout << "SET SCORE:" << result << std::endl;
+		
 	return result;
 	}
 	
@@ -113,7 +134,7 @@ namespace Gujarat
 
 			
 		}
-		std::cout << loc._x << " "<< loc._y << " newArea: "<<newArea<<std::endl;
+		//std::cout << loc._x << " "<< loc._y << " newArea: "<<newArea<<std::endl;
 		
 		_areas.push_back(newArea);
 		_scoreAreas.push_back(ComputeAreaScore(newArea,w));
@@ -143,7 +164,7 @@ namespace Gujarat
 		}
 	}
 
-	void SettlementAreas::intersectionFilter(Engine::Rectangle<int> & r, std::vector<int> & candidates)
+	void SettlementAreas::intersectionFilter(Engine::Rectangle<int> & r, std::vector<int> & candidates) const
 	{	
 		// looping in search of candidates
 		Engine::Rectangle<int> intersection;

@@ -21,7 +21,7 @@ else:
 		libs = Split('pthread mpich gdal hdf5 tinyxml')
 	libraryName = 'pandora'
 
-srcFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx')
+srcFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx')
 
 if int(mareNostrum)==1:
 	includeDirs = Split('. /gpfs/apps/HDF5/1.6.5/include')

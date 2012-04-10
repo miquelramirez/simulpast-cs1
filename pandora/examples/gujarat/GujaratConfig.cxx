@@ -1,15 +1,20 @@
 #include "GujaratConfig.hxx"
 #include <sstream>
 #include "Exceptions.hxx"
+#include "HunterGathererMDPConfig.hxx"
 
 namespace Gujarat
 {
 
-GujaratConfig::GujaratConfig() : _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _climateSeed(1)
+GujaratConfig::GujaratConfig() 
+	: _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _climateSeed(1),
+	_hunterGathererController( "Rule-Based" ), _controllerConfig(NULL)
 {
 }
   
-GujaratConfig::GujaratConfig(const std::string & filename) : _size(0), _soilFile(""), _climateSeed(1)
+GujaratConfig::GujaratConfig(const std::string & filename) 
+	: _size(0), _soilFile(""), _climateSeed(1), _hunterGathererController( "Rule-Based" ),
+	_controllerConfig( NULL )
 {     
 //    Config::_path      = (char*)0;
 //    Config::_numAgents = 0;
@@ -23,47 +28,140 @@ GujaratConfig::~GujaratConfig()
 {
 }
 
+void GujaratConfig::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, std::string& value )
+{
+	const std::string* retrievedStr = NULL;
+	retrievedStr = elem->Attribute( attrName );
+	if ( retrievedStr == NULL )
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	value = *retrievedStr;
+}
+
+void GujaratConfig::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, std::string& value )
+{
+	const std::string* retrievedStr = NULL;
+	retrievedStr = elem->Attribute( attrName );
+	if ( retrievedStr == NULL )
+	{
+		std::stringstream sstr;
+		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		value = "";
+		return;	
+	}
+	value = *retrievedStr;
+
+}
+
+void GujaratConfig::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, int& value )
+{
+	const std::string* retrievedStr = NULL;
+	retrievedStr = elem->Attribute( attrName );
+	if ( retrievedStr == NULL )
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	value = atoi(retrievedStr->c_str());
+}
+
+void GujaratConfig::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, int& value )
+{
+	const std::string* retrievedStr = NULL;
+	retrievedStr = elem->Attribute( attrName );
+	if ( retrievedStr == NULL )
+	{
+		std::stringstream sstr;
+		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		value = 0;
+		return;	
+	}
+	value = atoi(retrievedStr->c_str());
+
+}
+
+void GujaratConfig::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, float& value )
+{
+	const std::string* retrievedStr = NULL;
+	retrievedStr = elem->Attribute( attrName );
+	if ( retrievedStr == NULL )
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	value = atof(retrievedStr->c_str());
+}
+
+void GujaratConfig::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, float& value )
+{
+	const std::string* retrievedStr = NULL;
+	retrievedStr = elem->Attribute( attrName );
+	if ( retrievedStr == NULL )
+	{
+		std::stringstream sstr;
+		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		value = 0.0f;
+		return;	
+	}
+	value = atof(retrievedStr->c_str());
+
+}
+
 void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 {
-	TiXmlElement * element = root->FirstChildElement("climateSeed");
-	_climateSeed = atoi(element->Attribute("value"));
+	TiXmlElement * element = NULL;
+	
+	element = root->FirstChildElement("climateSeed");
+	retrieveAttributeMandatory( element, "value", _climateSeed );
 	
 	element = root->FirstChildElement("soil");	
 	parseSoilInfo(element);
 
 	element = root->FirstChildElement("dem");
-	_demFile = element->Attribute("fileName");
+	retrieveAttributeMandatory( element, "fileName", _demFile );
 
 	element = root->FirstChildElement("rainHistoricalDistribution");
-	_rainHistoricalDistribShape = atof(element->Attribute("shape"));
-	_rainHistoricalDistribScale = atof(element->Attribute("scale"));
-	_rainHistoricalDistribMean = atof(element->Attribute("mean"));
+
+	retrieveAttributeMandatory( element, "shape", _rainHistoricalDistribShape );
+	retrieveAttributeMandatory( element, "scale", _rainHistoricalDistribScale );
+	retrieveAttributeMandatory( element, "mean", _rainHistoricalDistribMean );
 
 	element = root->FirstChildElement("socialRange");
-	_socialRange = atoi( element->Attribute("value") ); 
+	retrieveAttributeMandatory( element, "value", _socialRange );
 	
 	element = root->FirstChildElement("hunterGatherers");
-	_numHG = atoi(element->Attribute("num"));
-	_homeRange = atoi( element->Attribute("homeRange") );
-	_surplusForReproductionThreshold = atoi( element->Attribute("surplusForReproductionThreshold") );
-	_surplusWanted = atoi( element->Attribute("surplusWanted") );
-	_numSectors = atoi( element->Attribute("numSectors") );
+	retrieveAttributeMandatory( element, "num", _numHG );
+	retrieveAttributeMandatory( element, "homeRange", _homeRange );
+	retrieveAttributeMandatory( element, "surplusForReproductionThreshold", _surplusForReproductionThreshold );
+	retrieveAttributeMandatory( element, "surplusWanted", _surplusWanted );
+	retrieveAttributeMandatory( element, "numSectors", _numSectors );
+	retrieveAttributeMandatory( element, "controllerType", _hunterGathererController );
+	
+	_hunterGathererController = element->Attribute("controllerType");
+
+	parseHGMDPConfig( element->FirstChildElement("controllerConfig") );
+
 
 	// MRJ: Loading agro pastoralists attributes	
 	element = root->FirstChildElement("agroPastoralists");
-	_numAP = atoi(element->Attribute("num"));
-	_maxCropHomeDistance = atoi(element->Attribute("maxCropHomeDistance"));
-
+	retrieveAttributeMandatory( element, "num", _numAP );
+	retrieveAttributeMandatory( element, "maxCropHomeDistance", _maxCropHomeDistance );
 
 	element = root->FirstChildElement("daysPerSeason");
-	_daysPerSeason = atoi( element->Attribute("value") );
+	retrieveAttributeMandatory( element, "value", _daysPerSeason );
+
 	element = root->FirstChildElement("cellResolution");
-	_cellResolution = atof( element->Attribute("value") );
+	retrieveAttributeMandatory( element, "value", _cellResolution );
 
 	element = root->FirstChildElement("massToEnergyRate" );
-	_massToEnergyRate = atof( element->Attribute("value") );
+	retrieveAttributeMandatory( element, "value", _massToEnergyRate );
 	element = root->FirstChildElement("energyToCaloriesRate" );
-	_energyToCalRate = atof( element->Attribute("value") );
+	retrieveAttributeMandatory( element, "value", _energyToCalRate );
 	
 	TiXmlNode* n = NULL;
 	while ( ( n = root->IterateChildren( n ) ) )
@@ -72,18 +170,19 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		TiXmlElement* elem = n->ToElement();
 		if ( !elem->ValueStr().compare("cellBiomass") )
 		{
-			std::string elemType = elem->Attribute("type");
+			std::string elemType;
+			retrieveAttributeMandatory( elem, "type", elemType );
 			if ( !elemType.compare("dune" ) )
 			{
-				_duneBiomass = atof( elem->Attribute("mean") );
-				_duneBiomassStdDev = atof( elem->Attribute("stddev") );
-				_duneEfficiency = atof( elem->Attribute("efficiency"));	
+				retrieveAttributeMandatory( elem, "mean", _duneBiomass );
+				retrieveAttributeMandatory( elem, "stddev", _duneBiomassStdDev );
+				retrieveAttributeMandatory( elem, "efficiency", _duneEfficiency );
 			}
 			else if ( !elemType.compare("interdune") )
 			{
-				_interduneBiomass = atof( elem->Attribute("mean") );
-				_interduneBiomassStdDev = atof( elem->Attribute("stddev"));
-				_interduneEfficiency = atof( elem->Attribute("efficiency"));
+				retrieveAttributeMandatory( elem, "mean", _interduneBiomass );
+				retrieveAttributeMandatory( elem, "stddev", _interduneBiomassStdDev );
+				retrieveAttributeMandatory( elem, "efficiency", _interduneEfficiency );
 			}
 			else
 			{
@@ -95,8 +194,9 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		}
 		else if ( !elem->ValueStr().compare( "storeRaster" ) ) 
 		{
-			std::string name = elem->Attribute( "name" );
-			std::string valueStr = elem->Attribute( "value" );
+			std::string name, valueStr;
+			retrieveAttributeMandatory( elem, "name", name );
+			retrieveAttributeMandatory( elem, "value", valueStr );
 			bool value = ( valueStr == "yes" ? true : false );
 			_storeRasters[name] = value;
 		}
@@ -110,9 +210,29 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	std::cout << "[CONFIG]: Interdune Cell: Biomass: Mass: " << _interduneBiomass << std::endl;
 	std::cout << "[CONFIG]: Interdune Cell: Biomass: Std. Dev: " << _interduneBiomassStdDev << std::endl;
 	std::cout << "[CONFIG]: Interdune Cell: Biomass: Efficiency: " << _interduneEfficiency << std::endl;
+	std::cout << "[CONFIG]: Hunter Gatherer Controller: " << _hunterGathererController << std::endl;
+	if ( _controllerConfig != NULL )
+		_controllerConfig->dump( std::cout ); 
 
 }
-  
+ 
+void GujaratConfig::parseHGMDPConfig( TiXmlElement* element )
+{
+	if ( element == NULL )
+	{
+		std::cerr << "[CONFIG]: controllerConfig element not found on configuration document" << std::endl;
+		return;
+	}
+	// Agent controller is not set to be model-based action selection
+	if ( _hunterGathererController != std::string("MDP") ) return;
+	// Element is not a controllerConfig element
+	if (  element->ValueStr().compare("controllerConfig") ) return;
+	// Not model-based controller config
+	if ( element->Attribute("type") != std::string("MDP") ) return;
+
+	_controllerConfig = new HunterGathererMDPConfig(element);
+}
+ 
 void GujaratConfig::parseSoilInfo( TiXmlElement * element )
 {    
 	// TODO use STL

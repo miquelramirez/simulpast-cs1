@@ -27,9 +27,20 @@ World * Agent::getWorld()
 	return _world;
 }
 
+const World * Agent::getWorld() const
+{
+	return _world;
+}
+
+
 void Agent::setPosition( const Point2D<int> & position )
 {
 	_position = position;
+}
+
+const Point2D<int> & Agent::getPosition() const
+{
+	return _position;
 }
 
 const Point2D<int> & Agent::getPosition()

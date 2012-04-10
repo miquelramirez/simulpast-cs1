@@ -53,11 +53,15 @@ public:
 		return *this;
 	}
 
-	bool operator==( const Point2D<Type> & point )
+	bool operator==( const Point2D<Type> & point ) const
 	{
 		return isEqual(point);
 	}
 	
+	bool operator!=( const Point2D<Type>& point ) const
+	{
+		return !isEqual(point);
+	}
 
 	//! Sum coordinates of the param to the coordinates of the caller object.
 	Point2D<Type> & operator+=( const Point2D<Type> & point)
@@ -102,6 +106,11 @@ public:
 	{
 		return Point2D<Type>(_x/point._x,_y/point._y);
 	}	
+
+	bool	operator<( const Point2D<Type>& point ) const
+	{
+		return (_x < point._x) || ((_x == point._x) && ( _y < point._y ));
+	}
 	
 	Type dot( const Point2D<Type> & point ) const
 	{

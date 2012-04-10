@@ -15,13 +15,19 @@ class MoveHomeAction : public Action
 	Engine::Point2D<int>	_newHomeLoc;
 
 public:
-	MoveHomeAction( Engine::Point2D<int>& p );
+	MoveHomeAction( const Engine::Point2D<int>& p );
 	virtual ~MoveHomeAction();
 	// TODO templatitzar classe per agent
 	void execute( GujaratAgent & agent );
-	int getTimeNeeded();
+	int getTimeNeeded() const;
 
 	static void	generatePossibleActions( GujaratAgent& agent, std::vector< MoveHomeAction* >& actions );
+	static void	generatePossibleActions( const GujaratAgent& agent,
+						const Engine::Point2D<int>& agentPos,
+						std::vector< MoveHomeAction* >& actions );
+
+	virtual void execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
+	virtual	Action* copy() const;
 };
 	
 } // namespace Gujarat

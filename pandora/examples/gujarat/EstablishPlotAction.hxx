@@ -18,7 +18,7 @@ public:
 	virtual ~EstablishPlotAction();
 
 	void execute( GujaratAgent & agent );
-	int getTimeNeeded();
+	int getTimeNeeded() const;
 
 	static void generatePossibleActions( GujaratAgent& agent,
 	std::vector< EstablishPlotAction* >& actions );

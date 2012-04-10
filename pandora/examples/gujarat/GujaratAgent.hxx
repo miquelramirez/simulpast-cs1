@@ -10,6 +10,7 @@
 namespace Gujarat
 {
 class Action;
+class AgentController;
 
 class GujaratAgent : public Engine::Agent
 {
@@ -49,7 +50,12 @@ protected:
 
 	int _homeMobilityRange; // MpiAttribute
 
+	float _massToCaloriesRate;
+
 	std::list<Action*> _actions;
+
+	AgentController*	_controller;
+
 	Engine::Point2D<int> getNearLocation( int range );
 
 public:
@@ -63,10 +69,21 @@ public:
 	int	getSocialRange() const { return _socialRange; }
 	void	setAvailableTime( int daysPerSeason );
 	void	setHomeMobilityRange( int v ) { _homeMobilityRange = v; }
-	int	getHomeMobilityRange( ) { return _homeMobilityRange; } 
+	int	getHomeMobilityRange( ) const { return _homeMobilityRange; } 
 	
+	void	setMassToCaloriesRate( float v ) { _massToCaloriesRate = v; }
+
 	void	initializePosition( Engine::Point2D<int> randomPos );
-	int	getNrAvailableAdults();
+	int	getNrAvailableAdults() const;
+	int	getOnHandResources() const { return _collectedResources; }
+	int	computeConsumedResources( int timeSteps ) const;
+	double	computeMaxForagingDistance( ) const;
+	int	computeEffectiveBiomassForaged( int nominal ) const;
+	int	convertBiomassToCalories( int biomass ) const;
+
+	void			setController( AgentController* controller ); 
+	AgentController* 	activeController() { return _controller; }
+	
 };
 
 } // namespace Gujarat

@@ -6,6 +6,8 @@
 #include "Exceptions.hxx"
 #include "Statistics.hxx"
 #include "GujaratConfig.hxx"
+#include "HunterGathererProgrammedController.hxx"
+#include "HunterGathererMDPController.hxx"
 #include <limits>
 
 namespace Gujarat
@@ -93,7 +95,18 @@ void GujaratWorld::createAgents()
 			agent->setHomeRange( _config._homeRange );
 			agent->setSurplusForReproductionThreshold( _config._surplusForReproductionThreshold );
 			agent->setSurplusWanted( _config._surplusWanted );
+			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );
 			agent->setNumSectors( _config._numSectors );
+
+			if ( _config._hunterGathererController == "MDP" )
+			{
+				agent->setController( new HunterGathererMDPController( agent, *_config._controllerConfig ) );
+			}
+			else
+			{
+				agent->setController( new HunterGathererProgrammedController( agent ) );
+			}
+			
 			agent->initializePosition(getRandomPosition());
 			agent->createSectorsMask();
 			std::cout << _simulation.getId() << " new HunterGathrer: " << agent << std::endl;
@@ -111,6 +124,7 @@ void GujaratWorld::createAgents()
 			agent->setSocialRange( _config._socialRange );
 			agent->setHomeMobilityRange( _config._socialRange );
 			agent->setMaxCropHomeDistance( _config._maxCropHomeDistance );
+			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );
 			addAgent(agent); 
 			agent->initializePosition(getRandomPosition());
 			std::cout << _simulation.getId() << " new AgroPastoralist: " << agent << std::endl;
@@ -353,12 +367,6 @@ void GujaratWorld::stepEnvironment()
 
 	//updateMoisture();
 	//updateSoilCondition();
-}
-
-int  GujaratWorld::convertToCalories( int mass )
-{
-	float fMass = (float)mass;
-	return fMass*_config._massToEnergyRate*_config._energyToCalRate;
 }
 
 const Climate & GujaratWorld::getClimate() const

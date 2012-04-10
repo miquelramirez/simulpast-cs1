@@ -3,13 +3,11 @@
 #include "GujaratWorld.hxx"
 #include "Exceptions.hxx"
 //#include "Action.hxx"
-#include "MoveHomeAction.hxx"
-#include "GatherAction.hxx"
-#include "HuntAction.hxx"
-#include "ForageAction.hxx"
 #include "Sector.hxx"
 #include "Point3D.hxx"
 #include <cmath>
+#include <cassert>
+#include "AgentController.hxx"
 
 namespace Gujarat
 {
@@ -102,10 +100,48 @@ void HunterGatherer::createSectorsMask()
 	}
 
 	_sectors.resize( _numSectors );
+	assert( _world != NULL );
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
-		_sectors[k] = new Sector( *_world );
+		_sectors[k] = new Sector( _world );
 	}
+}
+
+void HunterGatherer::updateKnowledge( 	const Engine::Point2D<int>& agentPos,
+					const Engine::Raster& dataRaster, 
+					std::vector<Sector*>& sectors ) const
+{
+	for ( unsigned k = 0; k < _numSectors; k++ )
+	{
+		sectors.push_back( new Sector() );
+	}
+
+	for ( int x=-_homeRange; x<=_homeRange; x++ )
+	{
+		for ( int y=-_homeRange; y<=_homeRange; y++ )
+		{
+			int indexSector = _sectorsMask[x+_homeRange][y+_homeRange];
+			if ( indexSector == - 1 )
+			{
+				continue;
+			}
+
+			Engine::Point2D<int> p;
+			p._x = agentPos._x + x;
+			p._y = agentPos._y + y;
+			if ( !_world->getBoundaries().isInside(p) )
+			{
+				continue;
+			}
+			sectors[indexSector]->addCell( p );
+		}
+	}
+
+	for ( unsigned k = 0; k < _numSectors; k++ )
+	{
+		sectors[k]->updateFeatures(dataRaster);
+	}
+
 }
 
 void HunterGatherer::updateKnowledge()
@@ -158,37 +194,7 @@ void HunterGatherer::evaluateSeasonalActions()
 
 void HunterGatherer::evaluateIntraSeasonalActions()
 {
-	// TODO: which order must follow the actions? random?
-	// now random
-
-	// action pack : move Home, hunting, gathering
-	int dice = _world->getStatistics().getUniformDistValue(1,10);
-
-	if ( dice >= 8 ) // p=0.2 agent chooses to move its home
-	{
-		std::cout << "DEBUG: MoveHome action selected" << std::endl;
-		std::vector< MoveHomeAction* > possibleActions;
-		MoveHomeAction::generatePossibleActions( *this, possibleActions );
-
-		// MRJ: Select Move Home action on a random basis
-		dice = _world->getStatistics().getUniformDistValue( 0, possibleActions.size() - 1 );
-
-		MoveHomeAction* selectedAction = possibleActions[dice];
-		possibleActions[dice] = NULL;
-		_actions.push_back( selectedAction );
-		for ( unsigned i = 0; i < possibleActions.size(); i++ )
-			if ( possibleActions[i] != NULL )
-				delete possibleActions[i];
-		return;
-	}
-
-	do
-	{
-		dice = _world->getStatistics().getUniformDistValue( 0, _sectors.size()-1 );
-	} while ( _sectors[dice]->isEmpty() );
-
-	_actions.push_back( new ForageAction( _sectors[dice] ) );
-
+	_actions.push_back( activeController()->selectAction() );
 }
 
 void HunterGatherer::serializeAdditionalAttributes()
@@ -203,6 +209,8 @@ GujaratAgent * HunterGatherer::createNewAgent()
 	oss << "HunterGatherer_" << world->getId() << "-" << world->getNewKey();
 	
 	HunterGatherer * agent = new HunterGatherer(oss.str());
+	// MRJ: Nobody setting the world pointer to newly created agents? How so?
+	agent->setWorld( _world );
 	agent->setAvailableTime( _availableTime );
 	agent->setSocialRange( _socialRange );
 	agent->setHomeMobilityRange( _homeMobilityRange );

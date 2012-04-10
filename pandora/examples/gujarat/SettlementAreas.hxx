@@ -11,24 +11,12 @@ namespace Gujarat
 {
 
 	class GujaratWorld;
-	
-	class compareSettlementAreas
-	{
-		/* TODO
-		Gujarat::GujaratWorld * _world;	
-	
-		bool operator()(const int& idArea1, const int& idArea2) const
-		{
-			return _world->getSettlementAreaScore(idArea1) < _world->getSettlementAreaScore(idArea2);
-		}
-		*/
-	};	
-	
+		
 	class SettlementAreas
 	{
 
-		std::vector< Engine::Rectangle<int> > _areas;
-		std::vector<int> _scoreAreas;
+		std::vector< Engine::Rectangle<int> > 	_areas;
+		std::vector<int> 			_scoreAreas;
 
 	protected: 
 		void updateArea(Engine::Point2D<int> & newPoint, Engine::Rectangle<int> & r);
@@ -42,11 +30,11 @@ namespace Gujarat
 		void generateAreas(GujaratWorld &w);
 		const std::vector< Engine::Rectangle<int> >& getAreas() const { return _areas; } 
 		const Engine::Rectangle<int> & getAreaById(int id) const { return _areas[id]; }
-		const int getScoreByAreaId(int id) const { return _scoreAreas[id]; } 
-  
+		int getScoreByAreaId(int id) const { return _scoreAreas[id]; } 
+ 
 		int ComputeAreaScore(const Engine::Rectangle<int> & newArea, GujaratWorld &w);
   
-		void intersectionFilter(Engine::Rectangle<int> & r, std::vector<int> & candidates);
+		void intersectionFilter(Engine::Rectangle<int> & r, std::vector<int> & candidates) const;
 		//!! Returns a list of Area/Rectngle identifiers. The corresponding Areas have non empty
 		//!! intersection with the Rectangle 'r'.
 		
@@ -62,7 +50,30 @@ namespace Gujarat
 		}
   
 	};
-
+	
+	class compareSettlementAreas
+	{	
+		const SettlementAreas * _settlementAreas;	
+	public:
+	
+		compareSettlementAreas( const SettlementAreas* areas )
+		{
+			_settlementAreas = areas;
+		}
+	
+		bool operator()(const int& idArea1, const int& idArea2) const
+		{
+			return 	_settlementAreas->getScoreByAreaId(idArea1) 
+					< 
+					_settlementAreas->getScoreByAreaId(idArea2);
+			//return idArea1 < idArea2;
+		}
+		
+		//static setWorld(Gujarat::GujaratWorld *w) { _world = w; }
+	};	
+	
+	
+	
 }//namespace
 
 #endif

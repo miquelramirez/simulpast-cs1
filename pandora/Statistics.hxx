@@ -21,7 +21,7 @@ class Statistics
 
 	// general random indexs
 	boost::uniform_int<> _randomNumbers;
-	boost::variate_generator< RandomEngine, boost::uniform_int<> > _nextRandomNumber;
+	mutable boost::variate_generator< RandomEngine, boost::uniform_int<> > _nextRandomNumber;
 
 	// TODO fix expo and normal distributions!
 	std::vector<float> _exponentialDistribution;
@@ -31,11 +31,11 @@ class Statistics
 	void generateNormalDistribution();
 public:
 	Statistics();
-	float getExponentialDistValue( float min, float max );
-	float getNormalDistValue( float min, float max );
+	float getExponentialDistValue( float min, float max ) const;
+	float getNormalDistValue( float min, float max ) const;
 
 	// uniform dist does not need to generate numbers, as randomNumbers itself is a 
-	int getUniformDistValue( int min, int max );
+	int getUniformDistValue( int min, int max ) const;
 };
 
 } // namespace Engine

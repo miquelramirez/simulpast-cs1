@@ -42,6 +42,7 @@ public:
 	int  getHomeRange() const { return _homeRange; }
 	void setNumSectors( int v ) { _numSectors = v; }
 	int  getNumSectors() const { return _numSectors; }
+	std::vector<Sector *>&	getSectors() { return _sectors; }
 
 	void setSurplusForReproductionThreshold( int v ) { _surplusForReproductionThreshold = v; }
 	void setSurplusWanted( int v ) { _surplusWanted = v; }
@@ -51,6 +52,11 @@ public:
 
 	void		updateResources( int v ) { _collectedResources += v; }
 	void 		createSectorsMask();
+
+	void		updateKnowledge( 	const Engine::Point2D<int>& agentPos,
+						const Engine::Raster& dataRaster,
+						std::vector< Sector* >& sectors ) const;
+
 	
 	// MPI Script Generated code
 	HunterGatherer( void * );

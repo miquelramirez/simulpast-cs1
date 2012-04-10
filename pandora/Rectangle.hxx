@@ -8,77 +8,11 @@
 #include <iostream>
 #include <cstdlib>
 
+#include "Interval.hxx" 
+
 namespace Engine
 {
 
-template <typename Type> class Interval
-{
-public:
-	
-	Type _min;
-	Type _max;
-	
-	Interval() : _min(0), _max(0)
-	{
-	}
-	
-	Interval(Type min, Type max) : _min(min), _max(max)
-	{
-	}	
-	
-	inline bool isInside(Type x)
-	{
-		return (x>=_min) && (x<=_max);
-	}
-	
-	bool intersection(Interval other, Interval & result)
-	{			
-		Type left;
-		if(_min >= other._min)
-		{
-			left = _min;
-		}
-		else
-		{
-			left = other._min;
-		}
-		
-		if(!(isInside(left) && other.isInside(left)))
-		{
-			return false;
-		}
-		
-		Type right;
-		if(_max <= other._max)
-		{
-			right = _max;
-		}
-		else
-		{
-			right = other._max;
-		}
-		
-		if(!(isInside(right) && other.isInside(right)))
-		{
-			return false;
-		}
-	
-	
-		result._min = left;
-		result._max = right;
-	
-	return true;	
-	}
-	
-	
-	friend std::ostream & operator<<( std::ostream & stream, Interval<Type> & intv )
-	{
-		return stream << "[" << intv._min << ".." << intv._max << "]";
-	}
-	
-};
-	
-	
 // 2D Rectangle
 template <typename Type> class Rectangle
 {
@@ -123,7 +57,7 @@ public:
 		_size._x = iOX._max - iOX._min +1;
 		_size._y = iOY._max - iOY._min +1;		
 		
-		std::cout << "intev2Rect:"<<  iOX._min << "," <<  iOY._min << "|" <<  iOX._max << "," <<  iOY._max << std::endl;
+		//std::cout << "intev2Rect:"<<  iOX._min << "," <<  iOY._min << "|" <<  iOX._max << "," <<  iOY._max << std::endl;
 	}	
 	
 	bool intersection(const Rectangle<Type> other, Rectangle<Type> & result)
@@ -141,7 +75,7 @@ public:
 			std::cout << "NEGATIU" << std::endl;
 		}
 		
-std::cout << R1_OX << R1_OY	<< "&&" <<R2_OX << R2_OY << "?" << std::endl;
+//std::cout << R1_OX << R1_OY	<< "&&" <<R2_OX << R2_OY << "?" << std::endl;
 		
 		Interval<Type> Intersection_OX;
 		if (! R1_OX.intersection(R2_OX,Intersection_OX) )
@@ -156,7 +90,7 @@ std::cout << R1_OX << R1_OY	<< "&&" <<R2_OX << R2_OY << "?" << std::endl;
 			return false;
 		}
 		
-std::cout << Intersection_OX << Intersection_OY << std::endl;
+//std::cout << Intersection_OX << Intersection_OY << std::endl;
 
 		result.intervals2Rectangle(Intersection_OX,Intersection_OY);
 		
