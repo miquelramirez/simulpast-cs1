@@ -63,5 +63,5 @@ env['namespaces'] = namespaceAgents
 env['parents'] = parents 
 env.GenerateMPICode( target=mpiAgentsSrc, source=agentsSrc)
 srcFiles += mpiAgentsSrc
-env.Program('gujarat', srcFiles, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs)
+env.Program(nameProgram, srcFiles, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs)
 
