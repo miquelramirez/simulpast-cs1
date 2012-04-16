@@ -40,7 +40,10 @@ public:
 	The param "point" is considered equal if it falls in the rectangle ((_x-delta,_y-delta)..(_x+delta,_y+delta)).
 	Assuming ((a,b)..(c,d)) a rectangle with top left corner (a,b) and bottom right corner (c,d).
 	*/
-	bool isEqual( const Point2D<Type> & point, const Type & delta = 0 ) const
+	// 
+	bool isEqual( const Point2D<Type> & point, const double & delta = 0.0001 ) const
+	// if we use epsilon the evaluation will fail for equal double numbers
+	//bool isEqual( const Point2D<Type> & point, const double & delta = std::numeric_limits<double>::epsilon() ) const
 	{
 		return distance(point)<=delta;
 	}
@@ -120,10 +123,8 @@ public:
 	//! Euclidean Distance between points.
 	double distance( const Point2D<Type> & point) const
 	{
-		//Type valueX = abs(_x-point._x);
-		Type valueX = (_x-point._x);
-		//Type valueY = abs(_y-point._y);
-		Type valueY = (_y-point._y);
+		double valueX = _x-point._x;
+		double valueY = _y-point._y;
 		return sqrt(valueX*valueX + valueY*valueY);
 	}
 };
