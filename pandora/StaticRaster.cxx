@@ -65,7 +65,7 @@ void StaticRaster::setInitValue( Point2D<int> position, int value )
 	if(value>_maxValue)
 	{
 		std::stringstream oss;
-		oss << "Raster::setValue - value: " << value << " bigger than max value: " << _maxValue << " at position: " << position;
+		oss << "Raster::setInitValue - value: " << value << " bigger than max value: " << _maxValue << " at position: " << position;
 		throw Exception(oss.str());
 
 		return;
@@ -73,7 +73,7 @@ void StaticRaster::setInitValue( Point2D<int> position, int value )
 	if(position._x<0 || position._x>=_values.size())
 	{
 		std::stringstream oss;
-		oss << "Raster::setValue - " << position << " x out of bounds: " << _values.size();
+		oss << "Raster::setInitValue - " << position << " x out of bounds: " << _values.size();
 		throw Exception(oss.str());
 
 		return;
@@ -81,7 +81,7 @@ void StaticRaster::setInitValue( Point2D<int> position, int value )
 	if(position._y<0 || position._y>=_values[position._x].size())
 	{
 		std::stringstream oss;
-		oss << "Raster::setValue - " << position << " y out of bounds: " << _values.size() << "/" << _values[position._x].size();
+		oss << "Raster::setInitValue - " << position << " y out of bounds: " << _values.size() << "/" << _values[position._x].size();
 		throw Exception(oss.str());
 		return;
 	}
