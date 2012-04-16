@@ -58,7 +58,6 @@ public:
 	bool exists();
 	void setExists(bool exists);
 
-	const Point2D<int> & getPosition();
 	const Point2D<int> & getPosition() const;
 	void setPosition( const Point2D<int> & position );
 
@@ -68,6 +67,7 @@ public:
 	void setWorld( World * world );
 	World * getWorld();
 	const World * getWorld() const;
+
 	friend std::ostream & operator<<( std::ostream & stream, Agent * agent );
 
 	// TODO fix? when an agent is modified we need to alert the original in case of being an overlap copy
