@@ -37,6 +37,10 @@ World::~World()
 	}
 }
 
+void World::initialize()
+{
+	init(0,0);
+}
 
 void World::init( int argc, char *argv[] )
 {
@@ -574,7 +578,7 @@ int World::getIdFromPosition( const Point2D<int> & position )
 	return nodePosition._y*sqrt(_simulation.getNumTasks())+nodePosition._x;
 }
 
-Point2D<int> World::getPositionFromId( const int & id ) const
+Point2D<int> World::getPositionFromId( const int & id )
 {
 	int worldsPerRow = sqrt(_simulation.getNumTasks());	
 	Point2D<int> worldPos(id%worldsPerRow, id/worldsPerRow);
@@ -950,7 +954,7 @@ World::AgentsList World::getAgentsNear( const Position<int> & position, const in
 	return agents;
 }
 */
-const int & World::getCurrentStep() const
+int World::getCurrentStep() const
 {
 	return _step;
 }
@@ -1051,7 +1055,6 @@ const Statistics & World::getStatistics() const
 	return _statistics;
 }
 
-
 Simulation & World::getSimulation()
 {
 	return _simulation;
@@ -1070,9 +1073,9 @@ StaticRaster & World::getStaticRaster( const std::string & key )
 	return it->second;
 }
 
-const Raster & World::getDynamicRaster( const std::string & key ) const
+Raster & World::getDynamicRaster( const std::string & key )
 {
-	RastersMap::const_iterator it = _dynamicRasters.find(key);
+	RastersMap::iterator it = _dynamicRasters.find(key);
 	if(it==_dynamicRasters.end())		
 	{
 		// the key does not exists	
@@ -1083,8 +1086,7 @@ const Raster & World::getDynamicRaster( const std::string & key ) const
 	return it->second;
 }
 
-
-Raster & World::getDynamicRaster( const std::string & key )
+const Raster & World::getDynamicRaster( const std::string & key ) const
 {
 	RastersMap::iterator it = _dynamicRasters.find(key);
 	if(it==_dynamicRasters.end())		
@@ -1111,29 +1113,27 @@ StaticRaster & World::getRasterTmp( const std::string & key )
 	}
 	// the key does not exists	
 	std::stringstream oss;
-	oss << "World::getDynamicRasterTmp - searching for unregistered raster: " << key;
+	oss << "World::getRasterTmp - searching for unregistered raster: " << key;
 	throw Exception(oss.str());
 }
 
 const StaticRaster & World::getRasterTmp( const std::string & key ) const
 {
-	RastersMap::const_iterator it = _dynamicRasters.find(key);
+	RastersMap::iterator it = _dynamicRasters.find(key);
 	if(it!=_dynamicRasters.end())		
 	{
 		return it->second;
 	}
-	StaticRastersMap::const_iterator itS = _staticRasters.find(key);
+	StaticRastersMap::iterator itS = _staticRasters.find(key);
 	if(itS!=_staticRasters.end())
 	{
 		return itS->second;
 	}
 	// the key does not exists	
 	std::stringstream oss;
-	oss << "World::getDynamicRasterTmp - searching for unregistered raster: " << key;
+	oss << "World::getRasterTmp- searching for unregistered raster: " << key;
 	throw Exception(oss.str());
 }
-
-
 
 void World::setValue( const std::string & key, const Point2D<int> & position, int value )
 {
@@ -1337,7 +1337,7 @@ Rectangle<int> World::getExternalOverlap( const int & id) const
 	return result;
 }
 
-Rectangle<int> World::getOverlap( const int & id, const int & sectionIndex) const
+Rectangle<int> World::getOverlap( const int & id, const int & sectionIndex)
 {
 	Point2D<int> diff = getPositionFromId(id)-_worldPos;
 	// left
@@ -1687,7 +1687,7 @@ bool World::getSearchAgents()
 }
 
 
-int World::countNeighbours( Agent * target, const float & radius, const std::string & type )
+int World::countNeighbours( Agent * target, const double & radius, const std::string & type )
 {
 
 	int numAgents = for_each(_agents.begin(), _agents.end(), aggregatorCount<Engine::Agent>(radius,*target, type))._count;
@@ -1695,7 +1695,7 @@ int World::countNeighbours( Agent * target, const float & radius, const std::str
 	return numAgents+numOverlapAgents;
 }
 
-World::AgentsList World::getNeighbours( Agent * target, const float & radius, const std::string & type )
+World::AgentsList World::getNeighbours( Agent * target, const double & radius, const std::string & type )
 {
 	AgentsList agentsList = for_each(_agents.begin(), _agents.end(), aggregatorGet<Engine::Agent>(radius,*target, type))._neighbors;
 	AgentsList overlapAgentsList =  for_each(_overlapAgents.begin(), _overlapAgents.end(), aggregatorGet<Engine::Agent>(radius,*target, type))._neighbors;
