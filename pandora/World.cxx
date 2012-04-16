@@ -578,7 +578,7 @@ int World::getIdFromPosition( const Point2D<int> & position )
 	return nodePosition._y*sqrt(_simulation.getNumTasks())+nodePosition._x;
 }
 
-Point2D<int> World::getPositionFromId( const int & id )
+Point2D<int> World::getPositionFromId( const int & id ) const
 {
 	int worldsPerRow = sqrt(_simulation.getNumTasks());	
 	Point2D<int> worldPos(id%worldsPerRow, id/worldsPerRow);
@@ -1086,10 +1086,11 @@ Raster & World::getDynamicRaster( const std::string & key )
 	return it->second;
 }
 
+/*
 const Raster & World::getDynamicRaster( const std::string & key ) const
 {
-	RastersMap::iterator it = _dynamicRasters.find(key);
-	if(it==_dynamicRasters.end())		
+	RastersMap::const_iterator it = _dynamicRasters.find(key);
+	if(it==_dynamicRasters.end())
 	{
 		// the key does not exists	
 		std::stringstream oss;
@@ -1097,12 +1098,12 @@ const Raster & World::getDynamicRaster( const std::string & key ) const
 		throw Exception(oss.str());
 	}
 	return it->second;
-}
+}*/
 
 StaticRaster & World::getRasterTmp( const std::string & key )
 {
 	RastersMap::iterator it = _dynamicRasters.find(key);
-	if(it!=_dynamicRasters.end())		
+	if(it!=_dynamicRasters.end())
 	{
 		return it->second;
 	}
@@ -1119,12 +1120,12 @@ StaticRaster & World::getRasterTmp( const std::string & key )
 
 const StaticRaster & World::getRasterTmp( const std::string & key ) const
 {
-	RastersMap::iterator it = _dynamicRasters.find(key);
+	RastersMap::const_iterator it = _dynamicRasters.find(key);
 	if(it!=_dynamicRasters.end())		
 	{
 		return it->second;
 	}
-	StaticRastersMap::iterator itS = _staticRasters.find(key);
+	StaticRastersMap::const_iterator itS = _staticRasters.find(key);
 	if(itS!=_staticRasters.end())
 	{
 		return itS->second;
@@ -1337,7 +1338,7 @@ Rectangle<int> World::getExternalOverlap( const int & id) const
 	return result;
 }
 
-Rectangle<int> World::getOverlap( const int & id, const int & sectionIndex)
+Rectangle<int> World::getOverlap( const int & id, const int & sectionIndex) const	
 {
 	Point2D<int> diff = getPositionFromId(id)-_worldPos;
 	// left

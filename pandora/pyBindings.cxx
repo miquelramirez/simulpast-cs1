@@ -10,6 +10,73 @@
 
 typedef Engine::Point2D<int> Point2DInt;
 
+class StaticRasterWrap : public Engine::StaticRaster, public boost::python::wrapper<Engine::StaticRaster>
+{
+public:
+	void resize( const Point2DInt & size )
+	{
+		if (boost::python::override resize = this->get_override("resize")(size))			
+		{
+			resize( size );
+			return;
+		}
+		Engine::StaticRaster::resize(size);
+	}
+
+	void default_resize( const Point2DInt & size )
+	{
+		Engine::StaticRaster::resize(size);
+	}
+	
+	const int & getValue( Point2DInt position ) const
+	{
+		if (boost::python::override getValue = this->get_override("getValue")(position))
+		{
+			return getValue(position);
+		}
+		return Engine::StaticRaster::getValue(position);
+	}
+
+	const int & default_getValue(Point2DInt position) const
+	{
+		return Engine::StaticRaster::getValue(position);
+	}
+};
+
+class RasterWrap : public Engine::Raster, public boost::python::wrapper<Engine::Raster>
+{
+public:
+	void resize( const Point2DInt & size )
+	{
+		if (boost::python::override resize = this->get_override("resize")(size))			
+		{
+			resize( size );
+			return;
+		}
+		Engine::Raster::resize(size);
+	}
+
+	void default_resize( const Point2DInt & size )
+	{
+		Engine::Raster::resize(size);
+	}
+	
+	const int & getValue( Point2DInt position ) const
+	{
+		if (boost::python::override getValue = this->get_override("getValue")(position))
+		{
+			return getValue(position);
+		}
+		return Engine::Raster::getValue(position);
+	}
+
+	const int & default_getValue(Point2DInt position) const
+	{
+		return Engine::Raster::getValue(position);
+	}
+
+};
+
 class AgentWrap : public Engine::Agent, public boost::python::wrapper<Engine::Agent>
 {
 public:
@@ -72,15 +139,18 @@ BOOST_PYTHON_MODULE(libpyPandora)
 		.def_readwrite("_y", &Point2DInt::_y) 
 	;	
 	
-	boost::python::class_< Engine::StaticRaster >("StaticRasterStub")
-		.def("resize", &Engine::StaticRaster::resize) 
+	boost::python::class_< StaticRasterWrap, boost::noncopyable >("StaticRasterStub")
+		.def("resize", &Engine::StaticRaster::resize, &StaticRasterWrap::default_resize) 
 		.def("getSize", &Engine::StaticRaster::getSize)
-		.def("getValue", &Engine::Raster::getValue, boost::python::return_value_policy<boost::python::reference_existing_object>())
+		.def("getValue", &Engine::StaticRaster::getValue, &StaticRasterWrap::default_getValue, boost::python::return_value_policy<boost::python::copy_const_reference>())
 	;
-	
-	boost::python::class_< Engine::Raster >("RasterStub")
+
+	boost::python::class_< RasterWrap, boost::noncopyable >("RasterStub")
 		.def("setInitValues", &Engine::Raster::setInitValues) 
-		.def("setValue", &Engine::Raster::setValue)
+		.def("setValue", &Engine::Raster::setValue)	
+		.def("resize", &Engine::Raster::resize, &RasterWrap::default_resize) 
+		.def("getSize", &Engine::Raster::getSize)
+		.def("getValue", &Engine::Raster::getValue, &RasterWrap::default_getValue, boost::python::return_value_policy<boost::python::copy_const_reference>())
 	;
 
 	boost::python::class_< Engine::Simulation >("SimulationStub", boost::python::init< const int &, const int & >() )
