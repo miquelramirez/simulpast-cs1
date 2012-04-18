@@ -2,6 +2,7 @@
 \usepackage[utf8x]{inputenc}
 \usepackage{amsmath,amsthm,amssymb}
 \usepackage[pdftex,backref=page,hyperfigures,breaklinks,colorlinks]{hyperref}
+\usepackage{graphicx}
 
 \newcommand{\mdp}{\textsc{Mdp}}
 \newcommand{\mdps}{\textsc{Mdp}s}
@@ -55,6 +56,16 @@ on \texttt{libmdp}.
 Finally, a class encapsulating the parameters which can be tweaked from the simulation \textsc{Xml} configuration
 document, has been introduced. This allows to put some order into the the sorry mess that the \textsc{GujaratConfig}
 class is becoming as we progress.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.65,keepaspectratio,angle=90]{static-view.pdf}
+\label{static-view}
+\caption{Overview of the integration between the Gujarat simulation and \texttt{libmdp}.}
+\end{figure}
+
+A general overview of the relationships and interaction of the new components between them and with already existing
+components such as \textsc{GujaratAgent} or \textsc{GujaratWorld} is depicted in Figure~\ref{static-view}.
 
 \subsection{MDP Configuration}
 
