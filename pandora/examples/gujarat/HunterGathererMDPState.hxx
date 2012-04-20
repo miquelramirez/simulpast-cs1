@@ -37,7 +37,7 @@ public:
 	void					increaseTimeIndex() { _timeIndex++; }
 	unsigned				getTimeIndex() const { return _timeIndex; }
 	int					getOnHandResources() const { return _onHandResources; }
-	void					addResources( int amt ) { _onHandResources = _onHandResources + amt > 100 ? 100 : _onHandResources + amt; }
+	void					addResources( int amt ) { _onHandResources = _onHandResources + amt; }
 	void					decreaseResources( int amt ) { _onHandResources = _onHandResources - amt < 0 ? 0 : _onHandResources - amt; }
 	void					setLocation( Engine::Point2D<int> newLoc ) { _mapLocation = newLoc; }
 	const Engine::Point2D<int>&		getLocation() const { return _mapLocation; }
