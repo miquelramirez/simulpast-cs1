@@ -8,15 +8,17 @@ HunterGathererMDPState::HunterGathererMDPState()
 {
 }
 
-HunterGathererMDPState::HunterGathererMDPState(Engine::Point2D<int> loc, int initResources, const Engine::Raster& resourcesRaster)
-	: _timeIndex(0), _mapLocation( loc ), _onHandResources( initResources ), _resources( resourcesRaster ) 
+HunterGathererMDPState::HunterGathererMDPState(Engine::Point2D<int> loc, int initResources, 
+	const Engine::Raster& resourcesRaster, int divider )
+	: _timeIndex(0), _mapLocation( loc ), _onHandResources( initResources/divider ), _resources( resourcesRaster ),
+	_resourcesDivider( divider )
 {
 	computeHash();
 }
 
 HunterGathererMDPState::HunterGathererMDPState( const HunterGathererMDPState& s )
 	: _timeIndex( s._timeIndex ), _mapLocation( s._mapLocation ), _onHandResources( s._onHandResources ),
-	_resources( s._resources )
+	_resources( s._resources ), _resourcesDivider( s._resourcesDivider )
 {
 	computeHash();
 	
@@ -32,7 +34,8 @@ const HunterGathererMDPState& HunterGathererMDPState::operator=( const HunterGat
 	_mapLocation = s._mapLocation;
 	_onHandResources = s._onHandResources;
 	_resources = s._resources;
-	
+	_resourcesDivider = s._resourcesDivider;	
+
 	computeHash();
 	
 	for ( unsigned k = 0; k < s._availableActions.size(); k++ )
@@ -49,6 +52,7 @@ void	HunterGathererMDPState::initializeSuccessor( HunterGathererMDPState& s ) co
 	s._mapLocation = _mapLocation;
 	s._onHandResources = _onHandResources;
 	s._resources = _resources;
+	s._resourcesDivider = _resourcesDivider;
 }
 
 HunterGathererMDPState::~HunterGathererMDPState()

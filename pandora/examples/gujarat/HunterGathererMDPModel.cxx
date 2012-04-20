@@ -37,7 +37,8 @@ void	HunterGathererMDPModel::reset()
 	// Build initial state from current state in the simulation
 	_initial = new HunterGathererMDPState(	agentRef().getPosition(),
 						agentRef().getOnHandResources(),
-						agentRef().getWorld()->getDynamicRaster( "resources" ) );
+						agentRef().getWorld()->getDynamicRaster( "resources" ),
+						agentRef().computeConsumedResources(1) );
 	makeActionsForState( *_initial );
 	std::cout << "Initial state: " << *_initial << std::endl;	
 }
@@ -66,7 +67,8 @@ bool HunterGathererMDPModel::applicable( const HunterGathererMDPState& s,
 float HunterGathererMDPModel::cost( const HunterGathererMDPState& s,
 					action_t a ) const
 {
-	float rewardSignal = (2000.0f * (float)getHorizon() ) - (float)s.getOnHandResources();
+	float rewardSignal = ((float)getHorizon() ) - (float)s.getOnHandResources();
+	rewardSignal += s.availableActions(a)->getTimeNeeded();
 	return rewardSignal;
 }
 
@@ -85,7 +87,8 @@ void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s,
 
 void	HunterGathererMDPModel::applyFrameEffects( const HunterGathererMDPState& s,  HunterGathererMDPState& sp ) const
 {
-	sp.decreaseResources( agentRef().computeConsumedResources(1) );
+	sp.consume();
+	sp.spoilage();
 	sp.increaseTimeIndex();	
 }
 
