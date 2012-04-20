@@ -47,7 +47,9 @@ void	ForageAction::execute( GujaratAgent& a )
 
 	// 3. execut walk
 	int    amountCollected = doWalk( nearest, maxDistAgentWalk, agent );
-	agent.updateResources( amountCollected );
+	agent.updateResources( agent.convertBiomassToCalories(amountCollected) );
+	std::cout << "[DEBUG][t=" << a.getWorld()->getCurrentTimeStep() << "]:";
+	std::cout << "Agent " << a.getId() << " collects " << amountCollected << "grs of biomass, obtaining " << agent.convertBiomassToCalories(amountCollected) << "cal" << std::endl;
 }
 
 void	ForageAction::selectBestNearestCell( 	const Engine::Point2D<int>& n,
@@ -94,7 +96,7 @@ void	ForageAction::doWalk( const GujaratAgent& agent, const Engine::Point2D<int>
 		n = best;
 		
 		int amtCollected = agent.computeEffectiveBiomassForaged( bestScore );
-		collected += agent.convertBiomassToCalories(amtCollected);
+		collected += amtCollected;
 
 		// 4. update cell resources & amount collected
 		int prevValue = r.getValue(n); 
@@ -127,9 +129,8 @@ int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, GujaratAgent
 		int amtCollected = agent.computeEffectiveBiomassForaged( bestScore );
 		int prevActivity = agent.getWorld()->getValue( "forageActivity", n );
 		agent.getWorld()->setValue( "forageActivity", n, prevActivity + 1 );
-
 		// MRJ: Mass to Cal conversion
-		collected += agent.convertBiomassToCalories(amtCollected);
+		collected +=amtCollected ;
 
 		// 4. update cell resources & amount collected 
 		int prevValue = agent.getWorld()->getValue( "resources", n );
@@ -150,7 +151,7 @@ void ForageAction::execute( const GujaratAgent& agent, const HunterGathererMDPSt
 
 	doWalk( agent, nearest, maxDist, sp.getResourcesRaster(), collected );
 
-	sp.addResources( collected );
+	sp.addResources( agent.convertBiomassToCalories(collected));
 }
 
 
