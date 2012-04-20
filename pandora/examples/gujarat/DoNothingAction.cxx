@@ -34,5 +34,10 @@ void	DoNothingAction::execute( const GujaratAgent& agent, const HunterGathererMD
 	//std::cout << "DO NOTHING" << std::endl;
 }
 
+void	DoNothingAction::describe( std::ostream& os ) const
+{
+	os << "do_nothing()";
+}
+
 
 }
