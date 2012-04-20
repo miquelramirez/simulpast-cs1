@@ -79,8 +79,15 @@ void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s,
 	s.initializeSuccessor(sp);
 	const Action* act = s.availableActions(a);
 	act->execute( agentRef(), s, sp );
+	applyFrameEffects( s, sp );
 	makeActionsForState( sp );
 	outcomes.push_back( std::make_pair(sp, 1.0) );
+}
+
+void	HunterGathererMDPModel::applyFrameEffects( const HunterGathererMDPState& s,  HunterGathererMDPState& sp ) const
+{
+	sp.decreaseResources( agent.computeConsumedResources(1) );
+	sp.increaseTimeIndex();	
 }
 
 void	HunterGathererMDPModel::makeActionsForState( HunterGathererMDPState& s ) const

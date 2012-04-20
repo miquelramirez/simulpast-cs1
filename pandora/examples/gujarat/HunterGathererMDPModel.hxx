@@ -61,7 +61,7 @@ public:
 protected:
 	
 	void	makeActionsForState( HunterGathererMDPState& s ) const;
-
+	void	applyFrameEffects( const HunterGathererMDPState& s,  HunterGathererMDPState& sp ) const;
 private:
 
 	HunterGatherer*			_simAgent;

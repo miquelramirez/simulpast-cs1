@@ -212,8 +212,6 @@ void MoveHomeAction::execute( const GujaratAgent& agent, const HunterGathererMDP
 {
 	std::cout << "MOVE HOME" << std::endl;
 	sp.setLocation( _newHomeLoc );
-	sp.decreaseResources( agent.computeConsumedResources(1) );
-	sp.increaseTimeIndex();
 }
 
 int MoveHomeAction::getTimeNeeded() const

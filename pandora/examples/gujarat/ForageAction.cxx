@@ -145,10 +145,6 @@ void ForageAction::execute( const GujaratAgent& agent, const HunterGathererMDPSt
 	doWalk( agent, nearest, maxDist, sp.getResourcesRaster(), collected );
 
 	sp.addResources( collected );
-
-	sp.decreaseResources( agent.computeConsumedResources(1) );
-
-	sp.increaseTimeIndex();	
 }
 
 

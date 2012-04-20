@@ -32,8 +32,6 @@ void	DoNothingAction::generatePossibleActions( GujaratAgent& agent, std::vector<
 void	DoNothingAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
 {
 	std::cout << "DO NOTHING" << std::endl;
-	sp.decreaseResources( agent.computeConsumedResources(1) );
-	sp.increaseTimeIndex();	
 }
 
 
