@@ -91,7 +91,8 @@ void GujaratAgent::step()
 	}
 	
 	// end of year, evaluate reproduction, mortality and update age
-	if( getWorld()->getCurrentTimeStep() % 360 == 0 ) // last day of the year
+	if( (getWorld()->getCurrentTimeStep() % 360 == 0) 
+		&& (getWorld()->getCurrentTimeStep() > 359) ) // last day of the year
 	{
 		updateAges();
 		checkMortality();
