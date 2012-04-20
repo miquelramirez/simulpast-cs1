@@ -1,8 +1,8 @@
 
 #include "GujaratAgent.hxx"
 #include "GujaratWorld.hxx"
-
 #include "Action.hxx"
+#include <sstream>
 
 namespace Gujarat
 {
@@ -15,10 +15,15 @@ GujaratAgent::GujaratAgent( const std::string & id )
 	// we start with a couple of 15 years
 	_populationAges.push_back(15);
 	_populationAges.push_back(15);
+	std::stringstream fName;
+	fName << getId() << ".state.log";
+	_log = new std::ofstream( fName.str().c_str() );
 }
 
 GujaratAgent::~GujaratAgent()
 {
+	_log->close();
+	delete _log;
 }
 
 void	GujaratAgent::setController(  AgentController* controller )
@@ -45,6 +50,9 @@ void GujaratAgent::setAvailableTime( int daysPerSeason )
 
 void GujaratAgent::step()
 {
+	log() << "timestep=" << getWorld()->getCurrentTimeStep() << std::endl;
+	log() << "\tagent.collectedResourcesBeforeAction=" << getOnHandResources() << std::endl;	
+
 	updateKnowledge();
 
 	GujaratWorld * world = (GujaratWorld*)_world;
@@ -64,15 +72,32 @@ void GujaratAgent::step()
 
 	// age of the agent, in seasons
 	_age++;
-	// end of season, evaluate reproduction, mortality and update age
-	if(world->getClimate().getSeason()==HOTDRY)
+	log() << "\tagent.collectedResourcesAfterAction=" << getOnHandResources() << std::endl;	
+	_collectedResources -= computeConsumedResources(1);
+	log() << "\tagent.collectedResourcesAfterConsumption=" << getOnHandResources() << std::endl;	
+	if ( _collectedResources < 0 )
+	{
+		_starvated = true;
+		log() << "\tagent.isStarvating=yes" << std::endl;
+		_collectedResources = 0;
+	}
+	else
+	{
+		log() << "\tagent.isStarvating=no" << std::endl;
+		_starvated = false;
+		// Decay factor, modeling spoilage
+		_collectedResources *= 0.25;
+
+	}
+	
+	// end of year, evaluate reproduction, mortality and update age
+	if( getWorld()->getCurrentTimeStep() % 360 == 0 ) // last day of the year
 	{
 		updateAges();
 		checkMortality();
 		checkReproduction();
 		checkMarriage();
 		checkAgentRemoval();
-		_collectedResources = 0;
 	}
 }
 
@@ -177,17 +202,23 @@ Engine::Point2D<int> GujaratAgent::getNearLocation( int range )
 void GujaratAgent::executeActions()
 {
 	std::list<Action *>::iterator it = _actions.begin();
+	unsigned i = 0;
 	while(it!=_actions.end())
 	{
 		Action * nextAction = *it;
 		//_spentTime += nextAction->getTimeNeeded();
 		//if(_spentTime<=_availableTime)
 		//{
+		log() << "\tagent.action[" << i << "]=";
+		nextAction->describe(log());
+		log() << std::endl;
 		nextAction->execute(*this);
 		//}
 		it = _actions.erase(it);
 		delete nextAction;
+		i++;
 	}
+	
 }
 
 void GujaratAgent::checkAgentRemoval()
@@ -245,7 +276,7 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 			popSize++;
 		}
 	}
-	return 10.0f * popSize;	
+	return 2000.0f * popSize;	
 }
 
 void GujaratAgent::checkMortality()
@@ -260,12 +291,11 @@ void GujaratAgent::checkMortality()
 		}
 	}
 	// each individual eats 10 resources
-	int maintainedPopulation = _collectedResources/10.0f;
+	int maintainedPopulation = _collectedResources/2000.0f;
 	int starvingPopulation = popSize - maintainedPopulation;
 	// for each starving pop, possibility of death = 10% for each individual
 	if(starvingPopulation>0)
 	{
-		_starvated = true;	
 		//std::cout << "starving pop!: " << starvingPopulation << " with collected resources: " << _collectedResources << " and pop size: " << popSize << std::endl;
 		for(unsigned int index=0; index<_populationAges.size(); index++)
 		{
@@ -278,8 +308,6 @@ void GujaratAgent::checkMortality()
 			}
 		}
 	}
-	else
-		_starvated = false;
 
 	for(unsigned int index=0; index<2; index++)
 	{
