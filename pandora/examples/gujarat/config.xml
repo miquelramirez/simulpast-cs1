@@ -5,8 +5,8 @@
 	<numSteps 	name="numSteps" 	type="int"  value="1"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
-	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4184 -->
-	<energyToCaloriesRate value="0.000239006" />
+	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
+	<energyToCaloriesRate value="0.239006" />
 	<!-- Global agent parameters !-->
 	<socialRange value="25" />
 	<!-- Simulation time scale -->
