@@ -149,9 +149,9 @@ void HunterGatherer::updateKnowledge()
 	_collectedResources = 0;
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
-		std::cout << this << "clearing sector: " << k << std::endl;
+		//std::cout << this << "clearing sector: " << k << std::endl;
 		_sectors[k]->clearCells();
-		std::cout << "DONE!" <<  std::endl;
+		//std::cout << "DONE!" <<  std::endl;
 	}
 
 	for ( int x=-_homeRange; x<=_homeRange; x++ )
@@ -178,9 +178,9 @@ void HunterGatherer::updateKnowledge()
 
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
-		std::cout << "Sector #" << (k+1) << " features:" << std::endl;
+		//std::cout << "Sector #" << (k+1) << " features:" << std::endl;
 		_sectors[k]->updateFeatures();
-		_sectors[k]->showFeatures( std::cout );
+		//_sectors[k]->showFeatures( std::cout );
 	}
 }
 

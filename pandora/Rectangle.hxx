@@ -72,7 +72,7 @@ public:
 
 		if(_origin._y <0)
 		{
-			std::cout << "NEGATIU" << std::endl;
+			//std::cout << "NEGATIU" << std::endl;
 		}
 		
 //std::cout << R1_OX << R1_OY	<< "&&" <<R2_OX << R2_OY << "?" << std::endl;

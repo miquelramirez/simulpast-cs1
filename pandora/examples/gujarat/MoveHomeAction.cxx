@@ -210,7 +210,7 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 
 void MoveHomeAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
 {
-	std::cout << "MOVE HOME" << std::endl;
+	//std::cout << "MOVE HOME" << std::endl;
 	sp.setLocation( _newHomeLoc );
 }
 

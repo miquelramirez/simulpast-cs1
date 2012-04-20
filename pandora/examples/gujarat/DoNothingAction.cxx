@@ -31,7 +31,7 @@ void	DoNothingAction::generatePossibleActions( GujaratAgent& agent, std::vector<
 
 void	DoNothingAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
 {
-	std::cout << "DO NOTHING" << std::endl;
+	//std::cout << "DO NOTHING" << std::endl;
 }
 
 
