@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <list>
+#include <fstream>
 
 namespace Gujarat
 {
@@ -58,6 +59,8 @@ protected:
 
 	bool _starvated;
 	
+	std::ofstream*		_log;
+	
 	Engine::Point2D<int> getNearLocation( int range );
 
 public:
@@ -87,7 +90,7 @@ public:
 
 	void			setController( AgentController* controller ); 
 	AgentController* 	activeController() { return _controller; }
-	
+	std::ostream&		log() { return *_log; }	
 };
 
 } // namespace Gujarat
