@@ -10,7 +10,7 @@ namespace Gujarat
 GujaratAgent::GujaratAgent( const std::string & id ) 
 	: Engine::Agent(id), 
 	 _spentTime(0), _collectedResources(0), _age(0),
-	_socialRange( 50 )
+	_socialRange( 50 ), _starvated( false )
 {
 	// we start with a couple of 15 years
 	_populationAges.push_back(15);
@@ -264,7 +264,8 @@ void GujaratAgent::checkMortality()
 	int starvingPopulation = popSize - maintainedPopulation;
 	// for each starving pop, possibility of death = 10% for each individual
 	if(starvingPopulation>0)
-	{	
+	{
+		_starvated = true;	
 		//std::cout << "starving pop!: " << starvingPopulation << " with collected resources: " << _collectedResources << " and pop size: " << popSize << std::endl;
 		for(unsigned int index=0; index<_populationAges.size(); index++)
 		{
@@ -277,6 +278,8 @@ void GujaratAgent::checkMortality()
 			}
 		}
 	}
+	else
+		_starvated = false;
 
 	for(unsigned int index=0; index<2; index++)
 	{
@@ -381,6 +384,18 @@ int	GujaratAgent::getNrAvailableAdults() const
 	return numAdults;
 }
 
+int	GujaratAgent::getNrChildren() const
+{
+	int numChildren = 0;
+	for(unsigned i=0; i<_populationAges.size(); i++)
+	{
+		if(_populationAges[i] < 15)
+		{
+			numChildren++;
+		}
+	}
+	return numChildren;
+}
 
 } // namespace Gujarat
 

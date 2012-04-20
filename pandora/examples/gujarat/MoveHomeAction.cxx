@@ -27,6 +27,12 @@ Action*	MoveHomeAction::copy() const
 	return new MoveHomeAction( _newHomeLoc );
 }
 
+void	MoveHomeAction::describe( std::ostream& os ) const
+{
+	os << "move_home( " << _newHomeLoc._x << ", " << _newHomeLoc._y << ")";
+}
+
+
 void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 						const Engine::Point2D<int>& agentPos,
 						std::vector< MoveHomeAction* >& actions )

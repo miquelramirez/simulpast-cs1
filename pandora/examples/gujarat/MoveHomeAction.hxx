@@ -28,6 +28,7 @@ public:
 
 	virtual void execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
 	virtual	Action* copy() const;
+	virtual void	describe( std::ostream& os ) const;
 };
 	
 } // namespace Gujarat

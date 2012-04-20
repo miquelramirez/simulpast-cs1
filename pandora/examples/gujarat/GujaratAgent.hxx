@@ -56,6 +56,8 @@ protected:
 
 	AgentController*	_controller;
 
+	bool _starvated;
+	
 	Engine::Point2D<int> getNearLocation( int range );
 
 public:
@@ -75,11 +77,13 @@ public:
 
 	void	initializePosition( Engine::Point2D<int> randomPos );
 	int	getNrAvailableAdults() const;
+	int	getNrChildren() const;
 	int	getOnHandResources() const { return _collectedResources; }
 	int	computeConsumedResources( int timeSteps ) const;
 	double	computeMaxForagingDistance( ) const;
 	int	computeEffectiveBiomassForaged( int nominal ) const;
 	int	convertBiomassToCalories( int biomass ) const;
+	bool	starvationLastTimeStep() const { return _starvated; }
 
 	void			setController( AgentController* controller ); 
 	AgentController* 	activeController() { return _controller; }

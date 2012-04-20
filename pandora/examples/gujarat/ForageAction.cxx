@@ -27,6 +27,12 @@ Action*	ForageAction::copy() const
 	return new ForageAction( new Sector( *_forageArea ), true );
 }
 
+void	ForageAction::describe( std::ostream& os ) const
+{
+	os << "forage(" << _forageArea->biomassClass() << ")";
+}
+
+
 void	ForageAction::execute( GujaratAgent& a )
 {
 	std::cout << "[DEBUG]: Agent " << a.getId() << " is executing Forage action" << std::endl;
