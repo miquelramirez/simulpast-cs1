@@ -146,7 +146,6 @@ void HunterGatherer::updateKnowledge( 	const Engine::Point2D<int>& agentPos,
 
 void HunterGatherer::updateKnowledge()
 {
-	_collectedResources = 0;
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
 		//std::cout << this << "clearing sector: " << k << std::endl;
