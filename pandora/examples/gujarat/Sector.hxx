@@ -70,6 +70,7 @@ public:
 	void	updateFeatures( const Engine::Raster& r );
 
 	void	showFeatures( std::ostream& );
+	std::string	biomassClass() const;
 };
 
 class SectorBestFirstSortPtrVecPredicate

@@ -79,6 +79,24 @@ void	Sector::updateFeatures()
 	computeBiomassAmount(_world->getDynamicRaster("resources"));
 }
 
+std::string Sector::biomassClass() const
+{
+	std::string bioclass;
+	switch( (unsigned)_biomassAmountClass ) 
+	{
+	case BIOMASS_AMOUNT_LOW :
+		bioclass = "LOW";
+		break;
+	case BIOMASS_AMOUNT_MED :
+		bioclass = "MED";
+		break;
+	case BIOMASS_AMOUNT_HI :
+		bioclass = "HI";
+		break;
+	}
+	return bioclass;	
+}
+
 void	Sector::showFeatures( std::ostream& stream )
 {
 	stream << "\tFeature: BioMassAmount: " << _biomassAmount << std::endl;
