@@ -86,7 +86,7 @@ void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s,
 
 void	HunterGathererMDPModel::applyFrameEffects( const HunterGathererMDPState& s,  HunterGathererMDPState& sp ) const
 {
-	sp.decreaseResources( agent.computeConsumedResources(1) );
+	sp.decreaseResources( agentRef().computeConsumedResources(1) );
 	sp.increaseTimeIndex();	
 }
 
@@ -97,26 +97,39 @@ void	HunterGathererMDPModel::makeActionsForState( HunterGathererMDPState& s ) co
 	s.addAction( new DoNothingAction() );	
 	
 	// Make Forage actions
+	std::vector< Sector* > validActionSectors;
 	std::vector< Sector* > actionSectors;
 
 	agentRef().updateKnowledge( s.getLocation(), s.getResourcesRaster(), actionSectors );
 
-	if ( _config.getNumberForageActions() > actionSectors.size() )
+	// MRJ: Remove empty sectors if any
+	for ( unsigned i = 0; i < actionSectors.size(); i++ )
+	{
+		if ( actionSectors[i]->isEmpty() )
+		{
+			delete actionSectors[i];
+			continue;
+		}
+		validActionSectors.push_back( actionSectors[i] );
+	}	
+
+
+	if ( _config.getNumberForageActions() > validActionSectors.size() )
 	{
 		throw Engine::Exception( "HunterGathererMDPModel::makeActionsForState() : nr. forage actions in model > nr. available sectors" );
 	}	
-	else if ( _config.getNumberForageActions() == actionSectors.size() )
+	else if ( _config.getNumberForageActions() == validActionSectors.size() )
 	{
-		for ( unsigned i = 0; i < actionSectors.size(); i++ )
-			s.addAction( new ForageAction( actionSectors[i], true ) );	
+		for ( unsigned i = 0; i < validActionSectors.size(); i++ )
+			s.addAction( new ForageAction( validActionSectors[i], true ) );	
 	}
 	else
 	{
-		std::sort( actionSectors.begin(), actionSectors.end(), SectorBestFirstSortPtrVecPredicate() );
+		std::sort( validActionSectors.begin(), validActionSectors.end(), SectorBestFirstSortPtrVecPredicate() );
 		for ( unsigned i = 0; i < _config.getNumberForageActions(); i++ )
-			s.addAction( new ForageAction( actionSectors[i], true ) );
-		for ( unsigned i = _config.getNumberForageActions(); i < actionSectors.size(); i++ )
-			delete actionSectors[i];
+			s.addAction( new ForageAction( validActionSectors[i], true ) );
+		for ( unsigned i = _config.getNumberForageActions(); i < validActionSectors.size(); i++ )
+			delete validActionSectors[i];
 	}
 	
 	// Make Move Home
