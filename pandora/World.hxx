@@ -328,6 +328,8 @@ public:
 	virtual void createAgents() = 0;
 	//! to be redefined for subclasses
 	virtual void createRasters() = 0;
+
+	int	getCurrentTimeStep() const { return _step; }
 };
 
 } // namespace Engine
