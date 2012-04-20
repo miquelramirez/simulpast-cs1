@@ -2,6 +2,7 @@
 #define __Action_hxx__
 
 #include <cstdlib>
+#include <iosfwd>
 
 namespace Gujarat
 {
@@ -20,6 +21,7 @@ public:
 	virtual int getTimeNeeded() const = 0;
 
 	virtual Action*	copy() const { return NULL; }
+	virtual void	describe( std::ostream& os ) const;
 };
 	
 } // namespace Gujarat
