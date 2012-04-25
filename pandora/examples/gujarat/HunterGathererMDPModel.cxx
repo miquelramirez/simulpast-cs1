@@ -67,7 +67,7 @@ bool HunterGathererMDPModel::applicable( const HunterGathererMDPState& s,
 float HunterGathererMDPModel::cost( const HunterGathererMDPState& s,
 					action_t a ) const
 {
-	float rewardSignal = ((float)getHorizon() ) - (float)s.getOnHandResources();
+	float rewardSignal = s.getDaysStarving();
 	rewardSignal += s.availableActions(a)->getTimeNeeded();
 	return rewardSignal;
 }
