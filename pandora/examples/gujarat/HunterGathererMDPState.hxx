@@ -38,8 +38,21 @@ public:
 	unsigned				getTimeIndex() const { return _timeIndex; }
 	int					getOnHandResources() const { return _onHandResources; }
 	void					addResources( int amt ) { _onHandResources = _onHandResources + (amt / _resourcesDivider); }
-	void					consume() { _onHandResources = ( _onHandResources > 0 ? _onHandResources - 1 : 0 ); }
-	void					spoilage() { _onHandResources = (float)_onHandResources * 0.25f; }
+
+	void					consume() 
+	{ 
+		if ( _onHandResources > 0 ) 
+			_onHandResources--;
+		else
+		{
+			_onHandResources = 0;
+			_daysStarving++;
+		}
+	}
+	
+	int					getDaysStarving() const { return _daysStarving; }
+
+	void					spoilage() { _onHandResources = (float)_onHandResources * 0.5f; }
 	void					setLocation( Engine::Point2D<int> newLoc ) { _mapLocation = newLoc; }
 	const Engine::Point2D<int>&		getLocation() const { return _mapLocation; }
 	Engine::IncrementalRaster&		getResourcesRaster() { return _resources; }
@@ -58,12 +71,12 @@ private:
 private:
 	unsigned			_timeIndex;
 	Engine::Point2D<int>		_mapLocation;
-	// MRJ: This variable lies in the interval [0,100]
 	int				_onHandResources;
 	Engine::IncrementalRaster	_resources;
 	Engine::HashKey			_hashKey;
 	std::vector<Action*>		_availableActions;
 	int				_resourcesDivider;
+	int				_daysStarving;
 };
 
 inline std::ostream& operator<<( std::ostream& os, const HunterGathererMDPState& s )

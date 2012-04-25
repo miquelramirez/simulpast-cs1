@@ -86,7 +86,7 @@ void GujaratAgent::step()
 		log() << "\tagent.isStarvating=no" << std::endl;
 		_starvated = false;
 		// Decay factor, modeling spoilage
-		_collectedResources *= 0.25;
+		_collectedResources *= 0.5;
 
 	}
 	
