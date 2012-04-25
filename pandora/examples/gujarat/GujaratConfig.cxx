@@ -139,6 +139,7 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	retrieveAttributeMandatory( element, "homeRange", _homeRange );
 	retrieveAttributeMandatory( element, "surplusForReproductionThreshold", _surplusForReproductionThreshold );
 	retrieveAttributeMandatory( element, "surplusWanted", _surplusWanted );
+	retrieveAttributeMandatory( element, "surplusSpoilage", _surplusSpoilage );
 	retrieveAttributeMandatory( element, "numSectors", _numSectors );
 	retrieveAttributeMandatory( element, "controllerType", _hunterGathererController );
 	

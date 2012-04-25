@@ -95,6 +95,7 @@ void GujaratWorld::createAgents()
 			agent->setHomeRange( _config._homeRange );
 			agent->setSurplusForReproductionThreshold( _config._surplusForReproductionThreshold );
 			agent->setSurplusWanted( _config._surplusWanted );
+			agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
 			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );
 			agent->setNumSectors( _config._numSectors );
 
@@ -122,6 +123,7 @@ void GujaratWorld::createAgents()
 			AgroPastoralist * agent = new AgroPastoralist(oss.str());
 			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
+			agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
 			agent->setHomeMobilityRange( _config._socialRange );
 			agent->setMaxCropHomeDistance( _config._maxCropHomeDistance );
 			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );

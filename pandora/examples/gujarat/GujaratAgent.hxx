@@ -52,6 +52,7 @@ protected:
 	int _homeMobilityRange; // MpiAttribute
 
 	float _massToCaloriesRate;
+	float _surplusSpoilageFactor;
 
 	std::list<Action*> _actions;
 
@@ -87,6 +88,9 @@ public:
 	int	computeEffectiveBiomassForaged( int nominal ) const;
 	int	convertBiomassToCalories( int biomass ) const;
 	bool	starvationLastTimeStep() const { return _starvated; }
+
+	void	setSurplusSpoilageFactor( float v ) { _surplusSpoilageFactor = v; }
+	float	getSurplusSpoilageFactor() const { return _surplusSpoilageFactor; }
 
 	void			setController( AgentController* controller ); 
 	AgentController* 	activeController() { return _controller; }

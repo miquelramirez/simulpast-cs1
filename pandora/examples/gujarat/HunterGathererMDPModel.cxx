@@ -88,7 +88,7 @@ void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s,
 void	HunterGathererMDPModel::applyFrameEffects( const HunterGathererMDPState& s,  HunterGathererMDPState& sp ) const
 {
 	sp.consume();
-	sp.spoilage();
+	sp.spoilage( agentRef().getSurplusSpoilageFactor() );
 	sp.increaseTimeIndex();	
 }
 

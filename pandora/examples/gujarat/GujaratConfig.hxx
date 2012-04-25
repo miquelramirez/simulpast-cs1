@@ -50,6 +50,7 @@ class GujaratConfig : public Config
 	float _rainHistoricalDistribShape;
 	float _rainHistoricalDistribScale;
 	float _rainHistoricalDistribMean;
+	float _surplusSpoilage;
 
 	std::string	_hunterGathererController;
 
