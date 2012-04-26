@@ -133,6 +133,9 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 
 	element = root->FirstChildElement("socialRange");
 	retrieveAttributeMandatory( element, "value", _socialRange );
+		
+	element = root->FirstChildElement("meanCaloriesDayPerson");
+	retrieveAttributeMandatory( element, "value", _meanCaloriesDayPerson );	
 	
 	element = root->FirstChildElement("hunterGatherers");
 	retrieveAttributeMandatory( element, "num", _numHG );
@@ -142,6 +145,11 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	retrieveAttributeMandatory( element, "surplusSpoilage", _surplusSpoilage );
 	retrieveAttributeMandatory( element, "numSectors", _numSectors );
 	retrieveAttributeMandatory( element, "controllerType", _hunterGathererController );
+
+	retrieveAttributeMandatory( element, "foodNeedsMeanPerson", _hgFoodNeedsMeanPerson );
+	retrieveAttributeMandatory( element, "foodNeedsMeanChildren", _hgFoodNeedsMeanChildren );	
+	retrieveAttributeMandatory( element, "foodNeedsForReproduction", _hgFoodNeedsForReproduction); 	
+	retrieveAttributeMandatory( element, "spoilageFoodFactor", _hgSpoilageFoodFactor); 	
 	
 	_hunterGathererController = element->Attribute("controllerType");
 
@@ -156,6 +164,10 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	element = root->FirstChildElement("daysPerSeason");
 	retrieveAttributeMandatory( element, "value", _daysPerSeason );
 
+	element = root->FirstChildElement("daysPerYear");
+	retrieveAttributeMandatory( element, "value", _daysPerYear );
+	
+	
 	element = root->FirstChildElement("cellResolution");
 	retrieveAttributeMandatory( element, "value", _cellResolution );
 
