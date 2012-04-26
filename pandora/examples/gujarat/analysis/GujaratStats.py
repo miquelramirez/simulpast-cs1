@@ -6,6 +6,8 @@ class TimeStepData :
 	def __init__( self, index ) :
 		self.index = index
 		self.action = None
+		self.biomass_input = None
+		self.cal_input = None
 		self.isStarving = None
 		self.balanceAfterAction = None
 
@@ -22,11 +24,11 @@ class ActivityLog :
 
 	def process( self, t ) :
 
-		if 'move_home' in t.action :
+		if 'move_home' in t.action[0] :
 			key = 'move_home'
-		elif 'forage' in t.action :
+		elif 'forage' in t.action[0] :
 			key = 'forage'
-		elif 'do_nothing' in t.action :
+		elif 'do_nothing' in t.action[0] :
 			key = 'do_nothing'
 		else :
 			raise RuntimeError, "Unknown action %s found!"%t.action
@@ -66,14 +68,23 @@ class NutritionLog :
 	def __init__( self ) :
 		self.yearlyStarvingCount = 0
 		self.yearlyAvgBalance = 0.0
+		self.yearlyAvgBiomassInput = 0.0
+		self.yearlyAvgCalInput = 0.0
 		self.yearlyCounts = 0
+		self.yearlyForageCount = 0
 		self.seasonalStarving = {}
+		self.seasonalAvgBiomassInput = {}
+		self.seasonalAvgCalInput = {}
 		self.seasonalAvgBalance = {}
 		self.seasonalCounts = {}
+		self.seasonalForageCount = {}
 		for i in [0, 1, 2 ] :
 			self.seasonalStarving[i] = 0.0
 			self.seasonalAvgBalance[i] = 0.0
+			self.seasonalAvgBiomassInput[i] = 0.0
+			self.seasonalAvgCalInput[i] = 0.0
 			self.seasonalCounts[i] = 0
+			self.seasonalForageCount[i] = 0
 		
 
 	def process( self, t ) :
@@ -81,10 +92,17 @@ class NutritionLog :
 		self.yearlyStarvingCount += t.isStarving
 		self.yearlyAvgBalance += t.balanceAfterAction
 		self.yearlyCounts += 1
-
 		seasonIndex = (t.index % 360) / 120
 		
 		assert seasonIndex in [0,1,2]
+
+		if 'forage' in t.action[0] :
+			self.yearlyForageCount += 1
+			self.yearlyAvgBiomassInput += float(t.action[1])
+			self.yearlyAvgCalInput += float(t.action[2])
+			self.seasonalForageCount[seasonIndex] += 1
+			self.seasonalAvgBiomassInput[seasonIndex] += float(t.action[1])
+			self.seasonalAvgCalInput[seasonIndex] += float(t.action[2])
 
 		self.seasonalStarving[seasonIndex] += t.isStarving
 		self.seasonalAvgBalance[seasonIndex] += float(t.balanceAfterAction)
@@ -94,9 +112,13 @@ class NutritionLog :
 	def 	normalize( self, years ) :
 		self.yearlyStarvingCount /= float(years)
 		self.yearlyAvgBalance = float(self.yearlyAvgBalance) / (float(self.yearlyCounts)*years)
+		self.yearlyAvgBiomassInput /= float(self.yearlyForageCount)
+		self.yearlyAvgCalInput /= float(self.yearlyForageCount)
 		for i in [0,1,2] :
 			self.seasonalStarving[i] /= float(years)
 			self.seasonalAvgBalance[i] /= (float(self.seasonalCounts[i])*years)
+			self.seasonalAvgBiomassInput[i] /= self.seasonalForageCount[i]
+			self.seasonalAvgCalInput[i] /= self.seasonalForageCount[i]
 
 class Agent :
 
@@ -123,7 +145,7 @@ class Agent :
 					self.time_steps.append( t )
 					continue
 				if 'action' in key :
-					self.time_steps[-1].action = value
+					self.time_steps[-1].action = value.split(',')
 					continue
 				if 'isStarvating' in key :
 					if value == 'yes' :
@@ -159,17 +181,23 @@ class PopulationStats :
 
 		self.yearlyStarvingCount = 0
 		self.yearlyAvgBalance = 0.0
+		self.yearlyAvgBiomassInput = 0.0
+		self.yearlyAvgCalInput = 0.0
 		self.yearlyMinStarvingCount = 360
 		self.yearlyMaxStarvingCount = 0
 		self.seasonalStarving = {}
 		self.seasonalStarvingMin = {}
 		self.seasonalStarvingMax = {}
 		self.seasonalAvgBalance = {}
+		self.seasonalAvgBiomassInput = {}
+		self.seasonalAvgCalInput = {}
 		for i in [0, 1, 2 ] :
 			self.seasonalStarvingMin[i] = 360
 			self.seasonalStarvingMax[i] = 0
 			self.seasonalStarving[i] = 0.0
 			self.seasonalAvgBalance[i] = 0.0
+			self.seasonalAvgBiomassInput[i] = 0.0
+			self.seasonalAvgCalInput[i] = 0.0
 
 		self.__computeAggregateStats()
 		self.__normalizeStats()
@@ -185,11 +213,17 @@ class PopulationStats :
 				self.yearlyMinStarvingCount = agent.stats['nutritionLog'].yearlyStarvingCount
 			if self.yearlyMaxStarvingCount < agent.stats['nutritionLog'].yearlyStarvingCount :
 				self.yearlyMaxStarvingCount = agent.stats['nutritionLog'].yearlyStarvingCount
+
+			self.yearlyAvgBiomassInput += float(agent.stats['nutritionLog'].yearlyAvgBiomassInput)
+			self.yearlyAvgCalInput += float(agent.stats['nutritionLog'].yearlyAvgCalInput)
+			
 			for i in [0,1,2] :
 				for key, value in agent.stats['activityLog'].seasonalAvgDaysPerActivity[i].iteritems() :
 					self.seasonalActivities[i][key] += float(value)
 				self.seasonalStarving[i] += float( agent.stats['nutritionLog'].seasonalStarving[i] )
 				self.seasonalAvgBalance[i] += float( agent.stats['nutritionLog'].seasonalAvgBalance[i] )
+				self.seasonalAvgBiomassInput[i] += float( agent.stats['nutritionLog'].seasonalAvgBiomassInput[i] )
+				self.seasonalAvgCalInput[i] += float( agent.stats['nutritionLog'].seasonalAvgCalInput[i] )
 				if self.seasonalStarvingMin[i] >  agent.stats['nutritionLog'].seasonalStarving[i] :
 					self.seasonalStarvingMin[i] = agent.stats['nutritionLog'].seasonalStarving[i]
 				if self.seasonalStarvingMax[i] < agent.stats['nutritionLog'].seasonalStarving[i] :
@@ -200,11 +234,15 @@ class PopulationStats :
 			self.yearlyActivities[key] /= float( len(self.agents) )
 		self.yearlyStarvingCount /= float( len(self.agents) )
 		self.yearlyAvgBalance /= float( len(self.agents) )
+		self.yearlyAvgBiomassInput /= float( len(self.agents) )
+		self.yearlyAvgCalInput /= float( len(self.agents) )
 		for i in [0,1,2] :
 			for key, value in self.seasonalActivities[i].iteritems() :
 				self.seasonalActivities[i][key] /= float( len(self.agents) )
 			self.seasonalStarving[i] /= float( len(self.agents) )
 			self.seasonalAvgBalance[i] /= float( len(self.agents) )	
+			self.seasonalAvgBiomassInput[i] /= float( len(self.agents) )
+			self.seasonalAvgCalInput[i] /= float( len(self.agents) )
 
 	def report( self, stream ) :
 
@@ -218,6 +256,8 @@ class PopulationStats :
 			print >> stream, "\t", "Season #%d"%i
 			for key, value in self.seasonalActivities[i].iteritems() :
 				print >> stream, "\t\t", key, "%.2f"%(value*100)
+		print >> stream, "Avg. Biomass collected per Forage action: %.2f grs"%self.yearlyAvgBiomassInput
+		print >> stream, "Avg. Calories collected per Forage action: %.2f cal"%self.yearlyAvgCalInput
 		print >> stream, "Avg. Number of days starving (per year) : %.2f days"%self.yearlyStarvingCount
 		print >> stream, "Min. Number of days starving (per year) : %d days"%self.yearlyMinStarvingCount
 		print >> stream, "Max. Number of days starving (per year) : %d days"%self.yearlyMaxStarvingCount
@@ -229,7 +269,8 @@ class PopulationStats :
 			print >> stream, "\t\t", "Avg. Number of days starving: %.2f days"%self.seasonalStarving[i]
 			print >> stream, "\t\t", "Min Number of days starving: %d days"%self.seasonalStarvingMin[i]
 			print >> stream, "\t\t", "Max Number of days starving: %d days"%self.seasonalStarvingMax[i]
-
+			print >> stream, "\t\t", "Avg. Biomass collected per Forage action: %.2f grs"%self.seasonalAvgBiomassInput[i]
+			print >> stream, "\t\t", "Avg. Calories collected per Forage action: %.2f cal"%self.seasonalAvgCalInput[i]
 			print >> stream, "\t\t", "Avg. Balance: %.2f cal"%self.seasonalAvgBalance[i]
 
 	
