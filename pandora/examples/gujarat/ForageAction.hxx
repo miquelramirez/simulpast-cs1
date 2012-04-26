@@ -17,6 +17,8 @@ private:
 
 	Sector*		_forageArea;
 	bool		_ownsForageAreaPointer;
+	int		_biomassCollected;
+	int		_caloriesCollected;
 
 	int		doWalk( Engine::Point2D<int>& start, 
 				double maxDist,
@@ -24,7 +26,7 @@ private:
 
 	void		selectBestNearestCell( 	const Engine::Point2D<int>& current,
 						const Engine::Raster& r,
-						double& bestScore,
+						int& bestScore,
 						Engine::Point2D<int>& best ) const;
 
 	void		doWalk( const GujaratAgent& agent, 
@@ -42,6 +44,9 @@ public:
 	virtual void execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
 	virtual Action* copy() const;
 	virtual void	describe( std::ostream& os ) const;
+	
+	int	getBiomassCollected() const { return _biomassCollected; }
+	int	getCaloriesCollected() const { return _caloriesCollected; }
 };
 
 }
