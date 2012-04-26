@@ -30,7 +30,7 @@ Action*		HunterGathererMDPController::selectAction()
 	
 	_model->reset();
 
-	UCT*	uctPolicy = new UCT( *_uctBasePolicy, 10, (unsigned)_mdpConfig.getHorizon(), 2.0f );
+	UCT*	uctPolicy = new UCT( *_uctBasePolicy, (unsigned)_mdpConfig.getWidth(), (unsigned)_mdpConfig.getHorizon(), _mdpConfig.getExplorationBonus() );
 
 	Problem::action_t aIndex = (*uctPolicy)( _model->init() );
 
