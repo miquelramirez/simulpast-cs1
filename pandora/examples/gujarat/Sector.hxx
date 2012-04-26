@@ -41,6 +41,8 @@ public:
 	bool		isEmpty() const { return _cells.empty(); }
 	unsigned	numCells() const { return _cells.size(); }
 
+	const 	std::vector< Engine::Point2D<int> >&	cells() const { return _cells; }
+
 	void	addCell( Engine::Point2D<int>& p )
 	{
 		_cells.push_back( p );
