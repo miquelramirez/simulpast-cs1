@@ -92,6 +92,8 @@ public:
 	void	setSurplusSpoilageFactor( float v ) { _surplusSpoilageFactor = v; }
 	float	getSurplusSpoilageFactor() const { return _surplusSpoilageFactor; }
 
+	double	getForageTime() const;
+
 	void			setController( AgentController* controller ); 
 	AgentController* 	activeController() { return _controller; }
 	std::ostream&		log() { return *_log; }	

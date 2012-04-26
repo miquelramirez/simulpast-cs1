@@ -34,7 +34,7 @@ void	GujaratAgent::setController(  AgentController* controller )
 int	GujaratAgent::convertBiomassToCalories( int biomass ) const
 {
 	float fMass = (float)biomass;
-	return fMass* _massToCaloriesRate;	
+	return (int)(fMass* _massToCaloriesRate);	
 }
 
 int	GujaratAgent::computeEffectiveBiomassForaged( int nominal ) const
@@ -102,10 +102,17 @@ void GujaratAgent::step()
 	}
 }
 
+double 	GujaratAgent::getForageTime() const
+{
+	double forageTime = 0.5;
+	double walkingSpeedHour = 3000.0;
+	return forageTime * walkingSpeedHour;
+}
+
 double	GujaratAgent::computeMaxForagingDistance() const
 {
 	int 	nAdults = getNrAvailableAdults();		
-	double  walkingSpeedHour = 3.0;
+	double  walkingSpeedHour = 3000.0;
 	double  availTime = 4.5;
 	double  distPerAdult = walkingSpeedHour * availTime;
 
@@ -210,10 +217,10 @@ void GujaratAgent::executeActions()
 		//_spentTime += nextAction->getTimeNeeded();
 		//if(_spentTime<=_availableTime)
 		//{
+		nextAction->execute(*this);
 		log() << "\tagent.action[" << i << "]=";
 		nextAction->describe(log());
 		log() << std::endl;
-		nextAction->execute(*this);
 		//}
 		it = _actions.erase(it);
 		delete nextAction;
