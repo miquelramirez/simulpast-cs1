@@ -1,6 +1,7 @@
 
 #include "GujaratAgent.hxx"
 #include "GujaratWorld.hxx"
+#include "GujaratConfig.hxx"
 #include "Action.hxx"
 #include <sstream>
 
@@ -13,6 +14,10 @@ GujaratAgent::GujaratAgent( const std::string & id )
 	_socialRange( 50 ), _starvated( false )
 {
 	// we start with a couple of 15 years
+	// ISSUE ATM : 
+	// add config._adulthoodAge=15.
+	// add a method GujaratAgent::addIndividual(int age)
+	// at world initialization do calls a.addIndividual(config._adulthoodAge) 2 times
 	_populationAges.push_back(15);
 	_populationAges.push_back(15);
 	std::stringstream fName;
@@ -54,26 +59,36 @@ void GujaratAgent::step()
 	log() << "\tagent.collectedResourcesBeforeAction=" << getOnHandResources() << std::endl;	
 
 	updateKnowledge();
-
+	
 	GujaratWorld * world = (GujaratWorld*)_world;
 	// rain season is the first of the year; evaluate year actions
-	if(world->getClimate().getSeason()==HOTWET)
+	
+	//if(world->getClimate().getSeason()==HOTWET)
+	if(world->getClimate().getSeason()==HOTWET
+		&& ((world->getCurrentStep() % world->getConfig()._daysPerYear) == 0))
 	{
 		evaluateYearlyActions();
 		executeActions();
 	}
-	evaluateSeasonalActions();
-	executeActions();
-
+	if(world->getCurrentStep() % world->getConfig()._daysPerSeason == 0)
+	{
+		evaluateSeasonalActions();
+		executeActions();
+	}
+	
 	evaluateIntraSeasonalActions();
 	executeActions();
 
 	_spentTime = 0;
-
-	// age of the agent, in seasons
 	_age++;
+	
 	log() << "\tagent.collectedResourcesAfterAction=" << getOnHandResources() << std::endl;	
-	_collectedResources -= computeConsumedResources(1);
+	
+	_collectedResources 
+	//-= computeConsumedResources(1);
+	// ATM... 
+	-= neededResources(1);
+	
 	log() << "\tagent.collectedResourcesAfterConsumption=" << getOnHandResources() << std::endl;	
 	if ( _collectedResources < 0 )
 	{
@@ -86,13 +101,18 @@ void GujaratAgent::step()
 		log() << "\tagent.isStarvating=no" << std::endl;
 		_starvated = false;
 		// Decay factor, modeling spoilage
-		_collectedResources *= 0.25;
-
+		_collectedResources *= world->getConfig()._hgSpoilageFoodFactor;	
+		
 	}
 	
+	// this could happen at any time step
+	// due to starvation
+	checkStarvationMortality();
+	checkAgentRemoval();	
+	
 	// end of year, evaluate reproduction, mortality and update age
-	if( (getWorld()->getCurrentTimeStep() % 360 == 0) 
-		&& (getWorld()->getCurrentTimeStep() > 359) ) // last day of the year
+	if( (getWorld()->getCurrentTimeStep() % world->getConfig()._daysPerYear == 0) 
+		&& (getWorld()->getCurrentTimeStep() > world->getConfig()._daysPerYear -1 ) ) // last day of the year
 	{
 		updateAges();
 		checkMortality();
@@ -100,6 +120,8 @@ void GujaratAgent::step()
 		checkMarriage();
 		checkAgentRemoval();
 	}
+	
+	
 }
 
 double	GujaratAgent::computeMaxForagingDistance() const
@@ -156,13 +178,15 @@ void GujaratAgent::checkMarriage()
 
 			newAgent->_populationAges[0] = _populationAges[i];
 			_populationAges[i] = -1;
-
+			log() << "LEAVES HOME> Agent_" << _id << ". Indiv_" << i << std::endl;
+			
 			for(unsigned int j=2; j<agent->_populationAges.size(); j++)
 			{
 				if(agent->_populationAges[j]>15)
 				{
 					newAgent->_populationAges[1] = agent->_populationAges[j];
 					agent->_populationAges[j] = -1;
+					log() << "LEAVES HOME> Agent_" << agent->_id << ". Indiv_" << j << std::endl;
 					break;
 				}
 			}
@@ -236,7 +260,7 @@ void GujaratAgent::updateAges()
 {
 	for(unsigned int i=0; i<_populationAges.size(); i++)
 	{
-		if(_populationAges[i]!=-1)
+		if(_populationAges[i] >= 0)
 		{
 			_populationAges[i]++;
 		}
@@ -246,7 +270,7 @@ void GujaratAgent::updateAges()
 void GujaratAgent::checkReproduction()
 {
 	// if male or female died, reproduction is impossible
-	if(_populationAges[0] == -1 || _populationAges[1] == -1)
+	if(_populationAges[0] < 0 || _populationAges[1] < 0)
 	{
 		return;
 	}
@@ -257,7 +281,7 @@ void GujaratAgent::checkReproduction()
 		// we look for an empty space or add a new one
 		for(unsigned int index=2; index!=_populationAges.size(); index++)
 		{
-			if(_populationAges[index]==-1)
+			if(_populationAges[index] < 0)
 			{
 				_populationAges[index] = 0;
 				return;
@@ -266,6 +290,24 @@ void GujaratAgent::checkReproduction()
 		_populationAges.push_back(0);
 	}
 }
+
+int GujaratAgent::neededResources(int timeSteps) const
+{
+	// That method is virtual and shall be
+	// implemented by GujaratAgent and AgroPastoralist
+	GujaratWorld * w = (GujaratWorld*)_world;
+	
+	int popSize = 0;
+	for(unsigned int index=0; index<_populationAges.size(); index++)
+	{
+		if(_populationAges[index] < 0)
+		{
+			popSize++;
+		}
+	}
+	return w->getConfig()._meanCaloriesDayPerson * popSize * timeSteps ;	
+}
+
 
 int GujaratAgent::computeConsumedResources( int timeSteps ) const
 {
@@ -277,11 +319,55 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 			popSize++;
 		}
 	}
-	return 2000.0f * popSize;	
+	return ((GujaratWorld*)_world)->getConfig()._meanCaloriesDayPerson * popSize * timeSteps;	
 }
 
-void GujaratAgent::checkMortality()
+void GujaratAgent::checkStarvationMortality()
 {
+	 // ATM
+	 	// STARVATION	
+	 	int needs = neededResources(1);
+	 	if (_collectedResources < needs)
+	 	{
+	 		int ratio100 = (int)(100.0f * (float)_collectedResources) / ((float)needs);
+			
+			log() << "STATE/starvating> Agent_" << _id << " ratio:" << ratio100<<std::endl;
+			
+	 		//TODO ATM : verify that mortality policy
+	 		// ISSUE ATM : step = 1 day. Compute accumulated deficit,
+	 		// ISSUE ATM : a bad foraging day should not imply death.
+	 		ratio100 = (ratio100 + 100) / 2;
+	 		ratio100 = (ratio100 + 100) / 2;	// relax things a bit...
+	 		// ATM PROPOSAL : First to die : younger children
+	 		// ISSUE ATM PROPOSAL : as children dies, lower probability of death in that step		
+	 		for(unsigned int index=2; index < _populationAges.size(); index++)
+	 		{
+	 			if(_populationAges[index] >= 0 
+	 				&& _world->getStatistics().getUniformDistValue(1,100) > ratio100)
+	 			{
+//	 				_populationAges[index]=-1;				
+					log() << "RIP/Starvation> Agent_" << _id << ". Indiv_" << index << " ratio:" << ratio100<< std::endl;
+	 			}
+	 		}
+	 		// ISSUE: Greater Ressilience for adults
+	 		ratio100 = (ratio100 + 100) / 2;
+	 		if(_populationAges[0] >= 0 
+		 	&& _world->getStatistics().getUniformDistValue(1,100) > ratio100)
+		 	{
+//				_populationAges[0]=-1;
+				log() << "RIP/Starvation> Agent_" << _id << ". Indiv_" << 0 << " ratio:" << ratio100 << std::endl;
+		 	}
+		 
+		 	if(_populationAges[1] >= 0 
+			 && _world->getStatistics().getUniformDistValue(1,100) > ratio100)
+			{
+//				 _populationAges[1]=-1;
+				 log() << "RIP/Starvation> Agent_" << _id << ". Indiv_" << 1 << " ratio:" << ratio100 << std::endl;
+			}
+			 
+	 	}
+	
+/*	
 	// TODO check resources, now year, must be seasonal
 	int popSize = 0;
 	for(unsigned int index=0; index<_populationAges.size(); index++)
@@ -292,7 +378,7 @@ void GujaratAgent::checkMortality()
 		}
 	}
 	// each individual eats 10 resources
-	int maintainedPopulation = _collectedResources/2000.0f;
+	int maintainedPopulation = _collectedResources/((GujaratWorld*)_world)->getConfig()._meanCaloriesDayPerson;
 	int starvingPopulation = popSize - maintainedPopulation;
 	// for each starving pop, possibility of death = 10% for each individual
 	if(starvingPopulation>0)
@@ -308,8 +394,45 @@ void GujaratAgent::checkMortality()
 				}
 			}
 		}
-	}
+	}	
+*/
+}
 
+void GujaratAgent::checkMortality()
+{
+	
+/*	
+	
+	// TODO check resources, now year, must be seasonal
+	int popSize = 0;
+	for(unsigned int index=0; index<_populationAges.size(); index++)
+	{
+		if(_populationAges[index]!=-1)
+		{
+			popSize++;
+		}
+	}
+	// each individual eats 10 resources
+	int maintainedPopulation = _collectedResources/((GujaratWorld*)_world)->getConfig()._meanCaloriesDayPerson;
+	int starvingPopulation = popSize - maintainedPopulation;
+	// for each starving pop, possibility of death = 10% for each individual
+	if(starvingPopulation>0)
+	{
+		//std::cout << "starving pop!: " << starvingPopulation << " with collected resources: " << _collectedResources << " and pop size: " << popSize << std::endl;
+		for(unsigned int index=0; index<_populationAges.size(); index++)
+		{
+			if(_populationAges[index]!=-1)
+			{	
+				if(_world->getStatistics().getUniformDistValue(0,9)==0)
+				{
+					_populationAges[index]=-1;
+				}
+			}
+		}
+	}		
+*/	
+	// RANDOM ADULT MORTALITY
+	// TODO probabilities should go to config.xml
 	for(unsigned int index=0; index<2; index++)
 	{
 		if(_populationAges[index]==-1)
@@ -321,6 +444,7 @@ void GujaratAgent::checkMortality()
 		{
 			//std::cout << "adult: " << index << " died at age: " << _populationAges[index] << std::endl;
 			_populationAges[index] = -1;
+			log() << "RIP/Random Adult Yearly> Agent_" << _id << ". Indiv_" << index << std::endl;
 		}
 		/*
 		// absolute maximum: 50 years
@@ -331,6 +455,10 @@ void GujaratAgent::checkMortality()
 		}
 		*/
 	}
+	
+	// RANDOM CHILD MORTALITY
+	// TODO probabilities should go to config.xml
+	
 	for(unsigned int index=2; index<_populationAges.size(); index++)
 	{
 		if(_populationAges[index]==-1)
@@ -344,6 +472,7 @@ void GujaratAgent::checkMortality()
 			{
 				//std::cout << "child: " << _populationAges[index] << " died during infancy" << std::endl;
 				_populationAges[index] = -1;
+				log() << "RIP/Random Toddler Yearly> Agent_" << _id << ". Indiv_" << index << std::endl;
 			}
 		}
 		// 2% afterwards (as male/female)
@@ -352,6 +481,7 @@ void GujaratAgent::checkMortality()
 		{
 			//std::cout << "child: " << _populationAges[index] << " died" << std::endl;
 			_populationAges[index] = -1;
+			log() << "RIP/Random Child Yearly> Agent_" << _id << ". Indiv_" << index << std::endl;
 		}
 	}
 }

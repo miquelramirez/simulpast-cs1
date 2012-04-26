@@ -15,12 +15,10 @@ class AgentController;
 
 class GujaratAgent : public Engine::Agent
 {
-
-	// father = 0, mother = 1, children > 1
-	std::vector<int> _populationAges;
-
+	
 	void updateAges();
 	void checkReproduction();
+	void checkStarvationMortality();
 	void checkMortality();
 	void checkAgentRemoval();
 	void checkMarriage();
@@ -43,6 +41,9 @@ protected:
 	int _spentTime; // MpiAttribute
 	int _collectedResources; // MpiAttribute
 
+	// father = _populationAges[0], mother = _populationAges[1], children =_populationAges[> 1]
+	std::vector<int> _populationAges;
+	
 	// age of the agent in num steps (years*3)
 	int _age; // MpiAttribute
 
@@ -82,6 +83,8 @@ public:
 	int	getNrAvailableAdults() const;
 	int	getNrChildren() const;
 	int	getOnHandResources() const { return _collectedResources; }
+	
+	virtual int neededResources( int timeSteps ) const;
 	int	computeConsumedResources( int timeSteps ) const;
 	double	computeMaxForagingDistance( ) const;
 	int	computeEffectiveBiomassForaged( int nominal ) const;

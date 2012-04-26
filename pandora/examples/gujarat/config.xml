@@ -2,15 +2,17 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<path 	name="path" 	type="string"  value="./data/"/>
-	<numSteps 	name="numSteps" 	type="int"  value="1"/>
+	<numSteps 	name="numSteps" 	type="int"  value="300"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
 	<energyToCaloriesRate value="0.239006" />
 	<!-- Global agent parameters !-->
 	<socialRange value="25" />
+	<meanCaloriesDayPerson value="2000.0"/>	
 	<!-- Simulation time scale -->
 	<daysPerSeason value="120" />
+	<daysPerYear value="360" />
 	<!-- Simulation space scale, in m - cell side -->
 	<cellResolution value="31.5"/>
 	<!-- Biomass per cell stats -->
@@ -30,9 +32,16 @@
 	<!-- Agents definition -->
 	<!-- overlap will be defined as homeRange + 1. It must be < 1/4 of world size -->
 	<hunterGatherers 
-		num="1" homeRange="30"
+		num="50" homeRange="30"
 		surplusForReproductionThreshold="2" 
 		surplusWanted="1"
+		XXfoodNeedsMeanPerson="2500"
+		XXfoodNeedsMeanChildren="2200"
+		XXfoodNeedsForReproduction="500"		
+		foodNeedsMeanPerson="2000.0"
+		foodNeedsMeanChildren="2000.0"
+		foodNeedsForReproduction="400.0"
+		spoilageFoodFactor="0.25"
 		numSectors="8"
 		controllerType="MDP" >
 		<controllerConfig 	type="MDP" 

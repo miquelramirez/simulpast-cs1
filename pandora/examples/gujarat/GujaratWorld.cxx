@@ -14,7 +14,7 @@ namespace Gujarat
 {
 
 GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config ) 
-	: World(simulation, 1+config._homeRange, true, config._path+"/ned.h5"), _agentKey(0), _climate(config,*this), _config(config)					
+	: World(simulation, 1+config._homeRange, true, config._path+"/guj.h5"), _agentKey(0), _climate(config,*this), _config(config)					
 {
 	// overlap is maxHomeRange + 1 to allow splits to be in adjacent worlds
 	// TODO code a function proces config for resources 
@@ -97,7 +97,10 @@ void GujaratWorld::createAgents()
 			agent->setSurplusWanted( _config._surplusWanted );
 			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );
 			agent->setNumSectors( _config._numSectors );
-
+			agent->setFoodNeedsMeanPerson( _config._hgFoodNeedsMeanPerson);
+			agent->setFoodNeedsMeanChildren( _config._hgFoodNeedsMeanChildren);
+			agent->setFoodNeedsForReproduction( _config._hgFoodNeedsForReproduction);	
+			
 			if ( _config._hunterGathererController == "MDP" )
 			{
 				agent->setController( new HunterGathererMDPController( agent, *_config._controllerConfig ) );

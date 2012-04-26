@@ -10,7 +10,14 @@ class Sector;
 class ForageAction;
 
 class HunterGatherer : public GujaratAgent
-{	
+{
+	
+	// ATM : why should we want to replicate these constants on each object?
+	// ISSUES : add static attribute GujaratAgentConfig
+	float	_foodNeedsMeanPerson;
+	float	_foodNeedsMeanChildren;
+	float	_foodNeedsForReproduction;
+	
 	int 					_surplusForReproductionThreshold; // MpiAttribute
 	int 					_surplusWanted; // MpiAttribute
 	int 					_homeRange; // MpiAttribute
@@ -46,8 +53,14 @@ public:
 
 	void setSurplusForReproductionThreshold( int v ) { _surplusForReproductionThreshold = v; }
 	void setSurplusWanted( int v ) { _surplusWanted = v; }
+	
+	void setFoodNeedsMeanPerson( float v ) { _foodNeedsMeanPerson      = v; }
+	void setFoodNeedsMeanChildren( float v ) { _foodNeedsMeanChildren    = v; }
+	void setFoodNeedsForReproduction( float v ) { _foodNeedsForReproduction = v; }
+	
 	bool cellValid( Engine::Point2D<int>& loc );
 	bool cellRelevant( Engine::Point2D<int>& loc );
+	int  neededResources(int timeSteps) const;
 	bool needsResources();
 
 	void		updateResources( int v ) { _collectedResources += v; }

@@ -25,14 +25,21 @@ class GujaratConfig : public Config
 	int		_homeRange;
 	// Agents social range expressed in # GIS data grid tiles
 	int		_socialRange;
+	// Individual person calories basic consumption per 1 day.
+	float _meanCaloriesDayPerson;
 	// # days corresponding to a climate model season
 	int		_daysPerSeason;
+	int		_daysPerYear;
 	// # meters corresponding to the side of a cell
 	float _cellResolution;
 
 	// MRJ: Hunter Gatherers attributes
 	int		_surplusForReproductionThreshold;
 	int		_surplusWanted;
+	float	_hgFoodNeedsMeanPerson;
+	float	_hgFoodNeedsMeanChildren;
+	float	_hgFoodNeedsForReproduction;
+	float	_hgSpoilageFoodFactor;
 
 	// MRJ: Agro Pastoralists attributes
 	int		_maxCropHomeDistance;
@@ -88,7 +95,8 @@ public:
 		return it->second;
 	}
 	
-
+	friend class HunterGatherer;
+	friend class GujaratAgent;
 	friend class GujaratWorld;
 	friend class Climate;
 };
