@@ -19,7 +19,7 @@ public:
 	explicit HunterGathererMDPState();
 
 	// The real one
-	HunterGathererMDPState(Engine::Point2D<int> loc, int initialOnHand, const Engine::Raster& resourcesRaster, int divider);
+	HunterGathererMDPState(Engine::Point2D<int> loc, int initialOnHand, const Engine::Raster& resourcesRaster, int maxResources, int divider);
 	HunterGathererMDPState( const HunterGathererMDPState& s );
 	const HunterGathererMDPState&	operator=(const HunterGathererMDPState& s );
 	
@@ -37,7 +37,12 @@ public:
 	void					increaseTimeIndex() { _timeIndex++; }
 	unsigned				getTimeIndex() const { return _timeIndex; }
 	int					getOnHandResources() const { return _onHandResources; }
-	void					addResources( int amt ) { _onHandResources = _onHandResources + (amt / _resourcesDivider); }
+	void					addResources( int amt ) 
+	{ 
+		_onHandResources = _onHandResources + (amt / _resourcesDivider); 
+		if ( _onHandResources > _maxResources )
+			_onHandResources = _maxResources;
+	}
 
 	void					consume() 
 	{ 
@@ -75,6 +80,7 @@ private:
 	Engine::IncrementalRaster	_resources;
 	Engine::HashKey			_hashKey;
 	std::vector<Action*>		_availableActions;
+	int				_maxResources;
 	int				_resourcesDivider;
 	int				_daysStarving;
 };

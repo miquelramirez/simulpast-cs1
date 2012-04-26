@@ -9,16 +9,17 @@ HunterGathererMDPState::HunterGathererMDPState()
 }
 
 HunterGathererMDPState::HunterGathererMDPState(Engine::Point2D<int> loc, int initResources, 
-	const Engine::Raster& resourcesRaster, int divider )
+	const Engine::Raster& resourcesRaster, int maxResources, int divider )
 	: _timeIndex(0), _mapLocation( loc ), _onHandResources( initResources/divider ), _resources( resourcesRaster ),
-	_resourcesDivider( divider ), _daysStarving( 0 )
+	_maxResources( maxResources ), _resourcesDivider( divider ), _daysStarving( 0 )
 {
 	computeHash();
 }
 
 HunterGathererMDPState::HunterGathererMDPState( const HunterGathererMDPState& s )
 	: _timeIndex( s._timeIndex ), _mapLocation( s._mapLocation ), _onHandResources( s._onHandResources ),
-	_resources( s._resources ), _resourcesDivider( s._resourcesDivider ), _daysStarving( s._daysStarving )
+	_resources( s._resources ), _maxResources( s._maxResources), 
+	_resourcesDivider( s._resourcesDivider ), _daysStarving( s._daysStarving )
 {
 	computeHash();
 	
@@ -34,6 +35,7 @@ const HunterGathererMDPState& HunterGathererMDPState::operator=( const HunterGat
 	_mapLocation = s._mapLocation;
 	_onHandResources = s._onHandResources;
 	_resources = s._resources;
+	_maxResources = s._maxResources;
 	_resourcesDivider = s._resourcesDivider;
 	_daysStarving = s._daysStarving;	
 
@@ -52,6 +54,7 @@ void	HunterGathererMDPState::initializeSuccessor( HunterGathererMDPState& s ) co
 	s._timeIndex = _timeIndex;
 	s._mapLocation = _mapLocation;
 	s._onHandResources = _onHandResources;
+	s._maxResources = _maxResources;
 	s._resources = _resources;
 	s._resourcesDivider = _resourcesDivider;
 	s._daysStarving = _daysStarving;
