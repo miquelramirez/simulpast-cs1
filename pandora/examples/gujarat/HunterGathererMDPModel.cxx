@@ -38,6 +38,7 @@ void	HunterGathererMDPModel::reset()
 	_initial = new HunterGathererMDPState(	agentRef().getPosition(),
 						agentRef().getOnHandResources(),
 						agentRef().getWorld()->getDynamicRaster( "resources" ),
+						_config.getHorizon(),
 						agentRef().computeConsumedResources(1) );
 	makeActionsForState( *_initial );
 	std::cout << "Initial state: " << *_initial << std::endl;	
@@ -116,11 +117,7 @@ void	HunterGathererMDPModel::makeActionsForState( HunterGathererMDPState& s ) co
 	}	
 
 
-	if ( _config.getNumberForageActions() > validActionSectors.size() )
-	{
-		throw Engine::Exception( "HunterGathererMDPModel::makeActionsForState() : nr. forage actions in model > nr. available sectors" );
-	}	
-	else if ( _config.getNumberForageActions() == validActionSectors.size() )
+	if ( _config.getNumberForageActions() >= validActionSectors.size() )
 	{
 		for ( unsigned i = 0; i < validActionSectors.size(); i++ )
 			s.addAction( new ForageAction( validActionSectors[i], true ) );	
