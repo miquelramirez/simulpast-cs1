@@ -11,14 +11,14 @@ HunterGathererMDPState::HunterGathererMDPState()
 HunterGathererMDPState::HunterGathererMDPState(Engine::Point2D<int> loc, int initResources, 
 	const Engine::Raster& resourcesRaster, int divider )
 	: _timeIndex(0), _mapLocation( loc ), _onHandResources( initResources/divider ), _resources( resourcesRaster ),
-	_resourcesDivider( divider )
+	_resourcesDivider( divider ), _daysStarving( 0 )
 {
 	computeHash();
 }
 
 HunterGathererMDPState::HunterGathererMDPState( const HunterGathererMDPState& s )
 	: _timeIndex( s._timeIndex ), _mapLocation( s._mapLocation ), _onHandResources( s._onHandResources ),
-	_resources( s._resources ), _resourcesDivider( s._resourcesDivider )
+	_resources( s._resources ), _resourcesDivider( s._resourcesDivider ), _daysStarving( s._daysStarving )
 {
 	computeHash();
 	
@@ -34,7 +34,8 @@ const HunterGathererMDPState& HunterGathererMDPState::operator=( const HunterGat
 	_mapLocation = s._mapLocation;
 	_onHandResources = s._onHandResources;
 	_resources = s._resources;
-	_resourcesDivider = s._resourcesDivider;	
+	_resourcesDivider = s._resourcesDivider;
+	_daysStarving = s._daysStarving;	
 
 	computeHash();
 	
@@ -53,6 +54,7 @@ void	HunterGathererMDPState::initializeSuccessor( HunterGathererMDPState& s ) co
 	s._onHandResources = _onHandResources;
 	s._resources = _resources;
 	s._resourcesDivider = _resourcesDivider;
+	s._daysStarving = _daysStarving;
 }
 
 HunterGathererMDPState::~HunterGathererMDPState()
@@ -72,6 +74,7 @@ void	HunterGathererMDPState::computeHash()
 	_hashKey.add( _mapLocation._x );
 	_hashKey.add( _mapLocation._y );
 	_hashKey.add( _onHandResources );
+	_hashKey.add( _daysStarving );
 
 	for ( Engine::IncrementalRaster::ChangeIterator it = _resources.firstChange();
 		it != _resources.endOfChanges(); it++ )
