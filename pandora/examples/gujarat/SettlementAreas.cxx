@@ -72,7 +72,7 @@ namespace Gujarat
 		dunes++;
 		cells++;
 		wilds++;
-		result = (int)(1000.0*(   (1.0 - (dunes/cells)) + (wilds/cells) + exp(cells)  ));
+		result = (int)(1000.0*(   (1.0 - (dunes/cells)) + (wilds/cells) + (1.0/sqrt(sqrt(cells)))  ));
 		//result = wilds;
 		//std::cout << "SET SCORE:" << result << std::endl;
 		
