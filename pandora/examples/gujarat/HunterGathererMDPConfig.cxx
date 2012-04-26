@@ -21,6 +21,8 @@ HunterGathererMDPConfig::HunterGathererMDPConfig( TiXmlElement* elem )
 	std::string boolText = elem->Attribute( "doNothingIsAllowed" );	
 	_doNothingAllowed = ( boolText == "true" ? true : false );
 	_horizon = atoi( elem->Attribute( "horizon" ) );
+	_width = atoi( elem->Attribute( "width" ) );
+	_explorationBonus = atof( elem->Attribute( "explorationBonus" ) );
 }
 
 HunterGathererMDPConfig::~HunterGathererMDPConfig()
@@ -34,7 +36,9 @@ void	HunterGathererMDPConfig::dump( std::ostream& os ) const
 	os << "# Forage Actions: " << getNumberForageActions() << std::endl;
 	os << "# MoveHome Actions: " << getNumberMoveHomeActions() << std::endl;
 	os << "Is DoNothing an available action? " << ( isDoNothingAllowed() ? "yes" : "no" ) << std::endl;
-	os << "Horizon (# sim time steps): " << _horizon << std::endl;	
+	os << "Horizon (# sim time steps): " << _horizon << std::endl;
+	os << "Width: " << _width << std::endl;
+	os << "Exploration Bonus: " << _explorationBonus << std::endl;	
 }
 
 }
