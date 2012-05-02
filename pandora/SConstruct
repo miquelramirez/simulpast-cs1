@@ -3,8 +3,13 @@ import os
 
 release = ARGUMENTS.get('release', 1)
 mareNostrum = ARGUMENTS.get('mn', 0)
+localmpich = ARGUMENTS.get('localmpich',0)
 
-env = Environment(ENV=os.environ, CXX='mpicxx')
+if int(localmpich) == 1 :
+	env = Environment(ENV=os.environ, CXX='/usr/local/bin/mpicxx')
+else :
+	env = Environment(ENV=os.environ, CXX='mpicxx')
+
 env.VariantDir('build', '.')
 
 if int(release) == 0:
@@ -48,8 +53,11 @@ if int(release)==0 and int(mareNostrum)==1:
 	libDirs += ['/gpfs/apps/CEPBATOOLS/mpitrace-stable-1.2-mx/lib']
 
 env.SharedLibrary(libraryName, srcBaseFiles, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs)
+if int(localmpich) == 1 :
+	envPython = Environment(ENV=os.environ, CXX='/usr/local/bin/mpicxx')
+else :
+	envPython = Environment(ENV=os.environ, CXX='mpicxx')
 
-envPython = Environment(ENV=os.environ, CXX='mpicxx')
 envPython['LINKFLAGS'] = Split('-Wl,--export-dynamic,-no-undefined')
 envPython.VariantDir('build_py', '.')
 

@@ -1,6 +1,7 @@
 
 #include "GujaratAgent.hxx"
 #include "GujaratWorld.hxx"
+#include "GujaratDemographics.hxx"
 #include "Action.hxx"
 #include <sstream>
 
@@ -10,11 +11,13 @@ namespace Gujarat
 GujaratAgent::GujaratAgent( const std::string & id ) 
 	: Engine::Agent(id), 
 	 _spentTime(0), _collectedResources(0), _age(0),
-	_socialRange( 50 ), _starvated( false )
+	_socialRange( 50 ), _starved( false )
 {
 	// we start with a couple of 15 years
 	_populationAges.push_back(15);
 	_populationAges.push_back(15);
+	_emigrationProbability = 0.0;
+	_reproductionProbability = 0.0;
 	std::stringstream fName;
 	fName << getId() << ".state.log";
 	_log = new std::ofstream( fName.str().c_str() );
@@ -52,6 +55,19 @@ void GujaratAgent::step()
 {
 	log() << "timestep=" << getWorld()->getCurrentTimeStep() << std::endl;
 	log() << "\tagent.collectedResourcesBeforeAction=" << getOnHandResources() << std::endl;	
+	log() << "\tagent.nrAdults=" << getNrAvailableAdults() << std::endl;
+	log() << "\tagent.adultAges=[";
+	for ( unsigned k = 0; k < _populationAges.size(); k++ )
+		if ( _populationAges[k] >= 15 )
+			log() << _populationAges[k] << ",";
+	log() << "]" << std::endl; 
+	log() << "\tagent.nrChildren=" << getNrChildren() << std::endl;
+	log() << "\tagent.childrenAges=[";
+	for ( unsigned k = 0; k < _populationAges.size(); k++ )
+		if ( _populationAges[k] >= 0 && _populationAges[k] < 15 )
+			log() << _populationAges[k] << ",";	
+	log() << "]" << std::endl;
+	log() << "\tagent.resourcesNeeded=" << computeConsumedResources(1) << std::endl; 
 
 	updateKnowledge();
 
@@ -77,17 +93,30 @@ void GujaratAgent::step()
 	log() << "\tagent.collectedResourcesAfterConsumption=" << getOnHandResources() << std::endl;	
 	if ( _collectedResources < 0 )
 	{
-		_starvated = true;
-		log() << "\tagent.isStarvating=yes" << std::endl;
+		_starved = true;
+		_emigrationProbability += 1.0f/120.f;
+		log() << "\tagent.isStarving=yes" << std::endl;
 		_collectedResources = 0;
 	}
 	else
 	{
-		log() << "\tagent.isStarvating=no" << std::endl;
-		_starvated = false;
+		log() << "\tagent.isStarving=no" << std::endl;
+		_starved = false;
+		_reproductionProbability += 1.0/360.0f;
 		// Decay factor, modeling spoilage
 		_collectedResources *= getSurplusSpoilageFactor();
 
+	}
+
+	if ( (getWorld()->getCurrentTimeStep() % 120 == 0) 
+		&& (getWorld()->getCurrentTimeStep() > 119) ) // last day of the year
+	{
+		if( checkEmigration() )
+		{
+			log() << "Agent emigrates" << std::endl;
+			_world->removeAgent(this);
+			return;
+		}
 	}
 	
 	// end of year, evaluate reproduction, mortality and update age
@@ -100,6 +129,12 @@ void GujaratAgent::step()
 		checkMarriage();
 		checkAgentRemoval();
 	}
+}
+
+bool	GujaratAgent::checkEmigration()
+{
+	return _demographicsModel->checkEmigration();
+
 }
 
 double 	GujaratAgent::getTimeSpentForagingTile() const
@@ -247,26 +282,7 @@ void GujaratAgent::updateAges()
 
 void GujaratAgent::checkReproduction()
 {
-	// if male or female died, reproduction is impossible
-	if(_populationAges[0] == -1 || _populationAges[1] == -1)
-	{
-		return;
-	}
-	// 50% chance of having new child
-	if(_world->getStatistics().getUniformDistValue(0,1)==0)
-	{
-		//std::cout << this << " have a new baby!" << std::endl;
-		// we look for an empty space or add a new one
-		for(unsigned int index=2; index!=_populationAges.size(); index++)
-		{
-			if(_populationAges[index]==-1)
-			{
-				_populationAges[index] = 0;
-				return;
-			}
-		}
-		_populationAges.push_back(0);
-	}
+	_demographicsModel->checkReproduction();
 }
 
 int GujaratAgent::computeConsumedResources( int timeSteps ) const
@@ -284,78 +300,7 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 
 void GujaratAgent::checkMortality()
 {
-	// TODO check resources, now year, must be seasonal
-	int popSize = 0;
-	for(unsigned int index=0; index<_populationAges.size(); index++)
-	{
-		if(_populationAges[index]!=-1)
-		{
-			popSize++;
-		}
-	}
-	// each individual eats 10 resources
-	int maintainedPopulation = _collectedResources/2000.0f;
-	int starvingPopulation = popSize - maintainedPopulation;
-	// for each starving pop, possibility of death = 10% for each individual
-	if(starvingPopulation>0)
-	{
-		//std::cout << "starving pop!: " << starvingPopulation << " with collected resources: " << _collectedResources << " and pop size: " << popSize << std::endl;
-		for(unsigned int index=0; index<_populationAges.size(); index++)
-		{
-			if(_populationAges[index]!=-1)
-			{	
-				if(_world->getStatistics().getUniformDistValue(0,9)==0)
-				{
-					_populationAges[index]=-1;
-				}
-			}
-		}
-	}
-
-	for(unsigned int index=0; index<2; index++)
-	{
-		if(_populationAges[index]==-1)
-		{
-			continue;
-		}
-		// 2% chance of mortality in adults
-		if(_world->getStatistics().getUniformDistValue(0,1000)<_populationAges[index])
-		{
-			//std::cout << "adult: " << index << " died at age: " << _populationAges[index] << std::endl;
-			_populationAges[index] = -1;
-		}
-		/*
-		// absolute maximum: 50 years
-		if(_populationAges[index]==50)
-		{
-			//std::cout << "adult: " << index << " died at maximum age: " << std::endl;
-			_populationAges[index] = -1;
-		}
-		*/
-	}
-	for(unsigned int index=2; index<_populationAges.size(); index++)
-	{
-		if(_populationAges[index]==-1)
-		{
-			continue;
-		}
-		// 10% chance of mortality until 2
-		if(_populationAges[index]<3)
-		{
-			if(_world->getStatistics().getUniformDistValue(0,9)==0)
-			{
-				//std::cout << "child: " << _populationAges[index] << " died during infancy" << std::endl;
-				_populationAges[index] = -1;
-			}
-		}
-		// 2% afterwards (as male/female)
-		//else if(_world->getStatistics().getUniformDistValue(0,24)==0)
-		else if(_world->getStatistics().getUniformDistValue(0,1000)<_populationAges[index])
-		{
-			//std::cout << "child: " << _populationAges[index] << " died" << std::endl;
-			_populationAges[index] = -1;
-		}
-	}
+	_demographicsModel->checkMortality();
 }
 
 void GujaratAgent::serialize()
@@ -426,6 +371,84 @@ int	GujaratAgent::getNrChildren() const
 		}
 	}
 	return numChildren;
+}
+
+int	GujaratAgent::getPopulationSize() const
+{
+	int popSize = 0;
+	for(unsigned int index=0; index<_populationAges.size(); index++)
+	{
+		if(_populationAges[index]!=-1)
+		{
+			popSize++;
+		}
+	}
+	return popSize;	
+}
+
+void	GujaratAgent::decimatePopulation()
+{
+	for(unsigned int index=0; index<_populationAges.size(); index++)
+	{
+		if(_populationAges[index]!=-1)
+		{	
+			if(_world->getStatistics().getUniformDistValue(0,9)==0)
+			{
+				_populationAges[index]=-1;
+			}
+		}
+	}	
+}
+
+void	GujaratAgent::checkDeath( int minAge, int maxAge, int chance )
+{
+	for ( unsigned index = 0; index < _populationAges.size(); index++ )
+	{
+		if ( _populationAges[index] < 0 ) continue;
+		if ( _populationAges[index] < minAge
+			|| _populationAges[index] > maxAge )
+			continue;
+		int die = _world->getStatistics().getUniformDistValue(0,1000);
+		if ( die < chance )
+			_populationAges[index] = -1;
+	}
+}
+
+void	GujaratAgent::checkDeathByAging( int minAge )
+{
+	for ( unsigned index = 0; index < _populationAges.size(); index++ )
+	{
+		if ( _populationAges[index] <= minAge ) continue;
+		int chance = _populationAges[index] - minAge;
+		int die = _world->getStatistics().getUniformDistValue(0,100);
+		if ( die < chance )
+			_populationAges[index] = -1;
+	}
+	
+}
+
+bool	GujaratAgent::canReproduce() const
+{
+	if(_populationAges[0] == -1 || _populationAges[1] == -1)
+	{
+		return false;
+	}
+	return true;
+}
+
+void	GujaratAgent::addNewChild()
+{
+	//std::cout << this << " have a new baby!" << std::endl;
+	// we look for an empty space or add a new one
+	for(unsigned int index=2; index!=_populationAges.size(); index++)
+	{
+		if(_populationAges[index]==-1)
+		{
+			_populationAges[index] = 0;
+			return;
+		}
+	}
+	_populationAges.push_back(0);	
 }
 
 } // namespace Gujarat

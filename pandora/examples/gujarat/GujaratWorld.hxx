@@ -41,6 +41,9 @@ class GujaratWorld : public Engine::World
 	std::vector<float> _dailyDrySeasonBiomassDecrease;
 	// rectangular Areas surrounding Dunes
 	SettlementAreas    _settlementAreas;
+
+	std::ofstream*	_log;
+
 	//*********************************************
 	void createRasters();
 	void setSettlementAreasInRaster();
@@ -57,6 +60,8 @@ class GujaratWorld : public Engine::World
 	void updateResources();
 
 	void recomputeYearlyBiomass();
+
+	std::ofstream&	log() { return *_log; }
 	
 public:
 	GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config );

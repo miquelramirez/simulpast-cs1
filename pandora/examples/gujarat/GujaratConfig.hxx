@@ -56,6 +56,7 @@ class GujaratConfig : public Config
 	float _surplusSpoilage;
 
 	std::string	_hunterGathererController;
+	std::string	_demographicsModel;
 
 	HunterGathererMDPConfig*	_controllerConfig;
 
