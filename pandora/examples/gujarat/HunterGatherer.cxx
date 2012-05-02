@@ -216,11 +216,6 @@ GujaratAgent * HunterGatherer::createNewAgent()
 	agent->setHomeRange( _homeRange );
 	agent->setSurplusForReproductionThreshold( _surplusForReproductionThreshold );
 	agent->setSurplusWanted( _surplusWanted );
-	
-	agent->setFoodNeedsMeanPerson(_foodNeedsMeanPerson);
-	agent->setFoodNeedsMeanChildren(_foodNeedsMeanChildren);
-	agent->setFoodNeedsForReproduction(_foodNeedsForReproduction);	
-	
 	agent->setNumSectors( _sectors.size() );
 	agent->setPosition(_position);
 	agent->createSectorsMask();
@@ -228,44 +223,9 @@ GujaratAgent * HunterGatherer::createNewAgent()
 	return agent;
 }
 
-
-
-int HunterGatherer::neededResources(int timeSteps) const
-{
-	// return _collectedResources < (_surplusForReproductionThreshold + _surplusWanted);
-	// ATM : new survival threshold function and attributes
-
-	
-	float needs = 0.0;
-	
-	if (_populationAges[0] >= 0)
-	{
-		needs = needs + _foodNeedsMeanPerson;
-	}
-	
-	if (_populationAges[1] >= 0)
-	{
-		needs = needs + _foodNeedsMeanPerson;
-	}
-	
-	// check pregnancy on course
-	needs = needs + _foodNeedsForReproduction;
-	
-	for(int i = 2; i < _populationAges.size(); i++)
-	{
-		if (_populationAges[i] >= 0)
-		{
-			needs = needs + _foodNeedsMeanChildren;
-		}
-	}
-	
-	return	(int)needs * timeSteps;
-}
-
 bool	HunterGatherer::needsResources()
 {
-	//return _collectedResources < (_surplusForReproductionThreshold + _surplusWanted);
-	return _collectedResources < neededResources(1)*5;
+	return _collectedResources < (_surplusForReproductionThreshold + _surplusWanted);
 }
 
 bool	HunterGatherer::cellValid( Engine::Point2D<int>& loc )
