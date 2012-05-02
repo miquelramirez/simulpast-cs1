@@ -22,7 +22,7 @@ HunterGathererMDPConfig::HunterGathererMDPConfig( TiXmlElement* elem )
 	_doNothingAllowed = ( boolText == "true" ? true : false );
 	_horizon = atoi( elem->Attribute( "horizon" ) );
 	_width = atoi( elem->Attribute( "width" ) );
-	_explorationBonus = atof( elem->Attribute( "explorationBonus" ) );
+	_explorationBonus = -1.0f*atof( elem->Attribute( "explorationBonus" ) );
 }
 
 HunterGathererMDPConfig::~HunterGathererMDPConfig()
