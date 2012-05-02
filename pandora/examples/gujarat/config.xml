@@ -29,24 +29,33 @@
 	<rainHistoricalDistribution shape="2.628" scale="5278.807" mean="4643.847826087"/>
 	<!-- Agents definition -->
 	<!-- overlap will be defined as homeRange + 1. It must be < 1/4 of world size -->
+	<!-- * Walking Speed Hour = # meters traversed per hour -->
+	<!-- * Available Forage Time = # hours a day the forage action takes -->
+	<!-- * forageTimeCost = how much time (in hours) does it cost the agent to exploit a tile resources -->
 	<hunterGatherers 
 		num="1" homeRange="30"
 		surplusForReproductionThreshold="2" 
 		surplusWanted="1"
 		surplusSpoilage="0.25"
 		numSectors="8"
+		walkingSpeedHour="3000"
+		forageTimeCost="0.5"
+		availableForageTime="4.5"
 		controllerType="MDP" >
-		<!-- width = number of trials before selecting an action, the higher the
+		<!-- * width = number of trials before selecting an action, the higher the
 		 	the number, the more informed is the action selection and more
 			computation time is required -->
-		<!-- explorationBonus = exploration bonus parameter value -->
+		<!-- * explorationBonus = exploration bonus parameter value, the higher it is, UCT
+		     will be more likely to explore all possible actions with the same frequency,
+		     the lower it is, UCT will devote more time to explore those actions which 
+		     look more promising (and possibly missing some opportunities) -->
 		<controllerConfig 	type="MDP" 
 					nrForageActions="3"
 					nrMoveHomeActions="3"
 					doNothingIsAllowed="true"
 					horizon="7"
 					width="100"
-					explorationBonus ="-10.0"
+					explorationBonus ="10.0"
 		/>
 	</hunterGatherers>
 	<agroPastoralists num="0" 
