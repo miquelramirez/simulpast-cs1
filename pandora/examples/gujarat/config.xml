@@ -44,9 +44,9 @@
 					nrForageActions="3"
 					nrMoveHomeActions="3"
 					doNothingIsAllowed="true"
-					horizon="21"
+					horizon="7"
 					width="100"
-					explorationBonus ="2.0"
+					explorationBonus ="-10.0"
 		/>
 	</hunterGatherers>
 	<agroPastoralists num="0" 
