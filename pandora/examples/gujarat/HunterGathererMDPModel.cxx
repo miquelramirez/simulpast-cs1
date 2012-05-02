@@ -68,9 +68,9 @@ bool HunterGathererMDPModel::applicable( const HunterGathererMDPState& s,
 float HunterGathererMDPModel::cost( const HunterGathererMDPState& s,
 					action_t a ) const
 {
-	float rewardSignal = s.getDaysStarving();
-	rewardSignal += s.availableActions(a)->getTimeNeeded();
-	return rewardSignal;
+	float cost = s.getDaysStarving()*10;
+	cost += s.availableActions(a)->getTimeNeeded();
+	return cost;
 }
 
 void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s, 
@@ -82,6 +82,7 @@ void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s,
 	const Action* act = s.availableActions(a);
 	act->execute( agentRef(), s, sp );
 	applyFrameEffects( s, sp );
+	sp.computeHash();	
 	makeActionsForState( sp );
 	outcomes.push_back( std::make_pair(sp, 1.0) );
 }
@@ -90,14 +91,15 @@ void	HunterGathererMDPModel::applyFrameEffects( const HunterGathererMDPState& s,
 {
 	sp.consume();
 	sp.spoilage( agentRef().getSurplusSpoilageFactor() );
-	sp.increaseTimeIndex();	
+	sp.increaseTimeIndex();
 }
 
 void	HunterGathererMDPModel::makeActionsForState( HunterGathererMDPState& s ) const
 {
 	assert( s.numAvailableActions() == 0 );
 	// Make Do Nothing
-	s.addAction( new DoNothingAction() );	
+	if ( _config.isDoNothingAllowed() )
+		s.addAction( new DoNothingAction() );	
 	
 	// Make Forage actions
 	std::vector< Sector* > validActionSectors;
@@ -117,6 +119,7 @@ void	HunterGathererMDPModel::makeActionsForState( HunterGathererMDPState& s ) co
 	}	
 
 
+	std::sort( validActionSectors.begin(), validActionSectors.end(), SectorBestFirstSortPtrVecPredicate() );
 	if ( _config.getNumberForageActions() >= validActionSectors.size() )
 	{
 		for ( unsigned i = 0; i < validActionSectors.size(); i++ )
@@ -124,7 +127,6 @@ void	HunterGathererMDPModel::makeActionsForState( HunterGathererMDPState& s ) co
 	}
 	else
 	{
-		std::sort( validActionSectors.begin(), validActionSectors.end(), SectorBestFirstSortPtrVecPredicate() );
 		for ( unsigned i = 0; i < _config.getNumberForageActions(); i++ )
 			s.addAction( new ForageAction( validActionSectors[i], true ) );
 		for ( unsigned i = _config.getNumberForageActions(); i < validActionSectors.size(); i++ )
