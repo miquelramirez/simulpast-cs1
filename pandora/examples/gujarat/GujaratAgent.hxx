@@ -54,6 +54,10 @@ protected:
 	float _massToCaloriesRate;
 	float _surplusSpoilageFactor;
 
+	float _walkingSpeedHour;
+	float _forageTimeCost;
+	float _availableForageTime;
+
 	std::list<Action*> _actions;
 
 	AgentController*	_controller;
@@ -92,7 +96,16 @@ public:
 	void	setSurplusSpoilageFactor( float v ) { _surplusSpoilageFactor = v; }
 	float	getSurplusSpoilageFactor() const { return _surplusSpoilageFactor; }
 
-	double	getForageTime() const;
+	void	setWalkingSpeedHour( float v ) { _walkingSpeedHour = v; }
+	float	getWalkingSpeedHour() const { return _walkingSpeedHour; }
+
+	void	setForageTimeCost( float v ) { _forageTimeCost = v; }
+	float	getForageTimeCost() const { return _forageTimeCost; }
+
+	void	setAvailableForageTime( float v ) { _availableForageTime = v; }
+	float	getAvailableForageTime() const { return _availableForageTime; }
+
+	double	getTimeSpentForagingTile() const;
 
 	void			setController( AgentController* controller ); 
 	AgentController* 	activeController() { return _controller; }

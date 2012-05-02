@@ -102,21 +102,16 @@ void GujaratAgent::step()
 	}
 }
 
-double 	GujaratAgent::getForageTime() const
+double 	GujaratAgent::getTimeSpentForagingTile() const
 {
-	double forageTime = 0.5;
-	double walkingSpeedHour = 3000.0;
-	return forageTime * walkingSpeedHour;
+	return getForageTimeCost() * getWalkingSpeedHour();
 }
 
 double	GujaratAgent::computeMaxForagingDistance() const
 {
 	int 	nAdults = getNrAvailableAdults();		
-	double  walkingSpeedHour = 3000.0;
-	double  availTime = 4.5;
-	double  distPerAdult = walkingSpeedHour * availTime;
 
-	return  distPerAdult * (double)nAdults;
+	return  getWalkingSpeedHour() * getAvailableForageTime() * (double)nAdults;
 }
 
 GujaratAgent * GujaratAgent::getMarriageCandidate()

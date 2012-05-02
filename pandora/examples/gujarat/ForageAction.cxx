@@ -89,7 +89,7 @@ void	ForageAction::doWalk( const GujaratAgent& agent, const Engine::Point2D<int>
 		int bestScore = 0;
 		selectBestNearestCell( n, r, bestScore, best );
 		// 2. update walk distance
-		walkedDist += agent.getForageTime();
+		walkedDist += agent.getTimeSpentForagingTile();
 		walkedDist += best.distance(n);
 		n = best;
 		distHome = n0.distance(n);	
@@ -116,7 +116,7 @@ int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, GujaratAgent
 
 		selectBestNearestCell( n, agent.getWorld()->getDynamicRaster("resources"), bestScore, best );
 		// 2. update walk distance
-		walkedDist += agent.getForageTime();
+		walkedDist += agent.getTimeSpentForagingTile();
 		walkedDist += best.distance(n);
 		n = best;
 		distHome = n0.distance(n);

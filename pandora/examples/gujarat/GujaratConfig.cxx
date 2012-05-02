@@ -141,6 +141,9 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	retrieveAttributeMandatory( element, "surplusWanted", _surplusWanted );
 	retrieveAttributeMandatory( element, "surplusSpoilage", _surplusSpoilage );
 	retrieveAttributeMandatory( element, "numSectors", _numSectors );
+	retrieveAttributeMandatory( element, "walkingSpeedHour", _walkingSpeedHour );
+	retrieveAttributeMandatory( element, "forageTimeCost", _forageTimeCost );
+	retrieveAttributeMandatory( element, "availableForageTime", _availableForageTime );
 	retrieveAttributeMandatory( element, "controllerType", _hunterGathererController );
 	
 	_hunterGathererController = element->Attribute("controllerType");

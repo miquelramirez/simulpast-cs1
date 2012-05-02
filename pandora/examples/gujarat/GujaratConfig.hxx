@@ -33,6 +33,9 @@ class GujaratConfig : public Config
 	// MRJ: Hunter Gatherers attributes
 	int		_surplusForReproductionThreshold;
 	int		_surplusWanted;
+	float		_walkingSpeedHour;
+	float		_forageTimeCost;
+	float		_availableForageTime;
 
 	// MRJ: Agro Pastoralists attributes
 	int		_maxCropHomeDistance;
