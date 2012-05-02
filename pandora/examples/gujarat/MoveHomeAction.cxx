@@ -78,6 +78,7 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 		// count dunes from candidate area "i", 'selectedArea' variable
 		int countDunes = 0;
 		Engine::Point2D<int> index;
+		std::vector< Engine::Point2D<int> > dunes;
 		for (index._x = intersection._origin._x; index._x < intersection._origin._x+intersection._size._x; index._x++)			
 		{
 			for (index._y = intersection._origin._y; index._y < intersection._origin._y+intersection._size._y; index._y++)			
@@ -86,36 +87,15 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 					&& (agent.getPosition().distance(index) <= (double)agent.getHomeMobilityRange()))
 				{
 					countDunes++;
+					dunes.push_back(index);
 				}
 			}
 		}		
-		
-		bool foundDune = false;
-		// pick one dune at random		
-		uint32_t diceSelectOneRandomDune = world->getStatistics().getUniformDistValue(0, countDunes);
-		for (index._x = intersection._origin._x; 
-			 index._x < intersection._origin._x+intersection._size._x;
-			 index._x++)			
-		{
-			for (index._y = intersection._origin._y; 
-				 index._y < intersection._origin._y+intersection._size._y;
-				 index._y++)				
-			{
-				if (world->getValue("soils",index) == DUNE
-					&& (agent.getPosition().distance(index) <= (double)agent.getHomeMobilityRange())
-					&& diceSelectOneRandomDune == 0.0)
-				{	
-					actions.push_back( new MoveHomeAction( index ) );	
-					foundDune   = true;
-					break;
-				}
-				diceSelectOneRandomDune--;
-			}
-			if (foundDune)	
-			{
-				break;
-			}
-		}		
+
+		if ( dunes.empty() ) 
+			continue;
+		uint32_t diceSelectOneRandomDune = world->getStatistics().getUniformDistValue(0, dunes.size()-1);
+		actions.push_back( new MoveHomeAction( dunes[ diceSelectOneRandomDune ] ) );
 	}
 	candidates.clear();
 }
@@ -222,7 +202,7 @@ void MoveHomeAction::execute( const GujaratAgent& agent, const HunterGathererMDP
 
 int MoveHomeAction::getTimeNeeded() const
 {
-	return 5;//issue: set it in configuration file
+	return 1;//issue: set it in configuration file
 }
 
 } // namespace Gujarat
