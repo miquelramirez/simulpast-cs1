@@ -23,12 +23,12 @@ public:
 	virtual	Action*	selectAction();
 
 private:
-	typedef		Policy::random_t< HunterGathererMDPState >	BasePolicy;
-	typedef		Policy::UCT::uct_t< HunterGathererMDPState >	UCT;
+	typedef		Online::Policy::random_t< HunterGathererMDPState >	BasePolicy;
+	typedef		Online::Policy::UCT::uct_t< HunterGathererMDPState >	UCT;
 
 	HunterGathererMDPConfig						_mdpConfig;
 	HunterGathererMDPModel*						_model;
-	Policy::random_t< HunterGathererMDPState >*			_uctBasePolicy;	
+	Online::Policy::random_t< HunterGathererMDPState >*		_uctBasePolicy;	
 };
 
 }
