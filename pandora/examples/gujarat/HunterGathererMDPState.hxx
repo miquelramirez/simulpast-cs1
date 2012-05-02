@@ -47,11 +47,14 @@ public:
 	void					consume() 
 	{ 
 		if ( _onHandResources > 0 ) 
+		{
 			_onHandResources--;
+			_daysStarving=0;
+		}
 		else
 		{
 			_onHandResources = 0;
-			_daysStarving++;
+			_daysStarving=1;
 		}
 	}
 	
@@ -69,9 +72,9 @@ public:
 
 	unsigned	numAvailableActions() const { return _availableActions.size(); }
 
+	void	computeHash();
 private:
 	
-	void	computeHash();
 
 private:
 	unsigned			_timeIndex;
@@ -83,6 +86,7 @@ private:
 	int				_maxResources;
 	int				_resourcesDivider;
 	int				_daysStarving;
+	bool				_isCopy;
 };
 
 inline std::ostream& operator<<( std::ostream& os, const HunterGathererMDPState& s )
