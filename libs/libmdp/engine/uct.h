@@ -22,6 +22,7 @@
 #include "policy.h"
 
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <cassert>
 #include <limits>
@@ -29,6 +30,8 @@
 #include <math.h>
 
 //#define DEBUG
+
+namespace Online {
 
 namespace Policy {
 
@@ -65,6 +68,12 @@ struct data_t {
     std::vector<int> counts_;
     data_t(const std::vector<float> &values, const std::vector<int> &counts)
       : values_(values), counts_(counts) { }
+    data_t(const data_t &data)
+      : values_(data.values_), counts_(data.counts_) { }
+#if 0
+    data_t(data_t &&data)
+      : values_(std::move(data.values_)), counts_(std::move(data.counts_)) { }
+#endif
 };
 
 template<typename T> class hash_t :
@@ -98,16 +107,30 @@ template<typename T> class hash_t :
 template<typename T> class uct_t : public improvement_t<T> {
   protected:
     unsigned width_;
-    unsigned depth_bound_;
+    unsigned horizon_;
     float parameter_;
+    bool random_ties_;
     mutable hash_t<T> table_;
 
   public:
-    uct_t(const policy_t<T> &base_policy, unsigned width, unsigned depth_bound, float parameter)
+    uct_t(const policy_t<T> &base_policy,
+          unsigned width,
+          unsigned horizon,
+          float parameter,
+          bool random_ties)
       : improvement_t<T>(base_policy),
         width_(width),
-        depth_bound_(depth_bound),
-        parameter_(parameter) {
+        horizon_(horizon),
+        parameter_(parameter),
+        random_ties_(random_ties) {
+        std::stringstream name_stream;
+        name_stream << "uct("
+                    << "width=" << width_
+                    << ",horizon=" << horizon_
+                    << ",par=" << parameter_
+                    << ",random-ties=" << (random_ties_ ? "true" : "false")
+                    << ")";
+        policy_t<T>::set_name(name_stream.str());
     }
     virtual ~uct_t() { }
 
@@ -119,18 +142,15 @@ template<typename T> class uct_t : public improvement_t<T> {
         }
         typename hash_t<T>::iterator it = table_.find(std::make_pair(0, s));
         assert(it != table_.end());
-        Problem::action_t action = select_action(s, it->second, 0, false);
+        Problem::action_t action = select_best_action(s, it->second, 0, false, random_ties_);
         assert(policy_t<T>::problem().applicable(s, action));
         return action;
     }
     virtual const policy_t<T>* clone() const {
-        return new uct_t(improvement_t<T>::base_policy_, width_, depth_bound_, parameter_);
+        return new uct_t(improvement_t<T>::base_policy_, width_, horizon_, parameter_, random_ties_);
     }
     virtual void print_stats(std::ostream &os) const {
-        os << "stats: policy-type=uct(width="
-           << width_ << ",depth="
-           << depth_bound_ << ",par="
-           << parameter_ << ")" << std::endl;
+        os << "stats: policy=" << policy_t<T>::name() << std::endl;
         os << "stats: decisions=" << policy_t<T>::decisions_ << std::endl;
         improvement_t<T>::base_policy_.print_stats(os);
     }
@@ -155,7 +175,7 @@ template<typename T> class uct_t : public improvement_t<T> {
         std::cout << std::setw(2*depth) << "" << "search_tree(" << s << "):";
 #endif
 
-        if( (depth == depth_bound_) || policy_t<T>::problem().terminal(s) ) {
+        if( (depth == horizon_) || policy_t<T>::problem().terminal(s) ) {
 #ifdef DEBUG
             std::cout << " end" << std::endl;
 #endif
@@ -182,9 +202,11 @@ template<typename T> class uct_t : public improvement_t<T> {
             return value;
         } else {
             // select action for this node and increase counts
-            Problem::action_t a = select_action(s, it->second, depth, true);
+	    assert( it->second.counts_.size() == policy_t<T>::problem().number_actions(s)+1 );
+	    assert( it->second.values_.size() == policy_t<T>::problem().number_actions(s)+1 );
+            Problem::action_t a = select_action(s, it->second, depth, true, random_ties_);
             ++it->second.counts_[0];
-            ++it->second.counts_[1+a];
+            ++it->second.counts_.at(1+a);
 
             // sample next state
             std::pair<const T, bool> p = policy_t<T>::problem().sample(s, a);
@@ -199,11 +221,13 @@ template<typename T> class uct_t : public improvement_t<T> {
 #endif
 
             // do recursion and update value
-            float &old_value = it->second.values_[1+a];
-            float n = it->second.counts_[1+a];
+	    float old_value, n;
+            old_value = it->second.values_.at(1+a);
+            n = it->second.counts_.at(1+a);
             float new_value = cost +
               policy_t<T>::problem().discount() * search_tree(p.first, 1 + depth);
             old_value += (new_value - old_value) / n;
+	    it->second.values_.at(1+a) = old_value;
             return old_value;
         }
     }
@@ -211,46 +235,87 @@ template<typename T> class uct_t : public improvement_t<T> {
     Problem::action_t select_action(const T &state,
                                     const data_t &data,
                                     int depth,
-                                    bool add_bonus) const {
+                                    bool add_bonus,
+                                    bool random_ties) const {
         float log_ns = logf(data.counts_[0]);
-        Problem::action_t best_action = Problem::noop;
+        std::vector<Problem::action_t> best_actions;
+        int nactions = policy_t<T>::problem().number_actions(state);
         float best_value = std::numeric_limits<float>::max();
 
-	//std::cout << "UCT: Selecting one action out of " << policy_t<T>::problem().number_actions(state) << std::endl;
-
-        for( Problem::action_t a = 0; a < policy_t<T>::problem().number_actions(state); ++a ) {
+        best_actions.reserve(random_ties ? nactions : 1);
+        for( Problem::action_t a = 0; a < nactions; ++a ) {
             if( policy_t<T>::problem().applicable(state, a) ) {
                 // if this action has never been taken in this node, select it
-                if( data.counts_[1+a] == 0 ) {
+                if( data.counts_.at(1+a) == 0 ) {
                     return a;
                 }
 
                 // compute score of action adding bonus (if applicable)
-                assert(data.counts_[0] > 0);
-                float par = parameter_ == 0 ? -data.values_[1+a] : parameter_;
-                float bonus = add_bonus ? par * sqrtf(2 * log_ns / data.counts_[1+a]) : 0;
-                float value = data.values_[1+a] + bonus;
-
-		//std::cout << "\tIndex: " << a << std::endl;
-		//std::cout << "\tpar=" << par << std::endl;
-		//std::cout << "\tbonus=" << bonus << std::endl;
-		//std::cout << "\tvalue=" << value << std::endl;
+                assert(data.counts_.at(0) > 0);
+		float par, bonus, value;
+                par = parameter_ == 0 ? -data.values_.at(1+a) : parameter_;
+                bonus = add_bonus ? par * sqrtf(2 * log_ns / data.counts_.at(1+a)) : 0;
+                value = data.values_.at(1+a) + bonus;
 
                 // update best action so far
-                if( value < best_value ) {
-                    best_value = value;
-                    best_action = a;
+                if( value <= best_value ) {
+                    if( value < best_value ) {
+                        best_value = value;
+                        best_actions.clear();
+                    }
+                    if( random_ties || best_actions.empty() )
+                        best_actions.push_back(a);
                 }
             }
         }
-	std::cout << "UCT: Best action: " << best_action << std::endl;
-        assert(best_action != Problem::noop);
-        return best_action;
+        assert(!best_actions.empty());
+        return best_actions[Random::uniform(best_actions.size())];
     }
+
+    Problem::action_t select_best_action(const T &state,
+                                    const data_t &data,
+                                    int depth,
+                                    bool add_bonus,
+                                    bool random_ties) const {
+        float log_ns = logf(data.counts_[0]);
+        std::vector<Problem::action_t> best_actions;
+        int nactions = policy_t<T>::problem().number_actions(state);
+        float best_value = std::numeric_limits<float>::max();
+	int best_count = 0;
+
+        best_actions.reserve(random_ties ? nactions : 1);
+        for( Problem::action_t a = 0; a < nactions; ++a ) {
+            if( policy_t<T>::problem().applicable(state, a) ) {
+                // compute score of action adding bonus (if applicable)
+                assert(data.counts_.at(0) > 0);
+		float par, bonus, value;
+                par = parameter_ == 0 ? -data.values_.at(1+a) : parameter_;
+                bonus = add_bonus ? par * sqrtf(2 * log_ns / data.counts_.at(1+a)) : 0;
+                value = data.values_.at(1+a) + bonus;
+
+		std::cout << "Applicable Action: " << a << " Q(a,s)=" << value << " N(a,s)=" << data.counts_.at(1+a) << std::endl;
+
+                // update best action so far
+                if( value <= best_value ) {
+                    if( value < best_value ) {
+                        best_value = value;
+			best_count = data.counts_.at(1+a);
+                        best_actions.clear();
+                    }
+                    if( random_ties || best_actions.empty() )
+                        best_actions.push_back(a);
+                }
+            }
+        }
+	std::cout << "Best Action: " << best_actions.size() << " Cost: " << best_value << " Count: " << best_count <<  std::endl;
+        assert(!best_actions.empty());
+        return best_actions[Random::uniform(best_actions.size())];
+    }
+
 
     float evaluate(const T &s, unsigned depth) const {
         return Evaluation::evaluation(improvement_t<T>::base_policy_,
-                                      s, 1, depth_bound_ - depth);
+                                      s, 1, horizon_ - depth);
     }
 };
 
@@ -259,12 +324,15 @@ template<typename T> class uct_t : public improvement_t<T> {
 template<typename T>
 inline const policy_t<T>* make_uct(const policy_t<T> &base_policy,
                                    unsigned width,
-                                   unsigned depth_bound,
-                                   float parameter) {
-    return new UCT::uct_t<T>(base_policy, width, depth_bound, parameter);
+                                   unsigned horizon,
+                                   float parameter,
+                                   bool random_ties) {
+    return new UCT::uct_t<T>(base_policy, width, horizon, parameter, random_ties);
 }
 
 }; // namespace Policy
+
+}; // namespace Online
 
 #undef DEBUG
 
