@@ -22,11 +22,6 @@ Action*		HunterGathererMDPController::selectAction()
 {
 	log() << "timestep=" << agentRef().getWorld()->getCurrentTimeStep() << std::endl;
 	log() << "\tagent.position=" << agentRef().getPosition() << std::endl;
-	log() << "\tagent.collectedResources=" << agentRef().getOnHandResources() << std::endl;
-	log() << "\tagent.consumedResourcesPerTimeStep=" << agentRef().computeConsumedResources(1) << std::endl;
-	log() << "\tagent.nrAdults=" << agentRef().getNrAvailableAdults() << std::endl; 
-	log() << "\tagent.nrChildren=" << agentRef().getNrChildren() << std::endl;
-	log() << "\tagent.starvating=" << ( agentRef().starvationLastTimeStep() ? "yes" : "no" ) << std::endl;;
 	
 	_model->reset();
 
