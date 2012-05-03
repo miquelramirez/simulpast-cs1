@@ -113,7 +113,7 @@ void GujaratAgent::step()
 	{
 		if( checkEmigration() )
 		{
-			log() << "Agent emigrates" << std::endl;
+			log() << "\tagent.emigration=yes" << std::endl;
 			_world->removeAgent(this);
 			return;
 		}
