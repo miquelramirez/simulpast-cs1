@@ -98,7 +98,7 @@ void	ForageAction::doWalk( const GujaratAgent& agent, const Engine::Point2D<int>
 
 		// 4. update cell resources & amount collected
 		int prevValue = r.getValue(n); 
-		r.setValue( n, prevValue - bestScore );
+		r.setValue( n, prevValue - amtCollected );
 	}
 }
 
@@ -129,7 +129,7 @@ int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, GujaratAgent
 
 		// 4. update cell resources & amount collected 
 		int prevValue = agent.getWorld()->getValue( "resources", n );
-		agent.getWorld()->setValue( "resources", n, prevValue - bestScore );
+		agent.getWorld()->setValue( "resources", n, prevValue - amtCollected );
 	}
 	
 	return collected; 
