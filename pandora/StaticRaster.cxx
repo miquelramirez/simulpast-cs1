@@ -169,7 +169,7 @@ void StaticRaster::loadHDF5File( const std::string & fileName, const std::string
 	std::ostringstream oss;
 	oss << "/" << rasterName << "/values";	
 	hid_t fileId = H5Fopen(fileName.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
-	hid_t dset_id = H5Dopen(fileId, oss.str().c_str());
+	hid_t dset_id = H5Dopen(fileId, oss.str().c_str(), H5P_DEFAULT);
 	hid_t dataspaceId = H5Dget_space(dset_id);
 	hsize_t dims[2];
 	H5Sget_simple_extent_dims(dataspaceId, dims, NULL);
@@ -212,7 +212,7 @@ void StaticRaster::loadHDF5File( const std::string & fileName, const std::string
 	std::ostringstream oss;
 	oss << "/" << rasterName << "/values";	
 	hid_t fileId = H5Fopen(fileName.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
-	hid_t dset_id = H5Dopen(fileId, oss.str().c_str());
+	hid_t dset_id = H5Dopen(fileId, oss.str().c_str(), H5P_DEFAULT);
 	hid_t dataspaceId = H5Dget_space(dset_id);
 	hsize_t dims[2];
 	H5Sget_simple_extent_dims(dataspaceId, dims, NULL);
@@ -270,8 +270,12 @@ const int & StaticRaster::getMaxValue() const
 	return _maxValue;
 }
 
-float	StaticRaster::getAvgValue() const
+float StaticRaster::getAvgValue() const
 {
+	if(_values.size()==0) 
+	{
+		return 0.0f;
+	}
 	float norm = 0.0f;
 	float avg = 0.0f;
 
@@ -279,16 +283,10 @@ float	StaticRaster::getAvgValue() const
 	{
 		for(int j=0; j<_values[i].size(); j++)
 		{		
-			if ( _values[i][j] > 0 )
-			{
-				norm += 1.0;
-				avg += _values[i][j];
-			}
+			norm += 1.0f;			
+			avg += _values[i][j];
 		}
 	}
-
-	if ( norm < 1e-7 ) return 0.0f;
-	
 	return avg / norm;
 }
 
