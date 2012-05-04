@@ -19,7 +19,9 @@ namespace Gujarat
 		std::vector<int> 			_scoreAreas;
 
 	protected: 
+		// expands rectangle r to include point newPoint
 		void updateArea(Engine::Point2D<int> & newPoint, Engine::Rectangle<int> & r);
+		// create new area that will expand from point loc
 		void setNewArea(Engine::Point2D<int> loc,GujaratWorld &w,std::vector<bool> & duneInArea);
 
 	public:

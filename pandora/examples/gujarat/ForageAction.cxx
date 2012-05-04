@@ -55,7 +55,8 @@ void	ForageAction::selectBestNearestCell( 	const Engine::Point2D<int>& n,
 						Engine::Point2D<int>& best ) const
 {
 	bestScore = 0;
-	double minDist = 1e20;
+	std::vector< Engine::Point2D<int> > candidates;	
+	double minDist = std::numeric_limits<double>::max();
 
 	const std::vector< Engine::Point2D<int> >& sectorCells = _forageArea->cells();
 
@@ -66,15 +67,26 @@ void	ForageAction::selectBestNearestCell( 	const Engine::Point2D<int>& n,
 		if ( score > bestScore )
 		{
 			bestScore = score;
-			best = sectorCells[k];
+			candidates.clear();
+			candidates.push_back(sectorCells[k]);
 			minDist = dist; 
 		}
-		else if ( score == bestScore && minDist > dist )
+		else if(score == bestScore)
 		{
-			best = sectorCells[k];
-			minDist = dist;
+			if(dist<minDist)
+			{
+				candidates.clear();
+				candidates.push_back(sectorCells[k]);
+				minDist = dist;
+			}
+			else if(minDist==dist)
+			{
+				candidates.push_back(sectorCells[k]);
+			}
 		}
 	}
+	std::random_shuffle(candidates.begin(), candidates.end());
+	best = candidates[0];
 }
 
 void	ForageAction::doWalk( const GujaratAgent& agent, const Engine::Point2D<int>& n0, double maxDist, Engine::Raster& r, int& collected ) const
@@ -129,7 +141,7 @@ int	ForageAction::doWalk( Engine::Point2D<int>& n0, double maxDist, GujaratAgent
 
 		// 4. update cell resources & amount collected 
 		int prevValue = agent.getWorld()->getValue( "resources", n );
-		agent.getWorld()->setValue( "resources", n, prevValue - amtCollected );
+		agent.getWorld()->setValue( "resources", n, prevValue - amtCollected);
 	}
 	
 	return collected; 

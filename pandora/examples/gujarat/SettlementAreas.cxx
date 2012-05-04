@@ -59,7 +59,7 @@ namespace Gujarat
 			for(index._y = newArea._origin._y; index._y < newArea._origin._y + newArea._size._y ; index._y++)
 			{	
 				cells++;
-				if (w.getValue("soils",index) == WILD)
+				if (w.getValue("soils",index) != DUNE)
 				{
 					wilds++;
 				}
@@ -83,7 +83,8 @@ namespace Gujarat
 	{
 		int Xsize = w.getBoundaries()._size._x;
 		int Ysize = w.getBoundaries()._size._y;
-		
+	
+		// to begin
 		Engine::Rectangle<int> newArea(loc,Engine::Point2D<int>(1,1));  
 		std::queue<Engine::Point2D<int> *> targets;
   
@@ -106,7 +107,7 @@ namespace Gujarat
 					Engine::Point2D<int> newPoint = Engine::Point2D<int>(childX,childY);
 	      
 					//std::cout << "new  location: childX = "<<childX <<" childY= "<< childY << " IsDune: " << (w.getValue("soils",newPoint) == DUNE) <<std::endl;											
-					if ( duneInArea[ newPoint._x*Xsize + newPoint._y ] == false && w.getValue("soils",newPoint)==DUNE ) //!newArea.isInside( newPoint ) 						
+					if ( duneInArea[ newPoint._x*Xsize + newPoint._y ] == false && w.getValue("duneMap",newPoint)==DUNE ) //!newArea.isInside( newPoint ) 						
 					{	
 //						assert( w.getValue("soils",*currentLoc)==DUNE );
 //						assert( ! ( (childX >= newArea._origin._x) && (childX <= newArea._origin._x + newArea._size._x -1) && (childY >= newArea._origin._y) && (childY <= newArea._origin._y + newArea._size._y -1)));
@@ -154,7 +155,7 @@ namespace Gujarat
 		{
 			for(loc._y = Yorigin; loc._y< Yorigin+Ysize; loc._y++)		
 			{
-				if (w.getValue("soils",loc)==DUNE && !duneInArea[loc._x*Xsize + loc._y])
+				if (w.getValue("duneMap",loc)==DUNE && !duneInArea[loc._x*Xsize + loc._y])
 				{
 					//std::cout <<"origin area: "<< loc << std::endl;
 					setNewArea(loc,w,duneInArea);

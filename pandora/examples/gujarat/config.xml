@@ -24,6 +24,7 @@
 	<!-- GIS rasters -->
 	<soil fileName="./resources/gujarat_400_soil_reclass.tiff" size="400"/>
 	<dem fileName="./resources/gujarat_400_dem.tiff" size="400"/>
+	<duneMap fileName="./resources/dunes_400_0ha_simple.tiff" size="400"/>
 	<!-- Climatic model parameters -->
 	<climateSeed value="432432"/>
 	<rainHistoricalDistribution shape="2.628" scale="5278.807" mean="4643.847826087"/>
@@ -33,7 +34,7 @@
 	<!-- * Available Forage Time = # hours a day the forage action takes -->
 	<!-- * forageTimeCost = how much time (in hours) does it cost the agent to exploit a tile resources -->
 	<hunterGatherers 
-		num="100" homeRange="30"
+		num="1" homeRange="30"
 		surplusForReproductionThreshold="2" 
 		surplusWanted="1"
 		surplusSpoilage="0.50"
@@ -74,6 +75,7 @@
 	<storeRaster name="resourceType" value="no" />
 	<storeRaster name="consecutiveYears" value="no" />
 	<storeRaster name="sectors" value="no" />
+	<storeRaster name="duneMap" value="yes" />
 	<storeRaster name="DuneAreas" value="yes" />
 </config>
 
