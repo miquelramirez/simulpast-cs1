@@ -43,6 +43,8 @@ public:
 	const int & getMaxValue() const;
 	//! Reads the '_minValue' attribute.
 	const int & getMinValue() const;
+
+	float getAvgValue() const;
 }; 
 
 } // namespace Engine

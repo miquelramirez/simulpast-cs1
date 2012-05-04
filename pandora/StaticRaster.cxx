@@ -270,5 +270,27 @@ const int & StaticRaster::getMaxValue() const
 	return _maxValue;
 }
 
+float	StaticRaster::getAvgValue() const
+{
+	float norm = 0.0f;
+	float avg = 0.0f;
+
+	for(int i=0; i<_values.size(); i++)
+	{
+		for(int j=0; j<_values[i].size(); j++)
+		{		
+			if ( _values[i][j] > 0 )
+			{
+				norm += 1.0;
+				avg += _values[i][j];
+			}
+		}
+	}
+
+	if ( norm < 1e-7 ) return 0.0f;
+	
+	return avg / norm;
+}
+
 } // namespace Engine
 
