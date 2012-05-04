@@ -409,6 +409,7 @@ void GujaratWorld::stepEnvironment()
 	log() << "\tchildrenPopulation=" << nrChildren << std::endl;
 	log() << "\tmaxCurrentResources=" << getDynamicRaster("resources").getCurrentMaxValue() << std::endl;
 	log() << "\tminCurrentResources=" << getDynamicRaster("resources").getCurrentMinValue() << std::endl;
+	log() << "\tavgCurrentResources=" << getDynamicRaster("resources").getAvgValue() << std::endl;
 
 	// these rasters are only updated at the beginning of seasons
 	if ( !_climate.cellUpdateRequired() ) return;
