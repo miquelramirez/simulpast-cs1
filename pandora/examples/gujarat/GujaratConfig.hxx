@@ -19,6 +19,7 @@ class GujaratConfig : public Config
 	int 		_size;		
 	std::string 	_soilFile;
 	std::string 	_demFile;
+	std::string 	_duneMapFile;
 	int		_climateSeed;
 	// Agent home range expressed in # of underlying GIS
 	// data grid (~30m)

@@ -7,7 +7,7 @@ namespace Gujarat
 {
 
 GujaratConfig::GujaratConfig() 
-	: _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _climateSeed(1),
+	: _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _duneMapFile("no loaded file"), _climateSeed(1),
 	_hunterGathererController( "Rule-Based" ), _controllerConfig(NULL)
 {
 }
@@ -124,6 +124,9 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 
 	element = root->FirstChildElement("dem");
 	retrieveAttributeMandatory( element, "fileName", _demFile );
+
+	element = root->FirstChildElement("duneMap");
+	retrieveAttributeMandatory( element, "fileName", _duneMapFile);
 
 	element = root->FirstChildElement("rainHistoricalDistribution");
 

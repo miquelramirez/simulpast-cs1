@@ -42,6 +42,9 @@ void GujaratWorld::createRasters()
 
 	registerStaticRaster("dem", _config.isStorageRequired("dem"));
 	getStaticRaster("dem").loadGDALFile(_config._demFile, *this);
+
+	registerStaticRaster("duneMap", _config.isStorageRequired("duneMap"));
+	getStaticRaster("duneMap").loadGDALFile(_config._duneMapFile, *this);
 	
 	registerDynamicRaster("moisture", _config.isStorageRequired("moisture"));
 	getDynamicRaster("moisture").setInitValues(0, std::numeric_limits<int>::max(), 0);
