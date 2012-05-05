@@ -2,6 +2,7 @@
 import os
 import sys
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D as Line2D 
 
 def acquire_avg_resources_from_log( logfile ) :
 
@@ -30,16 +31,31 @@ def main() :
 	
 	if len(sys.argv) < 2 :
 		print >> sys.stderr, "No input file was specified"
-		print >> sys.stderr, "Usage: ./plot-avg-resources.py <world log>"
+		print >> sys.stderr, "Usage: ./plot-avg-resources.py <world log> \"title \""
 		sys.exit(1)
 
-	data, xmax, ymax = acquire_avg_resources_from_log( sys.argv[1] )
+	inputs = []
+	i = 1
+	while i < len(sys.argv) :
+		inputs.append( ( sys.argv[i], sys.argv[i+1] ) )
+		print inputs[-1]
+		i+=2
+
+	datas = []
+	global_xmax = 0
+	global_ymax = 0
+
+	for log, title_str in inputs :
+		data, xmax, ymax = acquire_avg_resources_from_log( log )
+		plt.plot( data, label=title_str )
+		if xmax > global_xmax : global_xmax = xmax
+		if ymax > global_ymax : global_ymax = ymax
 	
-	plt.plot( data )
-	plt.title( 'GujaratSim: Yearly Cell Resources (Pop=1)' )
+	plt.title( 'GujaratSim: Yearly Cell Resources' )
 	plt.xlabel( 'Timestep' )
 	plt.ylabel( 'Avg. Resources' )	
-	plt.axis( [ 0, xmax, 0, ymax*1.10 ] )	
+	plt.axis( [ 0, global_xmax, 0, global_ymax*1.10 ] )	
+	plt.legend()
 
 	plt.show()
 	
