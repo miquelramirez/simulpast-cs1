@@ -341,10 +341,24 @@ void GujaratAgent::serialize()
 	serializeAttribute("collected resources", _collectedResources);
 }
 
-void	GujaratAgent::initializePosition( Engine::Point2D<int> randomPos )
+void	GujaratAgent::initializePosition( )
 {
-	setPosition(randomPos);
-	setPosition(getNearLocation(50));
+	// 1. select settlement area
+	GujaratWorld* world = dynamic_cast<GujaratWorld*>(getWorld());
+	const  std::vector< Engine::Rectangle<int> >& areas = world->getSettlementAreas()->getAreas();
+	unsigned die = getWorld()->getStatistics().getUniformDistValue(0, areas.size()-1);
+	Engine::Rectangle<int> area = areas[die];
+	std::vector< Engine::Point2D<int> > dunes;
+	for ( int x = area._origin._x; x < area._origin._x + area._size._x; x++ )
+		for ( int y = area._origin._y; y < area._origin._y + area._size._y; y++ )
+		{
+			Engine::Point2D<int> p(x,y);
+			if ( getWorld()->getValue("soils", p ) == DUNE )
+				dunes.push_back( p );
+		}
+	assert( !dunes.empty() );
+	die = getWorld()->getStatistics().getUniformDistValue(0, dunes.size()-1);
+	setPosition( dunes[die] );
 }
 
 int	GujaratAgent::getNrAvailableAdults() const
