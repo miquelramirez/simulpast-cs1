@@ -279,11 +279,8 @@ float	StaticRaster::getAvgValue() const
 	{
 		for(int j=0; j<_values[i].size(); j++)
 		{		
-			if ( _values[i][j] > 0 )
-			{
-				norm += 1.0;
-				avg += _values[i][j];
-			}
+			norm += 1.0;
+			avg += _values[i][j];
 		}
 	}
 
