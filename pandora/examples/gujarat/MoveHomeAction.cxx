@@ -48,7 +48,7 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 	int boxSizeY = 2*agent.getHomeMobilityRange()+1;
 	Engine::Point2D<int> boxOrigin(boxOriginX, boxOriginY);	
 	Engine::Point2D<int> boxSize(boxSizeX,boxSizeY);	
-	Engine::Rectangle<int> unTrimmedHomeBox(boxOrigin,boxSize); 
+	Engine::Rectangle<int> unTrimmedHomeBox(boxOrigin,boxSize);
 	Engine::Rectangle<int> homeBox;
 	//TODO look out sectors, MPI regions, etc... Decide getBoundaries? or getOverlapBoundaries?
 	// MRJ: As I understand it, this should be getOverlapBoundaries(), very much as it was before
@@ -89,7 +89,7 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 			for (index._y = intersection._origin._y; index._y < intersection._origin._y+intersection._size._y; index._y++)			
 			{
 				if ((world->getValue("soils",index) == DUNE) 
-					&& (agentPos.distance(index) <= (double)agent.getHomeMobilityRange()))
+					&& (ceil(agentPos.distance(index)) <= (double)agent.getHomeMobilityRange()))
 				{
 					countDunes++;
 					dunes.push_back(index);
