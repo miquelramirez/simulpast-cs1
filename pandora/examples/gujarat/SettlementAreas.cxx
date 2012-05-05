@@ -177,7 +177,6 @@ namespace Gujarat
 			//		insideTheCircle, an extra filter, future issue	
 				candidates.push_back(i);
 			}
-			
 		}
 	}
 		
