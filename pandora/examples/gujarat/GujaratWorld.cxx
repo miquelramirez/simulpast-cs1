@@ -107,7 +107,7 @@ void GujaratWorld::createAgents()
 			agent->setSurplusForReproductionThreshold( _config._surplusForReproductionThreshold );
 			agent->setSurplusWanted( _config._surplusWanted );
 			agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
-			agent->setWalkingSpeedHour( _config._walkingSpeedHour );
+			agent->setWalkingSpeedHour( _config._walkingSpeedHour / _config._cellResolution );
 			agent->setForageTimeCost( _config._forageTimeCost );
 			agent->setAvailableForageTime( _config._availableForageTime );
 			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );
@@ -127,8 +127,7 @@ void GujaratWorld::createAgents()
 			{
 				agent->setController( new HunterGathererProgrammedController( agent ) );
 			}
-			
-			agent->initializePosition(getRandomPosition());
+			agent->initializePosition();
 			agent->createSectorsMask();
 			std::cout << _simulation.getId() << " new HunterGathrer: " << agent << std::endl;
 		}
@@ -154,7 +153,7 @@ void GujaratWorld::createAgents()
 				agent->setDemographicsModel( new RamirezDemographics( *agent ) );
 
 			addAgent(agent); 
-			agent->initializePosition(getRandomPosition());
+			agent->initializePosition();
 			std::cout << _simulation.getId() << " new AgroPastoralist: " << agent << std::endl;
 		}
 	}
