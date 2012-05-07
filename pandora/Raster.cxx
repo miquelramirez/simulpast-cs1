@@ -1,5 +1,6 @@
 
 #include "Raster.hxx"
+#include "RasterLoader.hxx"
 #include "Exceptions.hxx"
 
 #include <sstream>
@@ -180,12 +181,6 @@ void Raster::setInitValues( int minValue, int maxValue, int defaultValue )
 			setValue(Point2D<int>(i,j), defaultValue);			
 		}
 	}
-}
-
-void Raster::loadGDALFile( const std::string & fileName, World & world )
-{
-	StaticRaster::loadGDALFile(fileName, world);
-	std::copy(_values.begin(), _values.end(), _maxValues.begin());
 }
 
 } // namespace Engine
