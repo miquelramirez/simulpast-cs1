@@ -15,19 +15,19 @@ env.VariantDir('build', '.')
 if int(release) == 0:
 	env['CCFLAGS'] = Split('-g -Wall -DTIXML_USE_STL')    
 	if int(mareNostrum) == 1:
-		libs = Split('pthread mpich gdal hdf5 mpl z')
+		libs = Split('pthread mpich gdal hdf5 mpl z grass_gis')
 	else:
-		libs = Split('pthread mpich gdal hdf5 tinyxml mpl z')
+		libs = Split('pthread mpich gdal hdf5 tinyxml mpl z grass_gis')
 	libraryName = 'pandorad'
 else:
 	env['CCFLAGS'] = Split('-O3 -Wall -DTIXML_USE_STL')
 	if int(mareNostrum) == 1:
-		libs = Split('pthread mpich gdal hdf5 mpl z')
+		libs = Split('pthread mpich gdal hdf5 mpl z grass_gis')
 	else:
-		libs = Split('pthread mpich gdal hdf5 tinyxml mpl z')
+		libs = Split('pthread mpich gdal hdf5 tinyxml mpl z grass_gis')
 	libraryName = 'pandora'
 
-srcFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx')
+srcFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx RasterLoader.cxx')
 
 srcBaseFiles = [] 
 for src in srcFiles:
@@ -41,11 +41,12 @@ if int(mareNostrum)==1:
 	includeDirs += ['/gpfs/apps/TINYXML/2.6.2/64/']
 	libDirs = Split('/gpfs/apps/HDF5/1.6.5/lib /opt/ibmcmp/vacpp/10.1/lib64/ /gpfs/apps/GDAL/1.7.1/64/lib /gpfs/apps/TINYXML/2.6.2/64/')
 	libs += ['gpfs']
-	libs += ['z']
 	libs += ['xl']
 else:
 	includeDirs = Split('. /usr/local/include /usr/local/hdf5/include')
+	includeDirs += ['/usr/lib/grass64/include/']
 	libDirs = Split('. /usr/local/lib /usr/local/hdf5/lib/')
+	libDirs += ['/usr/lib/grass64/lib/']
 
 # if debug && mare nostrum mpitrace is added
 if int(release)==0 and int(mareNostrum)==1:
