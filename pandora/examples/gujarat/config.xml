@@ -2,7 +2,7 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<path 	name="path" 	type="string"  value="./data/"/>
-	<numSteps 	name="numSteps" 	type="int"  value="1440"/>
+	<numSteps 	name="numSteps" 	type="int"  value="350"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
@@ -24,6 +24,7 @@
 	<!-- GIS rasters -->
 	<soil fileName="./resources/gujarat_400_soil_reclass.tiff" size="400"/>
 	<dem fileName="./resources/gujarat_400_dem.tiff" size="400"/>
+	<duneMap fileName="./resources/dunes_400_0ha_simple.tiff" size="400"/>
 	<!-- Climatic model parameters -->
 	<climateSeed value="432432"/>
 	<rainHistoricalDistribution shape="2.628" scale="5278.807" mean="4643.847826087"/>
@@ -33,10 +34,10 @@
 	<!-- * Available Forage Time = # hours a day the forage action takes -->
 	<!-- * forageTimeCost = how much time (in hours) does it cost the agent to exploit a tile resources -->
 	<hunterGatherers 
-		num="100" homeRange="30"
+		num="0" homeRange="30"
 		surplusForReproductionThreshold="2" 
 		surplusWanted="1"
-		surplusSpoilage="0.25"
+		surplusSpoilage="0.50"
 		numSectors="8"
 		walkingSpeedHour="3000"
 		forageTimeCost="0.5"
@@ -51,8 +52,8 @@
 		     the lower it is, UCT will devote more time to explore those actions which 
 		     look more promising (and possibly missing some opportunities) -->
 		<controllerConfig 	type="MDP" 
-					nrForageActions="3"
-					nrMoveHomeActions="3"
+					nrForageActions="8"
+					nrMoveHomeActions="5"
 					doNothingIsAllowed="true"
 					horizon="7"
 					width="100"
@@ -74,6 +75,7 @@
 	<storeRaster name="resourceType" value="no" />
 	<storeRaster name="consecutiveYears" value="no" />
 	<storeRaster name="sectors" value="no" />
+	<storeRaster name="duneMap" value="yes" />
 	<storeRaster name="DuneAreas" value="yes" />
 </config>
 
