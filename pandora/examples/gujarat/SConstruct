@@ -52,8 +52,8 @@ if int(mareNostrum)==1:
 	libs += ['z']
 	libs += ['xl']
 else:
-	libDirs = Split('../../ /usr/local/lib/') 
-	includeDirs += ['/usr/local/include/', '../../../libs/libmdp']
+	libDirs = Split('../../ /usr/local/lib/ /usr/local/hdf5/lib/') 
+	includeDirs += ['/usr/local/include/', '../../../libs/libmdp','/usr/local/hdf5/include']
 # if debug && mare nostrum mpitrace is added
 if int(release)==0 and int(mareNostrum)==1:
 	libs += ['mpitrace']
