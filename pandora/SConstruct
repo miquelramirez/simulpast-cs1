@@ -15,16 +15,16 @@ env.VariantDir('build', '.')
 if int(release) == 0:
 	env['CCFLAGS'] = Split('-g -Wall -DTIXML_USE_STL')    
 	if int(mareNostrum) == 1:
-		libs = Split('pthread mpich gdal hdf5 mpl')
+		libs = Split('pthread mpich gdal hdf5 mpl z')
 	else:
-		libs = Split('pthread mpich gdal hdf5 tinyxml mpl')
+		libs = Split('pthread mpich gdal hdf5 tinyxml mpl z')
 	libraryName = 'pandorad'
 else:
 	env['CCFLAGS'] = Split('-O3 -Wall -DTIXML_USE_STL')
 	if int(mareNostrum) == 1:
-		libs = Split('pthread mpich gdal hdf5 mpl')
+		libs = Split('pthread mpich gdal hdf5 mpl z')
 	else:
-		libs = Split('pthread mpich gdal hdf5 tinyxml mpl')
+		libs = Split('pthread mpich gdal hdf5 tinyxml mpl z')
 	libraryName = 'pandora'
 
 srcFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx')
