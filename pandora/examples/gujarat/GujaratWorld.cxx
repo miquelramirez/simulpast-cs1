@@ -1,4 +1,6 @@
+
 #include "GujaratWorld.hxx"
+
 #include "Raster.hxx"
 #include "Point2D.hxx"
 #include "HunterGatherer.hxx"
@@ -10,6 +12,8 @@
 #include "HunterGathererMDPController.hxx"
 #include "OriginalDemographics.hxx"
 #include "RamirezDemographics.hxx"
+#include "RasterLoader.hxx"
+
 #include <limits>
 
 namespace Gujarat
@@ -38,13 +42,13 @@ GujaratWorld::~GujaratWorld()
 void GujaratWorld::createRasters()
 {
 	registerStaticRaster("soils", _config.isStorageRequired("soils"));
-	getStaticRaster("soils").loadGDALFile(_config._soilFile, *this);
+	Engine::RasterLoader::instance()->fillGDALRaster(getStaticRaster("soils"), _config._soilFile, this);
 
 	registerStaticRaster("dem", _config.isStorageRequired("dem"));
-	getStaticRaster("dem").loadGDALFile(_config._demFile, *this);
+	Engine::RasterLoader::instance()->fillGDALRaster(getStaticRaster("dem"), _config._demFile, this);
 
 	registerStaticRaster("duneMap", _config.isStorageRequired("duneMap"));
-	getStaticRaster("duneMap").loadGDALFile(_config._duneMapFile, *this);
+	Engine::RasterLoader::instance()->fillGDALRaster(getStaticRaster("duneMap"), _config._duneMapFile, this);
 	
 	registerDynamicRaster("moisture", _config.isStorageRequired("moisture"));
 	getDynamicRaster("moisture").setInitValues(0, std::numeric_limits<int>::max(), 0);

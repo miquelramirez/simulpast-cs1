@@ -8,6 +8,7 @@
 namespace Engine
 {
 class World;
+class RasterLoader;
 
 //! this class is used to load a static raster map. Values can't be modified, and it won't be serialized each time step (only one time)
 class StaticRaster
@@ -29,12 +30,6 @@ public:
 
 	//! Returns size of the raster codifying the horizontal and vertical dimensions in a Point2D object. 
 	Point2D<int> getSize() const;
-	// load a GDAL file conforming World position
-	void loadGDALFile( const std::string & fileName, World & world );
-	// load an HDF5 adjusting the raster to its size
-	void loadHDF5File( const std::string & fileName, const std::string & rasterName );
-	// load an HDF5 conforming World position
-	void loadHDF5File( const std::string & fileName, const std::string & rasterName, World & world );
 	//! Initializes the components of vector '_values' to defaultValue, and to maxValue the ones from vector _maxValue.
 	void setDefaultInitValues( int minValue, int maxValue, int defaultValue );	
 	//! Assigns the value "value" to the cell located by parameter "position". Does nothing if "position" is out of the area of the raster.
@@ -45,6 +40,9 @@ public:
 	const int & getMinValue() const;
 
 	float getAvgValue() const;
+	void updateMinMaxValues();
+	
+	friend class RasterLoader;
 }; 
 
 } // namespace Engine
