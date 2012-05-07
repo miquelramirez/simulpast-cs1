@@ -16,7 +16,7 @@ namespace Gujarat
 {
 
 GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config ) 
-	: World(simulation, 1+config._homeRange, true, config._path+"/ned.h5"), _agentKey(0), _climate(config,*this), _config(config)					
+	: World(simulation, 1+config._homeRange, true, config._path+"/gujarat.h5"), _agentKey(0), _climate(config,*this), _config(config)					
 {
 	// overlap is maxHomeRange + 1 to allow splits to be in adjacent worlds
 	// TODO code a function proces config for resources 
