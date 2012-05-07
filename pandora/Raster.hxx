@@ -41,11 +41,12 @@ public:
 	void setMinValue( const int & minValue);
 	void resize( const Point2D<int> & size );
 	
-	void loadGDALFile( const std::string & fileName, World & world );
 	void updateCurrentMinMaxValues();
 
 	int  getCurrentMinValue() const { return _currentMinValue; }
 	int  getCurrentMaxValue() const { return _currentMaxValue; }
+
+	friend class RasterLoader;
 };
 
 } // namespace Engine
