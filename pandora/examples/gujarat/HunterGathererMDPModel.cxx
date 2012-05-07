@@ -118,7 +118,7 @@ void	HunterGathererMDPModel::makeActionsForState( HunterGathererMDPState& s ) co
 		validActionSectors.push_back( actionSectors[i] );
 	}	
 
-
+	std::random_shuffle( validActionSectors.begin(), validActionSectors.end() );
 	std::sort( validActionSectors.begin(), validActionSectors.end(), SectorBestFirstSortPtrVecPredicate() );
 	if ( _config.getNumberForageActions() >= validActionSectors.size() )
 	{

@@ -43,7 +43,7 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 		return false;
 	}
 
-	hid_t datasetId = H5Dopen(fileId, "global"); 
+	hid_t datasetId = H5Dopen(fileId, "global", H5P_DEFAULT); 
 	hid_t attributeId = H5Aopen_name(datasetId, "numSteps");
 	H5Aread(attributeId, H5T_NATIVE_INT, &_numSteps);
 	H5Aclose(attributeId);
@@ -75,7 +75,7 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 	if(loadRasters)
 	{
 		// static rasters
-		hid_t staticRasterNamesDatasetId = H5Dopen(fileId, "staticRasters");
+		hid_t staticRasterNamesDatasetId = H5Dopen(fileId, "staticRasters", H5P_DEFAULT);
 
 		int numStaticRasters = H5Aget_num_attrs(staticRasterNamesDatasetId);
 		for(int i=0; i<numStaticRasters; i++)
@@ -96,7 +96,7 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 		}
 
 		// dynamic rasters
-		hid_t rasterNamesDatasetId = H5Dopen(fileId, "rasters");
+		hid_t rasterNamesDatasetId = H5Dopen(fileId, "rasters", H5P_DEFAULT);
 		int numRasters = H5Aget_num_attrs(rasterNamesDatasetId);
 		if(numRasters!=0)
 		{
@@ -126,7 +126,7 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 
 					std::ostringstream oss;
 					oss << "/" << it->first << "/step" << i;
-					hid_t dset_id = H5Dopen(fileId, oss.str().c_str());
+					hid_t dset_id = H5Dopen(fileId, oss.str().c_str(), H5P_DEFAULT);
 					hid_t dataspaceId = H5Dget_space(dset_id);
 					hsize_t dims[2];
 					H5Sget_simple_extent_dims(dataspaceId, dims, NULL);
@@ -440,7 +440,7 @@ double SimulationRecord::getSum( const std::string & type, const std::string & s
 
 void SimulationRecord::registerAgent( hid_t loc_id, const char * name )
 {
-	hid_t datasetId = H5Dopen(loc_id, name);
+	hid_t datasetId = H5Dopen(loc_id, name, H5P_DEFAULT);
 	std::string agentName(name);
 
 	unsigned int typePos = agentName.find_first_of("_");

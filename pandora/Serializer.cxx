@@ -35,22 +35,22 @@ void Serializer::init( Simulation & simulation, StaticRastersMap & staticRasters
 	// adding a group with global generic data
 	hsize_t simpleDimension = 1;
 	hid_t globalFileSpace = H5Screate_simple(1, &simpleDimension, NULL);
-	hid_t globalDatasetId = H5Dcreate(_fileId, "global", H5T_NATIVE_INT, globalFileSpace, H5P_DEFAULT);
+	hid_t globalDatasetId = H5Dcreate(_fileId, "global", H5T_NATIVE_INT, globalFileSpace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
 	hid_t attributeFileSpace = H5Screate_simple(1, &simpleDimension, NULL);
-	hid_t attributeId = H5Acreate(globalDatasetId, "numSteps", H5T_NATIVE_INT, attributeFileSpace, H5P_DEFAULT);
+	hid_t attributeId = H5Acreate(globalDatasetId, "numSteps", H5T_NATIVE_INT, attributeFileSpace, H5P_DEFAULT, H5P_DEFAULT);
 	H5Awrite(attributeId, H5T_NATIVE_INT, &simulation.getNumSteps());
 	H5Sclose(attributeFileSpace);
 	H5Aclose(attributeId);
 
 	attributeFileSpace = H5Screate_simple(1, &simpleDimension, NULL);
-	attributeId = H5Acreate(globalDatasetId, "size", H5T_NATIVE_INT, attributeFileSpace, H5P_DEFAULT);
+	attributeId = H5Acreate(globalDatasetId, "size", H5T_NATIVE_INT, attributeFileSpace, H5P_DEFAULT, H5P_DEFAULT);
 	H5Awrite(attributeId, H5T_NATIVE_INT, &simulation.getSize());
 	H5Sclose(attributeFileSpace);
 	H5Aclose(attributeId);
 
 	attributeFileSpace = H5Screate_simple(1, &simpleDimension, NULL);
-	attributeId= H5Acreate(globalDatasetId, "numTasks", H5T_NATIVE_INT, attributeFileSpace, H5P_DEFAULT);
+	attributeId= H5Acreate(globalDatasetId, "numTasks", H5T_NATIVE_INT, attributeFileSpace, H5P_DEFAULT, H5P_DEFAULT);
 	H5Awrite(attributeId, H5T_NATIVE_INT, &simulation.getNumTasks());
 	H5Sclose(attributeFileSpace);
 	H5Aclose(attributeId);
@@ -59,28 +59,28 @@ void Serializer::init( Simulation & simulation, StaticRastersMap & staticRasters
 
 	// we store the name of the rasters
 	hid_t rasterNameFileSpace = H5Screate_simple(1, &simpleDimension, NULL);
-	hid_t rasterNameDatasetId = H5Dcreate(_fileId, "rasters", H5T_NATIVE_INT, rasterNameFileSpace, H5P_DEFAULT);
+	hid_t rasterNameDatasetId = H5Dcreate(_fileId, "rasters", H5T_NATIVE_INT, rasterNameFileSpace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 	for(RastersMap::iterator it=rasters.begin(); it!=rasters.end(); it++)
 	{
 		if(world.rasterToSerialize(it->first))
 		{
 			attributeFileSpace = H5Screate_simple(1, &simpleDimension, NULL);
 			const std::string & name(it->first);
-			attributeId = H5Acreate(rasterNameDatasetId, name.c_str(), H5T_NATIVE_INT, attributeFileSpace, H5P_DEFAULT);
+			attributeId = H5Acreate(rasterNameDatasetId, name.c_str(), H5T_NATIVE_INT, attributeFileSpace, H5P_DEFAULT, H5P_DEFAULT);
 			H5Sclose(attributeFileSpace);
 			H5Aclose(attributeId);
 		}
 	}
 	H5Dclose(rasterNameDatasetId);
 
-	rasterNameDatasetId = H5Dcreate(_fileId, "staticRasters", H5T_NATIVE_INT, rasterNameFileSpace, H5P_DEFAULT);
+	rasterNameDatasetId = H5Dcreate(_fileId, "staticRasters", H5T_NATIVE_INT, rasterNameFileSpace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 	for(StaticRastersMap::iterator it=staticRasters.begin(); it!=staticRasters.end(); it++)
 	{
 		if(world.rasterToSerialize(it->first))
 		{
 			attributeFileSpace = H5Screate_simple(1, &simpleDimension, NULL);
 			const std::string & name(it->first);
-			attributeId = H5Acreate(rasterNameDatasetId, name.c_str(), H5T_NATIVE_INT, attributeFileSpace, H5P_DEFAULT);
+			attributeId = H5Acreate(rasterNameDatasetId, name.c_str(), H5T_NATIVE_INT, attributeFileSpace, H5P_DEFAULT, H5P_DEFAULT);
 			H5Sclose(attributeFileSpace);
 			H5Aclose(attributeId);
 		}
@@ -101,7 +101,7 @@ void Serializer::init( Simulation & simulation, StaticRastersMap & staticRasters
 	{
 		std::ostringstream oss;
 		oss << "step" << i;
-		hid_t stepGroupId  = H5Gcreate(_agentsFileId, oss.str().c_str(), H5P_DEFAULT);
+		hid_t stepGroupId  = H5Gcreate(_agentsFileId, oss.str().c_str(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 		H5Gclose(stepGroupId);
 	}
 	
@@ -127,9 +127,10 @@ void Serializer::init( Simulation & simulation, StaticRastersMap & staticRasters
 	{
 		if(world.rasterToSerialize(it->first))
 		{
-			hid_t rasterGroupId = H5Gcreate(_fileId, it->first.c_str(), 0);
+			// TODO 0 o H5P_DEFAULT??
+			hid_t rasterGroupId = H5Gcreate(_fileId, it->first.c_str(), 0, H5P_DEFAULT, H5P_DEFAULT);
 			hid_t fileSpace = H5Screate_simple(2, dimensions, NULL); 
-			hid_t datasetId = H5Dcreate(rasterGroupId, "values", H5T_NATIVE_INT, fileSpace, propertyListId);
+			hid_t datasetId = H5Dcreate(rasterGroupId, "values", H5T_NATIVE_INT, fileSpace, H5P_DEFAULT, propertyListId, H5P_DEFAULT);
 			H5Dclose(datasetId);
 			H5Sclose(fileSpace);
 			H5Gclose(rasterGroupId);
@@ -140,13 +141,14 @@ void Serializer::init( Simulation & simulation, StaticRastersMap & staticRasters
 	{
 		if(world.rasterToSerialize(it->first))
 		{
-			hid_t rasterGroupId = H5Gcreate(_fileId, it->first.c_str(), 0);
+			// TODO 0 o H5P_DEFAULT??
+			hid_t rasterGroupId = H5Gcreate(_fileId, it->first.c_str(), 0, H5P_DEFAULT, H5P_DEFAULT);
 			for(int i=0; i<=simulation.getNumSteps(); i++)
 			{  
 				std::ostringstream oss;
 				oss << "step" << i;
 				hid_t stepFileSpace = H5Screate_simple(2, dimensions, NULL); 
-				hid_t stepDatasetId = H5Dcreate(rasterGroupId, oss.str().c_str(), H5T_NATIVE_INT, stepFileSpace, propertyListId);
+				hid_t stepDatasetId = H5Dcreate(rasterGroupId, oss.str().c_str(), H5T_NATIVE_INT, stepFileSpace, H5P_DEFAULT, propertyListId, H5P_DEFAULT);
 				H5Dclose(stepDatasetId);
 				H5Sclose(stepFileSpace);
 			}	
@@ -169,7 +171,7 @@ void Serializer::serializeAgent( Agent * agent, const int & step )
 	
 	std::ostringstream ossStep;
 	ossStep << "step" << step << "/" << agent->getId();
-	_currentAgentDatasetId = H5Dcreate(_agentsFileId, ossStep.str().c_str(), H5T_NATIVE_INT, fileSpace, H5P_DEFAULT);
+	_currentAgentDatasetId = H5Dcreate(_agentsFileId, ossStep.str().c_str(), H5T_NATIVE_INT, fileSpace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
 	// basic attributes of an agent
 	serializeAttribute("x",agent->getPosition()._x);
@@ -194,7 +196,7 @@ void Serializer::serializeAttribute( const std::string & name, const int & value
 	}
 	hsize_t simpleDimension = 1;
 	hid_t fileSpace = H5Screate_simple(1, &simpleDimension, NULL);
-	hid_t attributeId = H5Acreate(_currentAgentDatasetId, name.c_str(), H5T_NATIVE_INT, fileSpace, H5P_DEFAULT);
+	hid_t attributeId = H5Acreate(_currentAgentDatasetId, name.c_str(), H5T_NATIVE_INT, fileSpace, H5P_DEFAULT, H5P_DEFAULT);
 	H5Awrite(attributeId, H5T_NATIVE_INT, &value);
 
 	H5Aclose(attributeId);
@@ -232,7 +234,7 @@ void Serializer::serializeRaster( StaticRaster & raster, World & world, const st
 	block[1] = world.getBoundaries()._size._x;
 
 
-	hid_t dataSetId = H5Dopen(_fileId, datasetKey.c_str());
+	hid_t dataSetId = H5Dopen(_fileId, datasetKey.c_str(), H5P_DEFAULT);
 	hid_t fileSpace = H5Dget_space(dataSetId);
 	
 	hsize_t	stride[2];

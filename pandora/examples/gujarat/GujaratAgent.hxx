@@ -89,7 +89,7 @@ public:
 	
 	void	setMassToCaloriesRate( float v ) { _massToCaloriesRate = v; }
 
-	void	initializePosition( Engine::Point2D<int> randomPos );
+	void	initializePosition( );
 
 	int	getNrAvailableAdults() const;
 	int	getNrChildren() const;

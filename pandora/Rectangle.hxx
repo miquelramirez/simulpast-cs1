@@ -70,11 +70,6 @@ public:
 		Interval<Type> R2_OX(other._origin._x,other._origin._x + other._size._x -1);		
 		Interval<Type> R2_OY(other._origin._y,other._origin._y + other._size._y -1);	
 
-		if(_origin._y <0)
-		{
-			//std::cout << "NEGATIU" << std::endl;
-		}
-		
 //std::cout << R1_OX << R1_OY	<< "&&" <<R2_OX << R2_OY << "?" << std::endl;
 		
 		Interval<Type> Intersection_OX;
@@ -94,11 +89,11 @@ public:
 
 		result.intervals2Rectangle(Intersection_OX,Intersection_OY);
 		
-	return true;	
+		return true;	
 	}
 	
 	
-	friend std::ostream & operator<<( std::ostream & stream, Rectangle<Type> & rectangle )
+	friend std::ostream & operator<<( std::ostream & stream, const Rectangle<Type> & rectangle )
 	{
 		return stream << "rect:" << rectangle._origin << "->" << rectangle._origin + rectangle._size - 1;
 	}

@@ -27,42 +27,24 @@ public:
 	}
 	
 	bool intersection(Interval other, Interval & result)
-	{			
-		Type left;
-		if(_min >= other._min)
+	{	
+		if ( _min <= other._min )
 		{
-			left = _min;
+			if ( !isInside(other._min) ) return false;
+			result._min = other._min;
+			if ( isInside(other._max) )
+				result._max = other._max;
+			else
+				result._max = _max;	
+			return true;
 		}
+		if ( !other.isInside(_min) ) return false;
+		result._min = _min;
+		if ( other.isInside( _max ) )
+			result._max = _max;
 		else
-		{
-			left = other._min;
-		}
-		
-		if(!(isInside(left) && other.isInside(left)))
-		{
-			return false;
-		}
-		
-		Type right;
-		if(_max <= other._max)
-		{
-			right = _max;
-		}
-		else
-		{
-			right = other._max;
-		}
-		
-		if(!(isInside(right) && other.isInside(right)))
-		{
-			return false;
-		}
-	
-	
-		result._min = left;
-		result._max = right;
-	
-		return true;	
+			result._max = other._max;
+		return true;
 	}
 	
 	
