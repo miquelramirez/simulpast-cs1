@@ -23,7 +23,7 @@ def main() :
 		agents.append( Agent( log ) )
 
 	for agent in agents :
-		agent.computeStats()
+		agent.computeStats(0,360)
 
 	globalStats = PopulationStats( agents )
 	globalStats.report( sys.stdout )

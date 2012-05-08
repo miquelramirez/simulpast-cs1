@@ -1,6 +1,14 @@
 import os
 import sys
 
+def get_sim_length( agents ) :
+	max_t = 0
+	for a in agents :
+		if len(a.time_steps) > max_t :
+			max_t = len(a.time_steps)
+
+	return max_t
+
 class TimeStepData :
 	
 	def __init__( self, index ) :
@@ -147,7 +155,7 @@ class Agent :
 				if 'action' in key :
 					self.time_steps[-1].action = value.split(',')
 					continue
-				if 'isStarvating' in key :
+				if 'isStarving' in key :
 					if value == 'yes' :
 						self.time_steps[-1].isStarving = 1
 					else :
@@ -156,13 +164,16 @@ class Agent :
 				if 'collectedResourcesAfterConsumption' in key :
 					self.time_steps[-1].balanceAfterAction = int(value)
 
-	def computeStats( self ) :
+	def computeStats( self, t0, tf ) :
 		
 		for statName, stat in self.stats.iteritems() :
 			print >> sys.stdout, "Computing", statName, "statistics for agent", self.name
 			for t in self.time_steps :
-				stat.process( t )
-			stat.normalize( len(self.time_steps)/360 )
+				if t.index >= t0 and t.index < tf :
+					stat.process( t )
+			years = len(self.time_steps)/(tf-t0)
+			if years == 0 : years = 1
+			stat.normalize( years )
 
 class PopulationStats :
 
