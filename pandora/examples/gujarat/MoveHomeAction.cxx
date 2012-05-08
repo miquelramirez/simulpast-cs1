@@ -99,7 +99,6 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 
 		if ( dunes.empty() ) 
 		{
-			std::cout << "No dunes in candidate area!" << std::endl;
 			continue;
 		}
 		uint32_t diceSelectOneRandomDune = world->getStatistics().getUniformDistValue(0, dunes.size()-1);
