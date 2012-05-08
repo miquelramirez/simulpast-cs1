@@ -59,9 +59,9 @@ def main() :
 
 	for log, title_str in inputs :
 		agents, adults, children, xmax, ymax = acquire_avg_resources_from_log( log )
-		plt.bar( [i for i in range(0,len(agents),120) ], [ agents[i] for i in range(0,len(agents),120) ], width=120, label=title_str+", agents" )
-		plt.bar( [i for i in range(0,len(agents),120) ], [ adults[i] for i in range(0,len(adults),120) ], width=120, label=title_str+", adults" )
-		plt.bar( [i for i in range(0,len(agents),120) ], [ children[i] for i in range(0,len(children),120) ], width=120, label=title_str+", children" )
+		plt.bar( [i for i in range(0,len(agents),120) ], [ agents[i] for i in range(0,len(agents),120) ], alpha=0.5, width=120, color='r', label=title_str+", agents" )
+		plt.bar( [i for i in range(0,len(agents),120) ], [ adults[i] for i in range(0,len(adults),120) ], alpha=0.5, width=120, color='y', label=title_str+", adults" )
+		plt.bar( [i for i in range(0,len(agents),120) ], [ children[i] for i in range(0,len(children),120) ], alpha=0.5, width=120, color='g', label=title_str+", children" )
 		if xmax > global_xmax : global_xmax = xmax
 		if ymax > global_ymax : global_ymax = ymax
 	
