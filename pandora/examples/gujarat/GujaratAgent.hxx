@@ -28,14 +28,8 @@ class GujaratAgent : public Engine::Agent
 
 	GujaratAgent * getMarriageCandidate();
 
-	virtual void updateKnowledge() = 0;
-
-	virtual void evaluateYearlyActions() = 0;
-	virtual void evaluateSeasonalActions() = 0;
-	virtual void evaluateIntraSeasonalActions() = 0;
 	virtual GujaratAgent * createNewAgent() = 0;
 
-	void executeActions();
 
 	virtual void serializeAdditionalAttributes() = 0;
 
@@ -133,7 +127,16 @@ public:
 	void			setController( AgentController* controller ); 
 	AgentController* 	activeController() { return _controller; }
 	void			setDemographicsModel( GujaratDemographics* model ) { _demographicsModel = model; }
-	std::ostream&		log() { return *_log; }	
+	std::ostream&		log() { return *_log; }
+
+	// Agent step broken down	
+	virtual void logAgentState();
+	virtual void updateKnowledge();
+	virtual void selectActions() = 0;
+	virtual void updateState();
+	
+	void executeActions();
+
 };
 
 } // namespace Gujarat

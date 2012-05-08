@@ -183,15 +183,7 @@ void HunterGatherer::updateKnowledge()
 	}
 }
 
-void HunterGatherer::evaluateYearlyActions()
-{
-}
-
-void HunterGatherer::evaluateSeasonalActions()
-{
-}
-
-void HunterGatherer::evaluateIntraSeasonalActions()
+void HunterGatherer::selectActions()
 {
 	_actions.push_back( activeController()->selectAction() );
 }

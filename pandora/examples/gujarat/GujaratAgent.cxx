@@ -51,7 +51,20 @@ void GujaratAgent::setAvailableTime( int daysPerSeason )
 	_availableTime = 120 / daysPerSeason;
 }
 
+void GujaratAgent::updateKnowledge()
+{
+}
+
 void GujaratAgent::step()
+{
+	logAgentState();
+	updateKnowledge();
+	selectActions();
+	executeActions();
+	updateState();
+}
+
+void GujaratAgent::logAgentState()
 {
 	log() << "timestep=" << getWorld()->getCurrentTimeStep() << std::endl;
 	log() << "\tagent.collectedResourcesBeforeAction=" << getOnHandResources() << std::endl;	
@@ -68,26 +81,10 @@ void GujaratAgent::step()
 			log() << _populationAges[k] << ",";	
 	log() << "]" << std::endl;
 	log() << "\tagent.resourcesNeeded=" << computeConsumedResources(1) << std::endl; 
+}
 
-	updateKnowledge();
-
-	GujaratWorld * world = (GujaratWorld*)_world;
-	// rain season is the first of the year; evaluate year actions
-	if(world->getClimate().getSeason()==HOTWET)
-	{
-		evaluateYearlyActions();
-		executeActions();
-	}
-	evaluateSeasonalActions();
-	executeActions();
-
-	evaluateIntraSeasonalActions();
-	executeActions();
-
-	_spentTime = 0;
-
-	// age of the agent, in seasons
-	_age++;
+void GujaratAgent::updateState()
+{
 	log() << "\tagent.collectedResourcesAfterAction=" << getOnHandResources() << std::endl;	
 	_collectedResources -= computeConsumedResources(1);
 	log() << "\tagent.collectedResourcesAfterConsumption=" << getOnHandResources() << std::endl;	
@@ -291,11 +288,9 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 	for(unsigned int index=0; index<_populationAges.size(); index++)
 	{
 		if(_populationAges[index]!=-1)
-		{
 			popSize++;
-		}
 	}
-	return 2000.0f * popSize;	
+	return 2000.0f * popSize * timeSteps;	
 }
 
 void GujaratAgent::checkMortality()
@@ -420,7 +415,7 @@ void	GujaratAgent::checkDeath( int minAge, int maxAge, int chance )
 	{
 		if ( _populationAges[index] < 0 ) continue;
 		if ( _populationAges[index] < minAge
-			|| _populationAges[index] > maxAge )
+			|| _populationAges[index] >= maxAge )
 			continue;
 		int die = _world->getStatistics().getUniformDistValue(0,1000);
 		if ( die < chance )

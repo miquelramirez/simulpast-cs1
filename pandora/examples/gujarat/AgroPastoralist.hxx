@@ -15,9 +15,7 @@ class AgroPastoralist : public GujaratAgent
 	
 	void updateKnowledge();
 
-	void evaluateYearlyActions();
-	void evaluateSeasonalActions();
-	void evaluateIntraSeasonalActions();
+	void selectActions();
 	
 	void serializeAdditionalAttributes();
 	
