@@ -110,7 +110,7 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 
 void MoveHomeAction::execute( GujaratAgent & agent )
 {
-	std::cout << "DEBUG: Agent " << agent.getId() << " is executing MoveHome action..." << std::endl;
+	std::cout << "[DEBUG]: Agent " << agent.getId() << " is executing MoveHome action..." << std::endl;
 	int prevHomeActivity = agent.getWorld()->getValue( "homeActivity", _newHomeLoc );
 	agent.getWorld()->setValue( "homeActivity", _newHomeLoc, prevHomeActivity + 1 );
 	agent.setPosition( _newHomeLoc );

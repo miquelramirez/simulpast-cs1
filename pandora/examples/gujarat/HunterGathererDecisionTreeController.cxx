@@ -16,25 +16,13 @@ HunterGathererDecisionTreeController::HunterGathererDecisionTreeController( Guja
 	: AgentController( a )
 {
 	_agentConcrete = dynamic_cast<HunterGatherer*>( a );
-	_DoNothingDaysCovered = 3; 
+	_DoNothingDaysCovered = 1; 
 }
 
 HunterGathererDecisionTreeController::~HunterGathererDecisionTreeController()
 {
 }
 
-Action* HunterGathererDecisionTreeController::shouldDoNothing(  )
-{	
-	// CollectedResources > ConsumedResourcesByAgent * #days
-	if( agentRef().getOnHandResources() > (agentRef().computeConsumedResources(1) * getDoNothingDaysCovered()) )
-	{
-		return new DoNothingAction();
-	}
-	else
-	{
-		return NULL;
-	}
-}
 
 Sector* HunterGathererDecisionTreeController::getMaxBiomassSector(  )
 {
@@ -75,6 +63,19 @@ Sector* HunterGathererDecisionTreeController::getMaxBiomassSector(  )
 
 	return validActionSectors[ maxBiomassIdx ];
 
+}
+
+Action* HunterGathererDecisionTreeController::shouldDoNothing(  )
+{	
+	// CollectedResources > ConsumedResourcesByAgent * #days
+	if( agentRef().getOnHandResources() > agentRef().computeConsumedResources( getDoNothingDaysCovered() ) )
+	{
+		return new DoNothingAction();
+	}
+	else
+	{
+		return NULL;
+	}
 }
 
 Action* HunterGathererDecisionTreeController::shouldForage(  )
@@ -126,63 +127,64 @@ Action* HunterGathererDecisionTreeController::shouldMoveHome(  )
 	Action* moveHome = NULL;
 	Engine::Point2D<int> newHomeLocation;
 	
-	
-	for ( unsigned i = 0; i < candidates.size(); i++ )
+	assert( !candidates.empty() );
+	Engine::Rectangle<int> selectedArea = settlementAreas->getAreaById(candidates[i]);
+	Engine::Rectangle<int> intersection;
+	// MRJ: If the selected area is outside of the "homeBox" then why caring about it all?
+	// ATM: above you will find settlementAreas->intersectionFilter method call. This ensures any
+	// item inside candidates vector has intersection with homeBox. So the 'if' is not
+	// needed, we just recompute the intersection to use it.
+	homeBox.intersection(selectedArea, intersection);
+		
+	// Extract one random dune cell which is inside the homeRange and inside the selected area.
+		
+	// count dunes from candidate area "i", 'selectedArea' variable
+	int countDunes = 0;
+	Engine::Point2D<int> index;
+	std::vector< Engine::Point2D<int> > dunes;
+	for (index._x = intersection._origin._x; index._x < intersection._origin._x+intersection._size._x; index._x++)			
 	{
-		Engine::Rectangle<int> selectedArea = settlementAreas->getAreaById(candidates[i]);
-		Engine::Rectangle<int> intersection;
-		// MRJ: If the selected area is outside of the "homeBox" then why caring about it all?
-		// ATM: above you will find settlementAreas->intersectionFilter method call. This ensures any
-		// item inside candidates vector has intersection with homeBox. So the 'if' is not
-		// needed, we just recompute the intersection to use it.
-		homeBox.intersection(selectedArea, intersection);
-		
-		// Extract one random dune cell which is inside the homeRange and inside the selected area.
-		
-		// count dunes from candidate area "i", 'selectedArea' variable
-		int countDunes = 0;
-		Engine::Point2D<int> index;
-		std::vector< Engine::Point2D<int> > dunes;
-		for (index._x = intersection._origin._x; index._x < intersection._origin._x+intersection._size._x; index._x++)			
+		for (index._y = intersection._origin._y; index._y < intersection._origin._y+intersection._size._y; index._y++)			
 		{
-			for (index._y = intersection._origin._y; index._y < intersection._origin._y+intersection._size._y; index._y++)			
+			if ((world->getValue("soils",index) == DUNE) 
+			    && (ceil(agentPos.distance(index)) <= (double)agentRef().getHomeMobilityRange()))
 			{
-				if ((world->getValue("soils",index) == DUNE) 
-					&& (ceil(agentPos.distance(index)) <= (double)agentRef().getHomeMobilityRange()))
-				{
-					countDunes++;
-					dunes.push_back(index);
-				}
+				countDunes++;
+				dunes.push_back(index);
 			}
-		}		
-
-		if ( dunes.empty() ) 
-		{
-			continue;
 		}
-		uint32_t diceSelectOneRandomDune = world->getStatistics().getUniformDistValue(0, dunes.size()-1);
-		newHomeLocation = dunes[ diceSelectOneRandomDune ];
-		moveHome = new MoveHomeAction( dunes[ diceSelectOneRandomDune ] );
+	}		
+
+	if ( dunes.empty() ) 
+	{
+		return NULL;
 	}
-	assert( !moveHome );
+	uint32_t diceSelectOneRandomDune = world->getStatistics().getUniformDistValue(0, dunes.size()-1);
+	newHomeLocation = dunes[ diceSelectOneRandomDune ];
+	moveHome = new MoveHomeAction( dunes[ diceSelectOneRandomDune ] );
+
+	assert( moveHome != NULL );
 	candidates.clear();
 
 
 	//Check if new SettlementArea have enough biomass to forage for one day
-	Engine::Point2D<int> oldHomeLocation = agentRef().getPosition();
-	agentRef().setPosition( newHomeLocation );
+	//Engine::Point2D<int> oldHomeLocation = agentRef().getPosition();
+	//agentRef().setPosition( newHomeLocation );
 	
-	Sector* maxSector = getMaxBiomassSector();
+	//Sector* maxSector = getMaxBiomassSector();
 	
-	if( maxSector->getBiomassAmount() >= agentRef().computeConsumedResources(1) )
-	{	
-		agentRef().setPosition( oldHomeLocation );
-		delete maxSector;
+	//Not sure is a good option, it makes the agent too conservative 
+	//without exploring further settlementAreas
+
+	//if( maxSector->getBiomassAmount() >= agentRef().computeConsumedResources(1) )
+	//{	
+	//	agentRef().setPosition( oldHomeLocation );
+	//	delete maxSector;
 		return moveHome;
-	}
+	//}
 	
-	delete moveHome;	
-	return NULL;
+	//delete moveHome;	
+	//return NULL;
 	
 
 
@@ -197,11 +199,11 @@ Action*	HunterGathererDecisionTreeController::selectAction()
 	Action* selectedAction = NULL;
 	
 	selectedAction = shouldDoNothing();	
-	selectedAction = (!selectedAction) ?  shouldForage() : NULL;
-	selectedAction = (!selectedAction) ?  shouldMoveHome() : NULL;
+	selectedAction = (!selectedAction) ?  shouldForage() : selectedAction;
+	selectedAction = (!selectedAction) ?  shouldMoveHome() : selectedAction;
 
 	//DefaultAction if non is selected
-	selectedAction = (!selectedAction) ?  new DoNothingAction() : NULL;
+	selectedAction = (!selectedAction) ?  new DoNothingAction() : selectedAction;
 
 	return selectedAction;
 	

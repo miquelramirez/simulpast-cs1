@@ -35,6 +35,7 @@ void	ForageAction::describe( std::ostream& os ) const
 
 void	ForageAction::execute( GujaratAgent& a )
 {
+	std::cout << "[DEBUG]: Agent " << a.getId() << " is executing Forage action..." << std::endl;
 	HunterGatherer& agent = (HunterGatherer&) a;
 
 	// 1. collect nr adults
@@ -146,9 +147,8 @@ void	ForageAction::doWalk( const GujaratAgent& agent, const Engine::Point2D<int>
 	}
 }
 
-void ForageAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
+ void ForageAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
 {
-	//std::cout << "FORAGE" << std::endl;
 	double  maxDist= agent.computeMaxForagingDistance();
 		
 	Engine::Point2D<int> nearest = _forageArea->getNearestTo( s.getLocation() );
