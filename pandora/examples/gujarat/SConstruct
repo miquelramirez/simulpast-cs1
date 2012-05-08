@@ -4,7 +4,7 @@ agents = ['HunterGatherer','AgroPastoralist']
 namespaceAgents = ['Gujarat','Gujarat']
 parents = ['GujaratAgent', 'GujaratAgent']
 
-srcFiles = Split('main.cxx GujaratWorld.cxx GujaratConfig.cxx Climate.cxx GujaratAgent.cxx AgroPastoralist.cxx HunterGatherer.cxx Action.cxx MoveHomeAction.cxx CultivatedField.cxx EstablishPlotAction.cxx SowAction.cxx HarvestAction.cxx MaintainPlotAction.cxx HuntAction.cxx GatherAction.cxx Sector.cxx ForageAction.cxx SettlementAreas.cxx APMoveHomeAction.cxx HunterGathererMDPConfig.cxx HunterGathererMDPState.cxx HunterGathererMDPModel.cxx DoNothingAction.cxx AgentController.cxx HunterGathererProgrammedController.cxx HunterGathererMDPController.cxx GujaratDemographics.cxx OriginalDemographics.cxx RamirezDemographics.cxx' )
+srcFiles = Split('main.cxx GujaratWorld.cxx GujaratConfig.cxx Climate.cxx GujaratAgent.cxx AgroPastoralist.cxx HunterGatherer.cxx Action.cxx MoveHomeAction.cxx CultivatedField.cxx EstablishPlotAction.cxx SowAction.cxx HarvestAction.cxx MaintainPlotAction.cxx HuntAction.cxx GatherAction.cxx Sector.cxx ForageAction.cxx SettlementAreas.cxx APMoveHomeAction.cxx HunterGathererMDPConfig.cxx HunterGathererMDPState.cxx HunterGathererMDPModel.cxx DoNothingAction.cxx AgentController.cxx HunterGathererProgrammedController.cxx HunterGathererDecisionTreeController.cxx HunterGathererMDPController.cxx GujaratDemographics.cxx OriginalDemographics.cxx RamirezDemographics.cxx' )
 
 import os, sys
 from subprocess import call
@@ -54,6 +54,7 @@ if int(mareNostrum)==1:
 else:
 	libDirs = Split('../../ /usr/local/lib/ /usr/local/hdf5/lib/') 
 	includeDirs += ['/usr/local/include/', '../../../libs/libmdp','/usr/local/hdf5/include']
+        libDirs += ['/usr/lib/grass64/lib/']
 # if debug && mare nostrum mpitrace is added
 if int(release)==0 and int(mareNostrum)==1:
 	libs += ['mpitrace']

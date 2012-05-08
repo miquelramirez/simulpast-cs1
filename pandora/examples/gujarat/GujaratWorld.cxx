@@ -9,6 +9,7 @@
 #include "Statistics.hxx"
 #include "GujaratConfig.hxx"
 #include "HunterGathererProgrammedController.hxx"
+#include "HunterGathererDecisionTreeController.hxx"
 #include "HunterGathererMDPController.hxx"
 #include "OriginalDemographics.hxx"
 #include "RamirezDemographics.hxx"
@@ -122,14 +123,18 @@ void GujaratWorld::createAgents()
 			else if ( _config._demographicsModel == "ramirez" )
 				agent->setDemographicsModel( new RamirezDemographics( *agent ) );
 				
-
+			
 			if ( _config._hunterGathererController == "MDP" )
 			{
 				agent->setController( new HunterGathererMDPController( agent, *_config._controllerConfig ) );
 			}
-			else
+			else if ( _config._hunterGathererController == "Random" )
 			{
 				agent->setController( new HunterGathererProgrammedController( agent ) );
+			}
+			else if ( _config._hunterGathererController == "DecisionTree" )
+			{
+				agent->setController( new HunterGathererDecisionTreeController( agent ) );
 			}
 			agent->initializePosition();
 			agent->createSectorsMask();

@@ -43,7 +43,7 @@
 		forageTimeCost="0.5"
 		availableForageTime="4.5"
 		demographicsModel="ramirez"
-		controllerType="MDP" >
+		controllerType="DecisionTree" >
 		<!-- * width = number of trials before selecting an action, the higher the
 		 	the number, the more informed is the action selection and more
 			computation time is required -->
