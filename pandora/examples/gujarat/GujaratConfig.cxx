@@ -157,11 +157,27 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	_hunterGathererController = element->Attribute("controllerType");
 
 	parseHGMDPConfig( element->FirstChildElement("controllerConfig") );
-	_hgCaloryRequirements = new CaloricRequirementsTable( element->FirstChildElement( "caloriesTable" ) );
+	TiXmlElement* calTable = element->FirstChildElement( "caloriesTable" );
+	if ( calTable == NULL )	
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: No caloriesTable element found for Hunter Gatherers in Config" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	_hgCaloryRequirements = new CaloricRequirementsTable( calTable  );
 
 	// MRJ: Loading agro pastoralists attributes	
 	element = root->FirstChildElement("agroPastoralists");
-	_apCaloryRequirements = new CaloricRequirementsTable( element->FirstChildElement( "caloriesTable" ) );
+
+	calTable = element->FirstChildElement( "caloriesTable" );
+	if ( calTable == NULL )	
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: No caloriesTable element found for AgroPastoralists in Config" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+
+	_apCaloryRequirements = new CaloricRequirementsTable( calTable );
 	retrieveAttributeMandatory( element, "num", _numAP );
 	retrieveAttributeMandatory( element, "maxCropHomeDistance", _maxCropHomeDistance );
 
