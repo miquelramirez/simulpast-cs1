@@ -20,10 +20,6 @@ private:
 	int		_biomassCollected;
 	int		_caloriesCollected;
 
-	int		doWalk( Engine::Point2D<int>& start, 
-				double maxDist,
-				GujaratAgent& world );
-
 	void		selectBestNearestCell( 	const Engine::Point2D<int>& current,
 						const Engine::Raster& r,
 						int& bestScore,
@@ -34,6 +30,12 @@ private:
 				double maxDist, 
 				Engine::Raster& r, 
 				int& collected ) const;
+
+	void		doWalk( GujaratAgent& agent, 
+				const Engine::Point2D<int>& n0, 
+				double maxDist, 
+				Engine::Raster& r, 
+				int& collected );
 
 public:
 	ForageAction( Sector* loc, bool ownsPointer = false );
