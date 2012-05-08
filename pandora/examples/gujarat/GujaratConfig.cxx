@@ -8,13 +8,13 @@ namespace Gujarat
 
 GujaratConfig::GujaratConfig() 
 	: _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _duneMapFile("no loaded file"), _climateSeed(1),
-	_hunterGathererController( "Rule-Based" ), _controllerConfig(NULL)
+	_hunterGathererController( "Rule-Based" ), _hgCaloryRequirements(NULL), _apCaloryRequirements(NULL),_controllerConfig(NULL)
 {
 }
   
 GujaratConfig::GujaratConfig(const std::string & filename) 
 	: _size(0), _soilFile(""), _climateSeed(1), _hunterGathererController( "Rule-Based" ),
-	_controllerConfig( NULL )
+	_hgCaloryRequirements(NULL), _apCaloryRequirements(NULL), _controllerConfig( NULL )
 {     
 //    Config::_path      = (char*)0;
 //    Config::_numAgents = 0;
@@ -26,6 +26,10 @@ GujaratConfig::GujaratConfig(const std::string & filename)
 
 GujaratConfig::~GujaratConfig()
 {
+	if ( _hgCaloryRequirements )
+		delete _hgCaloryRequirements;
+	if ( _apCaloryRequirements )
+		delete _apCaloryRequirements;
 }
 
 void GujaratConfig::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, std::string& value )
@@ -153,10 +157,11 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	_hunterGathererController = element->Attribute("controllerType");
 
 	parseHGMDPConfig( element->FirstChildElement("controllerConfig") );
-
+	_hgCaloryRequirements = new CaloricRequirementsTable( element->FirstChildElement( "caloriesTable" ) );
 
 	// MRJ: Loading agro pastoralists attributes	
 	element = root->FirstChildElement("agroPastoralists");
+	_apCaloryRequirements = new CaloricRequirementsTable( element->FirstChildElement( "caloriesTable" ) );
 	retrieveAttributeMandatory( element, "num", _numAP );
 	retrieveAttributeMandatory( element, "maxCropHomeDistance", _maxCropHomeDistance );
 

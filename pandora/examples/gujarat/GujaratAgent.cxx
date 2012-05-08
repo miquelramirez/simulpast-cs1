@@ -3,6 +3,7 @@
 #include "GujaratWorld.hxx"
 #include "GujaratDemographics.hxx"
 #include "Action.hxx"
+#include "CaloricRequirementsTable.hxx"
 #include <sstream>
 
 namespace Gujarat
@@ -11,7 +12,7 @@ namespace Gujarat
 GujaratAgent::GujaratAgent( const std::string & id ) 
 	: Engine::Agent(id), 
 	 _spentTime(0), _collectedResources(0), _age(0),
-	_socialRange( 50 ), _starved( false )
+	_socialRange( 50 ), _starved( false ), _caloricRequirements(0)
 {
 	// we start with a couple of 15 years
 	_populationAges.push_back(15);
@@ -284,13 +285,13 @@ void GujaratAgent::checkReproduction()
 
 int GujaratAgent::computeConsumedResources( int timeSteps ) const
 {
-	int popSize = 0;
+	int requiredResources = 0;
 	for(unsigned int index=0; index<_populationAges.size(); index++)
 	{
 		if(_populationAges[index]!=-1)
-			popSize++;
+			requiredResources += _caloricRequirements->getCaloriesFor(_populationAges[index]);
 	}
-	return 2000.0f * popSize * timeSteps;	
+	return requiredResources * timeSteps;	
 }
 
 void GujaratAgent::checkMortality()

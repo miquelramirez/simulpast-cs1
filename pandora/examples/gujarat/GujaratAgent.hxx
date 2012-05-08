@@ -4,6 +4,7 @@
 
 #include "Agent.hxx"
 
+
 #include <vector>
 #include <list>
 #include <fstream>
@@ -13,6 +14,7 @@ namespace Gujarat
 class Action;
 class AgentController;
 class GujaratDemographics;
+class CaloricRequirementsTable;
 
 class GujaratAgent : public Engine::Agent
 {
@@ -67,6 +69,8 @@ protected:
 	std::ofstream*		_log;
 	
 	Engine::Point2D<int> getNearLocation( int range );
+
+	CaloricRequirementsTable*	_caloricRequirements;
 
 public:
 	GujaratAgent( const std::string & id );
@@ -137,6 +141,7 @@ public:
 	
 	void executeActions();
 
+	void setCaloricRequirements( CaloricRequirementsTable* t ) { _caloricRequirements = t; }
 };
 
 } // namespace Gujarat
