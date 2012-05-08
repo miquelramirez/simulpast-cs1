@@ -8,13 +8,13 @@ namespace Gujarat
 
 GujaratConfig::GujaratConfig() 
 	: _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _duneMapFile("no loaded file"), _climateSeed(1),
-	_hunterGathererController( "Rule-Based" ), _controllerConfig(NULL)
+	_hunterGathererController( "Rule-Based" ), _hgCaloryRequirements(NULL), _apCaloryRequirements(NULL),_controllerConfig(NULL)
 {
 }
   
 GujaratConfig::GujaratConfig(const std::string & filename) 
 	: _size(0), _soilFile(""), _climateSeed(1), _hunterGathererController( "Rule-Based" ),
-	_controllerConfig( NULL )
+	_hgCaloryRequirements(NULL), _apCaloryRequirements(NULL), _controllerConfig( NULL )
 {     
 //    Config::_path      = (char*)0;
 //    Config::_numAgents = 0;
@@ -26,6 +26,10 @@ GujaratConfig::GujaratConfig(const std::string & filename)
 
 GujaratConfig::~GujaratConfig()
 {
+	if ( _hgCaloryRequirements )
+		delete _hgCaloryRequirements;
+	if ( _apCaloryRequirements )
+		delete _apCaloryRequirements;
 }
 
 void GujaratConfig::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, std::string& value )
@@ -153,10 +157,27 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	_hunterGathererController = element->Attribute("controllerType");
 
 	parseHGMDPConfig( element->FirstChildElement("controllerConfig") );
-
+	TiXmlElement* calTable = element->FirstChildElement( "caloriesTable" );
+	if ( calTable == NULL )	
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: No caloriesTable element found for Hunter Gatherers in Config" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	_hgCaloryRequirements = new CaloricRequirementsTable( calTable  );
 
 	// MRJ: Loading agro pastoralists attributes	
 	element = root->FirstChildElement("agroPastoralists");
+
+	calTable = element->FirstChildElement( "caloriesTable" );
+	if ( calTable == NULL )	
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: No caloriesTable element found for AgroPastoralists in Config" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+
+	_apCaloryRequirements = new CaloricRequirementsTable( calTable );
 	retrieveAttributeMandatory( element, "num", _numAP );
 	retrieveAttributeMandatory( element, "maxCropHomeDistance", _maxCropHomeDistance );
 

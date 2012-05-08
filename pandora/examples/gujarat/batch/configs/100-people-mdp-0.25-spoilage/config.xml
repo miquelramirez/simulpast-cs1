@@ -2,7 +2,7 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<path 	name="path" 	type="string"  value="./data/"/>
-	<numSteps 	name="numSteps" 	type="int"  value="120"/>
+	<numSteps 	name="numSteps" 	type="int"  value="1440"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
@@ -34,7 +34,7 @@
 	<!-- * Available Forage Time = # hours a day the forage action takes -->
 	<!-- * forageTimeCost = how much time (in hours) does it cost the agent to exploit a tile resources -->
 	<hunterGatherers 
-		num="1" homeRange="30"
+		num="100" homeRange="30"
 		surplusForReproductionThreshold="2" 
 		surplusWanted="1"
 		surplusSpoilage="0.25"
@@ -43,7 +43,7 @@
 		forageTimeCost="0.5"
 		availableForageTime="4.5"
 		demographicsModel="ramirez"
-		controllerType="DecisionTree" >
+		controllerType="MDP" >
 		<!-- * width = number of trials before selecting an action, the higher the
 		 	the number, the more informed is the action selection and more
 			computation time is required -->
@@ -60,13 +60,53 @@
 					explorationBonus ="10.0"
 		/>
 		<caloriesTable>
-			<entry ageMin="0" ageMax="1000" value="2000"/>
+			<entry ageMin="0" ageMax="1" value="625"/>
+			<entry ageMin="1" ageMax="2" value="903"/>
+			<entry ageMin="2" ageMax="3" value="1093"/>
+			<entry ageMin="3" ageMax="4" value="1208"/>
+			<entry ageMin="4" ageMax="5" value="1302"/>
+			<entry ageMin="5" ageMax="6" value="1397"/>
+			<entry ageMin="6" ageMax="7" value="1734"/>
+			<entry ageMin="7" ageMax="8" value="1868"/>
+			<entry ageMin="8" ageMax="9" value="2025"/>
+			<entry ageMin="9" ageMax="10" value="2197"/>
+			<entry ageMin="10" ageMax="11" value="2380"/>
+			<entry ageMin="11" ageMax="12" value="2588"/>
+			<entry ageMin="12" ageMax="13" value="2776"/>
+			<entry ageMin="13" ageMax="14" value="2995"/>
+			<entry ageMin="14" ageMax="15" value="3150"/>
+			<entry ageMin="15" ageMax="16" value="3263"/>
+			<entry ageMin="16" ageMax="17" value="3322"/>
+			<entry ageMin="17" ageMax="18" value="3361"/>
+			<entry ageMin="18" ageMax="30" value="3600"/>
+			<entry ageMin="30" ageMax="60" value="3425"/>
+			<entry ageMin="60" ageMax="1000" value="2987"/>
 		</caloriesTable>
 	</hunterGatherers>
 	<agroPastoralists num="0" 
-		maxCropHomeDistance="10" >
+		maxCropHomeDistance="10">
 		<caloriesTable>
-			<entry ageMin="0" ageMax="1000" value="2000"/>
+			<entry ageMin="0" ageMax="1" value="625"/>
+			<entry ageMin="1" ageMax="2" value="903"/>
+			<entry ageMin="2" ageMax="3" value="1093"/>
+			<entry ageMin="3" ageMax="4" value="1208"/>
+			<entry ageMin="4" ageMax="5" value="1302"/>
+			<entry ageMin="5" ageMax="6" value="1397"/>
+			<entry ageMin="6" ageMax="7" value="1734"/>
+			<entry ageMin="7" ageMax="8" value="1868"/>
+			<entry ageMin="8" ageMax="9" value="2025"/>
+			<entry ageMin="9" ageMax="10" value="2197"/>
+			<entry ageMin="10" ageMax="11" value="2380"/>
+			<entry ageMin="11" ageMax="12" value="2588"/>
+			<entry ageMin="12" ageMax="13" value="2776"/>
+			<entry ageMin="13" ageMax="14" value="2995"/>
+			<entry ageMin="14" ageMax="15" value="3150"/>
+			<entry ageMin="15" ageMax="16" value="3263"/>
+			<entry ageMin="16" ageMax="17" value="3322"/>
+			<entry ageMin="17" ageMax="18" value="3361"/>
+			<entry ageMin="18" ageMax="30" value="3600"/>
+			<entry ageMin="30" ageMax="60" value="3425"/>
+			<entry ageMin="60" ageMax="1000" value="2987"/>
 		</caloriesTable>
 	</agroPastoralists>
 

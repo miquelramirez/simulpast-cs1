@@ -23,9 +23,7 @@ class HunterGatherer : public GujaratAgent
 	bool sameSide( Engine::Point2D<int> P1, Engine::Point2D<int> P2, Engine::Point2D<int> A, Engine::Point2D<int> B );
 	bool insideTriangle( Engine::Point2D<int> p,  Engine::Point2D<int> b, Engine::Point2D<int> c ); 
 	
-	void evaluateYearlyActions();
-	void evaluateSeasonalActions();
-	void evaluateIntraSeasonalActions();
+	void selectActions();
 	
 	void serializeAdditionalAttributes();
 	

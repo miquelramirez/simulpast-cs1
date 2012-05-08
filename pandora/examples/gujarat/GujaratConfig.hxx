@@ -7,6 +7,7 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include "CaloricRequirementsTable.hxx"
 
 namespace Gujarat
 {
@@ -58,6 +59,9 @@ class GujaratConfig : public Config
 
 	std::string	_hunterGathererController;
 	std::string	_demographicsModel;
+
+	CaloricRequirementsTable* _hgCaloryRequirements;
+	CaloricRequirementsTable* _apCaloryRequirements;
 
 	HunterGathererMDPConfig*	_controllerConfig;
 

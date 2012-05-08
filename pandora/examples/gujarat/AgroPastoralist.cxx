@@ -26,25 +26,12 @@ void AgroPastoralist::updateKnowledge()
 {
 }
 
-void AgroPastoralist::evaluateYearlyActions()
-{
-	//std::cout << this << " evaluating yearly actions" << std::endl;	
-	// 20% of chance
-	// MRJ: Commenting out until fixed
-	
-}
-
-void AgroPastoralist::evaluateSeasonalActions()
-{
-
-}
-
 bool AgroPastoralist::cultivatedFieldOutOfReach()
 {
 	return _position.distance(_cultivatedField->getPosition()) > getMaxCropHomeDistance();
 }
 
-void AgroPastoralist::evaluateIntraSeasonalActions()
+void AgroPastoralist::selectActions()
 {
 	if(_cultivatedField == NULL || _cultivatedField->requiresFallow() )
 	{
