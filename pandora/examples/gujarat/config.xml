@@ -2,7 +2,7 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<path 	name="path" 	type="string"  value="./data/"/>
-	<numSteps 	name="numSteps" 	type="int"  value="362"/>
+	<numSteps 	name="numSteps" 	type="int"  value="120"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
@@ -37,7 +37,7 @@
 		num="1" homeRange="30"
 		surplusForReproductionThreshold="2" 
 		surplusWanted="1"
-		surplusSpoilage="0.50"
+		surplusSpoilage="0.25"
 		numSectors="8"
 		walkingSpeedHour="3000"
 		forageTimeCost="0.5"
@@ -59,10 +59,16 @@
 					width="100"
 					explorationBonus ="10.0"
 		/>
+		<caloriesTable>
+			<entry ageMin="0" ageMax="1000" value="2000"/>
+		</caloriesTable>
 	</hunterGatherers>
 	<agroPastoralists num="0" 
-		maxCropHomeDistance="10"	
-	/>
+		maxCropHomeDistance="10" >
+		<caloriesTable>
+			<entry ageMin="0" ageMax="1000" value="2000"/>
+		</caloriesTable>
+	</agroPastoralists>
 
 	<!-- Raster storage options -->
 	<storeRaster name="soils" value="yes" />
