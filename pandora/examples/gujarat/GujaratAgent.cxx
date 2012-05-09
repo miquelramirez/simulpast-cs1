@@ -5,6 +5,7 @@
 #include "Action.hxx"
 #include "CaloricRequirementsTable.hxx"
 #include <sstream>
+#include "GujaratConfig.hxx"
 
 namespace Gujarat
 {
@@ -14,9 +15,10 @@ GujaratAgent::GujaratAgent( const std::string & id )
 	 _spentTime(0), _collectedResources(0), _age(0),
 	_socialRange( 50 ), _starved( false ), _caloricRequirements(0)
 {
+	GujaratWorld * world = (GujaratWorld*)_world;
 	// we start with a couple of 15 years
-	_populationAges.push_back(15);
-	_populationAges.push_back(15);
+	_populationAges.push_back(world->getConfig()._adulthoodAge);
+	_populationAges.push_back(world->getConfig()._adulthoodAge);
 	_emigrationProbability = 0.0;
 	_reproductionProbability = 0.0;
 	std::stringstream fName;
@@ -49,7 +51,7 @@ int	GujaratAgent::computeEffectiveBiomassForaged( int nominal ) const
 
 void GujaratAgent::setAvailableTime( int daysPerSeason )
 {
-	_availableTime = 120 / daysPerSeason;
+	_availableTime = ((GujaratWorld*)_world)->getConfig()._daysPerSeason / daysPerSeason;
 }
 
 void GujaratAgent::updateKnowledge()
@@ -72,13 +74,13 @@ void GujaratAgent::logAgentState()
 	log() << "\tagent.nrAdults=" << getNrAvailableAdults() << std::endl;
 	log() << "\tagent.adultAges=[";
 	for ( unsigned k = 0; k < _populationAges.size(); k++ )
-		if ( _populationAges[k] >= 15 )
+		if ( _populationAges[k] >= ((GujaratWorld*)_world)->getConfig()._adulthoodAge )
 			log() << _populationAges[k] << ",";
 	log() << "]" << std::endl; 
 	log() << "\tagent.nrChildren=" << getNrChildren() << std::endl;
 	log() << "\tagent.childrenAges=[";
 	for ( unsigned k = 0; k < _populationAges.size(); k++ )
-		if ( _populationAges[k] >= 0 && _populationAges[k] < 15 )
+		if ( _populationAges[k] >= 0 && _populationAges[k] < ((GujaratWorld*)_world)->getConfig()._adulthoodAge )
 			log() << _populationAges[k] << ",";	
 	log() << "]" << std::endl;
 	log() << "\tagent.resourcesNeeded=" << computeConsumedResources(1) << std::endl; 
@@ -95,6 +97,9 @@ void GujaratAgent::updateState()
 		_emigrationProbability += 1.0f/120.f;
 		log() << "\tagent.isStarving=yes" << std::endl;
 		_collectedResources = 0;
+		
+		//ATM: should be applied some DeathByStarvation procedure?
+		
 	}
 	else
 	{
@@ -103,11 +108,10 @@ void GujaratAgent::updateState()
 		_reproductionProbability += 1.0/360.0f;
 		// Decay factor, modeling spoilage
 		_collectedResources *= getSurplusSpoilageFactor();
-
 	}
 
-	if ( (getWorld()->getCurrentTimeStep() % 120 == 0) 
-		&& (getWorld()->getCurrentTimeStep() > 119) ) // last day of the year
+	if ( (getWorld()->getCurrentTimeStep() % ((GujaratWorld*)_world)->getConfig()._daysPerSeason == 0) 
+		&& (getWorld()->getCurrentTimeStep() > ((GujaratWorld*)_world)->getConfig()._daysPerSeason-1) ) // last day of the year
 	{
 		if( checkEmigration() )
 		{
@@ -117,9 +121,10 @@ void GujaratAgent::updateState()
 		}
 	}
 	
+	
 	// end of year, evaluate reproduction, mortality and update age
-	if( (getWorld()->getCurrentTimeStep() % 360 == 0) 
-		&& (getWorld()->getCurrentTimeStep() > 359) ) // last day of the year
+	if( (getWorld()->getCurrentTimeStep() % ((GujaratWorld*)_world)->getConfig()._daysPerYear == 0) 
+		&& (getWorld()->getCurrentTimeStep() > ((GujaratWorld*)_world)->getConfig()._daysPerYear-1) ) // last day of the year
 	{
 		updateAges();
 		checkMortality();
@@ -157,7 +162,7 @@ GujaratAgent * GujaratAgent::getMarriageCandidate()
 		for(unsigned i=2; i<possibleAgent->_populationAges.size(); i++)
 		{	
 			// it avoids dead children (-1)
-			if(possibleAgent->_populationAges[i]>15)
+			if(possibleAgent->_populationAges[i]>((GujaratWorld*)_world)->getConfig()._adulthoodAge)
 			{
 				possible.push_back(possibleAgent);
 			}
@@ -176,7 +181,7 @@ void GujaratAgent::checkMarriage()
 {
 	for(unsigned i=2; i<_populationAges.size(); i++)
 	{
-		if(_populationAges[i]>15)
+		if(_populationAges[i]>((GujaratWorld*)_world)->getConfig()._adulthoodAge)
 		{
 			GujaratAgent * agent = getMarriageCandidate();
 
@@ -194,7 +199,7 @@ void GujaratAgent::checkMarriage()
 
 			for(unsigned int j=2; j<agent->_populationAges.size(); j++)
 			{
-				if(agent->_populationAges[j]>15)
+				if(agent->_populationAges[j]>((GujaratWorld*)_world)->getConfig()._adulthoodAge)
 				{
 					newAgent->_populationAges[1] = agent->_populationAges[j];
 					agent->_populationAges[j] = -1;
@@ -291,6 +296,9 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 		if(_populationAges[index]!=-1)
 			requiredResources += _caloricRequirements->getCaloriesFor(_populationAges[index]);
 	}
+	
+	requiredResources += _foodNeedsForReproduction;
+	
 	return requiredResources * timeSteps;	
 }
 
@@ -362,7 +370,7 @@ int	GujaratAgent::getNrAvailableAdults() const
 	int numAdults = 0;
 	for(unsigned i=0; i<_populationAges.size(); i++)
 	{
-		if(_populationAges[i] >= 15)
+		if(_populationAges[i] >= ((GujaratWorld*)_world)->getConfig()._adulthoodAge)
 		{
 			numAdults++;
 		}
@@ -375,7 +383,7 @@ int	GujaratAgent::getNrChildren() const
 	int numChildren = 0;
 	for(unsigned i=0; i<_populationAges.size(); i++)
 	{
-		if(_populationAges[i] < 15)
+		if(_populationAges[i] < ((GujaratWorld*)_world)->getConfig()._adulthoodAge)
 		{
 			numChildren++;
 		}

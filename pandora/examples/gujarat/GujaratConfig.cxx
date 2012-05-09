@@ -147,6 +147,11 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	retrieveAttributeMandatory( element, "surplusForReproductionThreshold", _surplusForReproductionThreshold );
 	retrieveAttributeMandatory( element, "surplusWanted", _surplusWanted );
 	retrieveAttributeMandatory( element, "surplusSpoilage", _surplusSpoilage );
+	
+	retrieveAttributeMandatory( element, "foodNeedsForReproduction", _hgFoodNeedsForReproduction );
+	
+	retrieveAttributeMandatory( element, "adulthoodAge", _adulthoodAge );	
+	
 	retrieveAttributeMandatory( element, "numSectors", _numSectors );
 	retrieveAttributeMandatory( element, "walkingSpeedHour", _walkingSpeedHour );
 	retrieveAttributeMandatory( element, "forageTimeCost", _forageTimeCost );
@@ -183,7 +188,9 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 
 	element = root->FirstChildElement("daysPerSeason");
 	retrieveAttributeMandatory( element, "value", _daysPerSeason );
-
+	element = root->FirstChildElement("daysPerYear");
+	retrieveAttributeMandatory( element, "value", _daysPerYear );
+	
 	element = root->FirstChildElement("cellResolution");
 	retrieveAttributeMandatory( element, "value", _cellResolution );
 

@@ -27,17 +27,22 @@ class GujaratConfig : public Config
 	int		_homeRange;
 	// Agents social range expressed in # GIS data grid tiles
 	int		_socialRange;
-	// # days corresponding to a climate model season
+	// # days corresponding to a climate model season	
 	int		_daysPerSeason;
+	int		_daysPerYear;
 	// # meters corresponding to the side of a cell
 	float _cellResolution;
 
 	// MRJ: Hunter Gatherers attributes
 	int		_surplusForReproductionThreshold;
-	int		_surplusWanted;
-	float		_walkingSpeedHour;
-	float		_forageTimeCost;
-	float		_availableForageTime;
+	int		_surplusWanted;	
+	float   _hgFoodNeedsForReproduction;
+	//float   _hgSpoilageFoodFactor;	
+	int		_adulthoodAge;
+	float	_walkingSpeedHour;
+	float	_forageTimeCost;
+	float	_availableForageTime;
+	
 
 	// MRJ: Agro Pastoralists attributes
 	int		_maxCropHomeDistance;
@@ -98,7 +103,7 @@ public:
 		return it->second;
 	}
 	
-
+	friend class GujaratAgent;
 	friend class GujaratWorld;
 	friend class Climate;
 };

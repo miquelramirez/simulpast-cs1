@@ -52,6 +52,8 @@ protected:
 
 	float _massToCaloriesRate;
 	float _surplusSpoilageFactor;
+	
+	float   _foodNeedsForReproduction;
 
 	float _walkingSpeedHour;
 	float _forageTimeCost;
@@ -103,7 +105,7 @@ public:
 	void	addNewChild();
 
 	int	getOnHandResources() const { return _collectedResources; }
-	int	computeConsumedResources( int timeSteps ) const;
+	virtual int	computeConsumedResources( int timeSteps ) const;
 	double	computeMaxForagingDistance( ) const;
 	int	computeEffectiveBiomassForaged( int nominal ) const;
 	int	convertBiomassToCalories( int biomass ) const;
@@ -112,6 +114,8 @@ public:
 	void	setSurplusSpoilageFactor( float v ) { _surplusSpoilageFactor = v; }
 	float	getSurplusSpoilageFactor() const { return _surplusSpoilageFactor; }
 
+	void 	setFoodNeedsForReproduction( float v) { _foodNeedsForReproduction = v; }
+	
 	void	setWalkingSpeedHour( float v ) { _walkingSpeedHour = v; }
 	float	getWalkingSpeedHour() const { return _walkingSpeedHour; }
 

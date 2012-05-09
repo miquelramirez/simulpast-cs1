@@ -46,6 +46,8 @@ public:
 	void setSurplusWanted( int v ) { _surplusWanted = v; }
 	bool cellValid( Engine::Point2D<int>& loc );
 	bool cellRelevant( Engine::Point2D<int>& loc );
+	
+	bool needsResources(int timeSteps);
 	bool needsResources();
 
 	void		updateResources( int v ) { _collectedResources += v; }

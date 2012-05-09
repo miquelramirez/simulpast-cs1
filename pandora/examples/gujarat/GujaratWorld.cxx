@@ -113,6 +113,9 @@ void GujaratWorld::createAgents()
 			agent->setSurplusWanted( _config._surplusWanted );
 			agent->setCaloricRequirements( _config._hgCaloryRequirements );
 			agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
+			
+			agent->setFoodNeedsForReproduction(_config._hgFoodNeedsForReproduction);			
+			
 			agent->setWalkingSpeedHour( _config._walkingSpeedHour / _config._cellResolution );
 			agent->setForageTimeCost( _config._forageTimeCost );
 			agent->setAvailableForageTime( _config._availableForageTime );
