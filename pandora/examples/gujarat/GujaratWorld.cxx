@@ -105,6 +105,7 @@ void GujaratWorld::createAgents()
  			oss << "HunterGatherer_" << i;
 			HunterGatherer * agent = new HunterGatherer(oss.str());
 			addAgent(agent);
+			agent->setWorld(this);
 			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
 			agent->setHomeMobilityRange( _config._homeRange );
@@ -115,7 +116,6 @@ void GujaratWorld::createAgents()
 			agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
 			
 			agent->setFoodNeedsForReproduction(_config._hgFoodNeedsForReproduction);			
-			
 			agent->setWalkingSpeedHour( _config._walkingSpeedHour / _config._cellResolution );
 			agent->setForageTimeCost( _config._forageTimeCost );
 			agent->setAvailableForageTime( _config._availableForageTime );
@@ -153,6 +153,7 @@ void GujaratWorld::createAgents()
 			std::ostringstream oss;
  			oss << "AgroPastoralist_" << i;
 			AgroPastoralist * agent = new AgroPastoralist(oss.str());
+			agent->setWorld(this);
 			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
 			agent->setSurplusSpoilageFactor( _config._surplusSpoilage );

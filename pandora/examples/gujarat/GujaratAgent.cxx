@@ -15,10 +15,22 @@ GujaratAgent::GujaratAgent( const std::string & id )
 	 _spentTime(0), _collectedResources(0), _age(0),
 	_socialRange( 50 ), _starved( false ), _caloricRequirements(0)
 {
-	GujaratWorld * world = (GujaratWorld*)_world;
+	
 	// we start with a couple of 15 years
+	_populationAges.push_back(15);
+	_populationAges.push_back(15);	
+	/* ATM:
+	option1)
+	Pass world or a GujaratConfig object as parameter
+	GujaratWorld * world = (GujaratWorld*)_world;
 	_populationAges.push_back(world->getConfig()._adulthoodAge);
 	_populationAges.push_back(world->getConfig()._adulthoodAge);
+		
+	option2)
+	add GujaratAgent::addIndividual(int age) which will be called
+	at createAgents in GujaratWorld initialization
+	call : agent->addIndividual(_config._adulthoodAge);
+	*/
 	_emigrationProbability = 0.0;
 	_reproductionProbability = 0.0;
 	std::stringstream fName;
@@ -298,6 +310,8 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 	}
 	
 	requiredResources += _foodNeedsForReproduction;
+	// ATM: Matthieu's tables about pregnancy process should be applied
+	
 	
 	return requiredResources * timeSteps;	
 }
