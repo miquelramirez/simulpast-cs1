@@ -91,7 +91,7 @@ void GujaratAgent::updateState()
 	if ( _collectedResources < 0 )
 	{
 		_starved = true;
-		_emigrationProbability += 1.0f/(float)((GujaratWorld*)_world->getConfig()._daysPerSeason);
+		_emigrationProbability += 1.0f/(float)(((GujaratWorld*)_world)->getConfig()._daysPerSeason);
 		log() << "\tagent.isStarving=yes" << std::endl;
 		_collectedResources = 0;
 	}
@@ -99,7 +99,7 @@ void GujaratAgent::updateState()
 	{
 		log() << "\tagent.isStarving=no" << std::endl;
 		_starved = false;
-		_reproductionProbability += 1.0/(float)(3*(GujaratWorld*)_world->getConfig()._daysPerSeason);
+		_reproductionProbability += 1.0/(float)(3*((GujaratWorld*)_world)->getConfig()._daysPerSeason);
 		// Decay factor, modeling spoilage
 		_collectedResources *= getSurplusSpoilageFactor();
 	}
@@ -134,6 +134,11 @@ bool	GujaratAgent::checkEmigration()
 {
 	return _demographicsModel->checkEmigration();
 
+}
+
+void	GujaratAgent::checkStarvationMortality()
+{
+	_demographicsModel->checkStarvationMortality();
 }
 
 double 	GujaratAgent::getTimeSpentForagingTile() const

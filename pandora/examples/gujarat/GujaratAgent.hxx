@@ -27,6 +27,7 @@ class GujaratAgent : public Engine::Agent
 	void checkMortality();
 	void checkAgentRemoval();
 	void checkMarriage();
+	void checkStarvationMortality();
 
 	GujaratAgent * getMarriageCandidate();
 
