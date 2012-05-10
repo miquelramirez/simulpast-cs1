@@ -36,8 +36,8 @@ def acquire_avg_resources_from_log( logfile ) :
 				if float(value) > max_r :
 					max_r = float(value)
 
-
-	return  agents, adults, children, max_t, max_r
+	assert len(agents) == len(adults) == len(children)
+	return  agents, adults, children, len(agents), max_r
 
 def main() :
 	
@@ -60,13 +60,10 @@ def main() :
 
 	for log, title_str in inputs :
 		agents, adults, children, xmax, ymax = acquire_avg_resources_from_log( log )
-		plt.figure(1)
-		plt.subplot(3,1,1)
-		plt.bar( [i for i in range(0,len(agents)) ], [ agents[i] for i in range(0,len(agents)) ], width=1, color='r', label=title_str+", agents" )
-		plt.subplot(3,1,2)
-		plt.bar( [i for i in range(0,len(adults)) ], [ adults[i] for i in range(0,len(adults)) ], width=1, color='y', label=title_str+", adults" )
-		plt.subplot(3,1,3)
-		plt.bar( [i for i in range(0,len(children)) ], [ children[i] for i in range(0,len(children)) ], width=1, color='g', label=title_str+", children" )
+		print len(agents), len(adults), len(children), xmax
+		plt.plot( [i for i in range(0,xmax) ], [ agents[i] for i in range(0,len(agents)) ], color='r', label=title_str+", agents" )
+		plt.plot( [i for i in range(0,xmax) ], [ adults[i] for i in range(0,len(adults)) ], color='y', label=title_str+", adults" )
+		plt.plot( [i for i in range(0,xmax) ], [ children[i] for i in range(0,len(children)) ], color='g', label=title_str+", children" )
 		if xmax > global_xmax : global_xmax = xmax
 		if ymax > global_ymax : global_ymax = ymax
 	
