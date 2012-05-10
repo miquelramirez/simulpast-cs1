@@ -12,4 +12,8 @@ GujaratDemographics::~GujaratDemographics()
 {
 }
 
+void GujaratDemographics::checkStarvationMortality()
+{
+}
+
 }

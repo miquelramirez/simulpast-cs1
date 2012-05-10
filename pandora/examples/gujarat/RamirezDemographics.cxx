@@ -24,6 +24,11 @@ bool	RamirezDemographics::checkEmigration( )
 
 void	RamirezDemographics::checkMortality()
 {
+	// TODO:
+	// Add attributes:
+	// 	* Natural Adult Mortality (in 1000%)
+	//	* Natural Children Mortality (in 1000%)
+	//	* Elderly Age Threshold
 	// Adult mortality check
 	_agent.checkDeath( 15, 1000, 2 );
 	// Children mortality check

@@ -91,24 +91,23 @@ void GujaratAgent::updateState()
 	if ( _collectedResources < 0 )
 	{
 		_starved = true;
-		_emigrationProbability += 1.0f/120.f;
+		_emigrationProbability += 1.0f/(float)((GujaratWorld*)_world->getConfig()._daysPerSeason);
 		log() << "\tagent.isStarving=yes" << std::endl;
 		_collectedResources = 0;
-		
-		//ATM: should be applied some DeathByStarvation procedure?
-		
 	}
 	else
 	{
 		log() << "\tagent.isStarving=no" << std::endl;
 		_starved = false;
-		_reproductionProbability += 1.0/360.0f;
+		_reproductionProbability += 1.0/(float)(3*(GujaratWorld*)_world->getConfig()._daysPerSeason);
 		// Decay factor, modeling spoilage
 		_collectedResources *= getSurplusSpoilageFactor();
 	}
 
+	checkStarvationMortality();
+
 	if ( (getWorld()->getCurrentTimeStep() % ((GujaratWorld*)_world)->getConfig()._daysPerSeason == 0) 
-		&& (getWorld()->getCurrentTimeStep() > ((GujaratWorld*)_world)->getConfig()._daysPerSeason-1) ) // last day of the year
+		&& (getWorld()->getCurrentTimeStep() > ((GujaratWorld*)_world)->getConfig()._daysPerSeason-1) ) 
 	{
 		if( checkEmigration() )
 		{

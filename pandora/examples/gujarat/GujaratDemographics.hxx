@@ -15,6 +15,7 @@ public:
 	virtual bool	checkEmigration( ) = 0;
 	virtual	void	checkMortality( ) = 0;
 	virtual void	checkReproduction( ) = 0;	
+	virtual	void	checkStarvationMortality();
 
 protected:
 
