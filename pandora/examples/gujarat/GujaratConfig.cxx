@@ -2,19 +2,21 @@
 #include <sstream>
 #include "Exceptions.hxx"
 #include "HunterGathererMDPConfig.hxx"
+#include "FixedAgentInitializer.hxx"
 
 namespace Gujarat
 {
 
 GujaratConfig::GujaratConfig() 
 	: _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _duneMapFile("no loaded file"), _climateSeed(1),
-	_hunterGathererController( "Rule-Based" ), _hgCaloryRequirements(NULL), _apCaloryRequirements(NULL),_controllerConfig(NULL)
+	_hunterGathererController( "Rule-Based" ), _hgCaloryRequirements(NULL), _apCaloryRequirements(NULL),
+	_hgInitializer(NULL), _apInitializer(NULL), _controllerConfig(NULL)
 {
 }
   
 GujaratConfig::GujaratConfig(const std::string & filename) 
 	: _size(0), _soilFile(""), _climateSeed(1), _hunterGathererController( "Rule-Based" ),
-	_hgCaloryRequirements(NULL), _apCaloryRequirements(NULL), _controllerConfig( NULL )
+	_hgCaloryRequirements(NULL), _apInitializer(NULL), _apCaloryRequirements(NULL), _hgInitializer(NULL), _controllerConfig( NULL )
 {     
 //    Config::_path      = (char*)0;
 //    Config::_numAgents = 0;
@@ -169,6 +171,25 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		sstr << "[CONFIG]: ERROR: No caloriesTable element found for Hunter Gatherers in Config" << std::endl;
 		throw Engine::Exception(sstr.str());
 	}
+	TiXmlElement* initializerElem = element->FirstChildElement( "initialization" );
+	if ( initializerElem == NULL )	
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: No <initialization> element found for Hunter Gatherers in Config" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	std::string initializerType = initializerElem->Attribute("type");
+	if ( initializerType == "fixed" )
+	{
+		_hgInitializer = new FixedAgentInitializer( initializerElem );
+	}
+	else
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: Unknown initializer '" << initializerType << "' type specified" << std::endl;
+		throw Engine::Exception(sstr.str());	
+	}
+
 	_hgCaloryRequirements = new CaloricRequirementsTable( calTable  );
 
 	// MRJ: Loading agro pastoralists attributes	
@@ -180,6 +201,25 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		std::stringstream sstr;
 		sstr << "[CONFIG]: ERROR: No caloriesTable element found for AgroPastoralists in Config" << std::endl;
 		throw Engine::Exception(sstr.str());
+	}
+
+	initializerElem = element->FirstChildElement( "initialization" );
+	if ( initializerElem == NULL )	
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: No <initialization> element found for Agro Pastoralists in Config" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	initializerType = initializerElem->Attribute("type");
+	if ( initializerType == "fixed" )
+	{
+		_apInitializer = new FixedAgentInitializer( initializerElem );
+	}
+	else
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: Unknown initializer '" << initializerType << "' type specified" << std::endl;
+		throw Engine::Exception(sstr.str());	
 	}
 
 	_apCaloryRequirements = new CaloricRequirementsTable( calTable );

@@ -16,21 +16,6 @@ GujaratAgent::GujaratAgent( const std::string & id )
 	_socialRange( 50 ), _starved( false ), _caloricRequirements(0)
 {
 	
-	// we start with a couple of 15 years
-	_populationAges.push_back(15);
-	_populationAges.push_back(15);	
-	/* ATM:
-	option1)
-	Pass world or a GujaratConfig object as parameter
-	GujaratWorld * world = (GujaratWorld*)_world;
-	_populationAges.push_back(world->getConfig()._adulthoodAge);
-	_populationAges.push_back(world->getConfig()._adulthoodAge);
-		
-	option2)
-	add GujaratAgent::addIndividual(int age) which will be called
-	at createAgents in GujaratWorld initialization
-	call : agent->addIndividual(_config._adulthoodAge);
-	*/
 	_emigrationProbability = 0.0;
 	_reproductionProbability = 0.0;
 	std::stringstream fName;
@@ -310,8 +295,6 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 	}
 	
 	requiredResources += _foodNeedsForReproduction;
-	// ATM: Matthieu's tables about pregnancy process should be applied
-	
 	
 	return requiredResources * timeSteps;	
 }
@@ -468,19 +451,25 @@ bool	GujaratAgent::canReproduce() const
 	return true;
 }
 
-void	GujaratAgent::addNewChild()
+void 	GujaratAgent::addNewIndividual( int age )
 {
-	//std::cout << this << " have a new baby!" << std::endl;
-	// we look for an empty space or add a new one
-	for(unsigned int index=2; index!=_populationAges.size(); index++)
+	for(unsigned int index=0; index < _populationAges.size(); index++)
 	{
 		if(_populationAges[index]==-1)
 		{
-			_populationAges[index] = 0;
+			_populationAges[index] = age;
 			return;
 		}
 	}
-	_populationAges.push_back(0);	
+	_populationAges.push_back(age);	
+	
+}
+
+void	GujaratAgent::addNewChild()
+{
+	addNewIndividual(0);
+	//std::cout << this << " have a new baby!" << std::endl;
+	// we look for an empty space or add a new one
 }
 
 } // namespace Gujarat

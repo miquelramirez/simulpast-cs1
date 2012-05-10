@@ -102,6 +102,7 @@ public:
 	void	checkDeathByAging( int minAge );
 	// if male or female died, reproduction is impossible
 	bool	canReproduce() const;
+	void	addNewIndividual( int age );
 	void	addNewChild();
 
 	int	getOnHandResources() const { return _collectedResources; }
