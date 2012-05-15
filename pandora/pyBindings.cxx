@@ -169,7 +169,7 @@ BOOST_PYTHON_MODULE(libpyPandora)
 	;
 	
 	boost::python::class_< AgentWrap, std::auto_ptr<AgentWrap>, boost::noncopyable >("AgentStub", boost::python::init< const std::string & > () )
-		.def("step", boost::python::pure_virtual(&Engine::Agent::step))
+		.def("selectActions", boost::python::pure_virtual(&Engine::Agent::selectActions))
 		.def("serialize", boost::python::pure_virtual(&Engine::Agent::serialize))
 		.add_property("id", boost::python::make_function(&Engine::Agent::getId, boost::python::return_value_policy<boost::python::copy_const_reference>()))
 		.add_property("position", boost::python::make_function(&Engine::Agent::getPosition, boost::python::return_value_policy<boost::python::reference_existing_object>()), &Engine::Agent::setPosition )
