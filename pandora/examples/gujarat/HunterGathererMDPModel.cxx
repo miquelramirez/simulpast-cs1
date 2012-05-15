@@ -79,8 +79,8 @@ void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s,
 {
 	HunterGathererMDPState sp;
 	s.initializeSuccessor(sp);
-	const Action* act = s.availableActions(a);
-	act->execute( agentRef(), s, sp );
+	const MDPAction* act = s.availableActions(a);
+	act->executeMDP( agentRef(), s, sp );
 	applyFrameEffects( s, sp );
 	sp.computeHash();	
 	makeActionsForState( sp );

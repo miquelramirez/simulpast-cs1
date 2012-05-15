@@ -1,11 +1,12 @@
 
 #include "GujaratAgent.hxx"
+
 #include "GujaratWorld.hxx"
 #include "GujaratDemographics.hxx"
-#include "Action.hxx"
 #include "CaloricRequirementsTable.hxx"
-#include <sstream>
 #include "GujaratConfig.hxx"
+
+#include <sstream>
 
 namespace Gujarat
 {
@@ -18,15 +19,11 @@ GujaratAgent::GujaratAgent( const std::string & id )
 	
 	_emigrationProbability = 0.0;
 	_reproductionProbability = 0.0;
-	std::stringstream fName;
-	fName << getId() << ".state.log";
-	_log = new std::ofstream( fName.str().c_str() );
+
 }
 
 GujaratAgent::~GujaratAgent()
 {
-	_log->close();
-	delete _log;
 }
 
 void	GujaratAgent::setController(  AgentController* controller )
@@ -53,15 +50,6 @@ void GujaratAgent::setAvailableTime( int daysPerSeason )
 
 void GujaratAgent::updateKnowledge()
 {
-}
-
-void GujaratAgent::step()
-{
-	logAgentState();
-	updateKnowledge();
-	selectActions();
-	executeActions();
-	updateState();
 }
 
 void GujaratAgent::logAgentState()
@@ -241,27 +229,6 @@ Engine::Point2D<int> GujaratAgent::getNearLocation( int range )
 	return possiblePositions[0];
 }
 
-void GujaratAgent::executeActions()
-{
-	std::list<Action *>::iterator it = _actions.begin();
-	unsigned i = 0;
-	while(it!=_actions.end())
-	{
-		Action * nextAction = *it;
-		//_spentTime += nextAction->getTimeNeeded();
-		//if(_spentTime<=_availableTime)
-		//{
-		nextAction->execute(*this);
-		log() << "\tagent.action[" << i << "]=";
-		nextAction->describe(log());
-		log() << std::endl;
-		//}
-		it = _actions.erase(it);
-		delete nextAction;
-		i++;
-	}
-	
-}
 
 void GujaratAgent::checkAgentRemoval()
 {

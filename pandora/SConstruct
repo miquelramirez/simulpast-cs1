@@ -20,14 +20,14 @@ if int(release) == 0:
 		libs = Split('pthread mpich gdal hdf5 tinyxml mpl z grass_gis')
 	libraryName = 'pandorad'
 else:
-	env['CCFLAGS'] = Split('-O3 -Wall -DTIXML_USE_STL')
+	env['CCFLAGS'] = Split('-O3 -Wall -DTIXML_USE_STL -fopenmp')
 	if int(mareNostrum) == 1:
 		libs = Split('pthread mpich gdal hdf5 mpl z grass_gis')
 	else:
 		libs = Split('pthread mpich gdal hdf5 tinyxml mpl z grass_gis')
 	libraryName = 'pandora'
 
-srcFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx RasterLoader.cxx')
+srcFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx RasterLoader.cxx Action.cxx')
 
 srcBaseFiles = [] 
 for src in srcFiles:

@@ -10,6 +10,8 @@
 #include "SowAction.hxx"
 #include "MaintainPlotAction.hxx"
 #include "HarvestAction.hxx"
+#include "Agent.hxx"
+#include "Action.hxx"
 
 namespace Gujarat
 {

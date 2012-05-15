@@ -375,6 +375,21 @@ void World::stepSection( const int & sectionIndex )
 	int numExecutedAgents = 0;
 	AgentsList agentsToSend;
 
+	// plan actions 
+	#pragma omp parallel for
+	for(int i=0; i<agentsToExecute.size(); i++)
+	{
+		Agent * agent = agentsToExecute[i];
+		//Agent * agent = *it;
+		if(_sections[sectionIndex].isInside(agent->getPosition()) && !hasBeenExecuted(agent))
+		{
+			agent->logAgentState();
+			agent->updateKnowledge();
+			agent->selectActions();
+		}
+	}
+
+	// execute actions
 	for(int i=0; i<agentsToExecute.size(); i++)
 	{
 //	while(it!=_agents.end())
@@ -384,7 +399,9 @@ void World::stepSection( const int & sectionIndex )
 		if(_sections[sectionIndex].isInside(agent->getPosition()) && !hasBeenExecuted(agent))
 		{
 			//std::cout << "agent: " << agent << " being executed at index: " << sectionIndex << " of task: "<< _simulation.getId() << " in step: " << _step << std::endl;
-			agent->step();
+			
+			agent->executeActions();
+			agent->updateState();
 			//std::cout << "agent: " << agent << " has been executed at index: " << sectionIndex << " of task: "<< _simulation.getId() << " in step: " << _step << std::endl;
 			if(!_boundaries.isInside(agent->getPosition()) && !willBeRemoved(agent))
 			{

@@ -84,9 +84,9 @@ public:
 	{
 	}
 
-	void step()
+	void selectActions()
 	{
-		this->get_override("step")();
+		this->get_override("selectActions")();
 	}	
 	
 	void serialize()

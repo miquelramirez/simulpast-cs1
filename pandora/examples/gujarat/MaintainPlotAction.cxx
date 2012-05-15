@@ -1,7 +1,10 @@
 
 #include "MaintainPlotAction.hxx"
+
+#include "Agent.hxx"
 #include "GujaratAgent.hxx"
 #include "AgroPastoralist.hxx"
+
 #include "CultivatedField.hxx"
 
 namespace Gujarat
@@ -15,7 +18,7 @@ MaintainPlotAction::~MaintainPlotAction()
 {
 }
 
-void MaintainPlotAction::execute( GujaratAgent & agent )
+void MaintainPlotAction::execute( Engine::Agent & agent )
 {
 	AgroPastoralist & agroPastoralist = (AgroPastoralist&)agent;
 	std::cout << "DEBUG: Agent " << agent.getId() << " executing Maintain action..." << std::endl;

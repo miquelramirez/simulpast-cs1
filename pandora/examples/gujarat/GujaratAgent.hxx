@@ -4,14 +4,11 @@
 
 #include "Agent.hxx"
 
-
 #include <vector>
 #include <list>
-#include <fstream>
 
 namespace Gujarat
 {
-class Action;
 class AgentController;
 class GujaratDemographics;
 class CaloricRequirementsTable;
@@ -62,14 +59,10 @@ protected:
 	float _emigrationProbability;
 	float _reproductionProbability;
 
-	std::list<Action*> _actions;
-
 	AgentController*	_controller;
 	GujaratDemographics*	_demographicsModel;
 
 	bool _starved;
-	
-	std::ofstream*		_log;
 	
 	Engine::Point2D<int> getNearLocation( int range );
 
@@ -79,7 +72,6 @@ public:
 	GujaratAgent( const std::string & id );
 	virtual ~GujaratAgent();
 
-	void step();
 	void serialize();
 
 	void	setSocialRange( int v ) { _socialRange = v; }
@@ -137,17 +129,12 @@ public:
 	void			setController( AgentController* controller ); 
 	AgentController* 	activeController() { return _controller; }
 	void			setDemographicsModel( GujaratDemographics* model ) { _demographicsModel = model; }
-	std::ostream&		log() { return *_log; }
-
-	// Agent step broken down	
-	virtual void logAgentState();
-	virtual void updateKnowledge();
-	virtual void selectActions() = 0;
-	virtual void updateState();
-	
-	void executeActions();
 
 	void setCaloricRequirements( CaloricRequirementsTable* t ) { _caloricRequirements = t; }
+
+	void logAgentState();
+	void updateKnowledge();
+	void updateState();
 };
 
 } // namespace Gujarat

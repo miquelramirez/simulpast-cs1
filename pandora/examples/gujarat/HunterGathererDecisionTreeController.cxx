@@ -65,7 +65,7 @@ Sector* HunterGathererDecisionTreeController::getMaxBiomassSector(  )
 
 }
 
-Action* HunterGathererDecisionTreeController::shouldDoNothing(  )
+MDPAction* HunterGathererDecisionTreeController::shouldDoNothing(  )
 {	
 	// CollectedResources > ConsumedResourcesByAgent * #days
 	if( agentRef().getOnHandResources() > agentRef().computeConsumedResources( getDoNothingDaysCovered() ) )
@@ -78,14 +78,14 @@ Action* HunterGathererDecisionTreeController::shouldDoNothing(  )
 	}
 }
 
-Action* HunterGathererDecisionTreeController::shouldForage(  )
+MDPAction* HunterGathererDecisionTreeController::shouldForage(  )
 {	
 	Sector* maxSector = getMaxBiomassSector();
 
 	if( maxSector == NULL) 
 		return NULL;
 	
-	Action* forage = NULL;
+	MDPAction* forage = NULL;
 	if( maxSector->getBiomassAmount() >=  agentRef().computeConsumedResources(1) )
 		forage = new ForageAction( maxSector, true );
 
@@ -94,7 +94,7 @@ Action* HunterGathererDecisionTreeController::shouldForage(  )
 
 }
 
-Action* HunterGathererDecisionTreeController::shouldMoveHome(  )
+MDPAction* HunterGathererDecisionTreeController::shouldMoveHome(  )
 {
 	const Engine::Point2D<int>& agentPos = agentRef().getPosition();
 	
@@ -124,7 +124,7 @@ Action* HunterGathererDecisionTreeController::shouldMoveHome(  )
 	std::make_heap(candidates.begin(),candidates.end(),Gujarat::compareSettlementAreas(settlementAreas));
 	
 	
-	Action* moveHome = NULL;
+	MDPAction* moveHome = NULL;
 	Engine::Point2D<int> newHomeLocation;
 	
 	assert( !candidates.empty() );
@@ -190,12 +190,12 @@ Action* HunterGathererDecisionTreeController::shouldMoveHome(  )
 
 }
 
-Action*	HunterGathererDecisionTreeController::selectAction()
+MDPAction*	HunterGathererDecisionTreeController::selectAction()
 {
 
         //Decission Tree: DoNothing --> Forage --> MoveHome
 
-	Action* selectedAction = NULL;
+	MDPAction* selectedAction = NULL;
 	
 	selectedAction = shouldDoNothing();	
 	selectedAction = (!selectedAction) ?  shouldForage() : selectedAction;

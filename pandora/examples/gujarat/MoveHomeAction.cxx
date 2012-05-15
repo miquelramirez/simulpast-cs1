@@ -1,8 +1,11 @@
 
-#include "GujaratWorld.hxx"
 #include "MoveHomeAction.hxx"
+
+#include "Agent.hxx"
 #include "GujaratAgent.hxx"
 #include "HunterGatherer.hxx"
+
+#include "GujaratWorld.hxx"
 #include "HunterGathererMDPState.hxx"
 #include <algorithm>
 #include <vector>
@@ -22,7 +25,7 @@ MoveHomeAction::~MoveHomeAction()
 {
 }
 
-Action*	MoveHomeAction::copy() const
+MDPAction * MoveHomeAction::copy() const
 {
 	return new MoveHomeAction( _newHomeLoc );
 }
@@ -108,7 +111,7 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 	candidates.clear();
 }
 
-void MoveHomeAction::execute( GujaratAgent & agent )
+void MoveHomeAction::execute( Engine::Agent & agent )
 {
 	std::cout << "[DEBUG]: Agent " << agent.getId() << " is executing MoveHome action..." << std::endl;
 	int prevHomeActivity = agent.getWorld()->getValue( "homeActivity", _newHomeLoc );
@@ -116,7 +119,7 @@ void MoveHomeAction::execute( GujaratAgent & agent )
 	agent.setPosition( _newHomeLoc );
 }
 
-void MoveHomeAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
+void MoveHomeAction::executeMDP( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
 {
 	//std::cout << "MOVE HOME" << std::endl;
 	sp.setLocation( _newHomeLoc );

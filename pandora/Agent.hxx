@@ -7,13 +7,13 @@
 
 #include <string>
 #include <sstream>
-
+#include <fstream>
 
 //#include "hdf5.h"
 
 namespace Engine
 {
-
+class Action;
 
 //! Base class for all agents 
 /*!
@@ -35,6 +35,9 @@ protected:
 	
 	/** *? pendent **/
 	void serializeAttribute( const std::string & name, const int & value );
+	
+	std::list<Engine::Action*> _actions;
+	std::ofstream * _log;
 public:
 	
 	//! Standard constructor.
@@ -61,7 +64,6 @@ public:
 	const Point2D<int> & getPosition() const;
 	void setPosition( const Point2D<int> & position );
 
-	virtual void step() = 0;
 	// delete agent from world
 	void remove();
 	void setWorld( World * world );
@@ -79,6 +81,14 @@ public:
 	
 	// defined in children, it must use serializeAttribute to save valuble data
 	virtual void serialize()=0;
+	
+	virtual void logAgentState();
+	virtual void updateKnowledge(){};
+	virtual void selectActions() = 0;
+	virtual void updateState(){};
+	void executeActions();
+	
+	std::ostream & log() { return *_log; }
 };
 
 } // namespace Engine

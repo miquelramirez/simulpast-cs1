@@ -2,7 +2,7 @@
 #include "HunterGatherer.hxx"
 #include "GujaratWorld.hxx"
 #include "Exceptions.hxx"
-//#include "Action.hxx"
+#include "Action.hxx"
 #include "Sector.hxx"
 #include "Point3D.hxx"
 #include <cmath>
@@ -185,7 +185,7 @@ void HunterGatherer::updateKnowledge()
 
 void HunterGatherer::selectActions()
 {
-	_actions.push_back( activeController()->selectAction() );
+	_actions.push_back( (Engine::Action*)(activeController()->selectAction()) );
 }
 
 void HunterGatherer::serializeAdditionalAttributes()

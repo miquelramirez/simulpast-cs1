@@ -8,7 +8,7 @@
 namespace Gujarat
 {
 
-class Action;
+class MDPAction;
 
 class AgentController
 {
@@ -18,7 +18,7 @@ public:
 	virtual ~AgentController();
 
 	// MRJ: returned object ownership is caller's
-	virtual Action* selectAction() = 0;
+	virtual MDPAction* selectAction() = 0;
 
 	GujaratAgent&		agentRef() { return *_agent; }
 	const GujaratAgent& 	agentRef() const { return *_agent; }

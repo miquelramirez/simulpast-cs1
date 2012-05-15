@@ -1,7 +1,10 @@
 
 #include "HarvestAction.hxx"
+
+#include "Agent.hxx"
 #include "GujaratAgent.hxx"
 #include "AgroPastoralist.hxx"
+
 #include "CultivatedField.hxx"
 
 namespace Gujarat
@@ -15,7 +18,7 @@ HarvestAction::~HarvestAction()
 {
 }
 
-void HarvestAction::execute( GujaratAgent & agent )
+void HarvestAction::execute( Engine::Agent & agent )
 {
 	AgroPastoralist & agroPastoralist = (AgroPastoralist&)agent;
 

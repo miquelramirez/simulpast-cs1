@@ -1,7 +1,10 @@
 
 #include "SowAction.hxx"
+
+#include "Agent.hxx"
 #include "GujaratAgent.hxx"
 #include "AgroPastoralist.hxx"
+
 #include "CultivatedField.hxx"
 
 namespace Gujarat
@@ -15,7 +18,7 @@ SowAction::~SowAction()
 {
 }
 
-void SowAction::execute( GujaratAgent & agent )
+void SowAction::execute( Engine::Agent & agent )
 {
 	AgroPastoralist & agroPastoralist = (AgroPastoralist&)agent;
 	if ( !agroPastoralist.getCultivatedField().isDomesticated() )

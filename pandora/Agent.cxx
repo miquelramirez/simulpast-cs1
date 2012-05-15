@@ -1,20 +1,27 @@
 
 #include "Agent.hxx"
+
 #include "Exceptions.hxx"
 #include "World.hxx"
 #include "Serializer.hxx"
+#include "Action.hxx"
 
 #include <iostream>
 
 namespace Engine
 {
 
-Agent::Agent( const std::string & id ) : _id(id), _exists(true), _position(-1,-1), _world(0)
+Agent::Agent( const std::string & id ) : _id(id), _exists(true), _position(-1,-1), _world(0), _log(0)
 {
+	std::stringstream fName;
+	fName << getId() << ".state.log";
+	_log = new std::ofstream( fName.str().c_str() );
 }
 
 Agent::~Agent()
 {
+	_log->close();
+	delete _log;
 }
 
 void Agent::setWorld( World * world )
@@ -99,6 +106,32 @@ std::string Agent::getType()
 {
 	unsigned int typePos = _id.find_first_of("_");
 	return _id.substr(0,typePos);
+}
+
+void Agent::logAgentState()
+{
+	log() << "Agent: " << this << " executing in timestep: " << getWorld()->getCurrentTimeStep() << std::endl;
+}
+
+void Agent::executeActions()
+{
+	std::list<Action *>::iterator it = _actions.begin();
+	unsigned i = 0;
+	while(it!=_actions.end())
+	{
+		Action * nextAction = *it;
+		//_spentTime += nextAction->getTimeNeeded();
+		//if(_spentTime<=_availableTime)
+		//{
+		nextAction->execute((Engine::Agent&)(*this));
+		log() << "\tagent.action[" << i << "]=";
+		nextAction->describe(log());
+		log() << std::endl;
+		//}
+		it = _actions.erase(it);
+		delete nextAction;
+		i++;
+	}
 }
 
 /*

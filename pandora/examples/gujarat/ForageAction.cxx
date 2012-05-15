@@ -1,4 +1,5 @@
 #include "ForageAction.hxx"
+#include "Agent.hxx"
 #include "GujaratAgent.hxx"
 #include "HunterGatherer.hxx"
 #include "GujaratWorld.hxx"
@@ -19,7 +20,7 @@ ForageAction::~ForageAction()
 		delete _forageArea;
 }
 
-Action*	ForageAction::copy() const
+MDPAction*	ForageAction::copy() const
 {
 	if ( !_ownsForageAreaPointer )
 		return new ForageAction( _forageArea, false );
@@ -33,7 +34,7 @@ void	ForageAction::describe( std::ostream& os ) const
 }
 
 
-void	ForageAction::execute( GujaratAgent& a )
+void ForageAction::execute( Engine::Agent & a )
 {
 	std::cout << "[DEBUG]: Agent " << a.getId() << " is executing Forage action..." << std::endl;
 	HunterGatherer& agent = (HunterGatherer&) a;
@@ -46,7 +47,7 @@ void	ForageAction::execute( GujaratAgent& a )
 
 	// 3. execute walk
 	_biomassCollected = 0;
-	doWalk( a, nearest, maxDistAgentWalk, agent.getWorld()->getDynamicRaster("resources"), _biomassCollected );	
+	doWalk( (GujaratAgent&)a, nearest, maxDistAgentWalk, agent.getWorld()->getDynamicRaster("resources"), _biomassCollected );	
 
 	_caloriesCollected = agent.convertBiomassToCalories( _biomassCollected );
 	agent.updateResources( _caloriesCollected );
@@ -147,7 +148,7 @@ void	ForageAction::doWalk( const GujaratAgent& agent, const Engine::Point2D<int>
 	}
 }
 
- void ForageAction::execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
+ void ForageAction::executeMDP( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const
 {
 	double  maxDist= agent.computeMaxForagingDistance();
 		

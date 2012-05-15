@@ -2,22 +2,27 @@
 #ifndef __EstablishPlotAction_hxx__
 #define __EstablishPlotAction_hxx__
 
-#include "Action.hxx"
+#include "MDPAction.hxx"
 #include "Point2D.hxx"
 #include <vector>
+
+namespace Engine
+{
+	class Agent;
+}
 
 namespace Gujarat
 {
 
 class GujaratAgent;
 	
-class EstablishPlotAction : public Action
+class EstablishPlotAction : public MDPAction
 {
 public:
 	EstablishPlotAction( Engine::Point2D<int> p );
 	virtual ~EstablishPlotAction();
 
-	void execute( GujaratAgent & agent );
+	void execute( Engine::Agent & agent );
 	int getTimeNeeded() const;
 
 	static void generatePossibleActions( GujaratAgent& agent,

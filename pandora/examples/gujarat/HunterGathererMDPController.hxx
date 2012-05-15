@@ -20,7 +20,7 @@ public:
 	virtual ~HunterGathererMDPController();
 
 
-	virtual	Action*	selectAction();
+	virtual	MDPAction*	selectAction();
 
 private:
 	typedef		Online::Policy::random_t< HunterGathererMDPState >	BasePolicy;

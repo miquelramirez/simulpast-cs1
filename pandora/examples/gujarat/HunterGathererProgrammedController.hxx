@@ -14,7 +14,7 @@ public:
 	HunterGathererProgrammedController( GujaratAgent* agent );
 	virtual ~HunterGathererProgrammedController();
 
-	virtual	Action*	selectAction();
+	virtual	MDPAction*	selectAction();
 
 private:
 	HunterGatherer*		_agentConcrete;

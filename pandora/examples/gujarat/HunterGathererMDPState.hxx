@@ -4,7 +4,7 @@
 #include "Point2D.hxx"
 #include "IncrementalRaster.hxx"
 #include "HashTable.hxx"
-#include "Action.hxx"
+#include "MDPAction.hxx"
 #include <engine/problem.h>
 
 namespace Gujarat
@@ -66,9 +66,9 @@ public:
 	Engine::IncrementalRaster&		getResourcesRaster() { return _resources; }
 	const Engine::IncrementalRaster&	getResourcesRaster() const { return _resources; }
 
-	void		addAction( Action* a );
-	Action*		availableActions( Problem::action_t actIndex ) { return _availableActions.at(actIndex); }
-	const Action*	availableActions( Problem::action_t actIndex ) const { return _availableActions.at(actIndex); }
+	void		addAction( MDPAction* a );
+	MDPAction*		availableActions( Problem::action_t actIndex ) { return _availableActions.at(actIndex); }
+	const MDPAction*	availableActions( Problem::action_t actIndex ) const { return _availableActions.at(actIndex); }
 
 	unsigned	numAvailableActions() const { return _availableActions.size(); }
 
@@ -82,7 +82,7 @@ private:
 	int				_onHandResources;
 	Engine::IncrementalRaster	_resources;
 	Engine::HashKey			_hashKey;
-	std::vector<Action*>		_availableActions;
+	std::vector<MDPAction*>		_availableActions;
 	int				_maxResources;
 	int				_resourcesDivider;
 	int				_daysStarving;

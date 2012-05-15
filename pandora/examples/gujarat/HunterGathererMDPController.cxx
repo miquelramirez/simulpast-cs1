@@ -18,7 +18,7 @@ HunterGathererMDPController::~HunterGathererMDPController()
 	delete _model;
 }
 
-Action*		HunterGathererMDPController::selectAction()
+MDPAction * HunterGathererMDPController::selectAction()
 {
 	log() << "timestep=" << agentRef().getWorld()->getCurrentTimeStep() << std::endl;
 	log() << "\tagent.position=" << agentRef().getPosition() << std::endl;
@@ -30,7 +30,7 @@ Action*		HunterGathererMDPController::selectAction()
 
 	Problem::action_t aIndex = (*uctPolicy)( _model->init() );
 
-	Action* a = _model->init().availableActions(aIndex)->copy();
+	MDPAction* a = _model->init().availableActions(aIndex)->copy();
 	
 	delete uctPolicy;
 

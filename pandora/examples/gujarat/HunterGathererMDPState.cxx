@@ -71,7 +71,7 @@ HunterGathererMDPState::~HunterGathererMDPState()
 		delete _availableActions[k];
 }
 
-void	HunterGathererMDPState::addAction( Action* a )
+void	HunterGathererMDPState::addAction( MDPAction* a )
 {
 	_availableActions.push_back(a);
 }

@@ -15,11 +15,11 @@ public:
 	HunterGathererDecisionTreeController( GujaratAgent* agent );
 	virtual ~HunterGathererDecisionTreeController();
 
-	virtual	Action*	selectAction();
+	virtual	MDPAction*	selectAction();
 	
-	Action*         shouldDoNothing(  );
-	Action*         shouldForage(  );
-	Action*         shouldMoveHome(  );
+	MDPAction*         shouldDoNothing(  );
+	MDPAction*         shouldForage(  );
+	MDPAction*         shouldMoveHome(  );
 	
 	Sector*         getMaxBiomassSector(  );
 	unsigned        getDoNothingDaysCovered() const { return _DoNothingDaysCovered; } 

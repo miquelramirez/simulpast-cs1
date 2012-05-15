@@ -1,9 +1,14 @@
 #ifndef __ForageAction_hxx__
 #define __ForageAction_hxx__
 
-#include "Action.hxx"
+#include "MDPAction.hxx"
 #include "Sector.hxx"
 #include "Point2D.hxx"
+
+namespace Engine
+{
+	class Agent;
+}
 
 namespace Gujarat
 {
@@ -11,7 +16,7 @@ namespace Gujarat
 class GujaratAgent;
 class GujaratWorld;
 
-class ForageAction : public Action
+class ForageAction : public MDPAction
 {
 private:
 
@@ -41,10 +46,11 @@ public:
 	ForageAction( Sector* loc, bool ownsPointer = false );
 	virtual ~ForageAction();
 
-	void	execute( GujaratAgent& agent );
+	void execute( Engine::Agent& agent );
+	virtual void executeMDP( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
+
 	int	getTimeNeeded() const { return 1; }
-	virtual void execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
-	virtual Action* copy() const;
+	virtual MDPAction* copy() const;
 	virtual void	describe( std::ostream& os ) const;
 	
 	int	getBiomassCollected() const { return _biomassCollected; }

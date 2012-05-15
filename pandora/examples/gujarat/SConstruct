@@ -7,16 +7,15 @@ parents = ['GujaratAgent', 'GujaratAgent']
 srcFiles = Split("""
 main.cxx GujaratWorld.cxx GujaratConfig.cxx 
 Climate.cxx GujaratAgent.cxx AgroPastoralist.cxx 
-HunterGatherer.cxx Action.cxx MoveHomeAction.cxx 
-CultivatedField.cxx EstablishPlotAction.cxx SowAction.cxx 
-HarvestAction.cxx MaintainPlotAction.cxx HuntAction.cxx 
-GatherAction.cxx Sector.cxx ForageAction.cxx 
-SettlementAreas.cxx APMoveHomeAction.cxx HunterGathererMDPConfig.cxx 
+HunterGatherer.cxx MDPAction.cxx MoveHomeAction.cxx 
+CultivatedField.cxx Sector.cxx ForageAction.cxx 
+SettlementAreas.cxx HunterGathererMDPConfig.cxx 
 HunterGathererMDPState.cxx HunterGathererMDPModel.cxx DoNothingAction.cxx 
 AgentController.cxx HunterGathererProgrammedController.cxx HunterGathererDecisionTreeController.cxx 
 HunterGathererMDPController.cxx GujaratDemographics.cxx OriginalDemographics.cxx 
 RamirezDemographics.cxx CaloricRequirementsTable.cxx AgentInitializer.cxx
-FixedAgentInitializer.cxx""" )
+FixedAgentInitializer.cxx EstablishPlotAction.cxx SowAction.cxx HarvestAction.cxx MaintainPlotAction.cxx APMoveHomeAction.cxx""" )
+
 
 import os, sys
 from subprocess import call
@@ -47,9 +46,11 @@ else:
 if int(release) == 0:
 	env['CCFLAGS'] = Split('-g -O0 -Wall -DTIXML_USE_STL')
 	libs = Split('pthread mpich pandorad gdal hdf5 tinyxml grass_gis grass_datetime')
+	linkFlags = Split('')
 else:
-	env['CCFLAGS'] = Split('-O3 -DTIXML_USE_STL')
+	env['CCFLAGS'] = Split('-O3 -DTIXML_USE_STL -fopenmp')
 	libs = Split('pthread mpich pandora gdal hdf5 tinyxml grass_gis grass_datetime')
+	linkFlags = Split('-fopenmp')
 
 
 includeDirs = Split('./ ../../')
@@ -80,6 +81,6 @@ for agent in agents:
 		agentsSrc.append(agent+".cxx")
 		mpiAgentsSrc.append("mpiCode/"+agent+"_mpi.cxx")
 env['namespaces'] = namespaceAgents
-env['parents'] = parents 
+env['parents'] = parents
 env.GenerateMPICode( target=mpiAgentsSrc, source=agentsSrc)
-env.Program(nameProgram, srcFiles+mpiAgentsSrc, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs)
+env.Program(nameProgram, srcFiles+mpiAgentsSrc, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs, LINKFLAGS=linkFlags)

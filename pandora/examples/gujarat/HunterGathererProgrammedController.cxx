@@ -18,7 +18,7 @@ HunterGathererProgrammedController::~HunterGathererProgrammedController()
 {
 }
 
-Action*	HunterGathererProgrammedController::selectAction()
+MDPAction*	HunterGathererProgrammedController::selectAction()
 {
 	// TODO: which order must follow the actions? random?
 	// now random
