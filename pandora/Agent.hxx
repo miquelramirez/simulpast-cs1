@@ -6,8 +6,6 @@
 #include "World.hxx"
 
 #include <string>
-#include <sstream>
-#include <fstream>
 
 //#include "hdf5.h"
 
@@ -37,7 +35,6 @@ protected:
 	void serializeAttribute( const std::string & name, const int & value );
 	
 	std::list<Engine::Action*> _actions;
-	std::ofstream * _log;
 public:
 	
 	//! Standard constructor.
@@ -87,8 +84,6 @@ public:
 	virtual void selectActions() = 0;
 	virtual void updateState(){};
 	void executeActions();
-	
-	std::ostream & log() { return *_log; }
 };
 
 } // namespace Engine

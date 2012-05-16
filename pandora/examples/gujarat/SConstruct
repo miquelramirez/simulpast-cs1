@@ -45,11 +45,11 @@ else:
 
 if int(release) == 0:
 	env['CCFLAGS'] = Split('-g -O0 -Wall -DTIXML_USE_STL')
-	libs = Split('pthread mpich pandorad gdal hdf5 tinyxml grass_gis grass_datetime')
+	libs = Split('pthread mpich pandorad gdal hdf5 tinyxml grass_gis log4cplus')
 	linkFlags = Split('')
 else:
 	env['CCFLAGS'] = Split('-O3 -DTIXML_USE_STL -fopenmp')
-	libs = Split('pthread mpich pandora gdal hdf5 tinyxml grass_gis grass_datetime')
+	libs = Split('pthread mpich pandora gdal hdf5 tinyxml grass_gis log4cplus')
 	linkFlags = Split('-fopenmp')
 
 

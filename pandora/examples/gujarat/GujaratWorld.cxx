@@ -14,6 +14,7 @@
 #include "OriginalDemographics.hxx"
 #include "RamirezDemographics.hxx"
 #include "RasterLoader.hxx"
+#include "Logger.hxx"
 
 #include <limits>
 
@@ -28,16 +29,11 @@ GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig
 	_yearlyBiomass.resize(4);
 	_dailyRainSeasonBiomassIncrease.resize(4);
 	_dailyDrySeasonBiomassDecrease.resize(4);
-	std::stringstream fName;
-	fName << "world.log";
-	_log = new std::ofstream( fName.str().c_str() );
 
 }
 
 GujaratWorld::~GujaratWorld()
 {
-	_log->close();
-	delete _log;
 }    
 
 void GujaratWorld::createRasters()
@@ -406,26 +402,26 @@ void GujaratWorld::stepEnvironment()
 	updateResources();
 	getDynamicRaster("resources").updateCurrentMinMaxValues();
 
-	log() << "timestep=" << getCurrentTimeStep() << std::endl;
+	Engine::Logger::instance().log("World") << "timestep=" << getCurrentTimeStep() << std::endl;
 
-	log() << "\tagentPopulation=" << _agents.size() << std::endl;
+	Engine::Logger::instance().log("World") << "\tagentPopulation=" << _agents.size() << std::endl;
 
 	unsigned nrAdults = 0;
 	for ( AgentsList::iterator it = _agents.begin(); 
 		it != _agents.end(); it++ )
 		nrAdults += dynamic_cast<GujaratAgent*>((*it))->getNrAvailableAdults();	
 
-	log() << "\tadultPopulation=" << nrAdults << std::endl;
+	Engine::Logger::instance().log("World")<< "\tadultPopulation=" << nrAdults << std::endl;
 
 	unsigned nrChildren = 0;
 	for ( AgentsList::iterator it = _agents.begin(); 
 		it != _agents.end(); it++ )
 		nrChildren += dynamic_cast<GujaratAgent*>((*it))->getNrChildren();
 
-	log() << "\tchildrenPopulation=" << nrChildren << std::endl;
-	log() << "\tmaxCurrentResources=" << getDynamicRaster("resources").getCurrentMaxValue() << std::endl;
-	log() << "\tminCurrentResources=" << getDynamicRaster("resources").getCurrentMinValue() << std::endl;
-	log() << "\tavgCurrentResources=" << getDynamicRaster("resources").getAvgValue() << std::endl;
+	Engine::Logger::instance().log("World")<< "\tchildrenPopulation=" << nrChildren << std::endl;
+	Engine::Logger::instance().log("World")<< "\tmaxCurrentResources=" << getDynamicRaster("resources").getCurrentMaxValue() << std::endl;
+	Engine::Logger::instance().log("World")<< "\tminCurrentResources=" << getDynamicRaster("resources").getCurrentMinValue() << std::endl;
+	Engine::Logger::instance().log("World")<< "\tavgCurrentResources=" << getDynamicRaster("resources").getAvgValue() << std::endl;
 
 	// these rasters are only updated at the beginning of seasons
 	if ( !_climate.cellUpdateRequired() ) return;

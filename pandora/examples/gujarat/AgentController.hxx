@@ -2,8 +2,6 @@
 #define __AGENT_CONTROLLER__
 
 #include "GujaratAgent.hxx"
-#include <iostream>
-#include <fstream>
 
 namespace Gujarat
 {
@@ -22,15 +20,9 @@ public:
 
 	GujaratAgent&		agentRef() { return *_agent; }
 	const GujaratAgent& 	agentRef() const { return *_agent; }
-
-protected:
-
-	std::ostream&		log() { return *_log; }	
-
 private:
 
 	GujaratAgent*		_agent;
-	std::ofstream*		_log;
 };
 
 }

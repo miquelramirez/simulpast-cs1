@@ -34,7 +34,7 @@ public:
 	static void	generatePossibleActions( const GujaratAgent& agent, const Engine::Point2D<int>& agentPos, std::vector< MoveHomeAction* >& actions );
 
 	virtual	MDPAction* copy() const;
-	virtual void	describe( std::ostream& os ) const;
+	virtual std::string describe() const;
 };
 	
 } // namespace Gujarat

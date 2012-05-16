@@ -5,6 +5,7 @@
 #include "GujaratDemographics.hxx"
 #include "CaloricRequirementsTable.hxx"
 #include "GujaratConfig.hxx"
+#include "Logger.hxx"
 
 #include <sstream>
 
@@ -54,38 +55,47 @@ void GujaratAgent::updateKnowledge()
 
 void GujaratAgent::logAgentState()
 {
-	log() << "timestep=" << getWorld()->getCurrentTimeStep() << std::endl;
-	log() << "\tagent.collectedResourcesBeforeAction=" << getOnHandResources() << std::endl;	
-	log() << "\tagent.nrAdults=" << getNrAvailableAdults() << std::endl;
-	log() << "\tagent.adultAges=[";
+	Engine::Logger::instance().log( getId()) << "timestep=" << getWorld()->getCurrentTimeStep() << std::endl;
+	Engine::Logger::instance().log( getId()) << "\tagent.collectedResourcesBeforeAction=" << getOnHandResources() << std::endl;	
+	Engine::Logger::instance().log( getId()) << "\tagent.nrAdults=" << getNrAvailableAdults() << std::endl;
+	Engine::Logger::instance().log( getId()) << "\tagent.adultAges=[";
 	for ( unsigned k = 0; k < _populationAges.size(); k++ )
+	{
 		if ( _populationAges[k] >= ((GujaratWorld*)_world)->getConfig()._adulthoodAge )
-			log() << _populationAges[k] << ",";
-	log() << "]" << std::endl; 
-	log() << "\tagent.nrChildren=" << getNrChildren() << std::endl;
-	log() << "\tagent.childrenAges=[";
+		{
+			Engine::Logger::instance().log( getId()) << _populationAges[k] << ",";
+		}
+	}
+
+	Engine::Logger::instance().log( getId()) << "]" << std::endl; 
+	Engine::Logger::instance().log( getId()) <<  "\tagent.nrChildren=" << getNrChildren() << std::endl;
+	Engine::Logger::instance().log( getId()) << "\tagent.childrenAges=[";
 	for ( unsigned k = 0; k < _populationAges.size(); k++ )
+	{
 		if ( _populationAges[k] >= 0 && _populationAges[k] < ((GujaratWorld*)_world)->getConfig()._adulthoodAge )
-			log() << _populationAges[k] << ",";	
-	log() << "]" << std::endl;
-	log() << "\tagent.resourcesNeeded=" << computeConsumedResources(1) << std::endl; 
+		{
+			Engine::Logger::instance().log( getId()) << _populationAges[k] << ",";	
+		}
+	}
+	Engine::Logger::instance().log( getId()) << "]" << std::endl;
+	Engine::Logger::instance().log( getId()) << "\tagent.resourcesNeeded=" << computeConsumedResources(1) << std::endl; 
 }
 
 void GujaratAgent::updateState()
 {
-	log() << "\tagent.collectedResourcesAfterAction=" << getOnHandResources() << std::endl;	
+	Engine::Logger::instance().log( getId()) << "\tagent.collectedResourcesAfterAction=" << getOnHandResources() << std::endl;	
 	_collectedResources -= computeConsumedResources(1);
-	log() << "\tagent.collectedResourcesAfterConsumption=" << getOnHandResources() << std::endl;	
+	Engine::Logger::instance().log( getId()) << "\tagent.collectedResourcesAfterConsumption=" << getOnHandResources() << std::endl;	
 	if ( _collectedResources < 0 )
 	{
 		_starved = true;
 		_emigrationProbability += 1.0f/(float)(((GujaratWorld*)_world)->getConfig()._daysPerSeason);
-		log() << "\tagent.isStarving=yes" << std::endl;
+		Engine::Logger::instance().log( getId()) << "\tagent.isStarving=yes" << std::endl;
 		_collectedResources = 0;
 	}
 	else
 	{
-		log() << "\tagent.isStarving=no" << std::endl;
+		Engine::Logger::instance().log( getId()) << "\tagent.isStarving=no" << std::endl;
 		_starved = false;
 		_reproductionProbability += 1.0/(float)(3*((GujaratWorld*)_world)->getConfig()._daysPerSeason);
 		// Decay factor, modeling spoilage
@@ -99,7 +109,7 @@ void GujaratAgent::updateState()
 	{
 		if( checkEmigration() )
 		{
-			log() << "\tagent.emigration=yes" << std::endl;
+			Engine::Logger::instance().log( getId()) << "\tagent.emigration=yes" << std::endl;
 			_world->removeAgent(this);
 			return;
 		}

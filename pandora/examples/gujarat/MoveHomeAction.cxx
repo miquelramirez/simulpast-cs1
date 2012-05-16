@@ -30,9 +30,11 @@ MDPAction * MoveHomeAction::copy() const
 	return new MoveHomeAction( _newHomeLoc );
 }
 
-void	MoveHomeAction::describe( std::ostream& os ) const
+std::string MoveHomeAction::describe() const
 {
-	os << "move_home( " << _newHomeLoc._x << ", " << _newHomeLoc._y << ")";
+	std::stringstream logMove;
+	logMove << "move_home( " << _newHomeLoc._x << ", " << _newHomeLoc._y << ")";
+	return logMove.str();
 }
 
 void	MoveHomeAction::generatePossibleActions( const GujaratAgent& agent, std::vector< MoveHomeAction* >& actions )

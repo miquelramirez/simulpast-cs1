@@ -4,11 +4,15 @@
 #include "Simulation.hxx"
 #include "Exceptions.hxx"
 
+#include <log4cplus/configurator.h>
+
 #include <iostream>
 #include <cstdlib>
 
 int main(int argc, char *argv[])
-{  
+{
+	log4cplus::BasicConfigurator config;
+config.configure();
 	try
 	{
 		if(argc>2)

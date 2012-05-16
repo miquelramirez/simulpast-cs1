@@ -12,8 +12,9 @@ Action::~Action()
 {
 }
 
-void Action::describe( std::ostream& os ) const
+std::string Action::describe() const
 {
+	return "";
 }
 
 } // namespace Engine

@@ -27,7 +27,7 @@ public:
 	static	void	generatePossibleActions( GujaratAgent& agent, std::vector< DoNothingAction* >& actions );
 
 	virtual MDPAction* copy() const;
-	virtual void	describe( std::ostream& os ) const;
+	virtual std::string describe() const;
 protected:
 	
 };

@@ -36,9 +36,9 @@ void DoNothingAction::executeMDP( const GujaratAgent& agent, const HunterGathere
 	//std::cout << "DO NOTHING" << std::endl;
 }
 
-void	DoNothingAction::describe( std::ostream& os ) const
+std::string DoNothingAction::describe() const
 {
-	os << "do_nothing()";
+	return "do_nothing()";
 }
 
 

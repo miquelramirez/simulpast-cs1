@@ -28,9 +28,11 @@ MDPAction*	ForageAction::copy() const
 	return new ForageAction( new Sector( *_forageArea ), true );
 }
 
-void	ForageAction::describe( std::ostream& os ) const
+std::string ForageAction::describe() const
 {
-	os << "forage(" << _forageArea->biomassClass() << ")," << getBiomassCollected() << "," << getCaloriesCollected();
+	std::stringstream logForage;
+	logForage << "forage(" << _forageArea->biomassClass() << ")," << getBiomassCollected() << "," << getCaloriesCollected();
+	return logForage.str();
 }
 
 

@@ -2,7 +2,7 @@
 #ifndef __Action_hxx__
 #define __Action_hxx__
 
-#include <sstream>
+#include <string>
 
 namespace Engine
 {
@@ -14,7 +14,7 @@ public:
 	Action();
 	virtual ~Action();
 	virtual void execute( Agent & agent ) = 0;
-	virtual void describe( std::ostream& os ) const;
+	virtual std::string describe() const;
 };
 
 } // namespace Engine

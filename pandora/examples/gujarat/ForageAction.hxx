@@ -51,7 +51,7 @@ public:
 
 	int	getTimeNeeded() const { return 1; }
 	virtual MDPAction* copy() const;
-	virtual void	describe( std::ostream& os ) const;
+	virtual std::string describe() const;
 	
 	int	getBiomassCollected() const { return _biomassCollected; }
 	int	getCaloriesCollected() const { return _caloriesCollected; }
