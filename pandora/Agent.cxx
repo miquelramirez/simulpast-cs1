@@ -148,6 +148,23 @@ void Agent::executeActions()
 		i++;
 	}
 }
+	
+void Agent::setRandomPosition()
+{
+	const Engine::Rectangle<int> & worldBoundaries = _world->getBoundaries();
+	Engine::Statistics & statistics = _world->getStatistics();
+	while(1)
+	{
+		int x = statistics.getUniformDistValue(worldBoundaries._origin._x,worldBoundaries._origin._x+worldBoundaries._size._x);
+		int y = statistics.getUniformDistValue(worldBoundaries._origin._y,worldBoundaries._origin._y+worldBoundaries._size._y);
+		Engine::Point2D<int> position(x,y);
+		if(_world->checkPosition(position))
+		{
+			_position = position;
+			return;
+		}
+	}
+}
 
 /*
 void Agent::interactionWithAgent( Agent * agent )

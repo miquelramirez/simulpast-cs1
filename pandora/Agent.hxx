@@ -88,6 +88,9 @@ public:
 	World * getWorld();
 	const World * getWorld() const;
 
+	// method to locate the agent to a valid random position of _world
+	void setRandomPosition();
+
 	friend std::ostream & operator<<( std::ostream & stream, Agent * agent );
 
 	// TODO fix? when an agent is modified we need to alert the original in case of being an overlap copy
