@@ -9,113 +9,17 @@ namespace Gujarat
 
 GujaratConfig::GujaratConfig() 
 	: _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _duneMapFile("no loaded file"), _climateSeed(1),
-	_hunterGathererController( "Rule-Based" ), _hgCaloryRequirements(NULL), _apCaloryRequirements(NULL),
-	_hgInitializer(NULL), _apInitializer(NULL), _controllerConfig(NULL)
+	_hunterGathererController( "Rule-Based" ), _hgCaloryRequirements(0), _apCaloryRequirements(0),
+	_hgInitializer(0), _apInitializer(0), _controllerConfig(0)
 {
 }
   
-GujaratConfig::GujaratConfig(const std::string & filename) 
-	: _size(0), _soilFile(""), _climateSeed(1), _hunterGathererController( "Rule-Based" ),
-	_hgCaloryRequirements(NULL), _apInitializer(NULL), _apCaloryRequirements(NULL), _hgInitializer(NULL), _controllerConfig( NULL )
-{     
-//    Config::_path      = (char*)0;
-//    Config::_numAgents = 0;
-//    Config::_numSteps  = 0;
-    
-    //deserializeTemplate(this, filename); 
-    //deserialize(filename); 
-};
-
 GujaratConfig::~GujaratConfig()
 {
 	if ( _hgCaloryRequirements )
 		delete _hgCaloryRequirements;
 	if ( _apCaloryRequirements )
 		delete _apCaloryRequirements;
-}
-
-void GujaratConfig::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, std::string& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		throw Engine::Exception(sstr.str());
-	}
-	value = *retrievedStr;
-}
-
-void GujaratConfig::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, std::string& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		value = "";
-		return;	
-	}
-	value = *retrievedStr;
-
-}
-
-void GujaratConfig::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, int& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		throw Engine::Exception(sstr.str());
-	}
-	value = atoi(retrievedStr->c_str());
-}
-
-void GujaratConfig::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, int& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		value = 0;
-		return;	
-	}
-	value = atoi(retrievedStr->c_str());
-
-}
-
-void GujaratConfig::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, float& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		throw Engine::Exception(sstr.str());
-	}
-	value = atof(retrievedStr->c_str());
-}
-
-void GujaratConfig::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, float& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		value = 0.0f;
-		return;	
-	}
-	value = atof(retrievedStr->c_str());
-
 }
 
 void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
