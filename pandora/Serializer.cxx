@@ -28,6 +28,7 @@
 #include "Agent.hxx"
 #include "Simulation.hxx"
 #include "Exceptions.hxx"
+#include <boost/filesystem.hpp>
 
 namespace Engine
 {
@@ -42,6 +43,13 @@ Serializer::~Serializer()
 
 void Serializer::init( Simulation & simulation, StaticRastersMap & staticRasters, RastersMap & rasters, World & world )
 {
+	// check if directory exists
+	unsigned int filePos = _fileName.find_last_of("/");
+	std::string path = _fileName.substr(0,filePos+1);
+
+	// create dir where logs will be stored if it is not already created
+	boost::filesystem::create_directory(path);
+
 	// creating base file in a parallel environment
 	hid_t propertyListId = H5Pcreate(H5P_FILE_ACCESS);
 
@@ -113,8 +121,6 @@ void Serializer::init( Simulation & simulation, StaticRastersMap & staticRasters
 	H5Sclose(globalFileSpace);
 	
 	// creating a file with the agents of each computer node
-	unsigned int filePos = _fileName.find_last_of("/");
-	std::string path = _fileName.substr(0,filePos+1);
 	std::ostringstream oss;
 	oss << path << "/agents-" << simulation.getId() << ".abm";
 	_agentsFileId = H5Fcreate(oss.str().c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
