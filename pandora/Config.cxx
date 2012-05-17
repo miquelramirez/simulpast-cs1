@@ -24,128 +24,159 @@
 #include "Config.hxx"
 #include "Exceptions.hxx"
 #include <sstream>
-#include <string.h>
+#include <cstring>
 
-#define CONSTCONFIG_TYPEINT 	0
-#define CONSTCONFIG_TYPESTRING 	1
+namespace Engine
+{
 
-//**********************************************************
-  Config::Config() 
-      : _path("")
-      ,_numSteps(0)
-      {
-//      std::cout << "Config::Config()" << std::endl;
-      }  
-//**********************************************************
-//**********************************************************
-  Config::Config(const std::string & filename)  
-    : _path("")
-    , _numSteps(0)
-    { 
-//    std::cout << "Config::Config(filename)" << std::endl;  
-    //deserialize(filename);   
-    };
-//**********************************************************
-  Config::~Config() {}
-//**********************************************************
-//**********************************************************
-  void Config::serialize(const std::string & filename)
-    {  
-    
-    }
-//**********************************************************
- TiXmlElement *Config::openTiXml(const std::string & filename)
- //TiXmlDocument *Config::openTiXml(const std::string & filename)
-    {
-    doc = new TiXmlDocument(filename.c_str());
-    if (!doc->LoadFile())
-      {
-      std::stringstream oss;
-      oss << "Exception, error at open for file " << filename << std::endl;
-      throw Engine::Exception(oss.str());
-      }
-    
-    TiXmlHandle hDoc(doc);    
-    TiXmlHandle hRoot(0);
+Config::Config() : _resultsFile(""), _numSteps(0)
+{
+}
 
-    TiXmlElement *pRoot;
-    pRoot = doc->FirstChildElement( "config" );
-    
-    return pRoot;    
-    }
-//**********************************************************
-  void Config::closeTiXml()
-    {
-      delete doc;      
-      doc = 0;
-    }
-//**********************************************************
-  void Config::extractAttribs(TiXmlElement *pRoot)
-    {
+Config::~Config()
+{
+	if(_doc)
+	{	
+		delete _doc;
+	}
+}
 
-    TiXmlElement *pParm;
+void Config::serialize(const std::string & filename)
+{
+}
+
+TiXmlElement * Config::openTiXml(const std::string & filename)
+{
+	_doc = new TiXmlDocument(filename.c_str());
+	if (!_doc->LoadFile())
+	{
+		std::stringstream oss;
+		oss << "Exception, error at open for file " << filename << std::endl;
+		throw Engine::Exception(oss.str());
+		return 0;
+	}
+
+	TiXmlHandle hDoc(_doc);
+	TiXmlHandle hRoot(0);
     
-	pParm = pRoot->FirstChildElement("path");
-	_path = pParm->Attribute("value");
+	TiXmlElement *pRoot;
+	pRoot = _doc->FirstChildElement( "config" );
+	return pRoot;    
+}
+  
+void Config::closeTiXml()
+{
+	if(!_doc)
+	{
+		return;
+	}
+	delete _doc;
+	_doc = 0;
+}
+  
+void Config::extractAttribs(TiXmlElement *pRoot)
+{
+	TiXmlElement *pParm = pRoot->FirstChildElement("resultsFile");
+	_resultsFile = pParm->Attribute("value");
 	pParm = pRoot->FirstChildElement("numSteps");
 	_numSteps = atoi(pParm->Attribute("value"));
     
     extractParticularAttribs(pRoot);
-    }
-//**********************************************************
-  void Config::deserialize(const std::string & filename)
-    {    
-    TiXmlElement *pRoot = openTiXml(filename);
-    
-    if ( pRoot )
-      {
-      extractAttribs(pRoot);    
-      // destroy pRoot and pParm
-      closeTiXml();
-      }//if      
-    }
+}
 
+void Config::deserialize(const std::string & filename)
+{    
+	TiXmlElement *pRoot = openTiXml(filename);
+	if( pRoot )
+	{
+		extractAttribs(pRoot);    
+		// destroy pRoot and pParm
+		closeTiXml();
+	}
+}
 
-  const int & Config::getNumSteps() const
+const int & Config::getNumSteps() const
 {
 	return _numSteps;
 }
-//**********************************************************
 
-    /*
-    extract scenario:
-    
-    <resource_map type="AAA" }>
-	<AAA value="BBB"/>
-    </resource_map>
-    
-    AAA={raster_file,distrib,peak}
+void Config::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, std::string& value )
+{
+	const std::string * retrievedStr = elem->Attribute( attrName );
+	if (!retrievedStr)
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		throw Engine::Exception(sstr.str());
+		return;
+	}
+	value = *retrievedStr;
+}
 
-    TODO:
+void Config::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, std::string& value )
+{
+	const std::string * retrievedStr = elem->Attribute( attrName );
+	if(!retrievedStr)
+	{
+		std::stringstream sstr;
+		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		value = "";
+		return;	
+	}
+	value = *retrievedStr;
+}
 
-    <resource_map type="CCC" }>
-	<CCC value="DDD"/>
-	<CCC value="EEE"/>
-	<CCC value="FFF"/>
-	<CCC value="GGG"/>
-	<CCC value="HHH"/>
-    </resource_map>
-    
-    */
-    
-//**********************************************************
+void Config::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, int& value )
+{
+	const std::string * retrievedStr = elem->Attribute( attrName );
+	if(!retrievedStr)
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	value = atoi(retrievedStr->c_str());
+}
 
-/* USAGE EXAMPLE :
-int main(int argc, char *argv[])
-  {
-  std::cout << "begin tinyxml test" << std::endl;
-  //std::stringstream oss;  
-  config c;
-  c.deserialize("config.xml");  
-    
-  std::cout << "config>" << c << std::endl;
-  }
-*/  
-  
-  
-  
+void Config::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, int& value )
+{	
+	const std::string * retrievedStr = elem->Attribute( attrName );
+	if(!retrievedStr)
+	{
+		std::stringstream sstr;
+		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		value = 0;
+		return;	
+	}
+	value = atoi(retrievedStr->c_str());
+
+}
+
+void Config::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, float& value )
+{
+	const std::string * retrievedStr = elem->Attribute( attrName );
+	if(!retrievedStr)
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	value = atof(retrievedStr->c_str());
+}
+
+void Config::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, float& value )
+{
+	const std::string * retrievedStr = elem->Attribute( attrName );
+	if(!retrievedStr)
+	{
+		std::stringstream sstr;
+		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
+		value = 0.0f;
+		return;	
+	}
+	value = atof(retrievedStr->c_str());
+}
+
+
+} // namespace Engine
+
