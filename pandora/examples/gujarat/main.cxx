@@ -4,8 +4,6 @@
 #include "Simulation.hxx"
 #include "Exceptions.hxx"
 
-#include <log4cplus/configurator.h>
-
 #include <iostream>
 #include <cstdlib>
 
