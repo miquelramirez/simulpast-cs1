@@ -48,21 +48,21 @@ protected:
 
 	int _homeMobilityRange; // MpiAttribute
 
-	float _massToCaloriesRate;
-	float _surplusSpoilageFactor;
+	float _massToCaloriesRate; // MpiAttribute
+	float _surplusSpoilageFactor; // MpiAttribute
 	
-	float   _foodNeedsForReproduction;
+	float   _foodNeedsForReproduction; // MpiAttribute
 
-	float _walkingSpeedHour;
-	float _forageTimeCost;
-	float _availableForageTime;
-	float _emigrationProbability;
-	float _reproductionProbability;
+	float _walkingSpeedHour; // MpiAttribute
+	float _forageTimeCost; // MpiAttribute
+	float _availableForageTime; // MpiAttribute
+	float _emigrationProbability; // MpiAttribute
+	float _reproductionProbability; // MpiAttribute
 
 	AgentController*	_controller;
 	GujaratDemographics*	_demographicsModel;
 
-	bool _starved;
+	bool _starved; // MpiAttribute
 	
 	Engine::Point2D<int> getNearLocation( int range );
 
