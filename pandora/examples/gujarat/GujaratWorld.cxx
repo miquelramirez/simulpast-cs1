@@ -22,7 +22,7 @@ namespace Gujarat
 {
 
 GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config ) 
-	: World(simulation, 1+config._homeRange, true, config._path+"/gujarat.h5"), _agentKey(0), _climate(config,*this), _config(config)					
+	: World(simulation, 1+config._homeRange, true, config._resultsFile), _agentKey(0), _climate(config,*this), _config(config)					
 {
 	// overlap is maxHomeRange + 1 to allow splits to be in adjacent worlds
 	// TODO code a function proces config for resources 
@@ -101,7 +101,6 @@ void GujaratWorld::createAgents()
  			oss << "HunterGatherer_" << i;
 			HunterGatherer * agent = new HunterGatherer(oss.str());
 			addAgent(agent);
-			agent->setWorld(this);
 			_config._hgInitializer->initialize(agent);
 			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
@@ -150,7 +149,7 @@ void GujaratWorld::createAgents()
 			std::ostringstream oss;
  			oss << "AgroPastoralist_" << i;
 			AgroPastoralist * agent = new AgroPastoralist(oss.str());
-			agent->setWorld(this);
+			addAgent(agent); 
 			_config._apInitializer->initialize(agent);
 			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
@@ -165,7 +164,6 @@ void GujaratWorld::createAgents()
 			else if ( _config._demographicsModel == "ramirez" )
 				agent->setDemographicsModel( new RamirezDemographics( *agent ) );
 
-			addAgent(agent); 
 			agent->initializePosition();
 			std::cout << _simulation.getId() << " new AgroPastoralist: " << agent << std::endl;
 		}
