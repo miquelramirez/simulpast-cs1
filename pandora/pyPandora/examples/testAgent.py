@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys
+import sys, random
 sys.path.append('../')
 sys.path.append('../../')
 
@@ -10,9 +10,10 @@ class MyAgent(Agent):
 	def __init__(self, id):
 		Agent.__init__( self, id)
 
-	def step(self):
-		self.position._x = self.position._x+1
-		self.position._y = self.position._y+1
+	def updateState(self):
+		newPosition = Point2DInt(self.position._x + random.randint(-1,1), self.position._y + random.randint(-1,1))
+		if self.getWorld().checkPosition(newPosition):
+			self.position = newPosition
 
 	def serialize(self):
 		return
@@ -28,8 +29,8 @@ class MyWorld(World):
 	def createAgents(self):
 		for i in range (0, 10):
 			newAgent = MyAgent('id_'+str(i))
-			newAgent.position = Point2DInt(i, i)
 			self.addAgent(newAgent)
+			newAgent.setRandomPosition()
 
 mySimulation = Simulation(32, 10)
 myWorld = MyWorld(mySimulation)
