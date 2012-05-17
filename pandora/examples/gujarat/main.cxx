@@ -9,8 +9,6 @@
 
 int main(int argc, char *argv[])
 {
-	log4cplus::BasicConfigurator config;
-config.configure();
 	try
 	{
 		if(argc>2)
