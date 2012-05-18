@@ -86,6 +86,7 @@ public:
 	void remove();
 	void setWorld( World * world );
 	World * getWorld();
+	World & getWorldRef();
 	const World * getWorld() const;
 
 	// method to locate the agent to a valid random position of _world

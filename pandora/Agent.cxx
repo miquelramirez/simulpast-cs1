@@ -56,6 +56,17 @@ const World * Agent::getWorld() const
 	return _world;
 }
 
+World & Agent::getWorldRef()
+{
+	if(!_world)
+	{
+		std::stringstream oss;
+		oss << "Agent::getWorldRef - accessing world reference without defining Agent's World";
+		throw Exception(oss.str());
+	}
+	return *_world;
+}
+
 void Agent::setPosition( const Point2D<int> & position )
 {
 	_position = position;
