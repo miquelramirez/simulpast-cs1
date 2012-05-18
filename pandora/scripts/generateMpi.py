@@ -223,7 +223,7 @@ def writeConstructor( f, agentName, parent , attributesMap ):
 	return None
 
 def createMpiCode( agentName, source, header, namespace, parent, attributesMap ):
-	print '\t\tcreating mpi file: mpiCode/'+agentName+'_mpi.cxx for agent: ' + agentName + ' from source: ' + source + ' and header: ' + header
+	print '\t\tcreating mpi file: mpiCode/'+agentName+'_mpi.cxx for agent: ' + agentName + ' with parent: ' + parent + ' from source: ' + source + ' and header: ' + header
 	f = open('mpiCode/'+agentName+'_mpi.cxx', 'w')
 	# header
 	f.write('\n')
@@ -253,35 +253,46 @@ def addAttribute( line, key, attributesMap ):
 	print '\t\t\tattribute detected: ' + nameAttribute + ' with type: ' + typeAttribute
 	return None
 
-def detectAttributes( headerName ):
-	print '\t\tlooking for attributes in header: '+ headerName + '...'
+def getAttributesFromClass( className, attributesMap):
+	headerName = className+'.hxx'
+	print '\t\tlooking for attributes of class: ' +  className + ' in header: '+ headerName + '...'
 	f = open(headerName, 'r')
-	key = 'MpiAttribute'
-	attributesMap = {}
+	key = 'MpiAttribute'	
 	for line in f:
 		if line.find(key) != -1:
 			addAttribute( line, key, attributesMap )
+		elif line.find('class') != -1 and line.find(className) != -1:
+			splittedLine = line.rsplit()
+			print splittedLine
+			parentName = splittedLine[len(splittedLine)-1]
+			# remove namespace in case it exists
+			parentNameWithoutNamespace = parentName
+			indexSeparator = parentName.find('::')
+			if(indexSeparator!=-1):
+				parentNameWithoutNamespace = parentName[indexSeparator+2:]
+			print 'parent class: ' + parentName
+			if parentNameWithoutNamespace!= 'Agent':
+				getAttributesFromClass( parentNameWithoutNamespace, attributesMap )
 	f.close()
-	return attributesMap
+	return parentName
 
-# TODO attributes in parent class?
 def execute( target, source, env ):
 	print 'generating code for mpi communication...'
 	listAgents = []
 	listAttributesMaps = []
 	namespaceAgents = env['namespaces']
-	parents = env['parents']
 	for i in range(1,len(source)):
 		sourceName = str(source[i])
 		headerName = sourceName.replace(".cxx", ".hxx")
 		listAgents += [sourceName.replace(".cxx", "")]
 		print '\tprocessing agent: ' + listAgents[i-1]
 		# get the list of attributes to send/receive in MPI
-		attributesMap = detectAttributes(headerName)
+		attributesMap = {}
+		parentName = getAttributesFromClass(listAgents[i-1], attributesMap )
 		# create header declaring a package with the list of attributes
 		createMpiHeader(listAgents[i-1], sourceName, headerName, attributesMap )
 		# create a source code defining package-class copy
-		createMpiCode(listAgents[i-1], sourceName, headerName, namespaceAgents[i-1], parents[i-1], attributesMap )
+		createMpiCode(listAgents[i-1], sourceName, headerName, namespaceAgents[i-1], parentName, attributesMap )
 		listAttributesMaps.append(attributesMap)
 
 	# fill mpi code registering types and additional methods

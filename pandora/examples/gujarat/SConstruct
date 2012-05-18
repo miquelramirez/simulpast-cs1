@@ -2,7 +2,6 @@ nameProgram = 'gujarat'
 
 agents = ['HunterGatherer','AgroPastoralist']
 namespaceAgents = ['Gujarat','Gujarat']
-parents = ['GujaratAgent', 'GujaratAgent']
 
 srcFiles = Split("""
 main.cxx GujaratWorld.cxx GujaratConfig.cxx 
@@ -81,6 +80,5 @@ for agent in agents:
 		agentsSrc.append(agent+".cxx")
 		mpiAgentsSrc.append("mpiCode/"+agent+"_mpi.cxx")
 env['namespaces'] = namespaceAgents
-env['parents'] = parents
 env.GenerateMPICode( target=mpiAgentsSrc, source=agentsSrc)
 env.Program(nameProgram, srcFiles+mpiAgentsSrc, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs, LINKFLAGS=linkFlags)
