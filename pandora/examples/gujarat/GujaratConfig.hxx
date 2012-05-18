@@ -16,7 +16,7 @@ namespace Gujarat
 class GujaratWorld;
 class HunterGathererMDPConfig;
 
-class GujaratConfig : public Config
+class GujaratConfig : public Engine::Config
 { 
 	int 		_size;		
 	std::string 	_soilFile;
@@ -89,7 +89,7 @@ public:
 	void extractParticularAttribs(TiXmlElement *pRoot);
 	friend std::ostream & operator<<( std::ostream & stream, const GujaratConfig & config )
 	{
-		return stream << "Config(" << "path:" << config._path << "," << "size:" << config._size << "," << "steps:" << config._numSteps << " soil file: " << config._soilFile << ")";
+		return stream << "Config(" << "path:" << config._resultsFile << "," << "size:" << config._size << "," << "steps:" << config._numSteps << " soil file: " << config._soilFile << ")";
 	}  
 	const int & getSize() const;
 	bool	isStorageRequired( std::string key ) const

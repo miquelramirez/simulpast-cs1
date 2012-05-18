@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <config>  
 	<!-- Global simulation parameters -->
-	<path 	name="path" 	type="string"  value="./data/"/>
-	<numSteps 	name="numSteps" 	type="int"  value="1"/>
+	<resultsFile value="./data/gujarat.h5"/>
+	<numSteps value="100"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
