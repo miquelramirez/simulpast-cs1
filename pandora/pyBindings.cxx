@@ -132,6 +132,14 @@ public:
 	void * fillPackage()
 	{
 	}
+
+	void sendVectorAttributes(int target)
+	{
+	}
+	
+	void receiveVectorAttributes(int origin)
+	{		
+	}
 };
 
 

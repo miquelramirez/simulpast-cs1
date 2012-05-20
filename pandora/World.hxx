@@ -23,6 +23,18 @@
 #ifndef __World_hxx__
 #define __World_hxx__
 
+enum MpiMessageType
+{
+	eNumAgents = 1,
+	eAgent = 2,
+	eNumGhostAgents = 3,
+	eGhostAgent = 4,
+	eRasterData = 5,
+	eRasterMaxData = 6,
+	eVectorAttribute = 7, 	
+	eSizeVector = 8		
+};
+
 #include <map>
 #include <vector>
 #include <list>

@@ -109,6 +109,10 @@ public:
 	virtual void selectActions() = 0;
 	virtual void updateState(){};
 	void executeActions();
+
+	// mpi related
+	virtual void sendVectorAttributes( int target ) = 0;
+	virtual void receiveVectorAttributes(int origin) = 0;
 };
 
 } // namespace Engine

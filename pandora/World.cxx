@@ -29,6 +29,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <algorithm>
+#include <boost/mpi/communicator.hpp>
+#include <boost/mpi/environment.hpp>
 
 namespace Engine
 {
@@ -242,7 +244,7 @@ void World::sendGhostAgents( const int & sectionIndex )
 
 			int numAgents = agentsToNeighbors[i].size();
 			//std::cout << _simulation.getId() << " sending num ghost agents: " << numAgents << " to : " << neighborsToUpdate[i] << " in step: " << _step << " and section index: " << sectionIndex <<  std::endl;
-			int error = MPI_Send(&numAgents, 1, MPI_INTEGER, neighborsToUpdate[i], 4, MPI_COMM_WORLD);
+			int error = MPI_Send(&numAgents, 1, MPI_INTEGER, neighborsToUpdate[i], eNumGhostAgents, MPI_COMM_WORLD);
 			if(error != MPI_SUCCESS)
 			{
 				std::stringstream oss;
@@ -254,7 +256,7 @@ void World::sendGhostAgents( const int & sectionIndex )
 				Agent * agent = *it;
 				void * package = agent->fillPackage();
 				//std::cout << _simulation.getId() << " sending ghost agent: " << *it << " from: " << _simulation.getId() << " to: " << neighborsToUpdate[i] << std::endl;
-				error = MPI_Send(package, 1, *agentType, neighborsToUpdate[i], 5, MPI_COMM_WORLD);
+				error = MPI_Send(package, 1, *agentType, neighborsToUpdate[i], eGhostAgent, MPI_COMM_WORLD);
 				delete package;
 				if(error != MPI_SUCCESS)
 				{
@@ -262,6 +264,7 @@ void World::sendGhostAgents( const int & sectionIndex )
 					oss << "World::sendGhostAgents - " << _simulation.getId() << " error in MPI_Send : " << error;
 					throw Exception(oss.str());
 				}
+				agent->sendVectorAttributes(neighborsToUpdate[i]);
 			}
 		}
 	}
@@ -289,7 +292,7 @@ void World::receiveGhostAgents( const int & sectionIndex )
 			AgentsList newGhostAgents;
 			int numAgentsToReceive;
 			MPI_Status status;
-			int error = MPI_Recv(&numAgentsToReceive, 1, MPI_INTEGER, neighborsToUpdate[i], 4, MPI_COMM_WORLD, &status);			
+			int error = MPI_Recv(&numAgentsToReceive, 1, MPI_INTEGER, neighborsToUpdate[i], eNumGhostAgents, MPI_COMM_WORLD, &status);			
 			if(error!=MPI_SUCCESS)
 			{
 				std::stringstream oss;
@@ -300,7 +303,7 @@ void World::receiveGhostAgents( const int & sectionIndex )
 			for(int j=0; j<numAgentsToReceive; j++)
 			{
 				void * package = MpiFactory::instance()->createDefaultPackage(itType->first);
-				error = MPI_Recv(package, 1, *agentType, neighborsToUpdate[i], 5, MPI_COMM_WORLD, &status);					
+				error = MPI_Recv(package, 1, *agentType, neighborsToUpdate[i], eGhostAgent, MPI_COMM_WORLD, &status);					
 				if(error!=MPI_SUCCESS)
 				{
 					std::stringstream oss;
@@ -310,6 +313,8 @@ void World::receiveGhostAgents( const int & sectionIndex )
 				Agent * agent = MpiFactory::instance()->createAndFillAgent(itType->first, package);
 				//std::cout << _simulation.getId() << " has received ghost agent: " << agent << " number: " << j << " from: " << neighborsToUpdate[i] << " in section index: " << sectionIndex << " and step: " << _step << std::endl;
 				delete package;
+				agent->receiveVectorAttributes(neighborsToUpdate[i]);
+
 				// we must check if it is an update of an agent, or a ghost agent
 				bool worldOwnsAgent = false;
 				AgentsList::iterator it = getOwnedAgent(agent->getId());
@@ -510,7 +515,7 @@ void World::sendAgents( AgentsList & agentsToSend )
 		{	
 			int numAgents = agentsToNeighbors[i].size();
 			//std::cout << _simulation.getId() << " sending num agents: " << numAgents << " to : " << _neighbors[i] << std::endl;
-			int error = MPI_Send(&numAgents, 1, MPI_INTEGER, _neighbors[i], 1, MPI_COMM_WORLD);
+			int error = MPI_Send(&numAgents, 1, MPI_INTEGER, _neighbors[i], eNumAgents, MPI_COMM_WORLD);
 			if(error != MPI_SUCCESS)
 			{
 				std::stringstream oss;
@@ -523,7 +528,7 @@ void World::sendAgents( AgentsList & agentsToSend )
 				Agent * agent = *it;
 				void * package = agent->fillPackage();
 				//std::cout << _simulation.getId() << " sending agent: " << *it << " from: " << _simulation.getId() << " to: " << _neighbors[i] << std::endl;
-				error = MPI_Send(package, 1, *agentType, _neighbors[i], 2, MPI_COMM_WORLD);
+				error = MPI_Send(package, 1, *agentType, _neighbors[i], eAgent, MPI_COMM_WORLD);
 				delete package;
 				if(error != MPI_SUCCESS)
 				{
@@ -531,8 +536,9 @@ void World::sendAgents( AgentsList & agentsToSend )
 					oss << "World::sendAgents - " << _simulation.getId() << " error in MPI_Send : " << error;
 					throw Exception(oss.str());
 				}
-				it = agentsToNeighbors[i].erase(it);
+				agent->sendVectorAttributes(_neighbors[i]);
 				// it is not deleted, as it is sent to overlap list
+				it = agentsToNeighbors[i].erase(it);
 			}
 		}
 	}
@@ -573,7 +579,7 @@ void World::sendOverlapZones( const int & sectionIndex, const bool & entireOverl
 				data[n] = getDynamicRaster(it->first).getValue(index);
 				//std::cout << "\t" << _simulation.getId() << " sending data : " << dataSize << " to: " << neighborsToUpdate[i] << " - send index: " << index << " in global pos: " << index+_overlapBoundaries._origin << " value: " << data[n] << " section index: " << sectionIndex << " and step: " << _step << std::endl;
 			}
-			if(MPI_Send(&data, dataSize, MPI_INTEGER, neighborsToUpdate[i], 3, MPI_COMM_WORLD)!= MPI_SUCCESS)
+			if(MPI_Send(&data, dataSize, MPI_INTEGER, neighborsToUpdate[i], eRasterData, MPI_COMM_WORLD)!= MPI_SUCCESS)
 			{
 				std::stringstream oss;
 				oss << "World::sendOverlapZones- " << _simulation.getId() << " error in MPI_Send";
@@ -599,7 +605,7 @@ void World::sendMaxOverlapZones()
 				data[n] = getDynamicRaster(it->first).getMaxValueAt(index);
 				//std::cout << "\t" << _simulation.getId() << " sending max data : " << dataSize << " to: " << _neighbors[i] << " - send index: " << index << " in global pos: " << index+_overlapBoundaries._origin << " value: " << data[n] << " and step: " << _step << std::endl;
 			}
-			if(MPI_Send(&data, dataSize, MPI_INTEGER, _neighbors[i], 6, MPI_COMM_WORLD)!= MPI_SUCCESS)
+			if(MPI_Send(&data, dataSize, MPI_INTEGER, _neighbors[i], eRasterMaxData, MPI_COMM_WORLD)!= MPI_SUCCESS)
 			{
 				std::stringstream oss;
 				oss << "World::sendMaxOverlapZones- " << _simulation.getId() << " error in MPI_Send";
@@ -648,7 +654,7 @@ void World::receiveAgents( const int & sectionIndex )
 		{
 			int numAgentsToReceive;
 			MPI_Status status;
-			int error = MPI_Recv(&numAgentsToReceive, 1, MPI_INTEGER, _neighbors[i], 1, MPI_COMM_WORLD, &status);			
+			int error = MPI_Recv(&numAgentsToReceive, 1, MPI_INTEGER, _neighbors[i], eNumAgents, MPI_COMM_WORLD, &status);			
 			if(error!=MPI_SUCCESS)
 			{
 				std::stringstream oss;
@@ -659,7 +665,7 @@ void World::receiveAgents( const int & sectionIndex )
 			for(int j=0; j<numAgentsToReceive; j++)
 			{
 				void * package = MpiFactory::instance()->createDefaultPackage(itType->first);
-				error = MPI_Recv(package, 1, *agentType, _neighbors[i], 2, MPI_COMM_WORLD, &status);					
+				error = MPI_Recv(package, 1, *agentType, _neighbors[i], eAgent, MPI_COMM_WORLD, &status);					
 				if(error!=MPI_SUCCESS)
 				{
 					std::stringstream oss;
@@ -669,6 +675,7 @@ void World::receiveAgents( const int & sectionIndex )
 				Agent * agent = MpiFactory::instance()->createAndFillAgent(itType->first, package);
 				//std::cout << _simulation.getId() << " has received agent: " << agent << " number: " << j << " from: " << _neighbors[i] << std::endl;
 				delete package;
+				agent->receiveVectorAttributes(_neighbors[i]);
 				addAgent(agent);
 			}
 		}
@@ -707,7 +714,7 @@ void World::receiveOverlapData( const int & sectionIndex, const bool & entireOve
 			int data[dataSize];
 			//std::cout << _simulation.getId() << " will receive from: " << neighborsToUpdate[i] << " dataSize: " << dataSize << " with overlap: " << overlapZone << " in section index: " << sectionIndex << std::endl;
 			MPI_Status status;
-			int error = MPI_Recv(&data, dataSize, MPI_INTEGER, neighborsToUpdate[i], 3, MPI_COMM_WORLD, &status);					
+			int error = MPI_Recv(&data, dataSize, MPI_INTEGER, neighborsToUpdate[i], eRasterData, MPI_COMM_WORLD, &status);					
 			if(error!=MPI_SUCCESS)
 			{
 				std::stringstream oss;
@@ -742,7 +749,7 @@ void World::receiveMaxOverlapData()
 			int data[dataSize];
 			//std::cout << _simulation.getId() << " will receive max values from: " << _neighbors[i] << " dataSize: " << dataSize << " with overlap: " << overlapZone <<  std::endl;
 			MPI_Status status;
-			int error = MPI_Recv(&data, dataSize, MPI_INTEGER, _neighbors[i], 6, MPI_COMM_WORLD, &status);					
+			int error = MPI_Recv(&data, dataSize, MPI_INTEGER, _neighbors[i], eRasterMaxData, MPI_COMM_WORLD, &status);					
 			if(error!=MPI_SUCCESS)
 			{
 				std::stringstream oss;
