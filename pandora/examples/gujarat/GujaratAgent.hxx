@@ -15,10 +15,10 @@ class CaloricRequirementsTable;
 
 class GujaratAgent : public Engine::Agent
 {
-
+protected:
 	// father = 0, mother = 1, children > 1
-	std::vector<int> _populationAges;
-
+	std::vector<int> _populationAges; // MpiVectorAttribute
+private:
 	void updateAges();
 	void checkReproduction();
 	void checkMortality();
@@ -36,33 +36,33 @@ class GujaratAgent : public Engine::Agent
 	virtual bool checkEmigration();
 
 protected:
-	int _availableTime; // MpiAttribute
-	int _spentTime; // MpiAttribute
-	int _collectedResources; // MpiAttribute
+	int _availableTime; // MpiBasicAttribute
+	int _spentTime; // MpiBasicAttribute
+	int _collectedResources; // MpiBasicAttribute
 
 	// age of the agent in num steps (years*3)
-	int _age; // MpiAttribute
+	int _age; // MpiBasicAttribute
 
 	// allowed range for social interaction
-	int _socialRange; // MpiAttribute
+	int _socialRange; // MpiBasicAttribute
 
-	int _homeMobilityRange; // MpiAttribute
+	int _homeMobilityRange; // MpiBasicAttribute
 
-	float _massToCaloriesRate; // MpiAttribute
-	float _surplusSpoilageFactor; // MpiAttribute
+	float _massToCaloriesRate; // MpiBasicAttribute
+	float _surplusSpoilageFactor; // MpiBasicAttribute
 	
-	float   _foodNeedsForReproduction; // MpiAttribute
+	float   _foodNeedsForReproduction; // MpiBasicAttribute
 
-	float _walkingSpeedHour; // MpiAttribute
-	float _forageTimeCost; // MpiAttribute
-	float _availableForageTime; // MpiAttribute
-	float _emigrationProbability; // MpiAttribute
-	float _reproductionProbability; // MpiAttribute
+	float _walkingSpeedHour; // MpiBasicAttribute
+	float _forageTimeCost; // MpiBasicAttribute
+	float _availableForageTime; // MpiBasicAttribute
+	float _emigrationProbability; // MpiBasicAttribute
+	float _reproductionProbability; // MpiBasicAttribute
 
 	AgentController*	_controller;
 	GujaratDemographics*	_demographicsModel;
 
-	bool _starved; // MpiAttribute
+	bool _starved; // MpiBasicAttribute
 	
 	Engine::Point2D<int> getNearLocation( int range );
 

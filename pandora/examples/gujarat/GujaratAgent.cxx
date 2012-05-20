@@ -207,7 +207,6 @@ void GujaratAgent::checkMarriage()
 			}
 			// location inside home range of husband family
 			newAgent->setPosition(getNearLocation(getSocialRange()));
-			_world->addAgent(newAgent);
 			//std::cout << "new agent created: " << newAgent << " with husband age: " << newAgent->_populationAges[0] << " and wife age: " << newAgent->_populationAges[1] << std::endl;
 		}
 	}

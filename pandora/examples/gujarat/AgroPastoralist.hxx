@@ -43,6 +43,8 @@ public:
 	// MPI Script Generated code
 	AgroPastoralist( void * );
 	void * fillPackage();
+	void sendVectorAttributes( int target );
+	void receiveVectorAttributes( int target );
 
 	void	setMaxCropHomeDistance( int v ) { _maxCropHomeDistance = v; }
 	int	getMaxCropHomeDistance() const { return _maxCropHomeDistance; }

@@ -195,13 +195,14 @@ void HunterGatherer::serializeAdditionalAttributes()
 
 GujaratAgent * HunterGatherer::createNewAgent()
 {	
+	std::cout << "creating new agent" << std::endl;
 	GujaratWorld * world = (GujaratWorld*)_world;
 	std::ostringstream oss;
 	oss << "HunterGatherer_" << world->getId() << "-" << world->getNewKey();
 	
 	HunterGatherer * agent = new HunterGatherer(oss.str());
-	// MRJ: Nobody setting the world pointer to newly created agents? How so?
-	agent->setWorld( _world );
+	_world->addAgent(agent);
+	
 	agent->setAvailableTime( _availableTime );
 	agent->setSocialRange( _socialRange );
 	agent->setHomeMobilityRange( _homeMobilityRange );
