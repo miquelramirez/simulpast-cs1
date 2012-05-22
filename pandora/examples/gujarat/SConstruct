@@ -43,7 +43,7 @@ else:
 		env['CXX'] = 'mpicxx'
 
 if int(release) == 0:
-	env['CCFLAGS'] = Split('-g -O0 -Wall -DTIXML_USE_STL')
+	env['CCFLAGS'] = Split('-g -O0 -Wall -DTIXML_USE_STL -DDEBUG')
 	libs = Split('pthread mpich pandorad gdal hdf5 tinyxml grass_gis')
 	linkFlags = Split('')
 else:
