@@ -81,10 +81,13 @@ def writeCreateType( f, nameAgent, attributesMap ):
 	index = 4
 	for nameAttribute, typeAttribute in attributesMap.items():
 		f.write('\t// '+nameAttribute+'\n')
-		# TODO vectors and lists?
-		f.write('\tblockLengths['+str(index)+'] = 1;\n')
-		mpiTypeAttribute = getMpiTypeAttribute(typeAttribute)
-		f.write('\ttypeList['+str(index)+'] = '+mpiTypeAttribute+';\n')
+		if typeAttribute == "string":
+			f.write('\tblockLengths['+str(index)+'] = 32;\n')
+			f.write('\ttypeList['+str(index)+'] = MPI_CHAR;\n');
+		else:
+			f.write('\tblockLengths['+str(index)+'] = 1;\n')
+			mpiTypeAttribute = getMpiTypeAttribute(typeAttribute)
+			f.write('\ttypeList['+str(index)+'] = '+mpiTypeAttribute+';\n')
 		index = index+1
 	f.write('\n')
 	# displacements
@@ -179,7 +182,10 @@ def createMpiHeader( agentName, source, header, attributesMap ):
 	f.write('\n')
 	# dynamic params
 	for nameAttribute, typeAttribute in attributesMap.items():
-		f.write('\t'+typeAttribute+' '+nameAttribute+'Mpi;\n')
+		if typeAttribute == "string":
+			f.write('\tchar '+nameAttribute+'Mpi[32];\n')
+		else:
+			f.write('\t'+typeAttribute+' '+nameAttribute+'Mpi;\n')
 	# close struct
 	f.write('} '+agentName+'Package;\n')
 	# close file
@@ -194,14 +200,18 @@ def writeFillPackage( f, agentName, attributesMap ):
 	f.write('{\n')
 	# basic params: _id, _position & _exists
 	f.write('\t'+agentName+'Package * package = new '+agentName+'Package;\n')
-	f.write('\tmemcpy(&package->_idMpi, _id.c_str(), sizeof(char)*_id.size());\n')
-	f.write('\tpackage->_idMpi[_id.size()] = \'\\0\';\n')
+	f.write('\tmemcpy(&package->_idMpi, _id.c_str(), std::min((unsigned int)32,sizeof(char)*_id.size()));\n')
+	f.write('\tpackage->_idMpi[std::min((unsigned int)32,_id.size())] = \'\\0\';\n')
 	f.write('\tpackage->_existsMpi = _exists;\n')
 	f.write('\tpackage->_positionMpi = _position;\n')
 	f.write('\n')
 	# dynamic params
-	for nameAttribute in attributesMap.keys():
-		f.write('\tpackage->'+nameAttribute+'Mpi = '+nameAttribute+';\n')
+	for nameAttribute, typeAttribute in attributesMap.items():
+		if typeAttribute == "string":
+			f.write('\tmemcpy(&package->'+nameAttribute+'Mpi, '+nameAttribute+'.c_str(), std::min((unsigned int)32,sizeof(char)*'+nameAttribute+'.size()));\n');
+			f.write('\tpackage->'+nameAttribute+'Mpi[std::min((unsigned int)32,'+nameAttribute+'.size())] = \'\\0\';\n')
+		else:
+			f.write('\tpackage->'+nameAttribute+'Mpi = '+nameAttribute+';\n')
 	f.write('\treturn package;\n')
 	f.write('}\n')
 	f.write('\n')
@@ -308,17 +318,31 @@ def addBasicAttribute( line, attributesMap ):
 	print '\t\t\tattribute detected: ' + nameAttribute + ' with type: ' + typeAttribute
 	return None
 
+def addStringAttribute( line, attributesMap ):
+	splitLine = line.split()
+	# 1st word will be std::string
+	typeAttribute = splitLine[0]
+	# 2nd word will be the name, removing final ';'
+	nameAttribute = splitLine[1]
+	nameAttribute = nameAttribute.strip(';')
+	attributesMap[nameAttribute] = 'string'
+	print '\t\t\tattribute detected: ' + nameAttribute + ' with type: string'
+	return None
+
 def getAttributesFromClass( className, attributesMap, vectorAttributesMap):
 	headerName = className+'.hxx'
 	print '\t\tlooking for attributes of class: ' +  className + ' in header: '+ headerName + '...'
 	f = open(headerName, 'r')
 	keyBasic = 'MpiBasicAttribute'	
-	keyVector = 'MpiVectorAttribute'									
+	keyVector = 'MpiVectorAttribute'
+	keyString = 'MpiStringAttribute'
 	for line in f:
 		if line.find(keyBasic) != -1:
 			addBasicAttribute( line, attributesMap )
 		elif line.find(keyVector) != -1:
 			addVectorAttribute( line, vectorAttributesMap ) 
+		elif line.find(keyString) != -1:
+			addStringAttribute( line, attributesMap )
 		# parse base class
 		elif line.find('class') != -1 and line.find(className) != -1:
 			splittedLine = line.rsplit()
