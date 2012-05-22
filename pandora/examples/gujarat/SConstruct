@@ -42,15 +42,15 @@ else:
 	else :
 		env['CXX'] = 'mpicxx'
 
+linkFlags = Split('-fopenmp')
+libs = Split('tinyxml')
+#libs = Split('pthread mpich pandorad gdal hdf5 tinyxml grass_gis')
 if int(release) == 0:
-	env['CCFLAGS'] = Split('-g -O0 -Wall -DTIXML_USE_STL -DDEBUG')
-	libs = Split('pthread mpich pandorad gdal hdf5 tinyxml grass_gis')
-	linkFlags = Split('')
+	env['CCFLAGS'] = Split('-g -O0 -Wall -DTIXML_USE_STL -DDEBUG -fopenmp')
+	libs += ['pandorad']
 else:
 	env['CCFLAGS'] = Split('-O3 -DTIXML_USE_STL -fopenmp')
-	libs = Split('pthread mpich pandora gdal hdf5 tinyxml grass_gis')
-	linkFlags = Split('-fopenmp')
-
+	libs += ['pandora']
 
 includeDirs = Split('./ ../../')
 
