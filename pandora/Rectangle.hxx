@@ -1,4 +1,25 @@
 
+/*
+ * Copyright (c) 2012
+ * COMPUTER APPLICATIONS IN SCIENCE & ENGINEERING
+ * BARCELONA SUPERCOMPUTING CENTRE - CENTRO NACIONAL DE SUPERCOMPUTACIÓN
+ * http://www.bsc.es
+
+ * This file is part of Pandora Library. This library is free software; 
+ * you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation;
+ * either version 3.0 of the License, or (at your option) any later version.
+ * 
+ * Pandora is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
 #ifndef __Rectangle_hxx__
 #define __Rectangle_hxx__
 
@@ -70,11 +91,6 @@ public:
 		Interval<Type> R2_OX(other._origin._x,other._origin._x + other._size._x -1);		
 		Interval<Type> R2_OY(other._origin._y,other._origin._y + other._size._y -1);	
 
-		if(_origin._y <0)
-		{
-			std::cout << "NEGATIU" << std::endl;
-		}
-		
 //std::cout << R1_OX << R1_OY	<< "&&" <<R2_OX << R2_OY << "?" << std::endl;
 		
 		Interval<Type> Intersection_OX;
@@ -94,11 +110,11 @@ public:
 
 		result.intervals2Rectangle(Intersection_OX,Intersection_OY);
 		
-	return true;	
+		return true;	
 	}
 	
 	
-	friend std::ostream & operator<<( std::ostream & stream, Rectangle<Type> & rectangle )
+	friend std::ostream & operator<<( std::ostream & stream, const Rectangle<Type> & rectangle )
 	{
 		return stream << "rect:" << rectangle._origin << "->" << rectangle._origin + rectangle._size - 1;
 	}

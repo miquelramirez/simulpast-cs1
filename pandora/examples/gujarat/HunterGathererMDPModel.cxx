@@ -37,7 +37,9 @@ void	HunterGathererMDPModel::reset()
 	// Build initial state from current state in the simulation
 	_initial = new HunterGathererMDPState(	agentRef().getPosition(),
 						agentRef().getOnHandResources(),
-						agentRef().getWorld()->getDynamicRaster( "resources" ) );
+						agentRef().getWorld()->getDynamicRaster( "resources" ),
+						_config.getHorizon(),
+						agentRef().computeConsumedResources(1) );
 	makeActionsForState( *_initial );
 	std::cout << "Initial state: " << *_initial << std::endl;	
 }
@@ -66,9 +68,9 @@ bool HunterGathererMDPModel::applicable( const HunterGathererMDPState& s,
 float HunterGathererMDPModel::cost( const HunterGathererMDPState& s,
 					action_t a ) const
 {
-	float rewardSignal = 1000.0f - (float)s.getOnHandResources();
-	rewardSignal += s.availableActions(a)->getTimeNeeded();
-	return rewardSignal;
+	float cost = s.getDaysStarving()*10;
+	cost += s.availableActions(a)->getTimeNeeded();
+	return cost;
 }
 
 void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s, 
@@ -77,39 +79,58 @@ void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s,
 {
 	HunterGathererMDPState sp;
 	s.initializeSuccessor(sp);
-	const Action* act = s.availableActions(a);
-	act->execute( agentRef(), s, sp );
+	const MDPAction* act = s.availableActions(a);
+	act->executeMDP( agentRef(), s, sp );
+	applyFrameEffects( s, sp );
+	sp.computeHash();	
 	makeActionsForState( sp );
 	outcomes.push_back( std::make_pair(sp, 1.0) );
+}
+
+void	HunterGathererMDPModel::applyFrameEffects( const HunterGathererMDPState& s,  HunterGathererMDPState& sp ) const
+{
+	sp.consume();
+	sp.spoilage( agentRef().getSurplusSpoilageFactor() );
+	sp.increaseTimeIndex();
 }
 
 void	HunterGathererMDPModel::makeActionsForState( HunterGathererMDPState& s ) const
 {
 	assert( s.numAvailableActions() == 0 );
 	// Make Do Nothing
-	s.addAction( new DoNothingAction() );	
+	if ( _config.isDoNothingAllowed() )
+		s.addAction( new DoNothingAction() );	
 	
 	// Make Forage actions
+	std::vector< Sector* > validActionSectors;
 	std::vector< Sector* > actionSectors;
 
 	agentRef().updateKnowledge( s.getLocation(), s.getResourcesRaster(), actionSectors );
 
-	if ( _config.getNumberForageActions() > actionSectors.size() )
+	// MRJ: Remove empty sectors if any
+	for ( unsigned i = 0; i < actionSectors.size(); i++ )
 	{
-		throw Engine::Exception( "HunterGathererMDPModel::makeActionsForState() : nr. forage actions in model > nr. available sectors" );
+		if ( actionSectors[i]->isEmpty() )
+		{
+			delete actionSectors[i];
+			continue;
+		}
+		validActionSectors.push_back( actionSectors[i] );
 	}	
-	else if ( _config.getNumberForageActions() == actionSectors.size() )
+
+	std::random_shuffle( validActionSectors.begin(), validActionSectors.end() );
+	std::sort( validActionSectors.begin(), validActionSectors.end(), SectorBestFirstSortPtrVecPredicate() );
+	if ( _config.getNumberForageActions() >= validActionSectors.size() )
 	{
-		for ( unsigned i = 0; i < actionSectors.size(); i++ )
-			s.addAction( new ForageAction( actionSectors[i], true ) );	
+		for ( unsigned i = 0; i < validActionSectors.size(); i++ )
+			s.addAction( new ForageAction( validActionSectors[i], true ) );	
 	}
 	else
 	{
-		std::sort( actionSectors.begin(), actionSectors.end(), SectorBestFirstSortPtrVecPredicate() );
 		for ( unsigned i = 0; i < _config.getNumberForageActions(); i++ )
-			s.addAction( new ForageAction( actionSectors[i], true ) );
-		for ( unsigned i = _config.getNumberForageActions(); i < actionSectors.size(); i++ )
-			delete actionSectors[i];
+			s.addAction( new ForageAction( validActionSectors[i], true ) );
+		for ( unsigned i = _config.getNumberForageActions(); i < validActionSectors.size(); i++ )
+			delete validActionSectors[i];
 	}
 	
 	// Make Move Home

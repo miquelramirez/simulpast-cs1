@@ -9,60 +9,69 @@
 
 namespace Gujarat
 {
-class Action;
 class AgentController;
+class GujaratDemographics;
+class CaloricRequirementsTable;
 
 class GujaratAgent : public Engine::Agent
 {
-
+protected:
 	// father = 0, mother = 1, children > 1
-	std::vector<int> _populationAges;
-
+	std::vector<int> _populationAges; // MpiVectorAttribute
+private:
 	void updateAges();
 	void checkReproduction();
 	void checkMortality();
 	void checkAgentRemoval();
 	void checkMarriage();
+	void checkStarvationMortality();
 
 	GujaratAgent * getMarriageCandidate();
 
-	virtual void updateKnowledge() = 0;
-
-	virtual void evaluateYearlyActions() = 0;
-	virtual void evaluateSeasonalActions() = 0;
-	virtual void evaluateIntraSeasonalActions() = 0;
 	virtual GujaratAgent * createNewAgent() = 0;
 
-	void executeActions();
 
 	virtual void serializeAdditionalAttributes() = 0;
 
+	virtual bool checkEmigration();
+
 protected:
-	int _availableTime; // MpiAttribute
-	int _spentTime; // MpiAttribute
-	int _collectedResources; // MpiAttribute
+	int _availableTime; // MpiBasicAttribute
+	int _spentTime; // MpiBasicAttribute
+	int _collectedResources; // MpiBasicAttribute
 
 	// age of the agent in num steps (years*3)
-	int _age; // MpiAttribute
+	int _age; // MpiBasicAttribute
 
 	// allowed range for social interaction
-	int _socialRange; // MpiAttribute
+	int _socialRange; // MpiBasicAttribute
 
-	int _homeMobilityRange; // MpiAttribute
+	int _homeMobilityRange; // MpiBasicAttribute
 
-	float _massToCaloriesRate;
+	float _massToCaloriesRate; // MpiBasicAttribute
+	float _surplusSpoilageFactor; // MpiBasicAttribute
+	
+	float   _foodNeedsForReproduction; // MpiBasicAttribute
 
-	std::list<Action*> _actions;
+	float _walkingSpeedHour; // MpiBasicAttribute
+	float _forageTimeCost; // MpiBasicAttribute
+	float _availableForageTime; // MpiBasicAttribute
+	float _emigrationProbability; // MpiBasicAttribute
+	float _reproductionProbability; // MpiBasicAttribute
 
 	AgentController*	_controller;
+	GujaratDemographics*	_demographicsModel;
 
+	bool _starved; // MpiBasicAttribute
+	
 	Engine::Point2D<int> getNearLocation( int range );
+
+	CaloricRequirementsTable*	_caloricRequirements;
 
 public:
 	GujaratAgent( const std::string & id );
 	virtual ~GujaratAgent();
 
-	void step();
 	void serialize();
 
 	void	setSocialRange( int v ) { _socialRange = v; }
@@ -73,17 +82,59 @@ public:
 	
 	void	setMassToCaloriesRate( float v ) { _massToCaloriesRate = v; }
 
-	void	initializePosition( Engine::Point2D<int> randomPos );
+	void	initializePosition( );
+
 	int	getNrAvailableAdults() const;
+	int	getNrChildren() const;
+	int	getPopulationSize() const;
+
+	// MRJ: Kills 1 out of every 10 people in the agent (on average)
+	void	decimatePopulation();
+	// MRJ: Checks if agent member dies with chance%, with age in [min,max]
+	void	checkDeath( int minAge, int maxAge, int chance );
+	void	checkDeathByAging( int minAge );
+	// if male or female died, reproduction is impossible
+	bool	canReproduce() const;
+	void	addNewIndividual( int age );
+	void	addNewChild();
+
 	int	getOnHandResources() const { return _collectedResources; }
-	int	computeConsumedResources( int timeSteps ) const;
+	virtual int	computeConsumedResources( int timeSteps ) const;
 	double	computeMaxForagingDistance( ) const;
 	int	computeEffectiveBiomassForaged( int nominal ) const;
 	int	convertBiomassToCalories( int biomass ) const;
+	bool	starvationLastTimeStep() const { return _starved; }
+
+	void	setSurplusSpoilageFactor( float v ) { _surplusSpoilageFactor = v; }
+	float	getSurplusSpoilageFactor() const { return _surplusSpoilageFactor; }
+
+	void 	setFoodNeedsForReproduction( float v) { _foodNeedsForReproduction = v; }
+	
+	void	setWalkingSpeedHour( float v ) { _walkingSpeedHour = v; }
+	float	getWalkingSpeedHour() const { return _walkingSpeedHour; }
+
+	void	setForageTimeCost( float v ) { _forageTimeCost = v; }
+	float	getForageTimeCost() const { return _forageTimeCost; }
+
+	void	setAvailableForageTime( float v ) { _availableForageTime = v; }
+	float	getAvailableForageTime() const { return _availableForageTime; }
+
+	void	setEmigrationProbability( float v ) { _emigrationProbability = v; }
+	float	getEmigrationProbability() const { return _emigrationProbability; }
+	void	setReproductionProbability( float v ) { _reproductionProbability = v; }
+	float	getReproductionProbability() const { return _reproductionProbability; }
+
+	double	getTimeSpentForagingTile() const;
 
 	void			setController( AgentController* controller ); 
 	AgentController* 	activeController() { return _controller; }
-	
+	void			setDemographicsModel( GujaratDemographics* model ) { _demographicsModel = model; }
+
+	void setCaloricRequirements( CaloricRequirementsTable* t ) { _caloricRequirements = t; }
+
+	void logAgentState();
+	void updateKnowledge();
+	void updateState();
 };
 
 } // namespace Gujarat

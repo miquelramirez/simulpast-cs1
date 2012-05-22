@@ -7,6 +7,8 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include "CaloricRequirementsTable.hxx"
+#include "AgentInitializer.hxx"
 
 namespace Gujarat
 {
@@ -14,25 +16,34 @@ namespace Gujarat
 class GujaratWorld;
 class HunterGathererMDPConfig;
 
-class GujaratConfig : public Config
+class GujaratConfig : public Engine::Config
 { 
 	int 		_size;		
 	std::string 	_soilFile;
 	std::string 	_demFile;
+	std::string 	_duneMapFile;
 	int		_climateSeed;
 	// Agent home range expressed in # of underlying GIS
 	// data grid (~30m)
 	int		_homeRange;
 	// Agents social range expressed in # GIS data grid tiles
 	int		_socialRange;
-	// # days corresponding to a climate model season
+	// # days corresponding to a climate model season	
 	int		_daysPerSeason;
+	int		_daysPerYear;
 	// # meters corresponding to the side of a cell
 	float _cellResolution;
 
 	// MRJ: Hunter Gatherers attributes
 	int		_surplusForReproductionThreshold;
-	int		_surplusWanted;
+	int		_surplusWanted;	
+	float   _hgFoodNeedsForReproduction;
+	//float   _hgSpoilageFoodFactor;	
+	int		_adulthoodAge;
+	float	_walkingSpeedHour;
+	float	_forageTimeCost;
+	float	_availableForageTime;
+	
 
 	// MRJ: Agro Pastoralists attributes
 	int		_maxCropHomeDistance;
@@ -50,8 +61,15 @@ class GujaratConfig : public Config
 	float _rainHistoricalDistribShape;
 	float _rainHistoricalDistribScale;
 	float _rainHistoricalDistribMean;
+	float _surplusSpoilage;
 
 	std::string	_hunterGathererController;
+	std::string	_demographicsModel;
+
+	CaloricRequirementsTable* _hgCaloryRequirements;
+	CaloricRequirementsTable* _apCaloryRequirements;
+	AgentInitializer*	  _hgInitializer;
+	AgentInitializer*	  _apInitializer;
 
 	HunterGathererMDPConfig*	_controllerConfig;
 
@@ -63,22 +81,15 @@ class GujaratConfig : public Config
 	void	parseHGMDPConfig( TiXmlElement* element );
 
 
-	void	retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, std::string& value );
-	void	retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, std::string& value );
-	void	retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, int& value );
-	void	retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, int& value );
-	void	retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, float& value );
-	void	retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, float& value );
 	
 public:
 	GujaratConfig();  
-	GujaratConfig(const std::string & filename);  
 	virtual ~GujaratConfig();
     
 	void extractParticularAttribs(TiXmlElement *pRoot);
 	friend std::ostream & operator<<( std::ostream & stream, const GujaratConfig & config )
 	{
-		return stream << "Config(" << "path:" << config._path << "," << "size:" << config._size << "," << "steps:" << config._numSteps << " soil file: " << config._soilFile << ")";
+		return stream << "Config(" << "path:" << config._resultsFile << "," << "size:" << config._size << "," << "steps:" << config._numSteps << " soil file: " << config._soilFile << ")";
 	}  
 	const int & getSize() const;
 	bool	isStorageRequired( std::string key ) const
@@ -88,7 +99,7 @@ public:
 		return it->second;
 	}
 	
-
+	friend class GujaratAgent;
 	friend class GujaratWorld;
 	friend class Climate;
 };

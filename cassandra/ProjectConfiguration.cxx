@@ -412,7 +412,7 @@ RasterConfiguration * ProjectConfiguration::getRasterConfig( const std::string &
 	if(it==_rastersConfig.end())
 	{
 		std::stringstream oss;
-		oss << "ProjectConfiguration::getRasterConfig - config not found for agent type: " << type; 
+		oss << "ProjectConfiguration::getRasterConfig - config not found for raster type: " << type; 
 		throw Engine::Exception(oss.str());
 		return 0;
 	}

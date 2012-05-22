@@ -1,6 +1,39 @@
 
+/*
+ * Copyright (c) 2012
+ * COMPUTER APPLICATIONS IN SCIENCE & ENGINEERING
+ * BARCELONA SUPERCOMPUTING CENTRE - CENTRO NACIONAL DE SUPERCOMPUTACIÓN
+ * http://www.bsc.es
+
+ * This file is part of Pandora Library. This library is free software; 
+ * you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation;
+ * either version 3.0 of the License, or (at your option) any later version.
+ * 
+ * Pandora is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
 #ifndef __World_hxx__
 #define __World_hxx__
+
+enum MpiMessageType
+{
+	eNumAgents = 1,
+	eAgent = 2,
+	eNumGhostAgents = 3,
+	eGhostAgent = 4,
+	eRasterData = 5,
+	eRasterMaxData = 6,
+	eVectorAttribute = 7, 	
+	eSizeVector = 8		
+};
 
 #include <map>
 #include <vector>
@@ -76,9 +109,9 @@ protected:
 	//! this method returns the general overlap zone between both worlds
 	Rectangle<int> getOverlap(const int & id, const int & sectionIndex ) const;
 	//! this method returns the external part of the strict overlap between World and id, 
-	Rectangle<int> getExternalOverlap(const int & id) const;	
+	Rectangle<int> getExternalOverlap(const int & id) const;
 	//! this method returns the internal part of the strict overlap between World and id, 
-	Rectangle<int> getInternalOverlap(const int & id) const;	
+	Rectangle<int> getInternalOverlap(const int & id) const;
 	//! returns true if neighbor id must be updated this section index execution
 	bool needsToBeUpdated( const int & id, const int & sectionIndex );
 	//! returns true if neighbor id will send data to _id, according to index execution
@@ -155,7 +188,6 @@ protected:
 
 	//! return a raster from the entire set (dynamic and static)
 	StaticRaster & getRasterTmp( const std::string & key );
-	
 	const StaticRaster & getRasterTmp( const std::string & key ) const;
 
 public:
@@ -178,6 +210,8 @@ public:
 	World filled with agents.
 	*/ 
 	void init( int argc, char *argv[] );
+	//! calls init without MPI initialization (used in pyPandora)
+	void initialize();
 	//! Runs the simulation. Performs each step and stores the states. Requires calling 'init' method a-priori.
 	void run();
 	
@@ -206,7 +240,7 @@ public:
 
 	template<class T> struct aggregator : public std::unary_function<T,void>
 	{
-		aggregator(float radius, T &center, const std::string & type ) :  _radius(radius), _center(center), _type(type)
+		aggregator(double radius, T &center, const std::string & type ) :  _radius(radius), _center(center), _type(type)
 		{
 			_particularType = _type.compare("all");
 		}
@@ -220,21 +254,23 @@ public:
 			{
 				return;
 			}
-			if(_center.getPosition().distance(neighbor->getPosition())<=_radius)
+			// if we use epsilon the evaluation will fail for equal double numbers
+			//if(_center.getPosition().distance(neighbor->getPosition())-_radius<= std::numeric_limits<double>::epsilon())
+			if(_center.getPosition().distance(neighbor->getPosition())-_radius<= 0.0001)
 			{
 					execute( *neighbor );
 			}
 		}
 		virtual void execute( T & neighbor )=0;
 		bool _particularType;
-		float _radius;
+		double _radius;
 		T & _center;
 		std::string _type;
 	};
 
 	template<class T> struct aggregatorCount : public aggregator<T>
 	{
-		aggregatorCount( float radius, T & center, const std::string & type ) : aggregator<T>(radius,center,type), _count(0) {}
+		aggregatorCount( double radius, T & center, const std::string & type ) : aggregator<T>(radius,center,type), _count(0) {}
 		void execute( T & neighbor )
 		{
 			_count++;
@@ -244,7 +280,7 @@ public:
 	
 	template<class T> struct aggregatorGet : public aggregator<T>
 	{
-		aggregatorGet( float radius, T & center, const std::string & type ) : aggregator<T>(radius,center,type) {}
+		aggregatorGet( double radius, T & center, const std::string & type ) : aggregator<T>(radius,center,type) {}
 		void execute( T & neighbor )
 		{
 			_neighbors.push_back(&neighbor);
@@ -253,11 +289,11 @@ public:
 	};
 
 	//! returns the number of neighbours of agent 'target' within the radius 'radius' using Euclidean Distance.
-	int countNeighbours( Agent * target, const float & radius, const std::string & type="all" );
+	int countNeighbours( Agent * target, const double & radius, const std::string & type="all" );
 	//! returns a list with the neighbours of agent 'target' within the radius 'radius' using Euclidean Distance.
-	AgentsList getNeighbours( Agent * target, const float & radius, const std::string & type="all" );
+	AgentsList getNeighbours( Agent * target, const double & radius, const std::string & type="all" );
 	//! returns an integer identifying the current step where the simulation is. The identifiers denote an order from older to newer steps.
-	const int & getCurrentStep() const;
+	int getCurrentStep() const;
 	//! this method can be redefined by the children in order to modify the execution of each step on a given resource field. Default is grow 1 until max
 	virtual void stepEnvironment();
 	//! this method is executed for each section during @stepSection. It is useful in the cases where a Raster is modified following data in adjacent cells.
@@ -275,8 +311,7 @@ public:
 
 	//! returns raster identified by parameter 'key'.
 	Raster & getDynamicRaster( const std::string & key );
-
-	const Raster& getDynamicRaster( const std::string& key ) const;
+//	const Raster& getDynamicRaster( const std::string& key ) const;
 
 	//! create a new static raster map with the stablished size and given key
 	void registerStaticRaster( const std::string & key, const bool & serialize );
@@ -287,8 +322,7 @@ public:
 
 	//! returns the statistics of the simulation.
 	Statistics & getStatistics();
-
-	const Statistics& getStatistics() const;
+	const Statistics & getStatistics() const;
 
 	//! returns the simulation characterization of this world
 	Simulation & getSimulation();
@@ -322,12 +356,13 @@ public:
 	bool rasterToSerialize( const std::string & key );
 	//! returns the attribute _overlap
 	const int & getOverlap();
-protected:
-
+public:
 	//! Factory method design pattern for creating concrete agents and rasters. It is delegated to concrete Worlds. This method must be defined by children, it is the method where agents are created and addAgents must be called
 	virtual void createAgents() = 0;
 	//! to be redefined for subclasses
 	virtual void createRasters() = 0;
+
+	int	getCurrentTimeStep() const { return _step; }
 };
 
 } // namespace Engine

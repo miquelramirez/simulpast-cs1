@@ -17,6 +17,12 @@ qrc_*.*
 *.opt
 *.status
 *.pyc
+*.aux
+*.out
+*.backup
+*.*~
+*.toc
+*.bak
 libs/gdal-1.9.0/apps/*
 libs/tinyxml-2.6.2/tinyxml/*.xml
 cassandra/Makefile

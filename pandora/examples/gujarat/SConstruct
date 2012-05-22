@@ -2,9 +2,19 @@ nameProgram = 'gujarat'
 
 agents = ['HunterGatherer','AgroPastoralist']
 namespaceAgents = ['Gujarat','Gujarat']
-parents = ['GujaratAgent', 'GujaratAgent']
 
-srcFiles = Split('main.cxx GujaratWorld.cxx GujaratConfig.cxx Climate.cxx GujaratAgent.cxx AgroPastoralist.cxx HunterGatherer.cxx Action.cxx MoveHomeAction.cxx CultivatedField.cxx EstablishPlotAction.cxx SowAction.cxx HarvestAction.cxx MaintainPlotAction.cxx HuntAction.cxx GatherAction.cxx Sector.cxx ForageAction.cxx SettlementAreas.cxx APMoveHomeAction.cxx HunterGathererMDPConfig.cxx HunterGathererMDPState.cxx HunterGathererMDPModel.cxx DoNothingAction.cxx AgentController.cxx HunterGathererProgrammedController.cxx HunterGathererMDPController.cxx' )
+srcFiles = Split("""
+main.cxx GujaratWorld.cxx GujaratConfig.cxx 
+Climate.cxx GujaratAgent.cxx AgroPastoralist.cxx 
+HunterGatherer.cxx MDPAction.cxx MoveHomeAction.cxx 
+CultivatedField.cxx Sector.cxx ForageAction.cxx 
+SettlementAreas.cxx HunterGathererMDPConfig.cxx 
+HunterGathererMDPState.cxx HunterGathererMDPModel.cxx DoNothingAction.cxx 
+AgentController.cxx HunterGathererProgrammedController.cxx HunterGathererDecisionTreeController.cxx 
+HunterGathererMDPController.cxx GujaratDemographics.cxx OriginalDemographics.cxx 
+RamirezDemographics.cxx CaloricRequirementsTable.cxx AgentInitializer.cxx
+FixedAgentInitializer.cxx EstablishPlotAction.cxx SowAction.cxx HarvestAction.cxx MaintainPlotAction.cxx APMoveHomeAction.cxx""" )
+
 
 import os, sys
 from subprocess import call
@@ -14,22 +24,32 @@ import generateMpi
 
 release = ARGUMENTS.get('release', 1)
 mareNostrum = ARGUMENTS.get('mn', 0)
+localmpich = ARGUMENTS.get('localmpich',0)
 
-env = Environment(ENV=os.environ, CXX='mpicxx')
+if int(localmpich) == 1 :
+	env = Environment(ENV=os.environ, CXX='/usr/local/bin/mpicxx')
+else :
+	env = Environment(ENV=os.environ, CXX='mpicxx')
+	
 generateMPICodeBuilder = Builder(action=generateMpi.execute)
 env.Append( BUILDERS = {'GenerateMPICode' : generateMPICodeBuilder})
 
 if int(mareNostrum) == 1:
 	env['CXX'] = '/opt/osshpc/mpich-mx/64/bin/mpicxx'
 else:
-	env['CXX'] = 'mpicxx'
+	if int(localmpich) == 1 :
+		env['CXX'] = '/usr/local/bin/mpicxx'
+	else :
+		env['CXX'] = 'mpicxx'
 
 if int(release) == 0:
-	env['CCFLAGS'] = Split('-g -Wall -DTIXML_USE_STL -DDEBUG')
-	libs = Split('pthread mpich pandorad gdal hdf5 tinyxml')
+	env['CCFLAGS'] = Split('-g -O0 -Wall -DTIXML_USE_STL -DDEBUG')
+	libs = Split('pthread mpich pandorad gdal hdf5 tinyxml grass_gis')
+	linkFlags = Split('')
 else:
-	env['CCFLAGS'] = Split('-O3 -DTIXML_USE_STL')
-	libs = Split('pthread mpich pandora gdal hdf5 tinyxml')
+	env['CCFLAGS'] = Split('-O3 -DTIXML_USE_STL -fopenmp')
+	libs = Split('pthread mpich pandora gdal hdf5 tinyxml grass_gis')
+	linkFlags = Split('-fopenmp')
 
 
 includeDirs = Split('./ ../../')
@@ -44,8 +64,9 @@ if int(mareNostrum)==1:
 	libs += ['z']
 	libs += ['xl']
 else:
-	libDirs = Split('../../ /usr/local/lib/') 
-	includeDirs += ['/usr/local/include/', '../../../libs/libmdp']
+	libDirs = Split('../../ /usr/local/lib/ /usr/local/hdf5/lib/') 
+	includeDirs += ['/usr/local/include/', '../../../libs/libmdp','/usr/local/hdf5/include']
+        libDirs += ['/usr/lib/grass64/lib/']
 # if debug && mare nostrum mpitrace is added
 if int(release)==0 and int(mareNostrum)==1:
 	libs += ['mpitrace']
@@ -59,8 +80,5 @@ for agent in agents:
 		agentsSrc.append(agent+".cxx")
 		mpiAgentsSrc.append("mpiCode/"+agent+"_mpi.cxx")
 env['namespaces'] = namespaceAgents
-env['parents'] = parents 
 env.GenerateMPICode( target=mpiAgentsSrc, source=agentsSrc)
-srcFiles += mpiAgentsSrc
-env.Program('gujarat', srcFiles, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs)
-
+env.Program(nameProgram, srcFiles+mpiAgentsSrc, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs, LINKFLAGS=linkFlags)

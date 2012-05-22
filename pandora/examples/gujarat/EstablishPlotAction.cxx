@@ -1,4 +1,5 @@
 #include "EstablishPlotAction.hxx"
+#include "Agent.hxx"
 #include "GujaratAgent.hxx"
 #include "AgroPastoralist.hxx"
 #include "GujaratWorld.hxx"
@@ -15,7 +16,7 @@ EstablishPlotAction::~EstablishPlotAction()
 {
 }
 
-void EstablishPlotAction::execute( GujaratAgent & agent )
+void EstablishPlotAction::execute( Engine::Agent & agent )
 {
 	AgroPastoralist & agroPastoralist = (AgroPastoralist&)agent;
 	agroPastoralist.acquireCultivatedField(_plotLocation);

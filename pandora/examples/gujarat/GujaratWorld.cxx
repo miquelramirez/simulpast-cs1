@@ -1,4 +1,6 @@
+
 #include "GujaratWorld.hxx"
+
 #include "Raster.hxx"
 #include "Point2D.hxx"
 #include "HunterGatherer.hxx"
@@ -7,20 +9,27 @@
 #include "Statistics.hxx"
 #include "GujaratConfig.hxx"
 #include "HunterGathererProgrammedController.hxx"
+#include "HunterGathererDecisionTreeController.hxx"
 #include "HunterGathererMDPController.hxx"
+#include "OriginalDemographics.hxx"
+#include "RamirezDemographics.hxx"
+#include "RasterLoader.hxx"
+#include "Logger.hxx"
+
 #include <limits>
 
 namespace Gujarat
 {
 
 GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config ) 
-	: World(simulation, 1+config._homeRange, true, config._path+"/ned.h5"), _agentKey(0), _climate(config,*this), _config(config)					
+	: World(simulation, 1+config._homeRange, true, config._resultsFile), _agentKey(0), _climate(config,*this), _config(config)					
 {
 	// overlap is maxHomeRange + 1 to allow splits to be in adjacent worlds
 	// TODO code a function proces config for resources 
 	_yearlyBiomass.resize(4);
 	_dailyRainSeasonBiomassIncrease.resize(4);
 	_dailyDrySeasonBiomassDecrease.resize(4);
+
 }
 
 GujaratWorld::~GujaratWorld()
@@ -30,10 +39,13 @@ GujaratWorld::~GujaratWorld()
 void GujaratWorld::createRasters()
 {
 	registerStaticRaster("soils", _config.isStorageRequired("soils"));
-	getStaticRaster("soils").loadGDALFile(_config._soilFile, *this);
+	Engine::RasterLoader::instance()->fillGDALRaster(getStaticRaster("soils"), _config._soilFile, this);
 
 	registerStaticRaster("dem", _config.isStorageRequired("dem"));
-	getStaticRaster("dem").loadGDALFile(_config._demFile, *this);
+	Engine::RasterLoader::instance()->fillGDALRaster(getStaticRaster("dem"), _config._demFile, this);
+
+	registerStaticRaster("duneMap", _config.isStorageRequired("duneMap"));
+	Engine::RasterLoader::instance()->fillGDALRaster(getStaticRaster("duneMap"), _config._duneMapFile, this);
 	
 	registerDynamicRaster("moisture", _config.isStorageRequired("moisture"));
 	getDynamicRaster("moisture").setInitValues(0, std::numeric_limits<int>::max(), 0);
@@ -89,25 +101,42 @@ void GujaratWorld::createAgents()
  			oss << "HunterGatherer_" << i;
 			HunterGatherer * agent = new HunterGatherer(oss.str());
 			addAgent(agent);
+			_config._hgInitializer->initialize(agent);
 			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
 			agent->setHomeMobilityRange( _config._homeRange );
 			agent->setHomeRange( _config._homeRange );
 			agent->setSurplusForReproductionThreshold( _config._surplusForReproductionThreshold );
 			agent->setSurplusWanted( _config._surplusWanted );
+			agent->setCaloricRequirements( _config._hgCaloryRequirements );
+			agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
+			
+			agent->setFoodNeedsForReproduction(_config._hgFoodNeedsForReproduction);			
+			agent->setWalkingSpeedHour( _config._walkingSpeedHour / _config._cellResolution );
+			agent->setForageTimeCost( _config._forageTimeCost );
+			agent->setAvailableForageTime( _config._availableForageTime );
 			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );
 			agent->setNumSectors( _config._numSectors );
 
+			if ( _config._demographicsModel == "original" )
+				agent->setDemographicsModel( new OriginalDemographics( *agent ) );
+			else if ( _config._demographicsModel == "ramirez" )
+				agent->setDemographicsModel( new RamirezDemographics( *agent ) );
+				
+			
 			if ( _config._hunterGathererController == "MDP" )
 			{
 				agent->setController( new HunterGathererMDPController( agent, *_config._controllerConfig ) );
 			}
-			else
+			else if ( _config._hunterGathererController == "Random" )
 			{
 				agent->setController( new HunterGathererProgrammedController( agent ) );
 			}
-			
-			agent->initializePosition(getRandomPosition());
+			else if ( _config._hunterGathererController == "DecisionTree" )
+			{
+				agent->setController( new HunterGathererDecisionTreeController( agent ) );
+			}
+			agent->initializePosition();
 			agent->createSectorsMask();
 			std::cout << _simulation.getId() << " new HunterGathrer: " << agent << std::endl;
 		}
@@ -120,13 +149,22 @@ void GujaratWorld::createAgents()
 			std::ostringstream oss;
  			oss << "AgroPastoralist_" << i;
 			AgroPastoralist * agent = new AgroPastoralist(oss.str());
+			addAgent(agent); 
+			_config._apInitializer->initialize(agent);
 			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
+			agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
 			agent->setHomeMobilityRange( _config._socialRange );
+			agent->setCaloricRequirements( _config._apCaloryRequirements );
 			agent->setMaxCropHomeDistance( _config._maxCropHomeDistance );
 			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );
-			addAgent(agent); 
-			agent->initializePosition(getRandomPosition());
+
+			if ( _config._demographicsModel == "original" )
+				agent->setDemographicsModel( new OriginalDemographics( *agent ) );
+			else if ( _config._demographicsModel == "ramirez" )
+				agent->setDemographicsModel( new RamirezDemographics( *agent ) );
+
+			agent->initializePosition();
 			std::cout << _simulation.getId() << " new AgroPastoralist: " << agent << std::endl;
 		}
 	}
@@ -362,8 +400,30 @@ void GujaratWorld::stepEnvironment()
 	updateResources();
 	getDynamicRaster("resources").updateCurrentMinMaxValues();
 
+	Engine::Logger::instance().log("World") << "timestep=" << getCurrentTimeStep() << std::endl;
+
+	Engine::Logger::instance().log("World") << "\tagentPopulation=" << _agents.size() << std::endl;
+
+	unsigned nrAdults = 0;
+	for ( AgentsList::iterator it = _agents.begin(); 
+		it != _agents.end(); it++ )
+		nrAdults += dynamic_cast<GujaratAgent*>((*it))->getNrAvailableAdults();	
+
+	Engine::Logger::instance().log("World")<< "\tadultPopulation=" << nrAdults << std::endl;
+
+	unsigned nrChildren = 0;
+	for ( AgentsList::iterator it = _agents.begin(); 
+		it != _agents.end(); it++ )
+		nrChildren += dynamic_cast<GujaratAgent*>((*it))->getNrChildren();
+
+	Engine::Logger::instance().log("World")<< "\tchildrenPopulation=" << nrChildren << std::endl;
+	Engine::Logger::instance().log("World")<< "\tmaxCurrentResources=" << getDynamicRaster("resources").getCurrentMaxValue() << std::endl;
+	Engine::Logger::instance().log("World")<< "\tminCurrentResources=" << getDynamicRaster("resources").getCurrentMinValue() << std::endl;
+	Engine::Logger::instance().log("World")<< "\tavgCurrentResources=" << getDynamicRaster("resources").getAvgValue() << std::endl;
+
 	// these rasters are only updated at the beginning of seasons
 	if ( !_climate.cellUpdateRequired() ) return;
+
 
 	//updateMoisture();
 	//updateSoilCondition();

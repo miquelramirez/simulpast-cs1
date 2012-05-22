@@ -222,8 +222,49 @@ def writeConstructor( f, agentName, parent , attributesMap ):
 	f.write('\n')
 	return None
 
-def createMpiCode( agentName, source, header, namespace, parent, attributesMap ):
-	print '\t\tcreating mpi file: mpiCode/'+agentName+'_mpi.cxx for agent: ' + agentName + ' from source: ' + source + ' and header: ' + header
+def getMpiTypeConversion( typeInCpp ):
+	if typeInCpp == 'int':
+		return 'MPI_INTEGER'
+	elif typeInCpp == 'float':
+		return 'MPI_FLOAT'
+	else:
+		'Warning, unknown type: ' + typeInCpp + ' using MPI_INTEGER'
+		return 'MPI_INTEGER'
+
+def writeVectorAttributesPassing( f, agentName, vectorAttributesMap ):
+	print 'writing vector attributes map'
+	f.write('\n')
+	f.write('void '+agentName+'::sendVectorAttributes( int target)\n')
+	f.write('{\n')
+	f.write('\tint sizeVector = 0;\n')
+	for nameAttribute in vectorAttributesMap.keys():
+		print 'sending vector: ' + nameAttribute + ' with type: ' + vectorAttributesMap[nameAttribute]
+		f.write('\tsizeVector = '+nameAttribute+'.size();\n')
+		f.write('\tMPI_Send(&sizeVector, 1, MPI_INTEGER, target, eSizeVector, MPI_COMM_WORLD);\n')
+		mpiType = getMpiTypeConversion(vectorAttributesMap[nameAttribute])
+		f.write('\tMPI_Send(&'+nameAttribute+'[0], sizeVector, '+mpiType+', target, eVectorAttribute, MPI_COMM_WORLD);\n')
+		f.write('\n')
+	f.write('}\n')
+	f.write('\n')
+
+	f.write('void '+agentName+'::receiveVectorAttributes( int origin)\n')
+	f.write('{\n')
+	f.write('\tint sizeVector = 0;\n')
+	f.write('\tMPI_Status status;\n')
+	f.write('\tvoid * data = 0;\n')
+	for nameAttribute in vectorAttributesMap.keys():		
+		print 'receiving vector: ' + nameAttribute + ' with type: ' + vectorAttributesMap[nameAttribute]
+		f.write('\tMPI_Recv(&sizeVector, 1, MPI_INTEGER, origin, eSizeVector, MPI_COMM_WORLD, &status);\n')
+		mpiType = getMpiTypeConversion(vectorAttributesMap[nameAttribute])
+		f.write('\tMPI_Recv(data, sizeVector, '+mpiType+', origin, eVectorAttribute, MPI_COMM_WORLD, &status);\n')
+		f.write('\t'+nameAttribute+'.resize(sizeVector);\n')
+		f.write('\tmemcpy(&'+nameAttribute+'[0], data, sizeof('+vectorAttributesMap[nameAttribute]+'));\n')
+		f.write('\n')
+	f.write('}\n')
+	f.write('\n')
+
+def createMpiCode( agentName, source, header, namespace, parent, attributesMap, vectorAttributesMap ):
+	print '\t\tcreating mpi file: mpiCode/'+agentName+'_mpi.cxx for agent: ' + agentName + ' with parent: ' + parent + ' from source: ' + source + ' and header: ' + header
 	f = open('mpiCode/'+agentName+'_mpi.cxx', 'w')
 	# header
 	f.write('\n')
@@ -237,12 +278,26 @@ def createMpiCode( agentName, source, header, namespace, parent, attributesMap )
 	f.write('\n')
 	writeFillPackage( f, agentName, attributesMap )
 	writeConstructor( f, agentName, parent, attributesMap )
+	writeVectorAttributesPassing( f, agentName, vectorAttributesMap );
 	f.write('} // namespace '+namespace+'\n')
 	f.write('\n')
 	f.close()
 	return None
 
-def addAttribute( line, key, attributesMap ):
+# attributes defined as a std::vector of basic types
+def addVectorAttribute( line, vectorAttributesMap ):
+	indexTemplateBegin = line.find('<')
+	indexTemplateEnd= line.find('>')
+	typeVector = line[indexTemplateBegin+1:indexTemplateEnd]
+	restOfLine = line[indexTemplateEnd+1:]
+	indexEndOfName = restOfLine.find(';')
+	nameAttribute = restOfLine[:indexEndOfName].strip()
+	vectorAttributesMap[nameAttribute] = typeVector
+	print '\t\t\tvector attribute detected: ' + nameAttribute + ' with type: std::vector of: ' + typeVector
+	return None
+
+# attributes with basic types (int, float, char, ...)
+def addBasicAttribute( line, attributesMap ):
 	splitLine = line.split()
 	# 1st word will be the type of the attribute
 	typeAttribute = splitLine[0]
@@ -253,35 +308,49 @@ def addAttribute( line, key, attributesMap ):
 	print '\t\t\tattribute detected: ' + nameAttribute + ' with type: ' + typeAttribute
 	return None
 
-def detectAttributes( headerName ):
-	print '\t\tlooking for attributes in header: '+ headerName + '...'
+def getAttributesFromClass( className, attributesMap, vectorAttributesMap):
+	headerName = className+'.hxx'
+	print '\t\tlooking for attributes of class: ' +  className + ' in header: '+ headerName + '...'
 	f = open(headerName, 'r')
-	key = 'MpiAttribute'
-	attributesMap = {}
+	keyBasic = 'MpiBasicAttribute'	
+	keyVector = 'MpiVectorAttribute'									
 	for line in f:
-		if line.find(key) != -1:
-			addAttribute( line, key, attributesMap )
+		if line.find(keyBasic) != -1:
+			addBasicAttribute( line, attributesMap )
+		elif line.find(keyVector) != -1:
+			addVectorAttribute( line, vectorAttributesMap ) 
+		# parse base class
+		elif line.find('class') != -1 and line.find(className) != -1:
+			splittedLine = line.rsplit()
+			parentName = splittedLine[len(splittedLine)-1]
+			# remove namespace in case it exists
+			parentNameWithoutNamespace = parentName
+			indexSeparator = parentName.find('::')
+			if(indexSeparator!=-1):
+				parentNameWithoutNamespace = parentName[indexSeparator+2:]
+			if parentNameWithoutNamespace!= 'Agent':
+				getAttributesFromClass( parentNameWithoutNamespace, attributesMap, vectorAttributesMap )
 	f.close()
-	return attributesMap
+	return parentName
 
-# TODO attributes in parent class?
 def execute( target, source, env ):
 	print 'generating code for mpi communication...'
 	listAgents = []
 	listAttributesMaps = []
 	namespaceAgents = env['namespaces']
-	parents = env['parents']
 	for i in range(1,len(source)):
 		sourceName = str(source[i])
 		headerName = sourceName.replace(".cxx", ".hxx")
 		listAgents += [sourceName.replace(".cxx", "")]
 		print '\tprocessing agent: ' + listAgents[i-1]
 		# get the list of attributes to send/receive in MPI
-		attributesMap = detectAttributes(headerName)
+		attributesMap = {}
+		vectorAttributesMap = {}
+		parentName = getAttributesFromClass(listAgents[i-1], attributesMap, vectorAttributesMap )
 		# create header declaring a package with the list of attributes
 		createMpiHeader(listAgents[i-1], sourceName, headerName, attributesMap )
 		# create a source code defining package-class copy
-		createMpiCode(listAgents[i-1], sourceName, headerName, namespaceAgents[i-1], parents[i-1], attributesMap )
+		createMpiCode(listAgents[i-1], sourceName, headerName, namespaceAgents[i-1], parentName, attributesMap, vectorAttributesMap )
 		listAttributesMaps.append(attributesMap)
 
 	# fill mpi code registering types and additional methods

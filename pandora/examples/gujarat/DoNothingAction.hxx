@@ -1,29 +1,33 @@
 #ifndef __DoNothingAction_hxx__
 #define __DoNothingAction_hxx__
 
-#include "Action.hxx"
+#include "MDPAction.hxx"
 #include <vector>
+
+namespace Engine
+{
+	class Agent;
+}
 
 namespace Gujarat
 {
 
 class GujaratAgent;
 
-class DoNothingAction : public Action
+class DoNothingAction : public MDPAction
 {
 public:
 	DoNothingAction();
 	virtual ~DoNothingAction();
 
-	void 	execute( GujaratAgent& agent );
+	void execute( Engine::Agent& agent );
+	virtual void executeMDP( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
+
 	int	getTimeNeeded() const { return 0; }
-
 	static	void	generatePossibleActions( GujaratAgent& agent, std::vector< DoNothingAction* >& actions );
-	
-	virtual void execute( const GujaratAgent& agent, const HunterGathererMDPState& s, HunterGathererMDPState& sp ) const;
 
-	virtual Action* copy() const;
-
+	virtual MDPAction* copy() const;
+	virtual std::string describe() const;
 protected:
 	
 };

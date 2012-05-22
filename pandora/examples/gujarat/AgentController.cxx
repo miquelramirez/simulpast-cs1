@@ -1,4 +1,5 @@
 #include "AgentController.hxx"
+#include <sstream>
 
 namespace Gujarat
 {

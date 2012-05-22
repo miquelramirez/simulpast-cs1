@@ -2,7 +2,7 @@
 #include "HunterGatherer.hxx"
 #include "GujaratWorld.hxx"
 #include "Exceptions.hxx"
-//#include "Action.hxx"
+#include "Action.hxx"
 #include "Sector.hxx"
 #include "Point3D.hxx"
 #include <cmath>
@@ -146,12 +146,11 @@ void HunterGatherer::updateKnowledge( 	const Engine::Point2D<int>& agentPos,
 
 void HunterGatherer::updateKnowledge()
 {
-	_collectedResources = 0;
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
-		std::cout << this << "clearing sector: " << k << std::endl;
+		//std::cout << this << "clearing sector: " << k << std::endl;
 		_sectors[k]->clearCells();
-		std::cout << "DONE!" <<  std::endl;
+		//std::cout << "DONE!" <<  std::endl;
 	}
 
 	for ( int x=-_homeRange; x<=_homeRange; x++ )
@@ -178,23 +177,15 @@ void HunterGatherer::updateKnowledge()
 
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
-		std::cout << "Sector #" << (k+1) << " features:" << std::endl;
+		//std::cout << "Sector #" << (k+1) << " features:" << std::endl;
 		_sectors[k]->updateFeatures();
-		_sectors[k]->showFeatures( std::cout );
+		//_sectors[k]->showFeatures( std::cout );
 	}
 }
 
-void HunterGatherer::evaluateYearlyActions()
+void HunterGatherer::selectActions()
 {
-}
-
-void HunterGatherer::evaluateSeasonalActions()
-{
-}
-
-void HunterGatherer::evaluateIntraSeasonalActions()
-{
-	_actions.push_back( activeController()->selectAction() );
+	_actions.push_back( (Engine::Action*)(activeController()->selectAction()) );
 }
 
 void HunterGatherer::serializeAdditionalAttributes()
@@ -204,13 +195,14 @@ void HunterGatherer::serializeAdditionalAttributes()
 
 GujaratAgent * HunterGatherer::createNewAgent()
 {	
+	std::cout << "creating new agent" << std::endl;
 	GujaratWorld * world = (GujaratWorld*)_world;
 	std::ostringstream oss;
 	oss << "HunterGatherer_" << world->getId() << "-" << world->getNewKey();
 	
 	HunterGatherer * agent = new HunterGatherer(oss.str());
-	// MRJ: Nobody setting the world pointer to newly created agents? How so?
-	agent->setWorld( _world );
+	_world->addAgent(agent);
+	
 	agent->setAvailableTime( _availableTime );
 	agent->setSocialRange( _socialRange );
 	agent->setHomeMobilityRange( _homeMobilityRange );

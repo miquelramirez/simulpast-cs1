@@ -11,10 +11,10 @@ class ForageAction;
 
 class HunterGatherer : public GujaratAgent
 {	
-	int 					_surplusForReproductionThreshold; // MpiAttribute
-	int 					_surplusWanted; // MpiAttribute
-	int 					_homeRange; // MpiAttribute
-	int 					_numSectors; // MpiAttribute
+	int 					_surplusForReproductionThreshold; // MpiBasicAttribute
+	int 					_surplusWanted; // MpiBasicAttribute
+	int 					_homeRange; // MpiBasicAttribute
+	int 					_numSectors; // MpiBasicAttribute
 	std::vector< std::vector< int > >	_sectorsMask;
 
 	void updateKnowledge();
@@ -23,16 +23,13 @@ class HunterGatherer : public GujaratAgent
 	bool sameSide( Engine::Point2D<int> P1, Engine::Point2D<int> P2, Engine::Point2D<int> A, Engine::Point2D<int> B );
 	bool insideTriangle( Engine::Point2D<int> p,  Engine::Point2D<int> b, Engine::Point2D<int> c ); 
 	
-	void evaluateYearlyActions();
-	void evaluateSeasonalActions();
-	void evaluateIntraSeasonalActions();
+	void selectActions();
 	
 	void serializeAdditionalAttributes();
 	
 	GujaratAgent * createNewAgent();
 
 	std::vector<Sector *> _sectors;
-	std::vector<ForageAction* > _availableForage;
 
 public:
 	HunterGatherer( const std::string & id );
@@ -48,6 +45,8 @@ public:
 	void setSurplusWanted( int v ) { _surplusWanted = v; }
 	bool cellValid( Engine::Point2D<int>& loc );
 	bool cellRelevant( Engine::Point2D<int>& loc );
+	
+	bool needsResources(int timeSteps);
 	bool needsResources();
 
 	void		updateResources( int v ) { _collectedResources += v; }
@@ -61,6 +60,8 @@ public:
 	// MPI Script Generated code
 	HunterGatherer( void * );
 	void * fillPackage();
+	void sendVectorAttributes( int target );
+	void receiveVectorAttributes( int target );
 };
 
 } // namespace Gujarat

@@ -27,7 +27,7 @@ public:
 	void 	setup( const HunterGathererMDPConfig& cfg );
 	void	reset();
 
-	const HunterGatherer& 	agentRef()
+	HunterGatherer& 	agentRef()
 	{
 		return *(_simAgent);
 	}
@@ -61,7 +61,7 @@ public:
 protected:
 	
 	void	makeActionsForState( HunterGathererMDPState& s ) const;
-
+	void	applyFrameEffects( const HunterGathererMDPState& s,  HunterGathererMDPState& sp ) const;
 private:
 
 	HunterGatherer*			_simAgent;

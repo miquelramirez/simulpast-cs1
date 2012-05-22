@@ -1,6 +1,8 @@
 
-#include "GujaratWorld.hxx"
 #include "APMoveHomeAction.hxx"
+
+#include "GujaratWorld.hxx"
+#include "Agent.hxx"
 #include "GujaratAgent.hxx"
 #include "AgroPastoralist.hxx"
 
@@ -40,17 +42,17 @@ void APMoveHomeAction::generatePossibleActions( GujaratAgent& agent,
 	}
 }
 
-void APMoveHomeAction::execute( GujaratAgent & agentRef )
+void APMoveHomeAction::execute( Engine::Agent & agent )
 {
-	AgroPastoralist& agent = dynamic_cast< AgroPastoralist& >( agentRef );
+	AgroPastoralist & agroPastoralist = (AgroPastoralist&)agent;
 
 	std::cout << "DEBUG: Agent " << agent.getId() << " executing Move Home action..." << std::endl;
 
 	int prevHomeActivity = agent.getWorld()->getValue( "homeActivity", _newHomeLoc );
 	agent.getWorld()->setValue( "homeActivity", _newHomeLoc, prevHomeActivity + 1 );
 	agent.setPosition( _newHomeLoc );
-	if ( agent.hasCultivatedField() && agent.cultivatedFieldOutOfReach() )
-		agent.abandonCultivatedField();
+	if ( agroPastoralist.hasCultivatedField() && agroPastoralist.cultivatedFieldOutOfReach() )
+		agroPastoralist.abandonCultivatedField();
 	
 }
 

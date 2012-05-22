@@ -1,5 +1,8 @@
+
 #include "HunterGathererMDPController.hxx"
 #include "HunterGatherer.hxx"
+
+#include "Logger.hxx"
 
 namespace Gujarat
 {
@@ -18,18 +21,24 @@ HunterGathererMDPController::~HunterGathererMDPController()
 	delete _model;
 }
 
-Action*		HunterGathererMDPController::selectAction()
+MDPAction * HunterGathererMDPController::selectAction()
 {
+	Engine::Logger::instance().log(agentRef().getId()+"_controller") << "timestep=" << agentRef().getWorld()->getCurrentTimeStep() << std::endl;
+	Engine::Logger::instance().log(agentRef().getId()+"_controller")<< "\tagent.position=" << agentRef().getPosition() << std::endl;
+	
 	_model->reset();
 
-	UCT*	uctPolicy = new UCT( *_uctBasePolicy, 10, (unsigned)_mdpConfig.getHorizon(), 2.0f );
+	UCT*	uctPolicy = new UCT( *_uctBasePolicy, 
+	(unsigned)_mdpConfig.getWidth(), (unsigned)_mdpConfig.getHorizon(), _mdpConfig.getExplorationBonus(), false );
 
 	Problem::action_t aIndex = (*uctPolicy)( _model->init() );
 
-	Action* a = _model->init().availableActions(aIndex)->copy();
+	MDPAction* a = _model->init().availableActions(aIndex)->copy();
 	
 	delete uctPolicy;
 
+	Engine::Logger::instance().log(agentRef().getId()+"_controller") << "\taction_selected=" << a->describe() << std::endl;
+	
 	return a;
 }
 

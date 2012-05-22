@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
 	try
 	{
-		if(argc>=2)
+		if(argc>2)
 		{
 			throw Engine::Exception("USAGE: gujarat [config file]");
 		}		
@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
 			fileName = argv[1];
 		}
 		Gujarat::GujaratConfig config;
+		std::cout << "Loading config file: " << fileName << std::endl;
 		config.deserialize(fileName);
 
 		Engine::Simulation gujaratSim(config.getSize(), config.getNumSteps());

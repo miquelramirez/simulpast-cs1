@@ -2,14 +2,14 @@
 #ifndef __AbandonPlotAction_hxx__
 #define __AbandonPlotAction_hxx__
 
-#include "Action.hxx"
+#include "MDPAction.hxx"
 
 namespace Gujarat
 {
 
 class GujaratAgent;
 	
-class AbandonPlotAction : public Action
+class AbandonPlotAction : public MDPAction
 {
 public:
 	AbandonPlotAction();

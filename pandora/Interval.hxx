@@ -1,3 +1,24 @@
+
+/*
+ * Copyright (c) 2012
+ * COMPUTER APPLICATIONS IN SCIENCE & ENGINEERING
+ * BARCELONA SUPERCOMPUTING CENTRE - CENTRO NACIONAL DE SUPERCOMPUTACIÓN
+ * http://www.bsc.es
+
+ * This file is part of Pandora Library. This library is free software; 
+ * you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation;
+ * either version 3.0 of the License, or (at your option) any later version.
+ * 
+ * Pandora is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 #ifndef __INTERVAL_HXX_
 #define __INTERVAL_HXX_
 
@@ -27,42 +48,24 @@ public:
 	}
 	
 	bool intersection(Interval other, Interval & result)
-	{			
-		Type left;
-		if(_min >= other._min)
+	{	
+		if ( _min <= other._min )
 		{
-			left = _min;
+			if ( !isInside(other._min) ) return false;
+			result._min = other._min;
+			if ( isInside(other._max) )
+				result._max = other._max;
+			else
+				result._max = _max;	
+			return true;
 		}
+		if ( !other.isInside(_min) ) return false;
+		result._min = _min;
+		if ( other.isInside( _max ) )
+			result._max = _max;
 		else
-		{
-			left = other._min;
-		}
-		
-		if(!(isInside(left) && other.isInside(left)))
-		{
-			return false;
-		}
-		
-		Type right;
-		if(_max <= other._max)
-		{
-			right = _max;
-		}
-		else
-		{
-			right = other._max;
-		}
-		
-		if(!(isInside(right) && other.isInside(right)))
-		{
-			return false;
-		}
-	
-	
-		result._min = left;
-		result._max = right;
-	
-		return true;	
+			result._max = other._max;
+		return true;
 	}
 	
 	

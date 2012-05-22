@@ -2,114 +2,24 @@
 #include <sstream>
 #include "Exceptions.hxx"
 #include "HunterGathererMDPConfig.hxx"
+#include "FixedAgentInitializer.hxx"
 
 namespace Gujarat
 {
 
 GujaratConfig::GujaratConfig() 
-	: _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _climateSeed(1),
-	_hunterGathererController( "Rule-Based" ), _controllerConfig(NULL)
+	: _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _duneMapFile("no loaded file"), _climateSeed(1),
+	_hunterGathererController( "Rule-Based" ), _hgCaloryRequirements(0), _apCaloryRequirements(0),
+	_hgInitializer(0), _apInitializer(0), _controllerConfig(0)
 {
 }
   
-GujaratConfig::GujaratConfig(const std::string & filename) 
-	: _size(0), _soilFile(""), _climateSeed(1), _hunterGathererController( "Rule-Based" ),
-	_controllerConfig( NULL )
-{     
-//    Config::_path      = (char*)0;
-//    Config::_numAgents = 0;
-//    Config::_numSteps  = 0;
-    
-    //deserializeTemplate(this, filename); 
-    //deserialize(filename); 
-};
-
 GujaratConfig::~GujaratConfig()
 {
-}
-
-void GujaratConfig::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, std::string& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		throw Engine::Exception(sstr.str());
-	}
-	value = *retrievedStr;
-}
-
-void GujaratConfig::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, std::string& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		value = "";
-		return;	
-	}
-	value = *retrievedStr;
-
-}
-
-void GujaratConfig::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, int& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		throw Engine::Exception(sstr.str());
-	}
-	value = atoi(retrievedStr->c_str());
-}
-
-void GujaratConfig::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, int& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		value = 0;
-		return;	
-	}
-	value = atoi(retrievedStr->c_str());
-
-}
-
-void GujaratConfig::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, float& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		sstr << "[CONFIG]: ERROR: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		throw Engine::Exception(sstr.str());
-	}
-	value = atof(retrievedStr->c_str());
-}
-
-void GujaratConfig::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, float& value )
-{
-	const std::string* retrievedStr = NULL;
-	retrievedStr = elem->Attribute( attrName );
-	if ( retrievedStr == NULL )
-	{
-		std::stringstream sstr;
-		std::cerr << "[CONFIG]: WARNING: Attribute " << elem->ValueStr() << "." << attrName << " not found!" << std::endl;
-		value = 0.0f;
-		return;	
-	}
-	value = atof(retrievedStr->c_str());
-
+	if ( _hgCaloryRequirements )
+		delete _hgCaloryRequirements;
+	if ( _apCaloryRequirements )
+		delete _apCaloryRequirements;
 }
 
 void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
@@ -125,6 +35,9 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	element = root->FirstChildElement("dem");
 	retrieveAttributeMandatory( element, "fileName", _demFile );
 
+	element = root->FirstChildElement("duneMap");
+	retrieveAttributeMandatory( element, "fileName", _duneMapFile);
+
 	element = root->FirstChildElement("rainHistoricalDistribution");
 
 	retrieveAttributeMandatory( element, "shape", _rainHistoricalDistribShape );
@@ -139,22 +52,89 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	retrieveAttributeMandatory( element, "homeRange", _homeRange );
 	retrieveAttributeMandatory( element, "surplusForReproductionThreshold", _surplusForReproductionThreshold );
 	retrieveAttributeMandatory( element, "surplusWanted", _surplusWanted );
+	retrieveAttributeMandatory( element, "surplusSpoilage", _surplusSpoilage );
+	
+	retrieveAttributeMandatory( element, "foodNeedsForReproduction", _hgFoodNeedsForReproduction );
+	
+	retrieveAttributeMandatory( element, "adulthoodAge", _adulthoodAge );	
+	
 	retrieveAttributeMandatory( element, "numSectors", _numSectors );
+	retrieveAttributeMandatory( element, "walkingSpeedHour", _walkingSpeedHour );
+	retrieveAttributeMandatory( element, "forageTimeCost", _forageTimeCost );
+	retrieveAttributeMandatory( element, "availableForageTime", _availableForageTime );
+	retrieveAttributeMandatory( element, "demographicsModel", _demographicsModel );
 	retrieveAttributeMandatory( element, "controllerType", _hunterGathererController );
 	
 	_hunterGathererController = element->Attribute("controllerType");
 
 	parseHGMDPConfig( element->FirstChildElement("controllerConfig") );
+	TiXmlElement* calTable = element->FirstChildElement( "caloriesTable" );
+	if ( calTable == NULL )	
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: No caloriesTable element found for Hunter Gatherers in Config" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	TiXmlElement* initializerElem = element->FirstChildElement( "initialization" );
+	if ( initializerElem == NULL )	
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: No <initialization> element found for Hunter Gatherers in Config" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	std::string initializerType = initializerElem->Attribute("type");
+	if ( initializerType == "fixed" )
+	{
+		_hgInitializer = new FixedAgentInitializer( initializerElem );
+	}
+	else
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: Unknown initializer '" << initializerType << "' type specified" << std::endl;
+		throw Engine::Exception(sstr.str());	
+	}
 
+	_hgCaloryRequirements = new CaloricRequirementsTable( calTable  );
 
 	// MRJ: Loading agro pastoralists attributes	
 	element = root->FirstChildElement("agroPastoralists");
+
+	calTable = element->FirstChildElement( "caloriesTable" );
+	if ( calTable == NULL )	
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: No caloriesTable element found for AgroPastoralists in Config" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+
+	initializerElem = element->FirstChildElement( "initialization" );
+	if ( initializerElem == NULL )	
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: No <initialization> element found for Agro Pastoralists in Config" << std::endl;
+		throw Engine::Exception(sstr.str());
+	}
+	initializerType = initializerElem->Attribute("type");
+	if ( initializerType == "fixed" )
+	{
+		_apInitializer = new FixedAgentInitializer( initializerElem );
+	}
+	else
+	{
+		std::stringstream sstr;
+		sstr << "[CONFIG]: ERROR: Unknown initializer '" << initializerType << "' type specified" << std::endl;
+		throw Engine::Exception(sstr.str());	
+	}
+
+	_apCaloryRequirements = new CaloricRequirementsTable( calTable );
 	retrieveAttributeMandatory( element, "num", _numAP );
 	retrieveAttributeMandatory( element, "maxCropHomeDistance", _maxCropHomeDistance );
 
 	element = root->FirstChildElement("daysPerSeason");
 	retrieveAttributeMandatory( element, "value", _daysPerSeason );
-
+	element = root->FirstChildElement("daysPerYear");
+	retrieveAttributeMandatory( element, "value", _daysPerYear );
+	
 	element = root->FirstChildElement("cellResolution");
 	retrieveAttributeMandatory( element, "value", _cellResolution );
 

@@ -33,8 +33,8 @@
 
 namespace Problem {
 
-#ifndef ACTION_TYPE
-#define ACTION_TYPE
+#ifndef __ACTION_TYPE
+#define __ACTION_TYPE
     typedef int action_t;
     const action_t noop = -1;
 #endif
@@ -140,8 +140,9 @@ template<typename T> class problem_t {
 
         float r = Random::real();
         for( unsigned i = 0; i < osize; ++i ) {
-            if( r < outcomes[i].second )
+            if( r < outcomes[i].second ) {
                 return std::make_pair(outcomes[i].first, true);
+            }
             r -= outcomes[i].second;
         }
         return std::make_pair(outcomes[0].first, true);
