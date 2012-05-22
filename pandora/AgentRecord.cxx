@@ -57,9 +57,9 @@ void AgentRecord::addState( int numStep, const std::string & key, int value )
 	vector[numStep] = value;
 }
 
-int AgentRecord::getState( int numStep, const std::string & key )
+int AgentRecord::getState( int numStep, const std::string & key ) const
 {
-	StatesMap::iterator it = _states.find(key);
+	StatesMap::const_iterator it = _states.find(key);
 	// the key already exists
 	if(it==_states.end())
 	{
@@ -67,28 +67,28 @@ int AgentRecord::getState( int numStep, const std::string & key )
 		oss << "AgentRecord::getState - searching for unknown key: " << key << " in agent record";
 		throw Engine::Exception(oss.str());
 	}
-	ValuesVector & vector = it->second;
-	return vector[numStep];
+	const ValuesVector & vector = it->second;
+	return vector.at(numStep);
 }
 
-std::string AgentRecord::getCompleteState( int numStep )
+std::string AgentRecord::getCompleteState( int numStep ) const
 {
 	std::stringstream completeState;
 	completeState << "id: " << _id << std::endl;
 	completeState << "Agent values:";
-	for(StatesMap::iterator it=_states.begin(); it!=_states.end(); it++)
+	for(StatesMap::const_iterator it=_states.begin(); it!=_states.end(); it++)
 	{
 		completeState << std::endl << it->first << ": " << it->second[numStep];
 	}
 	return completeState.str();
 }
 
-AgentRecord::StatesMap::iterator AgentRecord::beginStates()
+AgentRecord::StatesMap::const_iterator AgentRecord::beginStates() const
 {
 	return _states.begin();
 }
 
-AgentRecord::StatesMap::iterator AgentRecord::endStates()
+AgentRecord::StatesMap::const_iterator AgentRecord::endStates() const
 {
 	return _states.end();
 }

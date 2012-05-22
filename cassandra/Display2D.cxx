@@ -81,7 +81,7 @@ void Display2D::paintEvent(QPaintEvent *event)
 	{
 		for(int j=0; j<size._y; j++)
 		{
-			std::list<std::string>::iterator it =_orderedRasters.end();
+			std::list<std::string>::const_iterator it =_orderedRasters.end();
 			while(it!=_orderedRasters.begin())
 			{
 				it--;
@@ -135,10 +135,10 @@ void Display2D::paintEvent(QPaintEvent *event)
 	QPen agentsPen;
 	agentsPen.setWidth(_zoom);
 	
-	for(Engine::SimulationRecord::AgentTypesMap::iterator itType = _simulationRecord->beginTypes(); itType!=_simulationRecord->endTypes(); itType++)
+	for(Engine::SimulationRecord::AgentTypesMap::const_iterator itType = _simulationRecord->beginTypes(); itType!=_simulationRecord->endTypes(); itType++)
 	{
 		AgentConfiguration * agentConfig = ProjectConfiguration::instance()->getAgentConfig(itType->first);
-		for(Engine::SimulationRecord::AgentRecordsMap::iterator it= _simulationRecord->beginAgents(itType); it!=_simulationRecord->endAgents(itType); it++)
+		for(Engine::SimulationRecord::AgentRecordsMap::const_iterator it= _simulationRecord->beginAgents(itType); it!=_simulationRecord->endAgents(itType); it++)
 		{
 			if(agentConfig->useIcon() && !agentConfig->getFileName2D().empty())
 			{	

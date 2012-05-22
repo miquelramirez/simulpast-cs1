@@ -44,11 +44,11 @@ public:
 	virtual ~AgentRecord();
 	// TODO x and y must be integers or strings?
 	void addState( int numStep, const std::string & id, int value );
-	int getState( int numStep, const std::string & key );
-	std::string getCompleteState( int numStep );
+	int getState( int numStep, const std::string & key ) const;
+	std::string getCompleteState( int numStep ) const;
 
-	StatesMap::iterator beginStates();
-	StatesMap::iterator endStates();
+	StatesMap::const_iterator beginStates() const;
+	StatesMap::const_iterator endStates() const;
 };
 
 } // namespace Engine

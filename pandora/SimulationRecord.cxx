@@ -312,34 +312,34 @@ Engine::StaticRaster & SimulationRecord::getStaticRaster( const std::string & ke
 	return it->second;
 }
 
-const std::string & SimulationRecord::getName()
+const std::string & SimulationRecord::getName() const
 {
 	return _name;
 }
 
-int SimulationRecord::getNumSteps()
+int SimulationRecord::getNumSteps() const
 {
 	return _numSteps;
 }
 
-int SimulationRecord::getResolution()
+int SimulationRecord::getResolution() const
 {
 	return _resolution;
 }
 
-SimulationRecord::AgentTypesMap::iterator SimulationRecord::beginTypes()
+SimulationRecord::AgentTypesMap::const_iterator SimulationRecord::beginTypes() const
 {
 	return _types.begin();
 }
 
-SimulationRecord::AgentTypesMap::iterator SimulationRecord::endTypes()
+SimulationRecord::AgentTypesMap::const_iterator SimulationRecord::endTypes() const
 {
 	return _types.end();
 }
 
-SimulationRecord::AgentRecordsMap::iterator SimulationRecord::beginAgents( const std::string & type )
+SimulationRecord::AgentRecordsMap::const_iterator SimulationRecord::beginAgents( const std::string & type ) const
 {
-	AgentTypesMap::iterator it = _types.find(type);
+	AgentTypesMap::const_iterator it = _types.find(type);
 	if(it==_types.end())
 	{	
 		std::stringstream oss;
@@ -349,9 +349,9 @@ SimulationRecord::AgentRecordsMap::iterator SimulationRecord::beginAgents( const
 	return it->second.begin();
 }
 
-SimulationRecord::AgentRecordsMap::iterator SimulationRecord::endAgents( const std::string & type )
+SimulationRecord::AgentRecordsMap::const_iterator SimulationRecord::endAgents( const std::string & type ) const
 {
-	AgentTypesMap::iterator it = _types.find(type);
+	AgentTypesMap::const_iterator it = _types.find(type);
 	if(it==_types.end())
 	{	
 		std::stringstream oss;
@@ -361,41 +361,41 @@ SimulationRecord::AgentRecordsMap::iterator SimulationRecord::endAgents( const s
 	return it->second.end();
 }
 
-SimulationRecord::AgentRecordsMap::iterator SimulationRecord::beginAgents( AgentTypesMap::iterator & it )
+SimulationRecord::AgentRecordsMap::const_iterator SimulationRecord::beginAgents( AgentTypesMap::const_iterator & it ) const
 {
 	return it->second.begin();
 }
 
-SimulationRecord::AgentRecordsMap::iterator SimulationRecord::endAgents( AgentTypesMap::iterator & it )
+SimulationRecord::AgentRecordsMap::const_iterator SimulationRecord::endAgents( AgentTypesMap::const_iterator & it ) const
 {
 	return it->second.end();
 }
 
-SimulationRecord::RasterMap::iterator SimulationRecord::beginRasters()	
+SimulationRecord::RasterMap::const_iterator SimulationRecord::beginRasters() const
 {
 	return _resources.begin();
 }
 
-SimulationRecord::RasterMap::iterator SimulationRecord::endRasters()
+SimulationRecord::RasterMap::const_iterator SimulationRecord::endRasters() const
 {
 	return _resources.end();
 }
 
-SimulationRecord::StaticRasterMap::iterator SimulationRecord::beginStaticRasters()	
+SimulationRecord::StaticRasterMap::const_iterator SimulationRecord::beginStaticRasters() const
 {
 	return _staticRasters.begin();
 }
 
-SimulationRecord::StaticRasterMap::iterator SimulationRecord::endStaticRasters()
+SimulationRecord::StaticRasterMap::const_iterator SimulationRecord::endStaticRasters() const
 {
 	return _staticRasters.end();
 }
 		
-AgentRecord * SimulationRecord::getAgentAtPosition( int step, const Engine::Point2D<int> & position )
+AgentRecord * SimulationRecord::getAgentAtPosition( int step, const Engine::Point2D<int> & position ) const	
 {
-	for(AgentTypesMap::iterator itType=_types.begin(); itType!=_types.end(); itType++)
+	for(AgentTypesMap::const_iterator itType=_types.begin(); itType!=_types.end(); itType++)
 	{
-		for(AgentRecordsMap::iterator it=beginAgents(itType); it!=endAgents(itType); it++)
+		for(AgentRecordsMap::const_iterator it=beginAgents(itType); it!=endAgents(itType); it++)
 		{
 			AgentRecord * agentRecord = it->second;	
 			int x = agentRecord->getState(step, "x");

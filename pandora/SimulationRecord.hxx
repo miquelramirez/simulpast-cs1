@@ -81,26 +81,27 @@ public:
 	Engine::StaticRaster & getStaticRaster( const std::string & key );
 	Engine::StaticRaster & getRasterTmp( const std::string & key, const int & step );
 
-	const std::string & getName();
-	int getNumSteps();
-	int getResolution();	
+	const std::string & getName() const;
+	int getNumSteps() const;
+	int getResolution() const;	
 	
-	AgentRecordsMap::iterator beginAgents( const std::string & type );
-	AgentRecordsMap::iterator beginAgents( AgentTypesMap::iterator & it );
-	AgentRecordsMap::iterator endAgents( const std::string & type );
-	AgentRecordsMap::iterator endAgents( AgentTypesMap::iterator & it );
+	AgentRecordsMap::const_iterator beginAgents( const std::string & type ) const;
+	AgentRecordsMap::const_iterator endAgents( const std::string & type) const;
 
-	AgentTypesMap::iterator beginTypes();
-	AgentTypesMap::iterator endTypes();
+	AgentRecordsMap::const_iterator beginAgents( AgentTypesMap::const_iterator & it ) const;
+	AgentRecordsMap::const_iterator endAgents( AgentTypesMap::const_iterator & it ) const;
 
-	RasterMap::iterator beginRasters();
-	RasterMap::iterator endRasters();
+	AgentTypesMap::const_iterator beginTypes() const;
+	AgentTypesMap::const_iterator endTypes() const;
 
-	StaticRasterMap::iterator beginStaticRasters();
-	StaticRasterMap::iterator endStaticRasters();
+	RasterMap::const_iterator beginRasters() const;
+	RasterMap::const_iterator endRasters() const;
 
-	AgentRecord * getAgentAtPosition( int step, const Engine::Point2D<int> & position );
+	StaticRasterMap::const_iterator beginStaticRasters() const;
+	StaticRasterMap::const_iterator endStaticRasters() const;
 
+	AgentRecord * getAgentAtPosition( int step, const Engine::Point2D<int> & position ) const;
+	
 	// TODO make a different class
 	double getMean( const std::string & type, const std::string & state, int step );
 	double getSum( const std::string & type, const std::string & state, int step );

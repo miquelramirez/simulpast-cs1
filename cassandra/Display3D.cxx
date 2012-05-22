@@ -265,10 +265,10 @@ void Display3D::paintAgents()
 	Engine::StaticRaster & raster = _simulationRecord->getRasterTmp(_config3D.getDEMRaster(), _viewedStep);
 	const Engine::Point3D<float> scale(_config3D.getSize3D());
 
-	for(Engine::SimulationRecord::AgentTypesMap::iterator itType = _simulationRecord->beginTypes(); itType!=_simulationRecord->endTypes(); itType++)
+	for(Engine::SimulationRecord::AgentTypesMap::const_iterator itType = _simulationRecord->beginTypes(); itType!=_simulationRecord->endTypes(); itType++)
 	{
 		AgentConfiguration * agentConfig = ProjectConfiguration::instance()->getAgentConfig(itType->first);
-		for(Engine::SimulationRecord::AgentRecordsMap::iterator it= _simulationRecord->beginAgents(itType); it!=_simulationRecord->endAgents(itType); it++)
+		for(Engine::SimulationRecord::AgentRecordsMap::const_iterator it= _simulationRecord->beginAgents(itType); it!=_simulationRecord->endAgents(itType); it++)
 		{
 			Engine::AgentRecord * agent = it->second;
 			bool exists = agent->getState(_viewedStep/_simulationRecord->getResolution(), "exists");

@@ -57,13 +57,13 @@ void AgentTraitSelection::typeSelected( QListWidgetItem * item )
 	_selectedType= item->text().toStdString();
 	_states.clear();
 	clear();
-	for(Engine::SimulationRecord::AgentRecordsMap::iterator it=_simulationRecord->beginAgents(_selectedType); it!=_simulationRecord->endAgents(_selectedType); it++)
+	for(Engine::SimulationRecord::AgentRecordsMap::const_iterator it=_simulationRecord->beginAgents(_selectedType); it!=_simulationRecord->endAgents(_selectedType); it++)
 	{
 		Engine::AgentRecord * agentRecord = it->second;
-		for(Engine::AgentRecord::StatesMap::iterator itS=agentRecord->beginStates(); itS!=agentRecord->endStates(); itS++)
+		for(Engine::AgentRecord::StatesMap::const_iterator itS=agentRecord->beginStates(); itS!=agentRecord->endStates(); itS++)
 		{
 			std::string stateName = itS->first;
-			std::list<std::string>::iterator itL = std::find(_states.begin(), _states.end(), stateName);
+			std::list<std::string>::const_iterator itL = std::find(_states.begin(), _states.end(), stateName);
 			if(itL==_states.end())
 			{
 				_states.push_back(stateName);

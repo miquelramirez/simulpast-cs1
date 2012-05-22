@@ -48,7 +48,7 @@ void AgentTypeSelection::setSimulationRecord( Engine::SimulationRecord * simulat
 		update();
 		return;
 	}
-	for(Engine::SimulationRecord::AgentTypesMap::iterator it=_simulationRecord->beginTypes(); it!=_simulationRecord->endTypes(); it++)
+	for(Engine::SimulationRecord::AgentTypesMap::const_iterator it=_simulationRecord->beginTypes(); it!=_simulationRecord->endTypes(); it++)
 	{
 		addItem(it->first.c_str());
 	}    

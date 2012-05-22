@@ -331,13 +331,13 @@ void ProjectConfiguration::checkConfigs()
 	}
 	std::cout << "creating default configs" << std::endl;
 
-	for(Engine::SimulationRecord::AgentTypesMap::iterator itType = _simulationRecord->beginTypes(); itType!=_simulationRecord->endTypes(); itType++)
+	for(Engine::SimulationRecord::AgentTypesMap::const_iterator itType = _simulationRecord->beginTypes(); itType!=_simulationRecord->endTypes(); itType++)
 	{
 		_agentsConfig.insert(make_pair( itType->first, new AgentConfiguration() ));
 	}	
 	
 	std::list<std::string> rastersNames;
-	for(Engine::SimulationRecord::RasterMap::iterator itRaster = _simulationRecord->beginRasters(); itRaster!=_simulationRecord->endRasters(); itRaster++)
+	for(Engine::SimulationRecord::RasterMap::const_iterator itRaster = _simulationRecord->beginRasters(); itRaster!=_simulationRecord->endRasters(); itRaster++)
 	{
 		int minValue = itRaster->second[0].getMinValue();
 		int maxValue = itRaster->second[0].getMaxValue();
@@ -346,7 +346,7 @@ void ProjectConfiguration::checkConfigs()
 		rastersNames.push_back(itRaster->first);
 	}
 
-	for(Engine::SimulationRecord::StaticRasterMap::iterator itRaster = _simulationRecord->beginStaticRasters(); itRaster!=_simulationRecord->endStaticRasters(); itRaster++)
+	for(Engine::SimulationRecord::StaticRasterMap::const_iterator itRaster = _simulationRecord->beginStaticRasters(); itRaster!=_simulationRecord->endStaticRasters(); itRaster++)
 	{
 		int minValue = itRaster->second.getMinValue();
 		int maxValue = itRaster->second.getMaxValue();
