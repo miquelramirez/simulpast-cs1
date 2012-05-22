@@ -100,7 +100,7 @@ const int & Config::getNumSteps() const
 	return _numSteps;
 }
 
-void Config::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, std::string& value )
+void Config::retrieveAttributeMandatory( TiXmlElement* elem, const std::string & attrName, std::string& value )
 {
 	const std::string * retrievedStr = elem->Attribute( attrName );
 	if (!retrievedStr)
@@ -113,7 +113,7 @@ void Config::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrNam
 	value = *retrievedStr;
 }
 
-void Config::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, std::string& value )
+void Config::retrieveAttributeOptional( TiXmlElement* elem, const std::string & attrName, std::string& value )
 {
 	const std::string * retrievedStr = elem->Attribute( attrName );
 	if(!retrievedStr)
@@ -126,7 +126,7 @@ void Config::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName
 	value = *retrievedStr;
 }
 
-void Config::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, int& value )
+void Config::retrieveAttributeMandatory( TiXmlElement* elem, const std::string & attrName, int& value )
 {
 	const std::string * retrievedStr = elem->Attribute( attrName );
 	if(!retrievedStr)
@@ -138,7 +138,7 @@ void Config::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrNam
 	value = atoi(retrievedStr->c_str());
 }
 
-void Config::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, int& value )
+void Config::retrieveAttributeOptional( TiXmlElement* elem, const std::string & attrName, int& value )
 {	
 	const std::string * retrievedStr = elem->Attribute( attrName );
 	if(!retrievedStr)
@@ -152,7 +152,7 @@ void Config::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName
 
 }
 
-void Config::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, float& value )
+void Config::retrieveAttributeMandatory( TiXmlElement* elem, const std::string & attrName, float& value )
 {
 	const std::string * retrievedStr = elem->Attribute( attrName );
 	if(!retrievedStr)
@@ -164,7 +164,7 @@ void Config::retrieveAttributeMandatory( TiXmlElement* elem, std::string attrNam
 	value = atof(retrievedStr->c_str());
 }
 
-void Config::retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, float& value )
+void Config::retrieveAttributeOptional( TiXmlElement* elem, const std::string & attrName, float& value )
 {
 	const std::string * retrievedStr = elem->Attribute( attrName );
 	if(!retrievedStr)

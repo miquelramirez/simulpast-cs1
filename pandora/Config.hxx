@@ -42,12 +42,12 @@ protected:
 	// number of time steps of the simulation
 	int _numSteps;
 
-	void retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, std::string& value );
-	void retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, std::string& value );
-	void retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, int& value );
-	void retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, int& value );
-	void retrieveAttributeMandatory( TiXmlElement* elem, std::string attrName, float& value );
-	void retrieveAttributeOptional( TiXmlElement* elem, std::string attrName, float& value );
+	void retrieveAttributeMandatory( TiXmlElement* elem, const std::string & attrName, std::string& value );
+	void retrieveAttributeOptional( TiXmlElement* elem, const std::string & attrName, std::string& value );
+	void retrieveAttributeMandatory( TiXmlElement* elem, const std::string & attrName, int& value );
+	void retrieveAttributeOptional( TiXmlElement* elem, const std::string & attrName, int& value );
+	void retrieveAttributeMandatory( TiXmlElement* elem, const std::string & attrName, float& value );
+	void retrieveAttributeOptional( TiXmlElement* elem, const std::string & attrName, float& value );
 
 public:
 	Config();
