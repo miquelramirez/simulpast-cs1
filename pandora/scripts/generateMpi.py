@@ -200,16 +200,16 @@ def writeFillPackage( f, agentName, attributesMap ):
 	f.write('{\n')
 	# basic params: _id, _position & _exists
 	f.write('\t'+agentName+'Package * package = new '+agentName+'Package;\n')
-	f.write('\tmemcpy(&package->_idMpi, _id.c_str(), std::min((unsigned int)32,sizeof(char)*_id.size()));\n')
-	f.write('\tpackage->_idMpi[std::min((unsigned int)32,_id.size())] = \'\\0\';\n')
+	f.write('\tmemcpy(&package->_idMpi, _id.c_str(), std::min((unsigned int)32,(unsigned int)(sizeof(char)*_id.size())));\n')
+	f.write('\tpackage->_idMpi[std::min((unsigned int)32,(unsigned int)_id.size())] = \'\\0\';\n')
 	f.write('\tpackage->_existsMpi = _exists;\n')
 	f.write('\tpackage->_positionMpi = _position;\n')
 	f.write('\n')
 	# dynamic params
 	for nameAttribute, typeAttribute in attributesMap.items():
 		if typeAttribute == "string":
-			f.write('\tmemcpy(&package->'+nameAttribute+'Mpi, '+nameAttribute+'.c_str(), std::min((unsigned int)32,sizeof(char)*'+nameAttribute+'.size()));\n');
-			f.write('\tpackage->'+nameAttribute+'Mpi[std::min((unsigned int)32,'+nameAttribute+'.size())] = \'\\0\';\n')
+			f.write('\tmemcpy(&package->'+nameAttribute+'Mpi, '+nameAttribute+'.c_str(), std::min((unsigned int)32,(unsigned int)(sizeof(char)*'+nameAttribute+'.size())));\n');
+			f.write('\tpackage->'+nameAttribute+'Mpi[std::min((unsigned int)32,(unsigned int)'+nameAttribute+'.size())] = \'\\0\';\n')
 		else:
 			f.write('\tpackage->'+nameAttribute+'Mpi = '+nameAttribute+';\n')
 	f.write('\treturn package;\n')
