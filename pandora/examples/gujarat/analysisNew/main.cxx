@@ -22,8 +22,12 @@
 #include "Exceptions.hxx"
 #include "SimulationRecord.hxx"
 
-#include "ResultsAnalysis.hxx"
-#include "Mean.hxx"
+#include "Results.hxx"
+#include "AgentMean.hxx"
+#include "AgentSum.hxx"
+#include "RasterMean.hxx"
+#include "RasterSum.hxx"
+#include "AgentNum.hxx"
 #include <iostream>
 
 int main(int argc, char *argv[])
@@ -31,14 +35,21 @@ int main(int argc, char *argv[])
 	try
 	{
 		Engine::SimulationRecord simRecord;
-		simRecord.loadHDF5("../data/gujarat.h5", false, true);
+		simRecord.loadHDF5("../data/gujarat.h5", true, true);
 
-		Analysis::ResultsAnalysis results(simRecord, "foo.csv", "HunterGatherer");
-		results.addAnalysis(new Analysis::Mean("children"));
-		results.addAnalysis(new Analysis::Mean("collected resources"));
+		Analysis::AgentResults agentResults(simRecord, "agents.csv", "HunterGatherer");
+		agentResults.addAnalysis(new Analysis::AgentNum());
+		agentResults.addAnalysis(new Analysis::AgentMean("children"));
+		agentResults.addAnalysis(new Analysis::AgentSum("children"));
+		agentResults.addAnalysis(new Analysis::AgentMean("collected resources"));
 
-		results.apply();
+		agentResults.apply();
 		
+		Analysis::RasterResults rasterResults(simRecord, "resources.csv", "resources");
+		rasterResults.addAnalysis(new Analysis::RasterMean());
+		rasterResults.addAnalysis(new Analysis::RasterSum());
+
+		rasterResults.apply();
 	}
 	catch( std::exception & exceptionThrown )
 	{

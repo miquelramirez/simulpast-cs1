@@ -24,7 +24,7 @@ else:
 	pythonLibraryName = 'pyPandora'
 
 
-srcFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx RasterLoader.cxx Action.cxx Logger.cxx Analysis.cxx Mean.cxx ResultsAnalysis.cxx')
+srcFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx RasterLoader.cxx Action.cxx Logger.cxx Analysis.cxx AgentMean.cxx AgentSum.cxx AgentNum.cxx Results.cxx RasterSum.cxx RasterMean.cxx')
 
 srcBaseFiles = [] 
 for src in srcFiles:

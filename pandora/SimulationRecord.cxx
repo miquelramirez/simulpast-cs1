@@ -264,6 +264,19 @@ SimulationRecord::RasterHistory & SimulationRecord::getRasterHistory( const std:
 	}
 	return it->second;
 }
+	
+const SimulationRecord::RasterHistory & SimulationRecord::getRasterHistory( const std::string & key ) const
+{
+	RasterMap::const_iterator it = _resources.find(key);
+	// the key does not exists
+	if(it==_resources.end())
+	{
+		std::stringstream oss;
+		oss << "SimulationRecord::getRasterHistory - searching for unknown key: " << key << " in resource field histories";
+		throw Engine::Exception(oss.str());
+	}
+	return it->second;
+}
 
 Engine::StaticRaster & SimulationRecord::getRasterTmp( const std::string & key, const int & step )
 {

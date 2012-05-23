@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "SimulationRecord.hxx"
+
 namespace Engine
 {
 	class AgentRecord;
@@ -19,17 +21,36 @@ protected:
 	std::string _name;
 	std::vector<float> _results;
 public:
-	Analysis( const std::string name );
+	Analysis( const std::string & name );
 	virtual ~Analysis();
 	void setNumTimeSteps( int numTimeSteps );
 
 	const std::string & getName() const;
-	virtual void computeAgent( const Engine::AgentRecord & ) = 0;
 	virtual void preProcess(){};
 	virtual void postProcess(){};
 	float getResult( int timeStep ) const;
 	
 };
+
+class RasterAnalysis : public Analysis
+{
+public:
+	RasterAnalysis( const std::string & name ) : Analysis(name)
+	{
+	}
+	virtual void computeRaster( const Engine::SimulationRecord::RasterHistory & rasterHistory ) = 0;
+};
+
+
+class AgentAnalysis : public Analysis
+{
+public:
+	AgentAnalysis( const std::string & name ) : Analysis(name)
+	{
+	}
+	virtual void computeAgent( const Engine::AgentRecord & ) = 0;
+};
+
 
 } // namespace Analysis
 

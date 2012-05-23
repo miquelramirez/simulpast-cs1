@@ -77,6 +77,7 @@ public:
 	bool loadHDF5( const std::string & fileName, const bool & loadRasters=true, const bool & loadAgents=true);
 	
 	RasterHistory & getRasterHistory( const std::string & key );
+	const RasterHistory & getRasterHistory( const std::string & key ) const;
 	Engine::Raster & getDynamicRaster( const std::string & key, const int & step );
 	Engine::StaticRaster & getStaticRaster( const std::string & key );
 	Engine::StaticRaster & getRasterTmp( const std::string & key, const int & step );
