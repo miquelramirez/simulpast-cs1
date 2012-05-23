@@ -24,14 +24,19 @@ else:
 	pythonLibraryName = 'pyPandora'
 
 
-srcFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx RasterLoader.cxx Action.cxx Logger.cxx Analysis.cxx AgentMean.cxx AgentSum.cxx AgentNum.cxx Results.cxx RasterSum.cxx RasterMean.cxx')
+coreFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx RasterLoader.cxx Action.cxx Logger.cxx')
+
+analysisFiles = Split('analysis/Analysis.cxx analysis/AgentMean.cxx analysis/AgentSum.cxx analysis/AgentNum.cxx analysis/Results.cxx analysis/RasterSum.cxx analysis/RasterMean.cxx')
+
+
+srcFiles = coreFiles + analysisFiles
 
 srcBaseFiles = [] 
 for src in srcFiles:
 	srcBaseFiles.append('build/'+src)
 
 if int(mareNostrum)==1:
-	includeDirs = Split('. /gpfs/apps/HDF5/1.6.5/include')
+	includeDirs = Split('. analysis/ /gpfs/apps/HDF5/1.6.5/include')
 	includeDirs += ['/gpfs/apps/BOOST/1_39_0/64/include/boost-1_39/']
 	includeDirs += ['/gpfs/apps/TINYXML/2.6.2/64/STL/include']
 	includeDirs += ['/gpfs/apps/GDAL/1.7.1/64/include']	
@@ -39,7 +44,7 @@ if int(mareNostrum)==1:
 	libs += ['gpfs']
 	libs += ['xl']
 else:
-	includeDirs = Split('. /usr/local/include /usr/local/hdf5/include /usr/lib/grass64/include/')
+	includeDirs = Split('. analysis/ /usr/local/include /usr/local/hdf5/include /usr/lib/grass64/include/')
 	libDirs = Split('. /usr/local/lib /usr/local/hdf5/lib/ /usr/lib/grass64/lib/')
 
 # if debug && mare nostrum mpitrace is added
@@ -59,6 +64,7 @@ envPython.VariantDir('build_py', '.')
 srcPyFiles = [] 
 for src in srcFiles:
 	srcPyFiles.append('build_py/'+src)
+
 srcPyFiles.append('build/pyBindings.cxx')
 srcPyFiles.append('build/MpiStubCode.cxx')
 
