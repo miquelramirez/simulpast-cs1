@@ -1,6 +1,6 @@
 
-#ifndef __Mean_hxx__
-#define __Mean_hxx__
+#ifndef __AgentMean_hxx__
+#define __AgentMean_hxx__
 
 #include "Analysis.hxx"
 
@@ -12,13 +12,13 @@ namespace Engine
 namespace Analysis
 {
 
-class Mean : public Analysis
+class AgentMean : public AgentAnalysis
 {
 	std::string _attributeName;
 	std::vector<int> _numAgents;
 public:
-	Mean( const std::string attributeName );
-	virtual ~Mean();
+	AgentMean( const std::string & attributeName );
+	virtual ~AgentMean();
 	void computeAgent( const Engine::AgentRecord & agentRecord );
 
 	void preProcess();
@@ -27,5 +27,5 @@ public:
 
 } // namespace Analysis
 
-#endif // __Mean_hxx__
+#endif // __AgentMean_hxx__
 
