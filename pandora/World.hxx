@@ -244,6 +244,7 @@ public:
 		{
 			_particularType = _type.compare("all");
 		}
+		virtual ~aggregator(){}
 		void operator()( T * neighbor )
 		{
 			if(neighbor==&_center || !neighbor->exists())
