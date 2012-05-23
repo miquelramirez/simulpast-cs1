@@ -29,8 +29,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <algorithm>
-#include <boost/mpi/communicator.hpp>
-#include <boost/mpi/environment.hpp>
 
 namespace Engine
 {
