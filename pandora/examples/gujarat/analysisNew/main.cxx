@@ -22,12 +22,12 @@
 #include "Exceptions.hxx"
 #include "SimulationRecord.hxx"
 
-#include "Results.hxx"
-#include "AgentMean.hxx"
-#include "AgentSum.hxx"
-#include "RasterMean.hxx"
-#include "RasterSum.hxx"
-#include "AgentNum.hxx"
+#include "analysis/Results.hxx"
+#include "analysis/AgentMean.hxx"
+#include "analysis/AgentSum.hxx"
+#include "analysis/RasterMean.hxx"
+#include "analysis/RasterSum.hxx"
+#include "analysis/AgentNum.hxx"
 #include <iostream>
 
 int main(int argc, char *argv[])
