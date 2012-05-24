@@ -30,7 +30,7 @@ protected:
 	virtual void concreteApply() const = 0;
 
 public:
-	Results( Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator );	
+	Results( const Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator );	
 	virtual ~Results();
 
 	void apply() const;
@@ -41,7 +41,7 @@ class AgentResults : public Results
 {
 	void concreteApply() const;
 public:
-	AgentResults( Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator = ";" );
+	AgentResults( const Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator = ";" );
 	virtual ~AgentResults(){}
 };
 
@@ -49,7 +49,7 @@ class RasterResults : public Results
 {
 	void concreteApply() const;
 public:
-	RasterResults( Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator = ";" );
+	RasterResults( const Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator = ";" );
 	virtual ~RasterResults(){}
 };
 

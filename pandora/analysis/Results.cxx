@@ -10,7 +10,7 @@
 namespace Analysis
 {
 
-Results::Results( Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator ) : _simRecord(simRecord), _outputFile(outputFile), _type(type), _separator(separator)
+Results::Results( const Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator ) : _simRecord(simRecord), _outputFile(outputFile), _type(type), _separator(separator)
 {
 }
 
@@ -76,7 +76,7 @@ void Results::addAnalysis( Analysis * analysis )
 }
 
 	
-AgentResults::AgentResults( Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator ) : Results(simRecord, outputFile, type, separator)
+AgentResults::AgentResults( const Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator ) : Results(simRecord, outputFile, type, separator)
 {
 }
 
@@ -115,7 +115,7 @@ void AgentResults::concreteApply() const
 	}	
 }
 
-RasterResults::RasterResults( Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator ) : Results(simRecord, outputFile, type, separator)
+RasterResults::RasterResults( const Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator ) : Results(simRecord, outputFile, type, separator)
 {
 }
 

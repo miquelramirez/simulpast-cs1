@@ -28,6 +28,14 @@
 #include "Simulation.hxx"
 #include "World.hxx"
 #include "Agent.hxx"
+#include "SimulationRecord.hxx"
+
+#include "analysis/AgentMean.hxx"
+#include "analysis/AgentSum.hxx"
+#include "analysis/AgentNum.hxx"
+#include "analysis/RasterSum.hxx"
+#include "analysis/RasterMean.hxx"
+#include "analysis/Results.hxx"
 
 typedef Engine::Point2D<int> Point2DInt;
 
@@ -221,5 +229,34 @@ BOOST_PYTHON_MODULE(libpyPandora)
 		.add_property("id", boost::python::make_function(&Engine::Agent::getId, boost::python::return_value_policy<boost::python::copy_const_reference>()))
 		.add_property("position", boost::python::make_function(&Engine::Agent::getPosition, boost::python::return_value_policy<boost::python::reference_existing_object>()), &Engine::Agent::setPosition )
 	;
+	
+	boost::python::class_< Engine::SimulationRecord>("SimulationRecordStub")
+		.def("loadHDF5", &Engine::SimulationRecord::loadHDF5)
+	;
+
+	// analysis
+	boost::python::class_< Analysis::AgentMean >("AgentMeanStub", boost::python::init< const std::string & >() )
+	;	
+	boost::python::class_< Analysis::AgentSum>("AgentSumStub", boost::python::init< const std::string & >() )
+	;	
+	boost::python::class_< Analysis::AgentNum>("AgentNumStub")
+	;	
+	
+	boost::python::class_< Analysis::RasterSum>("RasterSumStub")
+	;
+	boost::python::class_< Analysis::RasterMean>("RasterMeanStub")
+	;
+
+	boost::python::class_< Analysis::AgentResults>("AgentResultsStub", boost::python::init< const Engine::SimulationRecord & , const std::string &, const std::string &, const std::string & >() )
+	.def("compute", &Analysis::AgentResults::apply)
+	.def("addAnalysis", &Analysis::AgentResults::addAnalysis)
+	;	
+
+	boost::python::class_< Analysis::RasterResults>("RasterResultsStub", boost::python::init< Engine::SimulationRecord & , const std::string &, const std::string &, const std::string & >() )
+	.def("compute", &Analysis::RasterResults::apply)
+	.def("addAnalysis", &Analysis::RasterResults::addAnalysis)
+	;	
+
+	
 }
 
