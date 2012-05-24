@@ -143,7 +143,7 @@ def createFactoryMethods( listAgents, factoryFile, namespaces, listAttributesMap
 	for i in range(0, len(listAgents)):
 		print '\t\tadding: ' + listAgents[i] + ' to factory file: ' + factoryFile
 		f.write('#include <'+listAgents[i]+'.hxx>\n')
-		f.write('#include <'+listAgents[i]+'_mpi.hxx>\n')
+		f.write('#include "'+listAgents[i]+'_mpi.hxx"\n')
 	f.write('\n')
 	f.write('namespace Engine\n')
 	f.write('{\n')
@@ -278,7 +278,7 @@ def createMpiCode( agentName, source, header, namespace, parent, attributesMap, 
 	f = open('mpiCode/'+agentName+'_mpi.cxx', 'w')
 	# header
 	f.write('\n')
-	f.write('#include <'+agentName+'_mpi.hxx>\n')
+	f.write('#include "'+agentName+'_mpi.hxx"\n')
 	f.write('#include <'+agentName+'.hxx>\n')
 	f.write('#include <cstring>\n')
 	f.write('#include <mpi.h>\n')
