@@ -23,8 +23,10 @@
 #include "World.hxx"
 #include "Agent.hxx"
 #include "Exceptions.hxx"
-#include "Statistics.hxx"
 #include "MpiFactory.hxx"
+
+#include "GeneralState.hxx"
+#include "Statistics.hxx"
 
 #include <cstdlib>
 #include <iostream>
@@ -41,8 +43,8 @@ World::World( const Simulation & simulation, const int & overlap, const bool & a
     , _step(0)
     , _overlap(overlap)
     , _serializer(fileName)
-    , _initialTime(0.0f)
     , _searchAgents(true)
+    , _initialTime(0.0f)
 {
 
 }
@@ -1088,16 +1090,6 @@ bool World::checkPosition( const Point2D<int> & newPosition )
 	return true;
 }
 
-Statistics & World::getStatistics()
-{
-	return _statistics;
-}
-
-const Statistics & World::getStatistics() const
-{
-	return _statistics;
-}
-
 Simulation & World::getSimulation()
 {
 	return _simulation;
@@ -1847,7 +1839,7 @@ Point2D<int> World::getRandomPosition()
 {
 	while(1)
 	{
-		Engine::Point2D<int> pos(_statistics.getUniformDistValue(0,_boundaries._size._x-1), _statistics.getUniformDistValue(0,_boundaries._size._y-1));
+		Engine::Point2D<int> pos(GeneralState::statistics().getUniformDistValue(0,_boundaries._size._x-1), GeneralState::statistics().getUniformDistValue(0,_boundaries._size._y-1));
 		pos += _boundaries._origin;
 		if(checkPosition(pos) && _boundaries.isInside(pos))
 		{

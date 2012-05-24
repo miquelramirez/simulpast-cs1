@@ -27,6 +27,8 @@
 #include "Serializer.hxx"
 #include "Action.hxx"
 #include "Logger.hxx"
+#include "GeneralState.hxx"
+#include "Statistics.hxx"
 
 #include <iostream>
 
@@ -130,7 +132,7 @@ bool Agent::isType( const std::string & type )
 	return false;
 }
 
-std::string Agent::getType()
+std::string Agent::getType() const
 {
 	unsigned int typePos = _id.find_first_of("_");
 	return _id.substr(0,typePos);
@@ -138,7 +140,7 @@ std::string Agent::getType()
 
 void Agent::logAgentState()
 {
-	Logger::instance().log( getId()) << "Agent: " << this << " executing in timestep: " << getWorld()->getCurrentTimeStep() << std::endl;
+	GeneralState::logger().log( getId()) << "Agent: " << this << " executing in timestep: " << getWorld()->getCurrentTimeStep() << std::endl;
 }
 
 void Agent::executeActions()
@@ -152,7 +154,7 @@ void Agent::executeActions()
 		//if(_spentTime<=_availableTime)
 		//{
 		nextAction->execute((Engine::Agent&)(*this));
-		Logger::instance().log( getId()) << "\tagent.action[" << i << "]=" << nextAction->describe() << std::endl;
+		GeneralState::logger().log( getId()) << "\tagent.action[" << i << "]=" << nextAction->describe() << std::endl;
 		//}
 		it = _actions.erase(it);
 		delete nextAction;
@@ -163,11 +165,10 @@ void Agent::executeActions()
 void Agent::setRandomPosition()
 {
 	const Engine::Rectangle<int> & worldBoundaries = _world->getBoundaries();
-	Engine::Statistics & statistics = _world->getStatistics();
 	while(1)
 	{
-		int x = statistics.getUniformDistValue(worldBoundaries._origin._x,worldBoundaries._origin._x+worldBoundaries._size._x);
-		int y = statistics.getUniformDistValue(worldBoundaries._origin._y,worldBoundaries._origin._y+worldBoundaries._size._y);
+		int x = GeneralState::statistics().getUniformDistValue(worldBoundaries._origin._x,worldBoundaries._origin._x+worldBoundaries._size._x);
+		int y = GeneralState::statistics().getUniformDistValue(worldBoundaries._origin._y,worldBoundaries._origin._y+worldBoundaries._size._y);
 		Engine::Point2D<int> position(x,y);
 		if(_world->checkPosition(position))
 		{

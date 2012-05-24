@@ -29,8 +29,9 @@
 namespace Engine
 {
 
-Logger * Logger::_instance = 0;
+//Logger * Logger::_instance = 0;
 
+	/*
 Logger & Logger::instance()
 {
 	if(!_instance)
@@ -41,9 +42,10 @@ Logger & Logger::instance()
 	}
 	return *_instance;
 }
-
+*/
 Logger::Logger()
 {
+	boost::filesystem::create_directory("logs");
 }
 
 Logger::~Logger()

@@ -41,7 +41,6 @@ enum MpiMessageType
 #include "Raster.hxx"
 #include "StaticRaster.hxx"
 #include "Rectangle.hxx"
-#include "Statistics.hxx"
 #include "Point2D.hxx"
 #include "Serializer.hxx"
 #include "Simulation.hxx"
@@ -97,9 +96,6 @@ protected:
 
 	//! false if each cell can have just one agent
 	bool _allowMultipleAgentsPerCell;
-
-	//! random number generator
-	Statistics _statistics;
 
 	//virtual void * createPackage( const std::string & type ) = 0;
 	//virtual Agent * createAgentFromPackage(  const std::string & type, void * package ) = 0;
@@ -320,10 +316,6 @@ public:
 	void registerDynamicRaster( const std::string & key, const bool & serialize );
 	//! checks if position parameter 'newPosition' is free to occupy by an agent, 'newPosition' is inside of the world and the maximum of agent cell-occupancy is not exceeded.
 	bool checkPosition( const Point2D<int> & newPosition );
-
-	//! returns the statistics of the simulation.
-	Statistics & getStatistics();
-	const Statistics & getStatistics() const;
 
 	//! returns the simulation characterization of this world
 	Simulation & getSimulation();

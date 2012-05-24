@@ -23,6 +23,7 @@
 #include "StaticRaster.hxx"
 #include "Exceptions.hxx"
 #include "World.hxx"
+#include <limits>
 
 namespace Engine
 {

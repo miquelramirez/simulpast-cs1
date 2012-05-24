@@ -246,11 +246,6 @@ void Serializer::serializeStaticRaster( const std::string & key, StaticRaster & 
 
 void Serializer::serializeRaster( StaticRaster & raster, World & world, const std::string & datasetKey )
 {
-	int posInsideMatrix[2];
-	// initial pos in environment where data will be copied
-	posInsideMatrix[0] = 0;
-	posInsideMatrix[1] = 0;
-
 	// if it is not a border, it will copy from overlap
 	hsize_t	offset[2];
     offset[0] = world.getBoundaries()._origin._y;

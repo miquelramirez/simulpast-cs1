@@ -99,7 +99,7 @@ public:
 	virtual void * fillPackage() = 0;
 	// this function returns true if the type of the agent is the one passed by reference
 	bool isType( const std::string & type );
-	std::string getType();
+	std::string getType() const;
 	
 	// defined in children, it must use serializeAttribute to save valuble data
 	virtual void serialize()=0;
