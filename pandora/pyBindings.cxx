@@ -28,6 +28,7 @@
 #include "Simulation.hxx"
 #include "World.hxx"
 #include "Agent.hxx"
+#include "AgentRecord.hxx"
 #include "SimulationRecord.hxx"
 
 #include "analysis/AgentMean.hxx"
@@ -36,6 +37,9 @@
 #include "analysis/RasterSum.hxx"
 #include "analysis/RasterMean.hxx"
 #include "analysis/Results.hxx"
+#include "analysis/Analysis.hxx"
+
+#include <string>
 
 typedef Engine::Point2D<int> Point2DInt;
 
@@ -109,7 +113,7 @@ public:
 class AgentWrap : public Engine::Agent, public boost::python::wrapper<Engine::Agent>
 {
 public:
-	AgentWrap( const std::string & id ) : Engine::Agent(id)
+	AgentWrap( const std::string & id ) : Agent(id)
 	{
 	}
 
@@ -150,12 +154,10 @@ public:
 	}
 };
 
-
-
 class WorldWrap : public Engine::World, public boost::python::wrapper<Engine::World>
 {
 public:
-	WorldWrap( const Engine::Simulation & simulation, const int & overlap, const bool & allowMultipleAgentsPerCell, const std::string & fileName ) : Engine::World( simulation, overlap, allowMultipleAgentsPerCell, fileName)
+	WorldWrap( const Engine::Simulation & simulation, const int & overlap, const bool & allowMultipleAgentsPerCell, const std::string & fileName ) : World( simulation, overlap, allowMultipleAgentsPerCell, fileName)
 	{
 	}
 
@@ -182,6 +184,51 @@ public:
 		World::stepEnvironment();
 	}
 };
+
+class AgentAnalysisWrap : public Analysis::AgentAnalysis, public boost::python::wrapper<Analysis::AgentAnalysis>
+{
+public:
+	AgentAnalysisWrap( const std::string & name ) : AgentAnalysis(name)
+	{
+	}
+
+	void computeAgent( const Engine::AgentRecord & record )
+	{
+		this->get_override("computeAgent")(record);
+	}
+};
+
+class RasterAnalysisWrap : public Analysis::RasterAnalysis, public boost::python::wrapper<Analysis::RasterAnalysis>
+{
+public:
+	RasterAnalysisWrap( const std::string & name ) : RasterAnalysis(name)
+	{
+	}
+
+	void computeRaster( const Engine::SimulationRecord::RasterHistory & rasterHistory )
+	{
+		this->get_override("computeRaster")(rasterHistory);
+	}
+};
+
+class ResultsWrap : public Analysis::Results, public boost::python::wrapper<Analysis::Results>
+{
+public:
+	ResultsWrap( const Engine::SimulationRecord & record, const std::string & outputFile, const std::string & type, const std::string & separator ) : Results(record, outputFile, type, separator)
+	{
+	}
+
+	void concreteApply() const
+	{
+		this->get_override("concreteApply")();
+	}
+};
+
+void passAnalysisOwnership( Analysis::Results & results, std::auto_ptr<Analysis::Analysis> analysisPtr )
+{
+	results.addAnalysis(analysisPtr.get());
+	analysisPtr.release();
+}
 
 BOOST_PYTHON_MODULE(libpyPandora)
 {
@@ -234,29 +281,54 @@ BOOST_PYTHON_MODULE(libpyPandora)
 		.def("loadHDF5", &Engine::SimulationRecord::loadHDF5)
 	;
 
-	// analysis
-	boost::python::class_< Analysis::AgentMean >("AgentMeanStub", boost::python::init< const std::string & >() )
-	;	
-	boost::python::class_< Analysis::AgentSum>("AgentSumStub", boost::python::init< const std::string & >() )
-	;	
-	boost::python::class_< Analysis::AgentNum>("AgentNumStub")
-	;	
-	
-	boost::python::class_< Analysis::RasterSum>("RasterSumStub")
+	// analysis base
+	boost::python::class_< Analysis::Analysis, std::auto_ptr<Analysis::Analysis> >("AnalysisStub", boost::python::init< const std::string & >() )
 	;
-	boost::python::class_< Analysis::RasterMean>("RasterMeanStub")
+	// agent analysis
+	boost::python::class_< AgentAnalysisWrap, std::auto_ptr<AgentAnalysisWrap> , boost::python::bases<Analysis::Analysis>, boost::noncopyable >("AgentAnalysisStub", boost::python::init< const std::string & >() )
+		.def("computeAgent", boost::python::pure_virtual(&Analysis::AgentAnalysis::computeAgent))
 	;
+	boost::python::implicitly_convertible< std::auto_ptr< Analysis::AgentAnalysis >, std::auto_ptr< Analysis::Analysis > >();	
 
-	boost::python::class_< Analysis::AgentResults>("AgentResultsStub", boost::python::init< const Engine::SimulationRecord & , const std::string &, const std::string &, const std::string & >() )
-	.def("compute", &Analysis::AgentResults::apply)
-	.def("addAnalysis", &Analysis::AgentResults::addAnalysis)
-	;	
-
-	boost::python::class_< Analysis::RasterResults>("RasterResultsStub", boost::python::init< Engine::SimulationRecord & , const std::string &, const std::string &, const std::string & >() )
-	.def("compute", &Analysis::RasterResults::apply)
-	.def("addAnalysis", &Analysis::RasterResults::addAnalysis)
-	;	
-
+	// raster analysis
+	boost::python::class_< RasterAnalysisWrap, std::auto_ptr<RasterAnalysisWrap> , boost::python::bases<Analysis::Analysis>, boost::noncopyable >("RasterAnalysisStub", boost::python::init< const std::string & >() )
+		.def("computeRaster", boost::python::pure_virtual(&Analysis::RasterAnalysis::computeRaster))
+	;
+	boost::python::implicitly_convertible< std::auto_ptr< Analysis::RasterAnalysis >, std::auto_ptr< Analysis::Analysis > >();	
 	
+	// concrete agent analysis
+	boost::python::class_< Analysis::AgentMean, std::auto_ptr< Analysis::AgentMean> , boost::python::bases<Analysis::AgentAnalysis> >("AgentMeanStub", boost::python::init< const std::string & >() )
+	;
+	boost::python::implicitly_convertible< std::auto_ptr< Analysis::AgentMean >, std::auto_ptr< Analysis::AgentAnalysis > >();
+	
+	boost::python::class_< Analysis::AgentSum, std::auto_ptr< Analysis::AgentSum> , boost::python::bases<Analysis::AgentAnalysis> >("AgentSumStub", boost::python::init< const std::string & >() )
+	;
+	boost::python::implicitly_convertible< std::auto_ptr< Analysis::AgentSum >, std::auto_ptr< Analysis::AgentAnalysis > >();
+
+	boost::python::class_< Analysis::AgentNum, std::auto_ptr< Analysis::AgentNum> , boost::python::bases<Analysis::AgentAnalysis> >("AgentNumStub")
+	;
+	boost::python::implicitly_convertible< std::auto_ptr< Analysis::AgentNum >, std::auto_ptr< Analysis::AgentAnalysis > >();
+
+	// concrete raster analysis
+	boost::python::class_< Analysis::RasterMean, std::auto_ptr< Analysis::RasterMean> , boost::python::bases<Analysis::RasterAnalysis> >("RasterMeanStub")
+	;
+	boost::python::implicitly_convertible< std::auto_ptr< Analysis::RasterMean >, std::auto_ptr< Analysis::RasterAnalysis > >();
+
+	boost::python::class_< Analysis::RasterSum, std::auto_ptr< Analysis::RasterSum> , boost::python::bases<Analysis::RasterAnalysis> >("RasterSumStub")
+	;
+	boost::python::implicitly_convertible< std::auto_ptr< Analysis::RasterSum >, std::auto_ptr< Analysis::RasterAnalysis > >();
+
+	// Results classes
+	boost::python::class_< ResultsWrap, boost::noncopyable >("ResultsStub", boost::python::init< const Engine::SimulationRecord & , const std::string &, const std::string &, const std::string & >() )
+	.def("compute", &Analysis::Results::apply)
+	.def("addAnalysis", &passAnalysisOwnership)
+	.def("concreteApply", boost::python::pure_virtual(&Analysis::Results::concreteApply))
+	;	
+
+	boost::python::class_< Analysis::AgentResults, boost::python::bases< Analysis::Results> >("AgentResultsStub", boost::python::init< const Engine::SimulationRecord & , const std::string &, const std::string &, const std::string & >() )
+	;
+	boost::python::class_< Analysis::RasterResults, boost::python::bases< Analysis::Results> >("RasterResultsStub", boost::python::init< const Engine::SimulationRecord & , const std::string &, const std::string &, const std::string & >() )
+	;	
+
 }
 
