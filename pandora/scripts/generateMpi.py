@@ -136,14 +136,14 @@ def createFactoryMethods( listAgents, factoryFile, namespaces, listAttributesMap
 	print '\tcreating mpi factory: ' + factoryFile
 	# headers
 	f.write('\n')
-	f.write('#include "MpiFactory.hxx"\n')
-	f.write('#include "Exceptions.hxx"\n')
+	f.write('#include <MpiFactory.hxx>\n')
+	f.write('#include <Exceptions.hxx>\n')
 	f.write('#include <sstream>\n')
 	f.write('\n')
 	for i in range(0, len(listAgents)):
 		print '\t\tadding: ' + listAgents[i] + ' to factory file: ' + factoryFile
-		f.write('#include "'+listAgents[i]+'.hxx"\n')
-		f.write('#include "'+listAgents[i]+'_mpi.hxx"\n')
+		f.write('#include <'+listAgents[i]+'.hxx>\n')
+		f.write('#include <'+listAgents[i]+'_mpi.hxx>\n')
 	f.write('\n')
 	f.write('namespace Engine\n')
 	f.write('{\n')
@@ -170,7 +170,7 @@ def createMpiHeader( agentName, source, header, attributesMap ):
 	f.write('#ifndef __'+agentName+'_mpi_hxx\n')
 	f.write('#define __'+agentName+'_mpi_hxx\n')
 	f.write('\n')
-	f.write('#include "Point2D.hxx"\n')
+	f.write('#include <Point2D.hxx>\n')
 	f.write('\n')
 	# struct Package
 	f.write('typedef struct\n')
@@ -278,8 +278,8 @@ def createMpiCode( agentName, source, header, namespace, parent, attributesMap, 
 	f = open('mpiCode/'+agentName+'_mpi.cxx', 'w')
 	# header
 	f.write('\n')
-	f.write('#include "'+agentName+'_mpi.hxx"\n')
-	f.write('#include "'+agentName+'.hxx"\n')
+	f.write('#include <'+agentName+'_mpi.hxx>\n')
+	f.write('#include <'+agentName+'.hxx>\n')
 	f.write('#include <cstring>\n')
 	f.write('#include <mpi.h>\n')
 	f.write('\n')
