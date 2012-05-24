@@ -13,7 +13,8 @@ HunterGathererMDPState.cxx HunterGathererMDPModel.cxx DoNothingAction.cxx
 AgentController.cxx HunterGathererProgrammedController.cxx HunterGathererDecisionTreeController.cxx 
 HunterGathererMDPController.cxx GujaratDemographics.cxx OriginalDemographics.cxx 
 RamirezDemographics.cxx CaloricRequirementsTable.cxx AgentInitializer.cxx
-FixedAgentInitializer.cxx EstablishPlotAction.cxx SowAction.cxx HarvestAction.cxx MaintainPlotAction.cxx APMoveHomeAction.cxx""" )
+FixedAgentInitializer.cxx EstablishPlotAction.cxx SowAction.cxx HarvestAction.cxx MaintainPlotAction.cxx APMoveHomeAction.cxx
+GujaratState.cxx""" )
 
 
 import os, sys

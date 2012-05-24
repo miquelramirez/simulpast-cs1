@@ -3,6 +3,7 @@
 #include "HunterGatherer.hxx"
 
 #include "Logger.hxx"
+#include "GeneralState.hxx"
 
 namespace Gujarat
 {
@@ -23,8 +24,8 @@ HunterGathererMDPController::~HunterGathererMDPController()
 
 MDPAction * HunterGathererMDPController::selectAction()
 {
-	Engine::Logger::instance().log(agentRef().getId()+"_controller") << "timestep=" << agentRef().getWorld()->getCurrentTimeStep() << std::endl;
-	Engine::Logger::instance().log(agentRef().getId()+"_controller")<< "\tagent.position=" << agentRef().getPosition() << std::endl;
+	Engine::GeneralState::logger().log(agentRef().getId()+"_controller") << "timestep=" << agentRef().getWorld()->getCurrentTimeStep() << std::endl;
+	Engine::GeneralState::logger().log(agentRef().getId()+"_controller")<< "\tagent.position=" << agentRef().getPosition() << std::endl;
 	
 	_model->reset();
 
@@ -37,7 +38,7 @@ MDPAction * HunterGathererMDPController::selectAction()
 	
 	delete uctPolicy;
 
-	Engine::Logger::instance().log(agentRef().getId()+"_controller") << "\taction_selected=" << a->describe() << std::endl;
+	Engine::GeneralState::logger().log(agentRef().getId()+"_controller") << "\taction_selected=" << a->describe() << std::endl;
 	
 	return a;
 }

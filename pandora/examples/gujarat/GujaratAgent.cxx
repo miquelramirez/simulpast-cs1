@@ -6,7 +6,8 @@
 #include "CaloricRequirementsTable.hxx"
 #include "GujaratConfig.hxx"
 #include "Logger.hxx"
-
+#include "GeneralState.hxx"
+#include "GujaratState.hxx"
 #include <sstream>
 
 namespace Gujarat
@@ -15,7 +16,7 @@ namespace Gujarat
 GujaratAgent::GujaratAgent( const std::string & id ) 
 	: Engine::Agent(id), 
 	 _spentTime(0), _collectedResources(0), _age(0),
-	_socialRange( 50 ), _starved( false ), _caloricRequirements(0)
+	_socialRange( 50 ), _starved( false )
 {
 	
 	_emigrationProbability = 0.0;
@@ -40,7 +41,7 @@ int	GujaratAgent::convertBiomassToCalories( int biomass ) const
 
 int	GujaratAgent::computeEffectiveBiomassForaged( int nominal ) const
 {
-	return _world->getStatistics().getNormalDistValue(0, nominal);
+	return Engine::GeneralState::statistics().getNormalDistValue(0, nominal);
 	
 }
 
@@ -55,47 +56,47 @@ void GujaratAgent::updateKnowledge()
 
 void GujaratAgent::logAgentState()
 {
-	Engine::Logger::instance().log( getId()) << "timestep=" << getWorld()->getCurrentTimeStep() << std::endl;
-	Engine::Logger::instance().log( getId()) << "\tagent.collectedResourcesBeforeAction=" << getOnHandResources() << std::endl;	
-	Engine::Logger::instance().log( getId()) << "\tagent.nrAdults=" << getNrAvailableAdults() << std::endl;
-	Engine::Logger::instance().log( getId()) << "\tagent.adultAges=[";
+	Engine::GeneralState::logger().log( getId()) << "timestep=" << getWorld()->getCurrentTimeStep() << std::endl;
+	Engine::GeneralState::logger().log( getId()) << "\tagent.collectedResourcesBeforeAction=" << getOnHandResources() << std::endl;	
+	Engine::GeneralState::logger().log( getId()) << "\tagent.nrAdults=" << getNrAvailableAdults() << std::endl;
+	Engine::GeneralState::logger().log( getId()) << "\tagent.adultAges=[";
 	for ( unsigned k = 0; k < _populationAges.size(); k++ )
 	{
 		if ( _populationAges[k] >= ((GujaratWorld*)_world)->getConfig()._adulthoodAge )
 		{
-			Engine::Logger::instance().log( getId()) << _populationAges[k] << ",";
+			Engine::GeneralState::logger().log( getId()) << _populationAges[k] << ",";
 		}
 	}
 
-	Engine::Logger::instance().log( getId()) << "]" << std::endl; 
-	Engine::Logger::instance().log( getId()) <<  "\tagent.nrChildren=" << getNrChildren() << std::endl;
-	Engine::Logger::instance().log( getId()) << "\tagent.childrenAges=[";
+	Engine::GeneralState::logger().log( getId()) << "]" << std::endl; 
+	Engine::GeneralState::logger().log( getId()) <<  "\tagent.nrChildren=" << getNrChildren() << std::endl;
+	Engine::GeneralState::logger().log( getId()) << "\tagent.childrenAges=[";
 	for ( unsigned k = 0; k < _populationAges.size(); k++ )
 	{
 		if ( _populationAges[k] >= 0 && _populationAges[k] < ((GujaratWorld*)_world)->getConfig()._adulthoodAge )
 		{
-			Engine::Logger::instance().log( getId()) << _populationAges[k] << ",";	
+			Engine::GeneralState::logger().log( getId()) << _populationAges[k] << ",";	
 		}
 	}
-	Engine::Logger::instance().log( getId()) << "]" << std::endl;
-	Engine::Logger::instance().log( getId()) << "\tagent.resourcesNeeded=" << computeConsumedResources(1) << std::endl; 
+	Engine::GeneralState::logger().log( getId()) << "]" << std::endl;
+	Engine::GeneralState::logger().log( getId()) << "\tagent.resourcesNeeded=" << computeConsumedResources(1) << std::endl; 
 }
 
 void GujaratAgent::updateState()
 {
-	Engine::Logger::instance().log( getId()) << "\tagent.collectedResourcesAfterAction=" << getOnHandResources() << std::endl;	
+	Engine::GeneralState::logger().log( getId()) << "\tagent.collectedResourcesAfterAction=" << getOnHandResources() << std::endl;	
 	_collectedResources -= computeConsumedResources(1);
-	Engine::Logger::instance().log( getId()) << "\tagent.collectedResourcesAfterConsumption=" << getOnHandResources() << std::endl;	
+	Engine::GeneralState::logger().log( getId()) << "\tagent.collectedResourcesAfterConsumption=" << getOnHandResources() << std::endl;	
 	if ( _collectedResources < 0 )
 	{
 		_starved = true;
 		_emigrationProbability += 1.0f/(float)(((GujaratWorld*)_world)->getConfig()._daysPerSeason);
-		Engine::Logger::instance().log( getId()) << "\tagent.isStarving=yes" << std::endl;
+		Engine::GeneralState::logger().log( getId()) << "\tagent.isStarving=yes" << std::endl;
 		_collectedResources = 0;
 	}
 	else
 	{
-		Engine::Logger::instance().log( getId()) << "\tagent.isStarving=no" << std::endl;
+		Engine::GeneralState::logger().log( getId()) << "\tagent.isStarving=no" << std::endl;
 		_starved = false;
 		_reproductionProbability += 1.0/(float)(3*((GujaratWorld*)_world)->getConfig()._daysPerSeason);
 		// Decay factor, modeling spoilage
@@ -109,7 +110,7 @@ void GujaratAgent::updateState()
 	{
 		if( checkEmigration() )
 		{
-			Engine::Logger::instance().log( getId()) << "\tagent.emigration=yes" << std::endl;
+			Engine::GeneralState::logger().log( getId()) << "\tagent.emigration=yes" << std::endl;
 			_world->removeAgent(this);
 			return;
 		}
@@ -130,13 +131,13 @@ void GujaratAgent::updateState()
 
 bool	GujaratAgent::checkEmigration()
 {
-	return _demographicsModel->checkEmigration();
+	return GujaratState::demographics().checkEmigration(*this);
 
 }
 
 void	GujaratAgent::checkStarvationMortality()
 {
-	_demographicsModel->checkStarvationMortality();
+	GujaratState::demographics().checkStarvationMortality(*this);
 }
 
 double 	GujaratAgent::getTimeSpentForagingTile() const
@@ -262,7 +263,7 @@ void GujaratAgent::updateAges()
 
 void GujaratAgent::checkReproduction()
 {
-	_demographicsModel->checkReproduction();
+	GujaratState::demographics().checkReproduction(*this);
 }
 
 int GujaratAgent::computeConsumedResources( int timeSteps ) const
@@ -271,7 +272,10 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 	for(unsigned int index=0; index<_populationAges.size(); index++)
 	{
 		if(_populationAges[index]!=-1)
-			requiredResources += _caloricRequirements->getCaloriesFor(_populationAges[index]);
+		{
+			CaloricRequirementsTable & foo = GujaratState::caloricRequirements(getType());
+			requiredResources += foo.getCaloriesFor(_populationAges[index]);
+		}
 	}
 	
 	requiredResources += _foodNeedsForReproduction;
@@ -281,7 +285,7 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 
 void GujaratAgent::checkMortality()
 {
-	_demographicsModel->checkMortality();
+	GujaratState::demographics().checkMortality(*this);
 }
 
 void GujaratAgent::serialize()
@@ -327,7 +331,7 @@ void	GujaratAgent::initializePosition( )
 	// 1. select settlement area
 	GujaratWorld* world = dynamic_cast<GujaratWorld*>(getWorld());
 	const  std::vector< Engine::Rectangle<int> >& areas = world->getSettlementAreas()->getAreas();
-	unsigned die = getWorld()->getStatistics().getUniformDistValue(0, areas.size()-1);
+	unsigned die = Engine::GeneralState::statistics().getUniformDistValue(0, areas.size()-1);
 	Engine::Rectangle<int> area = areas[die];
 	std::vector< Engine::Point2D<int> > dunes;
 	for ( int x = area._origin._x; x < area._origin._x + area._size._x; x++ )
@@ -338,7 +342,7 @@ void	GujaratAgent::initializePosition( )
 				dunes.push_back( p );
 		}
 	assert( !dunes.empty() );
-	die = getWorld()->getStatistics().getUniformDistValue(0, dunes.size()-1);
+	die = Engine::GeneralState::statistics().getUniformDistValue(0, dunes.size()-1);
 	setPosition( dunes[die] );
 }
 
@@ -387,7 +391,7 @@ void	GujaratAgent::decimatePopulation()
 	{
 		if(_populationAges[index]!=-1)
 		{	
-			if(_world->getStatistics().getUniformDistValue(0,9)==0)
+			if(Engine::GeneralState::statistics().getUniformDistValue(0,9)==0)
 			{
 				_populationAges[index]=-1;
 			}
@@ -403,7 +407,7 @@ void	GujaratAgent::checkDeath( int minAge, int maxAge, int chance )
 		if ( _populationAges[index] < minAge
 			|| _populationAges[index] >= maxAge )
 			continue;
-		int die = _world->getStatistics().getUniformDistValue(0,1000);
+		int die = Engine::GeneralState::statistics().getUniformDistValue(0,1000);
 		if ( die < chance )
 			_populationAges[index] = -1;
 	}
@@ -415,7 +419,7 @@ void	GujaratAgent::checkDeathByAging( int minAge )
 	{
 		if ( _populationAges[index] <= minAge ) continue;
 		int chance = _populationAges[index] - minAge;
-		int die = _world->getStatistics().getUniformDistValue(0,100);
+		int die = Engine::GeneralState::statistics().getUniformDistValue(0,100);
 		if ( die < chance )
 			_populationAges[index] = -1;
 	}

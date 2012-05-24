@@ -2,6 +2,9 @@
 #include "CultivatedField.hxx"
 #include "GujaratWorld.hxx"
 
+#include "Statistics.hxx"
+#include "GeneralState.hxx"
+
 namespace Gujarat
 {
 
@@ -32,7 +35,7 @@ int CultivatedField::harvest()
 	int harvestResult = 0;
 	int maxResources = _world.getValue("resources", getPosition());
 	float potentialResources = (float)_potential/100.0f*(float)maxResources;
-	harvestResult = _world.getStatistics().getUniformDistValue( (int)potentialResources, maxResources);
+	harvestResult = Engine::GeneralState::statistics().getUniformDistValue( (int)potentialResources, maxResources);
 	_potential = 0;
 	return harvestResult;
 }
@@ -54,7 +57,7 @@ bool  CultivatedField::isDomesticated()
 
 void  CultivatedField::increasePotential()
 {
-	_potential += _world.getStatistics().getUniformDistValue(0,5);
+	_potential += Engine::GeneralState::statistics().getUniformDistValue(0,5);
 	if ( _potential > 100 ) _potential = 100;
 }
 

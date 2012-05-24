@@ -4,22 +4,20 @@
 #include "HunterGathererMDPConfig.hxx"
 #include "FixedAgentInitializer.hxx"
 
+#include "GujaratState.hxx"
+
 namespace Gujarat
 {
 
 GujaratConfig::GujaratConfig() 
 	: _size(0), _soilFile("no loaded file"), _demFile("no loaded file"), _duneMapFile("no loaded file"), _climateSeed(1),
-	_hunterGathererController( "Rule-Based" ), _hgCaloryRequirements(0), _apCaloryRequirements(0),
-	_hgInitializer(0), _apInitializer(0), _controllerConfig(0)
+	_hunterGathererController( "Rule-Based" ), _hgInitializer(0), _apInitializer(0), _controllerConfig(0)
 {
 }
   
 GujaratConfig::~GujaratConfig()
 {
-	if ( _hgCaloryRequirements )
-		delete _hgCaloryRequirements;
-	if ( _apCaloryRequirements )
-		delete _apCaloryRequirements;
+
 }
 
 void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
@@ -63,6 +61,8 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	retrieveAttributeMandatory( element, "forageTimeCost", _forageTimeCost );
 	retrieveAttributeMandatory( element, "availableForageTime", _availableForageTime );
 	retrieveAttributeMandatory( element, "demographicsModel", _demographicsModel );
+	GujaratState::setDemographics(_demographicsModel);
+
 	retrieveAttributeMandatory( element, "controllerType", _hunterGathererController );
 	
 	_hunterGathererController = element->Attribute("controllerType");
@@ -94,7 +94,7 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		throw Engine::Exception(sstr.str());	
 	}
 
-	_hgCaloryRequirements = new CaloricRequirementsTable( calTable  );
+	GujaratState::setHGCaloricRequirements(calTable);
 
 	// MRJ: Loading agro pastoralists attributes	
 	element = root->FirstChildElement("agroPastoralists");
@@ -126,7 +126,8 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		throw Engine::Exception(sstr.str());	
 	}
 
-	_apCaloryRequirements = new CaloricRequirementsTable( calTable );
+	GujaratState::setAPCaloricRequirements(calTable);
+	
 	retrieveAttributeMandatory( element, "num", _numAP );
 	retrieveAttributeMandatory( element, "maxCropHomeDistance", _maxCropHomeDistance );
 

@@ -1,10 +1,10 @@
+
 #include "GujaratDemographics.hxx"
 
 namespace Gujarat
 {
 
-GujaratDemographics::GujaratDemographics( GujaratAgent& agent )
-	: _agent(agent)
+GujaratDemographics::GujaratDemographics()
 {
 }
 
@@ -12,7 +12,7 @@ GujaratDemographics::~GujaratDemographics()
 {
 }
 
-void GujaratDemographics::checkStarvationMortality()
+void GujaratDemographics::checkStarvationMortality( GujaratAgent & agent )
 {
 }
 

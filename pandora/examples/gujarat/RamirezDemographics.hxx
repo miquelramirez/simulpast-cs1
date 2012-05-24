@@ -6,16 +6,18 @@
 namespace Gujarat
 {
 
+class GujaratAgent;
+
 class RamirezDemographics : public GujaratDemographics
 {
 public:
 
-	RamirezDemographics( GujaratAgent& agent );
+	RamirezDemographics();
 	virtual	~RamirezDemographics();
 	
-	virtual bool checkEmigration();
-	virtual void checkMortality();
-	virtual void checkReproduction();
+	virtual bool checkEmigration( GujaratAgent& agent );
+	virtual void checkMortality( GujaratAgent& agent );
+	virtual void checkReproduction( GujaratAgent& agent );
 };
 
 

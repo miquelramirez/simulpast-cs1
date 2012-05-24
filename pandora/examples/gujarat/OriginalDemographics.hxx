@@ -5,17 +5,18 @@
 
 namespace Gujarat
 {
+class GujaratAgent;
 
 class OriginalDemographics : public GujaratDemographics
 {
 public:
 
-	OriginalDemographics( GujaratAgent& agent );
+	OriginalDemographics();
 	virtual	~OriginalDemographics();
 	
-	virtual bool checkEmigration();
-	virtual void checkMortality();
-	virtual void checkReproduction();
+	virtual bool checkEmigration( GujaratAgent& agent );
+	virtual void checkMortality( GujaratAgent& agent );
+	virtual void checkReproduction( GujaratAgent& agent );
 };
 
 }

@@ -10,8 +10,6 @@
 namespace Gujarat
 {
 class AgentController;
-class GujaratDemographics;
-class CaloricRequirementsTable;
 
 class GujaratAgent : public Engine::Agent
 {
@@ -60,13 +58,10 @@ protected:
 	float _reproductionProbability; // MpiBasicAttribute
 
 	AgentController*	_controller;
-	GujaratDemographics*	_demographicsModel;
 
 	bool _starved; // MpiBasicAttribute
 	
 	Engine::Point2D<int> getNearLocation( int range );
-
-	CaloricRequirementsTable*	_caloricRequirements;
 
 public:
 	GujaratAgent( const std::string & id );
@@ -128,9 +123,6 @@ public:
 
 	void			setController( AgentController* controller ); 
 	AgentController* 	activeController() { return _controller; }
-	void			setDemographicsModel( GujaratDemographics* model ) { _demographicsModel = model; }
-
-	void setCaloricRequirements( CaloricRequirementsTable* t ) { _caloricRequirements = t; }
 
 	void logAgentState();
 	void updateKnowledge();

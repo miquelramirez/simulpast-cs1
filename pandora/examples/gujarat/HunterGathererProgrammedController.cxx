@@ -1,9 +1,15 @@
+
 #include "HunterGathererProgrammedController.hxx"
+
 #include <vector>
 #include <iostream>
+
 #include "MoveHomeAction.hxx"
 #include "ForageAction.hxx"
 #include "HunterGatherer.hxx"
+
+#include "Statistics.hxx"
+#include "GeneralState.hxx"
 
 namespace Gujarat
 {
@@ -24,7 +30,7 @@ MDPAction*	HunterGathererProgrammedController::selectAction()
 	// now random
 
 	// action pack : move Home, hunting, gathering
-	int dice = agentRef().getWorld()->getStatistics().getUniformDistValue(1,10);
+	int dice = Engine::GeneralState::statistics().getUniformDistValue(1,10);
 
 	if ( dice >= 8 ) // p=0.2 agent chooses to move its home
 	{
@@ -33,7 +39,7 @@ MDPAction*	HunterGathererProgrammedController::selectAction()
 		MoveHomeAction::generatePossibleActions( agentRef(), possibleActions );
 
 		// MRJ: Select Move Home action on a random basis
-		dice = agentRef().getWorld()->getStatistics().getUniformDistValue( 0, possibleActions.size() - 1 );
+		dice = Engine::GeneralState::statistics().getUniformDistValue( 0, possibleActions.size() - 1 );
 
 		MoveHomeAction* selectedAction = possibleActions[dice];
 		possibleActions[dice] = NULL;
@@ -45,7 +51,7 @@ MDPAction*	HunterGathererProgrammedController::selectAction()
 
 	do
 	{
-		dice = _agentConcrete->getWorld()->getStatistics().getUniformDistValue( 0, _agentConcrete->getSectors().size()-1 );
+		dice = Engine::GeneralState::statistics().getUniformDistValue( 0, _agentConcrete->getSectors().size()-1 );
 	
 	} while ( _agentConcrete->getSectors()[dice]->isEmpty() );
 

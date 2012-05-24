@@ -1,6 +1,9 @@
+
 #include "HunterGathererDecisionTreeController.hxx"
+
 #include <vector>
 #include <iostream>
+
 #include "MoveHomeAction.hxx"
 #include "ForageAction.hxx"
 #include "DoNothingAction.hxx"
@@ -8,6 +11,9 @@
 #include "SettlementAreas.hxx"
 #include "GujaratWorld.hxx"
 #include "Sector.hxx"
+
+#include "GeneralState.hxx"
+#include "Statistics.hxx"
 
 namespace Gujarat
 {
@@ -177,7 +183,7 @@ MDPAction* HunterGathererDecisionTreeController::shouldMoveHome(  )
 	{
 		return NULL;
 	}
-	uint32_t diceSelectOneRandomDune = world->getStatistics().getUniformDistValue(0, dunes.size()-1);
+	uint32_t diceSelectOneRandomDune = Engine::GeneralState::statistics().getUniformDistValue(0, dunes.size()-1);
 	newHomeLocation = dunes[ diceSelectOneRandomDune ];
 	moveHome = new MoveHomeAction( dunes[ diceSelectOneRandomDune ] );
 

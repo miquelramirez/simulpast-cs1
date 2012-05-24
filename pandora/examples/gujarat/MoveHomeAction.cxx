@@ -10,8 +10,8 @@
 #include <algorithm>
 #include <vector>
 
-#include <stdint.h>
-
+#include "Statistics.hxx"
+#include "GeneralState.hxx"
 
 namespace Gujarat
 {
@@ -106,7 +106,7 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 		{
 			continue;
 		}
-		uint32_t diceSelectOneRandomDune = world->getStatistics().getUniformDistValue(0, dunes.size()-1);
+		uint32_t diceSelectOneRandomDune = Engine::GeneralState::statistics().getUniformDistValue(0, dunes.size()-1);
 		actions.push_back( new MoveHomeAction( dunes[ diceSelectOneRandomDune ] ) );
 	}
 	assert( !actions.empty() );

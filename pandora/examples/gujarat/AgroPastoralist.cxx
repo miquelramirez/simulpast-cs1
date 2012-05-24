@@ -12,6 +12,8 @@
 #include "HarvestAction.hxx"
 #include "Agent.hxx"
 #include "Action.hxx"
+#include "GeneralState.hxx"
+#include "Statistics.hxx"
 
 namespace Gujarat
 {
@@ -45,7 +47,7 @@ void AgroPastoralist::selectActions()
 			std::vector< APMoveHomeAction* > possibleMHActions;
 			APMoveHomeAction::generatePossibleActions( *this, possibleMHActions );
 			
-			int dice = _world->getStatistics().getUniformDistValue( 0, possibleMHActions.size() - 1 );
+			int dice = Engine::GeneralState::statistics().getUniformDistValue( 0, possibleMHActions.size() - 1 );
 	
 			APMoveHomeAction* selectedAction = possibleMHActions[dice];
 			possibleMHActions[dice] = NULL;
@@ -57,7 +59,7 @@ void AgroPastoralist::selectActions()
 		}
 
 
-		int dice = _world->getStatistics().getUniformDistValue( 0, possibleEPActions.size() - 1 );
+		int dice = Engine::GeneralState::statistics().getUniformDistValue( 0, possibleEPActions.size() - 1 );
 		
 		EstablishPlotAction* selectedAction = possibleEPActions[dice];
 		possibleEPActions[dice] = NULL;
@@ -79,7 +81,7 @@ void AgroPastoralist::selectActions()
 
 	if ( _cultivatedField->isSown() && _cultivatedField->evaluatePotential() < 80 )
 	{
-		int dice = _world->getStatistics().getUniformDistValue( 0, 10 );
+		int dice = Engine::GeneralState::statistics().getUniformDistValue( 0, 10 );
 		_actions.push_back(new MaintainPlotAction());
 		return;
 	}

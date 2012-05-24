@@ -3,6 +3,8 @@
 #include "World.hxx"
 #include "Exceptions.hxx"
 
+#include <cassert>
+
 namespace Gujarat
 {
 
