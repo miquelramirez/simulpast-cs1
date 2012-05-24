@@ -22,22 +22,22 @@
 
 #include <boost/python.hpp>
 #include <boost/python/object.hpp>
-#include "Point2D.hxx"
-#include "StaticRaster.hxx"
-#include "Raster.hxx"
-#include "Simulation.hxx"
-#include "World.hxx"
-#include "Agent.hxx"
-#include "AgentRecord.hxx"
-#include "SimulationRecord.hxx"
+#include <Point2D.hxx>
+#include <StaticRaster.hxx>
+#include <Raster.hxx>
+#include <Simulation.hxx>
+#include <World.hxx>
+#include <Agent.hxx>
+#include <AgentRecord.hxx>
+#include <SimulationRecord.hxx>
 
-#include "analysis/AgentMean.hxx"
-#include "analysis/AgentSum.hxx"
-#include "analysis/AgentNum.hxx"
-#include "analysis/RasterSum.hxx"
-#include "analysis/RasterMean.hxx"
-#include "analysis/Results.hxx"
-#include "analysis/Analysis.hxx"
+#include <analysis/AgentMean.hxx>
+#include <analysis/AgentSum.hxx>
+#include <analysis/AgentNum.hxx>
+#include <analysis/RasterSum.hxx>
+#include <analysis/RasterMean.hxx>
+#include <analysis/Results.hxx>
+#include <analysis/Analysis.hxx>
 
 #include <string>
 

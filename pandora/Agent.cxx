@@ -20,15 +20,15 @@
  * 
  */
 
-#include "Agent.hxx"
+#include <Agent.hxx>
 
-#include "Exceptions.hxx"
-#include "World.hxx"
-#include "Serializer.hxx"
-#include "Action.hxx"
-#include "Logger.hxx"
-#include "GeneralState.hxx"
-#include "Statistics.hxx"
+#include <Exceptions.hxx>
+#include <World.hxx>
+#include <Serializer.hxx>
+#include <Action.hxx>
+#include <Logger.hxx>
+#include <GeneralState.hxx>
+#include <Statistics.hxx>
 
 #include <iostream>
 

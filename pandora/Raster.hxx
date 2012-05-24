@@ -23,8 +23,8 @@
 #ifndef __Raster_hxx__
 #define __Raster_hxx__
 
-#include "Point2D.hxx"
-#include "StaticRaster.hxx"
+#include <Point2D.hxx>
+#include <StaticRaster.hxx>
 
 namespace Engine
 {

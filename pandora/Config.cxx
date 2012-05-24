@@ -21,8 +21,8 @@
  */
 
 
-#include "Config.hxx"
-#include "Exceptions.hxx"
+#include <Config.hxx>
+#include <Exceptions.hxx>
 #include <sstream>
 #include <cstring>
 

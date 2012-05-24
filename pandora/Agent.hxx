@@ -23,12 +23,12 @@
 #ifndef __Agent_hxx__
 #define __Agent_hxx__
 
-#include "Point2D.hxx"
-#include "World.hxx"
+#include <Point2D.hxx>
+#include <World.hxx>
 
 #include <string>
 
-//#include "hdf5.h"
+//#include <hdf5.h"
 
 namespace Engine
 {

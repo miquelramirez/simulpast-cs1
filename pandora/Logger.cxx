@@ -20,7 +20,7 @@
  * 
  */
 
-#include "Logger.hxx"
+#include <Logger.hxx>
 
 #include <boost/filesystem.hpp>
 #include <iostream>

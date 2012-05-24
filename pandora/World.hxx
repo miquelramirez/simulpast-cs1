@@ -38,16 +38,14 @@ enum MpiMessageType
 #include <map>
 #include <vector>
 #include <list>
-#include "Raster.hxx"
-#include "StaticRaster.hxx"
-#include "Rectangle.hxx"
-#include "Point2D.hxx"
-#include "Serializer.hxx"
-#include "Simulation.hxx"
+#include <Raster.hxx>
+#include <StaticRaster.hxx>
+#include <Rectangle.hxx>
+#include <Point2D.hxx>
+#include <Serializer.hxx>
+#include <Simulation.hxx>
 
 #include <algorithm>
-
-//#include "hdf5.h"
 
 namespace Engine
 {
@@ -62,13 +60,8 @@ public:
 	typedef std::list< Agent* > AgentsList;
 protected:		
 	Simulation _simulation;
-	// MPI
-	// to simulation
-//	int _numTasks;
-//	int _id;
 
 	int _localRasterSize;
-//	int _globalRasterSize;
 
 	Point2D<int> _worldPos;
 	Rectangle<int> _boundaries;
@@ -97,9 +90,6 @@ protected:
 	//! false if each cell can have just one agent
 	bool _allowMultipleAgentsPerCell;
 
-	//virtual void * createPackage( const std::string & type ) = 0;
-	//virtual Agent * createAgentFromPackage(  const std::string & type, void * package ) = 0;
-
 	//! this method returns true if neighbor is corner of _id
 	bool isCorner(const int & neighbor) const;
 	//! this method returns the general overlap zone between both worlds
@@ -114,8 +104,6 @@ protected:
 	bool needsToReceiveData( const int & id, const int & sectionIndex );
 
 
-	// simulation
-//	int _numSteps;
 	//! current simulation step
 	int _step;
 

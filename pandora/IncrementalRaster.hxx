@@ -22,7 +22,7 @@
 #ifndef __IncrementalRaster_hxx__
 #define __IncrementalRaster_hxx__
 
-#include "Raster.hxx"
+#include <Raster.hxx>
 #include <map>
 
 namespace Engine

@@ -20,13 +20,13 @@
  * 
  */
 
-#include "World.hxx"
-#include "Agent.hxx"
-#include "Exceptions.hxx"
-#include "MpiFactory.hxx"
+#include <World.hxx>
+#include <Agent.hxx>
+#include <Exceptions.hxx>
+#include <MpiFactory.hxx>
 
-#include "GeneralState.hxx"
-#include "Statistics.hxx"
+#include <GeneralState.hxx>
+#include <Statistics.hxx>
 
 #include <cstdlib>
 #include <iostream>

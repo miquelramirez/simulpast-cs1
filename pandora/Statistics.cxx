@@ -20,8 +20,8 @@
  * 
  */
 
-#include "Statistics.hxx"
-#include "Exceptions.hxx"
+#include <Statistics.hxx>
+#include <Exceptions.hxx>
 
 #include <limits>
 #include <sstream>

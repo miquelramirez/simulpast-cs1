@@ -20,9 +20,9 @@
  * 
  */
 
-#include "Raster.hxx"
-#include "RasterLoader.hxx"
-#include "Exceptions.hxx"
+#include <Raster.hxx>
+#include <RasterLoader.hxx>
+#include <Exceptions.hxx>
 
 #include <sstream>
 #include <iostream>

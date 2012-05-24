@@ -20,7 +20,7 @@
  * 
  */
 
-#include "MpiFactory.hxx"
+#include <MpiFactory.hxx>
 
 namespace Engine
 {

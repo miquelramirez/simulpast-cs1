@@ -29,7 +29,7 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "Interval.hxx" 
+#include <Interval.hxx> 
 
 namespace Engine
 {

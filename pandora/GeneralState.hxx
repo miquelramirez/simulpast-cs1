@@ -2,8 +2,8 @@
 #ifndef __GeneralState_hxx__
 #define __GeneralState_hxx__
 
-#include "Logger.hxx"
-#include "Statistics.hxx"
+#include <Logger.hxx>
+#include <Statistics.hxx>
 
 namespace Engine
 {

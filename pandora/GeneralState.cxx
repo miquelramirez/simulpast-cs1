@@ -1,5 +1,5 @@
 
-#include "GeneralState.hxx"
+#include <GeneralState.hxx>
 
 namespace Engine
 {

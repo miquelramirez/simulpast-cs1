@@ -20,11 +20,11 @@
  * 
  */
 
-#include "RasterLoader.hxx"
-#include "StaticRaster.hxx"
-#include "Raster.hxx"
-#include "World.hxx"
-#include "Exceptions.hxx"
+#include <RasterLoader.hxx>
+#include <StaticRaster.hxx>
+#include <Raster.hxx>
+#include <World.hxx>
+#include <Exceptions.hxx>
 
 #include <vector>
 #include <gdal/gdal_priv.h>
