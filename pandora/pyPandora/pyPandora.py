@@ -57,11 +57,11 @@ class RasterMean(libpyPandora.RasterMeanStub):
 	def __init__(self):
 		libpyPandora.RasterMeanStub.__init__( self )
 
-class AgentResults(libpyPandora.AgentResultsStub):
+class AgentResults(libpyPandora.AgentResultsStub):	
 	def __init__(self, simRecord, outputFile, typeName, separator ):
 		libpyPandora.AgentResultsStub.__init__( self, simRecord, outputFile, typeName, separator )
 
-class RasterResults(libpyPandora.RasterResultsStub):
+class RasterResults(libpyPandora.RasterResultsStub):	
 	def __init__(self, simRecord, outputFile, typeName, separator ):
 		libpyPandora.RasterResultsStub.__init__( self, simRecord, outputFile, typeName, separator )
 
