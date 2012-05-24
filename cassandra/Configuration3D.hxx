@@ -23,7 +23,7 @@
 #ifndef __Configuration3D_hxx__
 #define __Configuration3D_hxx__
 
-#include "Point3D.hxx"
+#include <Point3D.hxx>
 #include <string>
 #include <list>
 

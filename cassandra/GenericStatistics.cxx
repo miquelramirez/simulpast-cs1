@@ -20,10 +20,10 @@
  * 
  */
 
-#include "GenericStatistics.hxx"
-#include "MeanDataPlot.hxx"
-#include "SumDataPlot.hxx"
-#include "StepDataPlot.hxx"
+#include <GenericStatistics.hxx>
+#include <MeanDataPlot.hxx>
+#include <SumDataPlot.hxx>
+#include <StepDataPlot.hxx>
 
 #include <QListWidgetItem>
 #include <QHBoxLayout>

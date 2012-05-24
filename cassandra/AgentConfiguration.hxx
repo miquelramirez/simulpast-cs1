@@ -25,7 +25,7 @@
 
 #include <QIcon>
 #include <QColor>
-#include "Point3D.hxx"
+#include <Point3D.hxx>
 
 namespace GUI
 {

@@ -25,7 +25,7 @@
 
 #include <QWidget>
 
-#include "ui_ColorInterval.h"
+#include <ui_ColorInterval.h>
 
 namespace GUI
 {

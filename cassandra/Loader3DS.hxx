@@ -26,7 +26,7 @@
 #include <string>
 #include <fstream>
 
-#include "Point3D.hxx"
+#include <Point3D.hxx>
 
 namespace GUI
 {

@@ -25,7 +25,7 @@
 
 #include <string>
 #include <map>
-#include "Configuration3D.hxx"
+#include <Configuration3D.hxx>
 
 class TiXmlElement;
 

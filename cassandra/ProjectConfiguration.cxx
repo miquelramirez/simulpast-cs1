@@ -20,14 +20,14 @@
  * 
  */
 
-#include "ProjectConfiguration.hxx"
+#include <ProjectConfiguration.hxx>
 
-#include "SimulationRecord.hxx"
-#include "AgentConfiguration.hxx"
-#include "RasterConfiguration.hxx"
-#include "Exceptions.hxx"
-#include "ColorSelector.hxx"
-#include "ColorInterval.hxx"
+#include <SimulationRecord.hxx>
+#include <AgentConfiguration.hxx>
+#include <RasterConfiguration.hxx>
+#include <Exceptions.hxx>
+#include <ColorSelector.hxx>
+#include <ColorInterval.hxx>
 
 #include <QMessageBox>
 

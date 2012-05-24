@@ -20,7 +20,7 @@
  * 
  */
 
-#include "Configuration3D.hxx"
+#include <Configuration3D.hxx>
 
 namespace GUI
 {

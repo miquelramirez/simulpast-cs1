@@ -20,9 +20,9 @@
  * 
  */
 
-#include "Configurator3D.hxx"
+#include <Configurator3D.hxx>
 #include <iostream>
-#include "ProjectConfiguration.hxx"
+#include <ProjectConfiguration.hxx>
 
 namespace GUI
 {

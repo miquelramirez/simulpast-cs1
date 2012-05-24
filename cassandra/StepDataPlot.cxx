@@ -20,11 +20,11 @@
  * 
  */
 
-#include "StepDataPlot.hxx"
+#include <StepDataPlot.hxx>
 
-#include "SimulationRecord.hxx"
-#include "Exceptions.hxx"
-#include "AgentRecord.hxx"
+#include <SimulationRecord.hxx>
+#include <Exceptions.hxx>
+#include <AgentRecord.hxx>
 
 #include <qwt_legend.h>
 #include <qwt_plot_curve.h>

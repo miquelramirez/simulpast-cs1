@@ -25,9 +25,9 @@
 
 #include <QMainWindow>
 #include <map>
-#include "Point3D.hxx"
-#include "Configuration3D.hxx"
-#include "LoadSimulationThread.hxx"
+#include <Point3D.hxx>
+#include <Configuration3D.hxx>
+#include <LoadSimulationThread.hxx>
 
 class QMenu;
 class QAction;

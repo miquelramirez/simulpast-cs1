@@ -24,10 +24,10 @@
 #define __Display3D_hxx__
 
 #include <map>
-#include "Material.hxx"
+#include <Material.hxx>
 
 #include <QGLWidget>
-#include "Point3D.hxx"
+#include <Point3D.hxx>
 
 class QListWidgetItem;
 

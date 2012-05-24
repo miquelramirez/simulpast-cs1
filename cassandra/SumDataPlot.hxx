@@ -23,7 +23,7 @@
 #ifndef __SumDataPlot_hxx__
 #define __SumDataPlot_hxx__
 
-#include "DataPlot.hxx"
+#include <DataPlot.hxx>
 
 #include <string>
 class QWidget;

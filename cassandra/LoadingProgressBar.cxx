@@ -20,9 +20,9 @@
  * 
  */
 
-#include "LoadingProgressBar.hxx"
-#include "ProjectConfiguration.hxx"
-#include "SimulationRecord.hxx"
+#include <LoadingProgressBar.hxx>
+#include <ProjectConfiguration.hxx>
+#include <SimulationRecord.hxx>
 #include <iostream>
 
 namespace GUI

@@ -20,21 +20,21 @@
  * 
  */
 
-#include "Display2D.hxx"
-#include "Raster.hxx"
-#include "SimulationRecord.hxx"
-#include "AgentRecord.hxx"
-#include "Exceptions.hxx"
+#include <Display2D.hxx>
+#include <Raster.hxx>
+#include <SimulationRecord.hxx>
+#include <AgentRecord.hxx>
+#include <Exceptions.hxx>
 #include <QPainter>
 #include <QToolTip>
 #include <QListWidgetItem>
 #include <QPixmap>
 #include <sstream>
 #include <iostream>
-#include "AgentConfiguration.hxx"
-#include "RasterConfiguration.hxx"
-#include "ProjectConfiguration.hxx"
-#include "ColorSelector.hxx"
+#include <AgentConfiguration.hxx>
+#include <RasterConfiguration.hxx>
+#include <ProjectConfiguration.hxx>
+#include <ColorSelector.hxx>
 #include <algorithm>
 
 namespace GUI

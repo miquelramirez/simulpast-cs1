@@ -27,9 +27,9 @@
 #include <QString>
 #include <QColor>
 #include <QListWidgetItem>
-#include "AgentConfiguration.hxx"
+#include <AgentConfiguration.hxx>
 
-#include "ui_AgentConfigurator.h"
+#include <ui_AgentConfigurator.h>
 
 class QCloseEvent;
 class QIcon;

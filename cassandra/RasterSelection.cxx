@@ -20,8 +20,8 @@
  * 
  */
 
-#include "RasterSelection.hxx"
-#include "SimulationRecord.hxx"
+#include <RasterSelection.hxx>
+#include <SimulationRecord.hxx>
 
 #include <algorithm>
 

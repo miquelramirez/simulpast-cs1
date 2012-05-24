@@ -20,13 +20,13 @@
  * 
  */
 
-#include "Model3D.hxx"
+#include <Model3D.hxx>
 
-#include "Point2D.hxx"
-#include "Point3D.hxx"
+#include <Point2D.hxx>
+#include <Point3D.hxx>
 
-#include "Object3D.hxx"
-#include "Material.hxx"
+#include <Object3D.hxx>
+#include <Material.hxx>
 
 #include <iostream>
 

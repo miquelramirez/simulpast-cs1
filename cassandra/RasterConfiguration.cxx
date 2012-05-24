@@ -20,9 +20,9 @@
  * 
  */
 
-#include "RasterConfiguration.hxx"
-#include "ColorSelector.hxx"
-#include "DefaultColorSelector.hxx"
+#include <RasterConfiguration.hxx>
+#include <ColorSelector.hxx>
+#include <DefaultColorSelector.hxx>
 #include <iostream>
 
 namespace GUI

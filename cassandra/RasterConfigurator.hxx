@@ -25,9 +25,9 @@
 
 #include <QDialog>
 
-#include "ui_RasterConfigurator.h"
+#include <ui_RasterConfigurator.h>
 
-#include "RasterConfiguration.hxx"
+#include <RasterConfiguration.hxx>
 
 namespace GUI
 {

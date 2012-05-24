@@ -20,8 +20,8 @@
  * 
  */
 
-#include "SumDataPlot.hxx"
-#include "SimulationRecord.hxx"
+#include <SumDataPlot.hxx>
+#include <SimulationRecord.hxx>
 
 #include <QWidget>
 

@@ -20,8 +20,8 @@
  * 
  */
 
-#include "LoadSimulationThread.hxx"
-#include "ProjectConfiguration.hxx"
+#include <LoadSimulationThread.hxx>
+#include <ProjectConfiguration.hxx>
 
 namespace GUI
 {

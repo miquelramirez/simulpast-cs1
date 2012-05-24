@@ -20,22 +20,22 @@
  * 
  */
 
-#include "MainWindow.hxx"
+#include <MainWindow.hxx>
 
-#include "Display2D.hxx"
-#include "AgentTypeSelection.hxx"
-#include "AgentTraitSelection.hxx"
-#include "RasterSelection.hxx"
-#include "GenericStatistics.hxx"
-#include "AgentConfigurator.hxx"
-#include "Display3D.hxx"
-#include "AgentConfiguration.hxx"
-#include "RasterConfigurator.hxx"
-#include "Configurator3D.hxx"
-#include "Exceptions.hxx"
-#include "ProjectConfiguration.hxx"
-#include "SimulationRecord.hxx"
-#include "LoadingProgressBar.hxx"
+#include <Display2D.hxx>
+#include <AgentTypeSelection.hxx>
+#include <AgentTraitSelection.hxx>
+#include <RasterSelection.hxx>
+#include <GenericStatistics.hxx>
+#include <AgentConfigurator.hxx>
+#include <Display3D.hxx>
+#include <AgentConfiguration.hxx>
+#include <RasterConfigurator.hxx>
+#include <Configurator3D.hxx>
+#include <Exceptions.hxx>
+#include <ProjectConfiguration.hxx>
+#include <SimulationRecord.hxx>
+#include <LoadingProgressBar.hxx>
 
 #include <iostream>
 

@@ -20,8 +20,8 @@
  * 
  */
 
-#include "AgentConfigurator.hxx"
-#include "ProjectConfiguration.hxx"
+#include <AgentConfigurator.hxx>
+#include <ProjectConfiguration.hxx>
 #include <sstream>
 #include <iostream>
 #include <QTextStream>

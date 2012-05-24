@@ -20,12 +20,12 @@
  * 
  */
 
-#include "AgentConfiguration.hxx"
+#include <AgentConfiguration.hxx>
 #include <sstream>
 #include <iostream>
-#include "Exceptions.hxx"
-#include "Loader3DS.hxx"
-#include "Model3D.hxx"
+#include <Exceptions.hxx>
+#include <Loader3DS.hxx>
+#include <Model3D.hxx>
 
 namespace GUI
 {

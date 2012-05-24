@@ -1,5 +1,5 @@
 
-#include "ColorInterval.hxx"
+#include <ColorInterval.hxx>
 #include <QColorDialog>
 #include <iostream>
  

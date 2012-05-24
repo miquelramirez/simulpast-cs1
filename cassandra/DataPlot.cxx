@@ -20,10 +20,10 @@
  * 
  */
 
-#include "DataPlot.hxx"
+#include <DataPlot.hxx>
 
-#include "SimulationRecord.hxx"
-#include "Exceptions.hxx"
+#include <SimulationRecord.hxx>
+#include <Exceptions.hxx>
 
 #include <qwt_legend.h>
 #include <qwt_plot_curve.h>

@@ -27,7 +27,7 @@
 #include <map>
 #include <list>
 
-#include "Point3D.hxx"
+#include <Point3D.hxx>
 
 namespace GUI
 {

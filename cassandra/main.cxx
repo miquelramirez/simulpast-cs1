@@ -22,8 +22,8 @@
 
 #include <QApplication>
 
-#include "MainWindow.hxx"
-#include "Exceptions.hxx"
+#include <MainWindow.hxx>
+#include <Exceptions.hxx>
 #include <iostream>
 
 int main(int argc, char *argv[])

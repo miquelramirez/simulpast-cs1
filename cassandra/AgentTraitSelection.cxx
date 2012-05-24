@@ -20,9 +20,9 @@
  * 
  */
 
-#include "AgentTraitSelection.hxx"
-#include "SimulationRecord.hxx"
-#include "AgentRecord.hxx"
+#include <AgentTraitSelection.hxx>
+#include <SimulationRecord.hxx>
+#include <AgentRecord.hxx>
 
 #include <algorithm>
 

@@ -23,9 +23,9 @@
 #ifndef __DefaultColorSelector_hxx__
 #define __DefaultColorSelector_hxx__
 
-#include "ColorSelector.hxx"
-#include "Raster.hxx"
-#include "Point3D.hxx"
+#include <ColorSelector.hxx>
+#include <Raster.hxx>
+#include <Point3D.hxx>
 
 namespace GUI
 {

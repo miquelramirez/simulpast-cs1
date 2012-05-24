@@ -20,24 +20,24 @@
  * 
  */
 
-#include "Display3D.hxx"
+#include <Display3D.hxx>
 
 #include <iostream>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <QListWidgetItem>
 
-#include "Exceptions.hxx"
-#include "SimulationRecord.hxx"
-#include "Model3D.hxx"
-#include "Point2D.hxx"
+#include <Exceptions.hxx>
+#include <SimulationRecord.hxx>
+#include <Model3D.hxx>
+#include <Point2D.hxx>
 #include <QtGui>
-#include "AgentConfiguration.hxx"
-#include "RasterConfiguration.hxx"
-#include "Configuration3D.hxx"
-#include "ColorSelector.hxx"
-#include "StaticRaster.hxx"
-#include "ProjectConfiguration.hxx"
+#include <AgentConfiguration.hxx>
+#include <RasterConfiguration.hxx>
+#include <Configuration3D.hxx>
+#include <ColorSelector.hxx>
+#include <StaticRaster.hxx>
+#include <ProjectConfiguration.hxx>
 
 #include <algorithm>
 

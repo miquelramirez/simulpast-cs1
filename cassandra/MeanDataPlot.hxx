@@ -23,7 +23,7 @@
 #ifndef __MeanDataPlot_hxx__
 #define __MeanDataPlot_hxx__
 
-#include "DataPlot.hxx"
+#include <DataPlot.hxx>
 
 #include <string>
 class QWidget;

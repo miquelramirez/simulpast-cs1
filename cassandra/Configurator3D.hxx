@@ -24,9 +24,9 @@
 #define __Configurator3D_hxx__
 
 #include <QDialog>
-#include "ui_Configurator3D.h"
+#include <ui_Configurator3D.h>
 
-#include "Configuration3D.hxx"
+#include <Configuration3D.hxx>
 
 namespace GUI
 {

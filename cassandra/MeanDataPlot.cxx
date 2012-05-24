@@ -20,8 +20,8 @@
  * 
  */
 
-#include "MeanDataPlot.hxx"
-#include "SimulationRecord.hxx"
+#include <MeanDataPlot.hxx>
+#include <SimulationRecord.hxx>
 
 #include <QWidget>
 #include <iostream>

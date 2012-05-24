@@ -23,7 +23,7 @@
 #ifndef __Display2D_hxx__
 #define __Display2D_hxx__
 
-#include "Point2D.hxx"
+#include <Point2D.hxx>
 
 #include <QWidget>
 #include <QWheelEvent>

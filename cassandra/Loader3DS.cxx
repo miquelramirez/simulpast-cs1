@@ -20,15 +20,15 @@
  * 
  */
 
-#include "Loader3DS.hxx"
-#include "Exceptions.hxx"
+#include <Loader3DS.hxx>
+#include <Exceptions.hxx>
 
-#include "Model3D.hxx"
-#include "Object3D.hxx"
+#include <Model3D.hxx>
+#include <Object3D.hxx>
 
-#include "Point2D.hxx"
-#include "Point3D.hxx"
-#include "Material.hxx"
+#include <Point2D.hxx>
+#include <Point3D.hxx>
+#include <Material.hxx>
 
 #include <iostream>
 

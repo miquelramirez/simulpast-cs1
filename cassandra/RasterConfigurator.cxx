@@ -20,10 +20,10 @@
  * 
  */
 
-#include "RasterConfigurator.hxx"
-#include "ProjectConfiguration.hxx"
-#include "ColorInterval.hxx"
-#include "ColorSelector.hxx"
+#include <RasterConfigurator.hxx>
+#include <ProjectConfiguration.hxx>
+#include <ColorInterval.hxx>
+#include <ColorSelector.hxx>
 
 #include <iostream>
 

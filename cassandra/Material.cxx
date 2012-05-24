@@ -20,12 +20,12 @@
  * 
  */
 
-#include "Material.hxx"
+#include <Material.hxx>
 
 #include <iostream>
 #include <sstream>
 
-#include "Exceptions.hxx"
+#include <Exceptions.hxx>
 
 namespace GUI
 {

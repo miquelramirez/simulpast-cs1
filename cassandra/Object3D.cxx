@@ -20,9 +20,9 @@
  * 
  */
 #include <iostream>
-#include "Object3D.hxx"
-#include "Exceptions.hxx"
-#include "Material.hxx"
+#include <Object3D.hxx>
+#include <Exceptions.hxx>
+#include <Material.hxx>
 
 namespace GUI
 {

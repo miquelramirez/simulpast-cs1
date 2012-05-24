@@ -26,10 +26,10 @@
 #include <vector>
 #include <string>
 
-#include "Point2D.hxx"
-#include "Point3D.hxx"
+#include <Point2D.hxx>
+#include <Point3D.hxx>
 
-#include "Model3D.hxx"
+#include <Model3D.hxx>
 
 namespace GUI
 {

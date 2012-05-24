@@ -13,6 +13,7 @@ FORMS += uis/LoadingProgressBar.ui
 DEFINES += TIXML_USE_STL
 DEPENDPATH += .
 INCLUDEPATH += .
+INCLUDEPATH += uis/
 INCLUDEPATH += ../pandora/
 INCLUDEPATH += /usr/include/qwt/
 INCLUDEPATH += /usr/include/mpich2/ 
@@ -32,3 +33,4 @@ LIBS += -fopenmp -L../pandora/ -lpandora -L/usr/local/qwt-6.0.0/lib/ -L/usr/loca
 HEADERS += Display2D.hxx MainWindow.hxx AgentTypeSelection.hxx AgentTraitSelection.hxx DataPlot.hxx GenericStatistics.hxx StepDataPlot.hxx RasterSelection.hxx Display3D.hxx AgentConfigurator.hxx Model3D.hxx Object3D.hxx Material.hxx Loader3DS.hxx ColorSelector.hxx DefaultColorSelector.hxx AgentConfiguration.hxx RasterConfigurator.hxx ColorInterval.hxx RasterConfiguration.cxx Configurator3D.hxx Configuration3D.hxx ProjectConfiguration.hxx LoadSimulationThread.hxx LoadingProgressBar.hxx
 SOURCES += main.cxx Display2D.cxx  MainWindow.cxx AgentTypeSelection.cxx AgentTraitSelection.cxx DataPlot.cxx MeanDataPlot.cxx SumDataPlot.cxx  GenericStatistics.cxx StepDataPlot.cxx RasterSelection.cxx Display3D.cxx AgentConfigurator.cxx Model3D.cxx Object3D.cxx Material.cxx Loader3DS.cxx DefaultColorSelector.cxx AgentConfiguration.cxx RasterConfigurator.cxx ColorInterval.cxx RasterConfiguration.cxx Configurator3D.cxx Configuration3D.cxx ProjectConfiguration.cxx LoadSimulationThread.cxx LoadingProgressBar.cxx MpiStubCode.cxx
 RESOURCES = cassandra.qrc
+

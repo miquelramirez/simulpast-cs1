@@ -23,7 +23,7 @@
 #ifndef __LoadingProgressBar_hxx__
 #define __LoadingProgressBar_hxx__
 
-#include "ui_LoadingProgressBar.h"
+#include <ui_LoadingProgressBar.h>
 
 namespace GUI
 {

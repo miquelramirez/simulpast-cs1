@@ -27,7 +27,7 @@
 #include <GL/gl.h>
 #include <il.h>
 
-#include "Point3D.hxx"
+#include <Point3D.hxx>
 
 namespace GUI
 {
