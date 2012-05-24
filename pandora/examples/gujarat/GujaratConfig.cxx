@@ -1,10 +1,10 @@
-#include "GujaratConfig.hxx"
+#include <GujaratConfig.hxx>
 #include <sstream>
-#include "Exceptions.hxx"
-#include "HunterGathererMDPConfig.hxx"
-#include "FixedAgentInitializer.hxx"
+#include <Exceptions.hxx>
+#include <HunterGathererMDPConfig.hxx>
+#include <FixedAgentInitializer.hxx>
 
-#include "GujaratState.hxx"
+#include <GujaratState.hxx>
 
 namespace Gujarat
 {

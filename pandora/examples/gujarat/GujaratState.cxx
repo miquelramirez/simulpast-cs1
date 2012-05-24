@@ -1,12 +1,12 @@
 
-#include "GujaratState.hxx"
+#include <GujaratState.hxx>
 
 #include <tinyxml.h>
-#include "Exceptions.hxx"
-#include "CaloricRequirementsTable.hxx"
-#include "GujaratDemographics.hxx"
-#include "RamirezDemographics.hxx"
-#include "OriginalDemographics.hxx"
+#include <Exceptions.hxx>
+#include <CaloricRequirementsTable.hxx>
+#include <GujaratDemographics.hxx>
+#include <RamirezDemographics.hxx>
+#include <OriginalDemographics.hxx>
 
 namespace Gujarat 
 {

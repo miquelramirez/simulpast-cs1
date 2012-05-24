@@ -2,7 +2,7 @@
 #ifndef __CultivatedField_hxx__
 #define __CultivatedField_hxx__
 
-#include "Point2D.hxx"
+#include <Point2D.hxx>
 
 namespace Gujarat
 {

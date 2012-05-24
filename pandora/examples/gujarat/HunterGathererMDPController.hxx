@@ -1,10 +1,10 @@
 #ifndef __HUNTER_GATHERER_MDP_CONTROLLER__
 #define __HUNTER_GATHERER_MDP_CONTROLLER__
 
-#include "AgentController.hxx"
-#include "HunterGathererMDPConfig.hxx"
-#include "HunterGathererMDPModel.hxx"
-#include "HunterGathererMDPState.hxx"
+#include <AgentController.hxx>
+#include <HunterGathererMDPConfig.hxx>
+#include <HunterGathererMDPModel.hxx>
+#include <HunterGathererMDPState.hxx>
 #include <engine/policy.h>
 #include <engine/uct.h>
 

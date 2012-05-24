@@ -4,8 +4,8 @@
 
 #include <vector>
 
-#include "MDPAction.hxx"
-#include "Point2D.hxx"
+#include <MDPAction.hxx>
+#include <Point2D.hxx>
 
 namespace Engine
 {

@@ -2,7 +2,7 @@
 #ifndef __HunterGatherer_hxx__
 #define __HunterGatherer_hxx__
 
-#include "GujaratAgent.hxx"
+#include <GujaratAgent.hxx>
 
 namespace Gujarat
 {

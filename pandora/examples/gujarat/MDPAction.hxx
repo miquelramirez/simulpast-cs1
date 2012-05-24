@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <iosfwd>
 
-#include "Action.hxx"
+#include <Action.hxx>
 
 namespace Gujarat
 {

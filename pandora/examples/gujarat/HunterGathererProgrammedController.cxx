@@ -1,15 +1,15 @@
 
-#include "HunterGathererProgrammedController.hxx"
+#include <HunterGathererProgrammedController.hxx>
 
 #include <vector>
 #include <iostream>
 
-#include "MoveHomeAction.hxx"
-#include "ForageAction.hxx"
-#include "HunterGatherer.hxx"
+#include <MoveHomeAction.hxx>
+#include <ForageAction.hxx>
+#include <HunterGatherer.hxx>
 
-#include "Statistics.hxx"
-#include "GeneralState.hxx"
+#include <Statistics.hxx>
+#include <GeneralState.hxx>
 
 namespace Gujarat
 {

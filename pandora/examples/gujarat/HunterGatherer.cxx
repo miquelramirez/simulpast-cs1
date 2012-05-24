@@ -1,13 +1,13 @@
 
-#include "HunterGatherer.hxx"
-#include "GujaratWorld.hxx"
-#include "Exceptions.hxx"
-#include "Action.hxx"
-#include "Sector.hxx"
-#include "Point3D.hxx"
+#include <HunterGatherer.hxx>
+#include <GujaratWorld.hxx>
+#include <Exceptions.hxx>
+#include <Action.hxx>
+#include <Sector.hxx>
+#include <Point3D.hxx>
 #include <cmath>
 #include <cassert>
-#include "AgentController.hxx"
+#include <AgentController.hxx>
 
 namespace Gujarat
 {

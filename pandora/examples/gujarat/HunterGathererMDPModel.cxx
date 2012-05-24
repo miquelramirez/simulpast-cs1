@@ -1,10 +1,10 @@
-#include "HunterGathererMDPModel.hxx"
-#include "HunterGatherer.hxx"
-#include "HunterGathererMDPConfig.hxx"
-#include "ForageAction.hxx"
-#include "MoveHomeAction.hxx"
-#include "DoNothingAction.hxx"
-#include "Exceptions.hxx"
+#include <HunterGathererMDPModel.hxx>
+#include <HunterGatherer.hxx>
+#include <HunterGathererMDPConfig.hxx>
+#include <ForageAction.hxx>
+#include <MoveHomeAction.hxx>
+#include <DoNothingAction.hxx>
+#include <Exceptions.hxx>
 #include <typeinfo>
 
 using Problem::action_t;

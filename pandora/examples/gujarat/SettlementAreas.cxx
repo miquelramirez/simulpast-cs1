@@ -1,7 +1,7 @@
 
 #include <queue>
-#include "GujaratWorld.hxx"
-#include "SettlementAreas.hxx"
+#include <GujaratWorld.hxx>
+#include <SettlementAreas.hxx>
 #include <assert.h>
 #include <math.h>
 

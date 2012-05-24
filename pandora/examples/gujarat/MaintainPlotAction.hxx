@@ -2,7 +2,7 @@
 #ifndef __MaintainPlotAction_hxx__
 #define __MaintainPlotAction_hxx__
 
-#include "MDPAction.hxx"
+#include <MDPAction.hxx>
 
 namespace Engine
 {

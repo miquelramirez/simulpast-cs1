@@ -1,22 +1,22 @@
 
-#include "GujaratWorld.hxx"
+#include <GujaratWorld.hxx>
 
-#include "Raster.hxx"
-#include "Point2D.hxx"
-#include "HunterGatherer.hxx"
-#include "AgroPastoralist.hxx"
-#include "Exceptions.hxx"
-#include "GujaratConfig.hxx"
-#include "HunterGathererProgrammedController.hxx"
-#include "HunterGathererDecisionTreeController.hxx"
-#include "HunterGathererMDPController.hxx"
-#include "OriginalDemographics.hxx"
-#include "RamirezDemographics.hxx"
-#include "RasterLoader.hxx"
+#include <Raster.hxx>
+#include <Point2D.hxx>
+#include <HunterGatherer.hxx>
+#include <AgroPastoralist.hxx>
+#include <Exceptions.hxx>
+#include <GujaratConfig.hxx>
+#include <HunterGathererProgrammedController.hxx>
+#include <HunterGathererDecisionTreeController.hxx>
+#include <HunterGathererMDPController.hxx>
+#include <OriginalDemographics.hxx>
+#include <RamirezDemographics.hxx>
+#include <RasterLoader.hxx>
 
-#include "Logger.hxx"
-#include "GeneralState.hxx"
-#include "Statistics.hxx"
+#include <Logger.hxx>
+#include <GeneralState.hxx>
+#include <Statistics.hxx>
 
 #include <limits>
 

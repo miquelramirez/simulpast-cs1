@@ -1,7 +1,7 @@
 #ifndef __AGENT_CONTROLLER__
 #define __AGENT_CONTROLLER__
 
-#include "GujaratAgent.hxx"
+#include <GujaratAgent.hxx>
 
 namespace Gujarat
 {

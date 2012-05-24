@@ -4,7 +4,7 @@
 
 
 #include <string>
-#include "GeneralState.hxx"
+#include <GeneralState.hxx>
 
 class TiXmlElement;
 

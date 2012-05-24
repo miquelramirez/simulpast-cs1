@@ -1,17 +1,17 @@
 
-#include "MoveHomeAction.hxx"
+#include <MoveHomeAction.hxx>
 
-#include "Agent.hxx"
-#include "GujaratAgent.hxx"
-#include "HunterGatherer.hxx"
+#include <Agent.hxx>
+#include <GujaratAgent.hxx>
+#include <HunterGatherer.hxx>
 
-#include "GujaratWorld.hxx"
-#include "HunterGathererMDPState.hxx"
+#include <GujaratWorld.hxx>
+#include <HunterGathererMDPState.hxx>
 #include <algorithm>
 #include <vector>
 
-#include "Statistics.hxx"
-#include "GeneralState.hxx"
+#include <Statistics.hxx>
+#include <GeneralState.hxx>
 
 namespace Gujarat
 {

@@ -1,7 +1,7 @@
 #ifndef __HUNTER_GATHERER_PROGRAMMED_CONTROLLER__
 #define __HUNTER_GATHERER_PROGRAMMED_CONTROLLER__
 
-#include "AgentController.hxx"
+#include <AgentController.hxx>
 
 namespace Gujarat
 {

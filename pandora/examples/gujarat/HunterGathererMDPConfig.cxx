@@ -1,4 +1,4 @@
-#include "HunterGathererMDPConfig.hxx"
+#include <HunterGathererMDPConfig.hxx>
 #include <tinyxml.h>
 #include <cstdlib>
 #include <string>

@@ -1,8 +1,8 @@
 #ifndef __HUNTERGATHERER_MDP_MODEL__
 #define __HUNTERGATHERER_MDP_MODEL__
 
-#include "HunterGathererMDPState.hxx"
-#include "HunterGathererMDPConfig.hxx"
+#include <HunterGathererMDPState.hxx>
+#include <HunterGathererMDPConfig.hxx>
 #include <engine/problem.h>
 #include <vector>
 

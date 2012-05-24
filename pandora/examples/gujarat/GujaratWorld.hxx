@@ -2,9 +2,9 @@
 #ifndef __GujaratWorld_hxx__
 #define __GujaratWorld_hxx__
 
-#include "World.hxx"
-#include "Climate.hxx"
-#include "SettlementAreas.hxx"
+#include <World.hxx>
+#include <Climate.hxx>
+#include <SettlementAreas.hxx>
 #include <string>
 
 namespace Gujarat

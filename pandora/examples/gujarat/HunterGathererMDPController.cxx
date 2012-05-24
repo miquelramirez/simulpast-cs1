@@ -1,9 +1,9 @@
 
-#include "HunterGathererMDPController.hxx"
-#include "HunterGatherer.hxx"
+#include <HunterGathererMDPController.hxx>
+#include <HunterGatherer.hxx>
 
-#include "Logger.hxx"
-#include "GeneralState.hxx"
+#include <Logger.hxx>
+#include <GeneralState.hxx>
 
 namespace Gujarat
 {

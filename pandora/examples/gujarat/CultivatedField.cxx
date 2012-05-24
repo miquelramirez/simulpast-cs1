@@ -1,9 +1,9 @@
 
-#include "CultivatedField.hxx"
-#include "GujaratWorld.hxx"
+#include <CultivatedField.hxx>
+#include <GujaratWorld.hxx>
 
-#include "Statistics.hxx"
-#include "GeneralState.hxx"
+#include <Statistics.hxx>
+#include <GeneralState.hxx>
 
 namespace Gujarat
 {

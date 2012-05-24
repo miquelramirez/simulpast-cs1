@@ -1,7 +1,7 @@
 #ifndef __DoNothingAction_hxx__
 #define __DoNothingAction_hxx__
 
-#include "MDPAction.hxx"
+#include <MDPAction.hxx>
 #include <vector>
 
 namespace Engine

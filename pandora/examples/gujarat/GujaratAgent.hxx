@@ -2,7 +2,7 @@
 #ifndef __GujaratAgent_hxx__
 #define __GujaratAgent_hxx__
 
-#include "Agent.hxx"
+#include <Agent.hxx>
 
 #include <vector>
 #include <list>

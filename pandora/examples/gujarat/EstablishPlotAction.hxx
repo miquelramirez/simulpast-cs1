@@ -2,8 +2,8 @@
 #ifndef __EstablishPlotAction_hxx__
 #define __EstablishPlotAction_hxx__
 
-#include "MDPAction.hxx"
-#include "Point2D.hxx"
+#include <MDPAction.hxx>
+#include <Point2D.hxx>
 #include <vector>
 
 namespace Engine

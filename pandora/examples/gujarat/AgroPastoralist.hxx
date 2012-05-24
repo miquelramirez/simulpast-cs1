@@ -2,7 +2,7 @@
 #ifndef __AgroPastoralist_hxx__
 #define __AgroPastoralist_hxx__
 
-#include "GujaratAgent.hxx"
+#include <GujaratAgent.hxx>
 
 namespace Gujarat
 {

@@ -1,7 +1,7 @@
 #ifndef __HUNTER_GATHERER_DECISION_TREE_CONTROLLER__
 #define __HUNTER_GATHERER_DECISION_TREE_CONTROLLER__
 
-#include "AgentController.hxx"
+#include <AgentController.hxx>
 
 namespace Gujarat
 {

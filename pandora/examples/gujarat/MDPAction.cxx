@@ -1,7 +1,7 @@
-#include "MDPAction.hxx"
+#include <MDPAction.hxx>
 #include <Exceptions.hxx>
 #include <iostream>
-#include "HunterGathererMDPState.hxx"
+#include <HunterGathererMDPState.hxx>
 
 namespace Gujarat
 {

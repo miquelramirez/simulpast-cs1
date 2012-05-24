@@ -1,19 +1,19 @@
 
-#include "HunterGathererDecisionTreeController.hxx"
+#include <HunterGathererDecisionTreeController.hxx>
 
 #include <vector>
 #include <iostream>
 
-#include "MoveHomeAction.hxx"
-#include "ForageAction.hxx"
-#include "DoNothingAction.hxx"
-#include "HunterGatherer.hxx"
-#include "SettlementAreas.hxx"
-#include "GujaratWorld.hxx"
-#include "Sector.hxx"
+#include <MoveHomeAction.hxx>
+#include <ForageAction.hxx>
+#include <DoNothingAction.hxx>
+#include <HunterGatherer.hxx>
+#include <SettlementAreas.hxx>
+#include <GujaratWorld.hxx>
+#include <Sector.hxx>
 
-#include "GeneralState.hxx"
-#include "Statistics.hxx"
+#include <GeneralState.hxx>
+#include <Statistics.hxx>
 
 namespace Gujarat
 {

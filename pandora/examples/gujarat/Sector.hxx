@@ -2,8 +2,8 @@
 #ifndef __Sector_hxx__
 #define __Sector_hxx__
 
-#include "Point2D.hxx"
-#include "Raster.hxx"
+#include <Point2D.hxx>
+#include <Raster.hxx>
 #include <vector>
 #include <iosfwd>
 

@@ -1,10 +1,10 @@
 #ifndef __HunterGathererMDPState_hxx__
 #define __HunterGathererMDPState_hxx__
 
-#include "Point2D.hxx"
-#include "IncrementalRaster.hxx"
-#include "HashTable.hxx"
-#include "MDPAction.hxx"
+#include <Point2D.hxx>
+#include <IncrementalRaster.hxx>
+#include <HashTable.hxx>
+#include <MDPAction.hxx>
 #include <engine/problem.h>
 
 namespace Gujarat

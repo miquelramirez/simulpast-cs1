@@ -1,9 +1,9 @@
 #ifndef __ForageAction_hxx__
 #define __ForageAction_hxx__
 
-#include "MDPAction.hxx"
-#include "Sector.hxx"
-#include "Point2D.hxx"
+#include <MDPAction.hxx>
+#include <Sector.hxx>
+#include <Point2D.hxx>
 
 namespace Engine
 {

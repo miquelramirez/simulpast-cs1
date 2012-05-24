@@ -2,13 +2,13 @@
 #ifndef __GujaratConfig_hxx__
 #define __GujaratConfig_hxx__
 
-#include "Config.hxx"
+#include <Config.hxx>
 #include <tinyxml.h>
 #include <string>
 #include <sstream>
 #include <map>
-#include "CaloricRequirementsTable.hxx"
-#include "AgentInitializer.hxx"
+#include <CaloricRequirementsTable.hxx>
+#include <AgentInitializer.hxx>
 
 namespace Gujarat
 {

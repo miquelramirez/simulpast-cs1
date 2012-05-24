@@ -1,7 +1,7 @@
 #ifndef __FIXED_AGENT_INITIALIZER__
 #define __FIXED_AGENT_INITIALIZER__
 
-#include "AgentInitializer.hxx"
+#include <AgentInitializer.hxx>
 #include <vector>
 
 class TiXmlElement;

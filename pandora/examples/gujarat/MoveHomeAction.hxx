@@ -2,9 +2,9 @@
 #ifndef __MoveHomeAction_hxx__
 #define __MoveHomeAction_hxx__
 
-#include "MDPAction.hxx"
+#include <MDPAction.hxx>
 
-#include "Point2D.hxx"
+#include <Point2D.hxx>
 #include <vector>
 
 namespace Engine

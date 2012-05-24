@@ -1,9 +1,9 @@
-#include "ForageAction.hxx"
-#include "Agent.hxx"
-#include "GujaratAgent.hxx"
-#include "HunterGatherer.hxx"
-#include "GujaratWorld.hxx"
-#include "HunterGathererMDPState.hxx"
+#include <ForageAction.hxx>
+#include <Agent.hxx>
+#include <GujaratAgent.hxx>
+#include <HunterGatherer.hxx>
+#include <GujaratWorld.hxx>
+#include <HunterGathererMDPState.hxx>
 #include <cassert>
 
 namespace Gujarat

@@ -2,7 +2,7 @@
 #ifndef __SowAction_hxx__
 #define __SowAction_hxx__
 
-#include "MDPAction.hxx"
+#include <MDPAction.hxx>
 
 namespace Engine
 {

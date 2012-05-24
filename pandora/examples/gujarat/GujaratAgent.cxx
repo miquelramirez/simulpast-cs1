@@ -1,13 +1,13 @@
 
-#include "GujaratAgent.hxx"
+#include <GujaratAgent.hxx>
 
-#include "GujaratWorld.hxx"
-#include "GujaratDemographics.hxx"
-#include "CaloricRequirementsTable.hxx"
-#include "GujaratConfig.hxx"
-#include "Logger.hxx"
-#include "GeneralState.hxx"
-#include "GujaratState.hxx"
+#include <GujaratWorld.hxx>
+#include <GujaratDemographics.hxx>
+#include <CaloricRequirementsTable.hxx>
+#include <GujaratConfig.hxx>
+#include <Logger.hxx>
+#include <GeneralState.hxx>
+#include <GujaratState.hxx>
 #include <sstream>
 
 namespace Gujarat

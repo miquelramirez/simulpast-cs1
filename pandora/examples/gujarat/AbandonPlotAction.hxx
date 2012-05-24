@@ -2,7 +2,7 @@
 #ifndef __AbandonPlotAction_hxx__
 #define __AbandonPlotAction_hxx__
 
-#include "MDPAction.hxx"
+#include <MDPAction.hxx>
 
 namespace Gujarat
 {
