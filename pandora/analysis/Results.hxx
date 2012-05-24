@@ -14,6 +14,7 @@ namespace Analysis
 {
 
 class Analysis;
+class AgentAnalysis;
 
 class Results
 {
@@ -26,8 +27,6 @@ protected:
 	std::string _type;
 	std::string _separator;
 	
-	// method implemented in children (raster, agents, ...)
-	virtual void concreteApply() const = 0;
 
 public:
 	Results( const Engine::SimulationRecord & simRecord, const std::string & outputFile, const std::string & type, const std::string & separator );	
@@ -35,6 +34,9 @@ public:
 
 	void apply() const;
 	void addAnalysis( Analysis * analysis );
+	
+	// method implemented in children (raster, agents, ...)
+	virtual void concreteApply() const = 0;
 };
 
 class AgentResults : public Results
