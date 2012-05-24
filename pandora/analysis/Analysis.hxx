@@ -38,6 +38,7 @@ public:
 	RasterAnalysis( const std::string & name ) : Analysis(name)
 	{
 	}
+	virtual ~RasterAnalysis(){}
 	virtual void computeRaster( const Engine::SimulationRecord::RasterHistory & rasterHistory ) = 0;
 };
 
