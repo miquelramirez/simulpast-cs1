@@ -1,8 +1,8 @@
 
-#include "Results.hxx"
+#include <Results.hxx>
 
-#include "Analysis.hxx"
-#include "SimulationRecord.hxx"
+#include <Analysis.hxx>
+#include <SimulationRecord.hxx>
 
 #include <iostream>
 #include <fstream>

@@ -1,6 +1,6 @@
 
-#include "AgentNum.hxx"
-#include "AgentRecord.hxx"
+#include <AgentNum.hxx>
+#include <AgentRecord.hxx>
 
 namespace Analysis
 {

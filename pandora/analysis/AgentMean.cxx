@@ -1,6 +1,6 @@
 
-#include "AgentMean.hxx"
-#include "AgentRecord.hxx"
+#include <AgentMean.hxx>
+#include <AgentRecord.hxx>
 
 namespace Analysis
 {

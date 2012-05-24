@@ -1,7 +1,7 @@
 
-#include "RasterMean.hxx"
-#include "Raster.hxx"
-#include "Exceptions.hxx"
+#include <RasterMean.hxx>
+#include <Raster.hxx>
+#include <Exceptions.hxx>
 
 namespace Analysis
 {

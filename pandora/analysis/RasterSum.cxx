@@ -1,6 +1,6 @@
 
-#include "RasterSum.hxx"
-#include "Raster.hxx"
+#include <RasterSum.hxx>
+#include <Raster.hxx>
 
 namespace Analysis
 {

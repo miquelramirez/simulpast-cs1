@@ -2,7 +2,7 @@
 #ifndef __AgentMean_hxx__
 #define __AgentMean_hxx__
 
-#include "Analysis.hxx"
+#include <Analysis.hxx>
 
 namespace Engine
 {

@@ -2,8 +2,8 @@
 #ifndef __RasterSum_hxx__
 #define __RasterSum_hxx__
 
-#include "Analysis.hxx"
-#include "SimulationRecord.hxx"
+#include <Analysis.hxx>
+#include <SimulationRecord.hxx>
 
 /*
 namespace Engine
