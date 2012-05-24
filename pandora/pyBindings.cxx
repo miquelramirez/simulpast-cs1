@@ -117,9 +117,9 @@ public:
 	{
 	}
 
+	// select Actions is not mandatory for python agents (users must fill updateState method)
 	void selectActions()
 	{
-		//this->get_override("selectActions")();
 	}	
 	
 	void serialize()
