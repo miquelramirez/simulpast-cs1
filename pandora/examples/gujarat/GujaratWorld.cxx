@@ -12,6 +12,7 @@
 #include <HunterGathererMDPController.hxx>
 #include <OriginalDemographics.hxx>
 #include <RamirezDemographics.hxx>
+#include <AlexisDemographics.hxx>
 #include <RasterLoader.hxx>
 
 #include <Logger.hxx>

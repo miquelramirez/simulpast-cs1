@@ -140,6 +140,25 @@ void	GujaratAgent::checkStarvationMortality()
 	GujaratState::demographics().checkStarvationMortality(*this);
 }
 
+void	GujaratAgent::checkIndividualStarvationDeath(int index, int deficitRatioPer1000)
+{
+	int probabSurvPer10000;
+	
+	if (_populationAges[index] < 15)
+	{	probabSurvPer10000= 9600; }//9885=20 days survival; // 9600=10 days survival	
+	else
+	{	probabSurvPer10000= 9966; }//9966=40 days survival
+	
+	if(_populationAges[index] >= 0 
+		&& Engine::GeneralState::statistics().getUniformDistValue(1,1000) > deficitRatioPer1000
+		&& Engine::GeneralState::statistics().getUniformDistValue(1,10000) > probabSurvPer10000)
+	{
+		//log() << "RIP/Starvation> Agent_"	<< _agent._id << " indiv:" << index << " ratio:" 				<< deficitRatioPer1000 << " age:" 					<< _agent._populationAges[index] << std::endl;
+		_populationAges[index]=-1;
+	}
+}
+
+
 double 	GujaratAgent::getTimeSpentForagingTile() const
 {
 	return getForageTimeCost() * getWalkingSpeedHour();

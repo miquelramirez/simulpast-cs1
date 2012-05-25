@@ -6,6 +6,7 @@
 #include <CaloricRequirementsTable.hxx>
 #include <GujaratDemographics.hxx>
 #include <RamirezDemographics.hxx>
+#include <AlexisDemographics.hxx>
 #include <OriginalDemographics.hxx>
 
 namespace Gujarat 
@@ -111,6 +112,13 @@ void GujaratState::setDemographics( const std::string & model )
 		_demographics = new RamirezDemographics;
 		return;
 	}
+	else if(model.compare("alexis")==0)
+	{
+		_demographics = new AlexisDemographics;
+		return;
+	}
+	
+	
 	std::stringstream oss;
 	oss << "GujaratState::setDemographics() - unknown model: " << model;
 	throw Engine::Exception(oss.str());

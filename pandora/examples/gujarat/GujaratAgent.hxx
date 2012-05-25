@@ -88,7 +88,8 @@ public:
 	// MRJ: Checks if agent member dies with chance%, with age in [min,max]
 	void	checkDeath( int minAge, int maxAge, int chance );
 	void	checkDeathByAging( int minAge );
-	// if male or female died, reproduction is impossible
+	// if male or female died, reproduction is impossible	
+	void	checkIndividualStarvationDeath(int index, int deficitRatioPer1000);
 	bool	canReproduce() const;
 	void	addNewIndividual( int age );
 	void	addNewChild();
