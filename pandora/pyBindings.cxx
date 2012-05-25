@@ -117,11 +117,6 @@ public:
 	{
 	}
 
-	// select Actions is not mandatory for python agents (users must fill updateState method)
-	void selectActions()
-	{
-	}	
-	
 	void serialize()
 	{
 		this->get_override("serialize")();
@@ -268,7 +263,6 @@ BOOST_PYTHON_MODULE(libpyPandora)
 	;
 	
 	boost::python::class_< AgentWrap, std::auto_ptr<AgentWrap>, boost::noncopyable >("AgentStub", boost::python::init< const std::string & > () )
-//		.def("selectActions", boost::python::pure_virtual(&Engine::Agent::selectActions))
 		.def("updateState", &Engine::Agent::updateState, &AgentWrap::default_UpdateState)
 		.def("getWorld", &Engine::Agent::getWorldRef, boost::python::return_value_policy<boost::python::reference_existing_object>())
 		.def("serialize", boost::python::pure_virtual(&Engine::Agent::serialize))
