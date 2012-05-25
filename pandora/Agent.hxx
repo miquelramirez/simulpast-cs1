@@ -106,7 +106,7 @@ public:
 	
 	virtual void logAgentState();
 	virtual void updateKnowledge(){};
-	virtual void selectActions() = 0;
+	virtual void selectActions(){};
 	virtual void updateState(){};
 	void executeActions();
 
