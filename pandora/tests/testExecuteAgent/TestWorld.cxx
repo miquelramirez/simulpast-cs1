@@ -18,12 +18,12 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-#include "TestWorld.hxx"
+#include <TestWorld.hxx>
 
-#include "Point2D.hxx"
-#include "Exceptions.hxx"
+#include <Point2D.hxx>
+#include <Exceptions.hxx>
 
-#include "TestAgent.hxx"
+#include <TestAgent.hxx>
 
 #include <assert.h>
 #include <iostream>
@@ -63,7 +63,7 @@ void TestWorld::createAgents()
 {
 	if(_simulation.getId()==2)
 	{
-		TestAgent * agent = new TestAgent("test_0");
+		TestAgent * agent = new TestAgent("TestAgent_0");
 		agent->setPosition(Engine::Point2D<int>(0,32));
 		addAgent(agent);
 		return;

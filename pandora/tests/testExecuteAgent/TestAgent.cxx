@@ -18,9 +18,9 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-#include "TestAgent.hxx"
-#include "World.hxx"
-#include "Point2D.hxx"
+#include <TestAgent.hxx>
+#include <World.hxx>
+#include <Point2D.hxx>
 
 namespace Test
 {
@@ -45,7 +45,7 @@ void TestAgent::move()
 	}
 }
 
-void TestAgent::step()
+void TestAgent::updateState()
 {
 	move();
 }
