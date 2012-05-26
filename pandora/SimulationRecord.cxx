@@ -21,8 +21,9 @@
  */
 
 #include <SimulationRecord.hxx>
-#include <RasterLoader.hxx>
 #include <Exceptions.hxx>
+#include <GeneralState.hxx>
+#include <RasterLoader.hxx>
 
 #include <hdf5.h>
 
@@ -113,7 +114,7 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 		for(StaticRasterMap::iterator it=_staticRasters.begin(); it!=_staticRasters.end(); it++)
 		{
 			_loadingState = "loading static raster: "+it->first;
-			RasterLoader::instance()->fillHDF5Raster(it->second, fileName, it->first );
+			GeneralState::rasterLoader().fillHDF5Raster(it->second, fileName, it->first );
 		}
 
 		// dynamic rasters
