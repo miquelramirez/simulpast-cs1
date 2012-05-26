@@ -19,11 +19,11 @@
  * 
  */
 
-#include "TestWorld.hxx"
+#include <TestWorld.hxx>
 
-#include "Raster.hxx"
-#include "Point2D.hxx"
-#include "Exceptions.hxx"
+#include <Raster.hxx>
+#include <Point2D.hxx>
+#include <Exceptions.hxx>
 
 #include <assert.h>
 #include <iostream>
