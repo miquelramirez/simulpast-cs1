@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<config>  
+	<!-- Global simulation parameters -->
+	<resultsFile value="./data/hello.h5"/>
+	<numSteps value="100"/>
+	<size value="32"/>
+	<numAgents value="100"/>
+</config>
+
