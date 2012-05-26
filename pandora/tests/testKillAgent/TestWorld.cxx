@@ -19,12 +19,12 @@
  * 
  */
 
-#include "TestWorld.hxx"
+#include <TestWorld.hxx>
 
-#include "Point2D.hxx"
-#include "Exceptions.hxx"
+#include <Point2D.hxx>
+#include <Exceptions.hxx>
 
-#include "TestAgent.hxx"
+#include <TestAgent.hxx>
 
 #include <assert.h>
 #include <iostream>
@@ -46,6 +46,13 @@ void TestWorld::createRasters()
 
 void TestWorld::stepAgents()
 {
+	if(_simulation.getNumTasks()==1)
+	{
+		assert(_agents.size()==0);
+		assert(_overlapAgents.size()==0);
+		return;
+	}
+
 	if(_simulation.getId()==3)
 	{
 		if(_step<31)
@@ -81,7 +88,7 @@ void TestWorld::createAgents()
 {
 	if(_simulation.getId()==3)
 	{
-		TestAgent * agent = new TestAgent("test_0");
+		TestAgent * agent = new TestAgent("TestAgent_0");
 		agent->setPosition(Engine::Point2D<int>(63,63));
 		addAgent(agent);
 		return;

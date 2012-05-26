@@ -22,7 +22,7 @@
 #ifndef __TestAgent_hxx__
 #define __TestAgent_hxx__
 
-#include "Agent.hxx"
+#include <Agent.hxx>
 #include <string>
 
 namespace Test
@@ -37,11 +37,13 @@ public:
 	TestAgent( const std::string & id );
 	virtual ~TestAgent();
 	
-	void step();	
+	void updateState();	
 	
 	// Mpi related
 	TestAgent( void * package );
 	void * fillPackage();
+	void sendVectorAttributes(int);
+	void receiveVectorAttributes(int);
 };
 
 } // namespace Test
