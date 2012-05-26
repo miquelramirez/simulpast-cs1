@@ -5,6 +5,7 @@
 
 #include <string>
 #include <GeneralState.hxx>
+#include <vector>
 
 class TiXmlElement;
 
@@ -13,6 +14,8 @@ namespace Gujarat
 
 class CaloricRequirementsTable;
 class GujaratDemographics;
+class AgentController;
+class HunterGathererMDPConfig;
 
 class GujaratState
 {
@@ -21,7 +24,10 @@ class GujaratState
 	static CaloricRequirementsTable * _hgCaloricRequirements;
 	static CaloricRequirementsTable * _apCaloricRequirements;
 
+	std::vector<AgentController*> _hgControllers;
+
 	static GujaratDemographics * _demographics;
+
 
 protected:
 	GujaratState();
@@ -37,6 +43,8 @@ public:
 	static CaloricRequirementsTable & caloricRequirements( const std::string & type );
 	static GujaratDemographics & demographics();
 
+	static void setHGController( const std::string & type, const HunterGathererMDPConfig & config );
+	static AgentController & controller();
 };
 
 } // namespace Gujarat

@@ -79,8 +79,6 @@ class GujaratConfig : public Engine::Config
 
 	void 	parseSoilInfo(TiXmlElement * element);
 	void	parseHGMDPConfig( TiXmlElement* element );
-
-
 	
 public:
 	GujaratConfig();  

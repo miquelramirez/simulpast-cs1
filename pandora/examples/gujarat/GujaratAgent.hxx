@@ -9,7 +9,6 @@
 
 namespace Gujarat
 {
-class AgentController;
 
 class GujaratAgent : public Engine::Agent
 {
@@ -56,8 +55,6 @@ protected:
 	float _availableForageTime; // MpiBasicAttribute
 	float _emigrationProbability; // MpiBasicAttribute
 	float _reproductionProbability; // MpiBasicAttribute
-
-	AgentController*	_controller;
 
 	bool _starved; // MpiBasicAttribute
 	
@@ -121,9 +118,6 @@ public:
 	float	getReproductionProbability() const { return _reproductionProbability; }
 
 	double	getTimeSpentForagingTile() const;
-
-	void			setController( AgentController* controller ); 
-	AgentController* 	activeController() { return _controller; }
 
 	void logAgentState();
 	void updateKnowledge();

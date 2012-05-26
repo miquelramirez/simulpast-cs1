@@ -21,11 +21,11 @@ class HunterGathererMDPModel : public Problem::problem_t< HunterGathererMDPState
 {
 public:
 
-	HunterGathererMDPModel( HunterGatherer* a );
+	HunterGathererMDPModel();
 	virtual ~HunterGathererMDPModel();
 
 	void 	setup( const HunterGathererMDPConfig& cfg );
-	void	reset();
+	void	reset( GujaratAgent & agent );
 
 	HunterGatherer& 	agentRef()
 	{

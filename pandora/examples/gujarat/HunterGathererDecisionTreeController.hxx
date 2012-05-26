@@ -12,20 +12,19 @@ class Sector;
 class HunterGathererDecisionTreeController : public AgentController
 {
 public:
-	HunterGathererDecisionTreeController( GujaratAgent* agent );
+	HunterGathererDecisionTreeController();
 	virtual ~HunterGathererDecisionTreeController();
 
-	virtual	MDPAction*	selectAction();
+	virtual	MDPAction*	selectAction( GujaratAgent & agent );
 	
-	MDPAction*         shouldDoNothing(  );
-	MDPAction*         shouldForage(  );
-	MDPAction*         shouldMoveHome(  );
+	MDPAction*         shouldDoNothing(  HunterGatherer & agent  );
+	MDPAction*         shouldForage(  HunterGatherer & agent  );
+	MDPAction*         shouldMoveHome(  HunterGatherer & agent  );
 	
-	Sector*         getMaxBiomassSector(  );
+	Sector*         getMaxBiomassSector( HunterGatherer & agent );
 	unsigned        getDoNothingDaysCovered() const { return _DoNothingDaysCovered; } 
 
 private:
-	HunterGatherer*		_agentConcrete;
 	unsigned                _DoNothingDaysCovered;
 };
 

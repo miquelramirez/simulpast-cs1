@@ -16,11 +16,11 @@ class HunterGathererMDPController : public AgentController
 
 public:
 
-	HunterGathererMDPController( GujaratAgent* a, const HunterGathererMDPConfig& cfg );
+	HunterGathererMDPController( const HunterGathererMDPConfig& cfg );
 	virtual ~HunterGathererMDPController();
 
 
-	virtual	MDPAction*	selectAction();
+	virtual	MDPAction*	selectAction( GujaratAgent & agent );
 
 private:
 	typedef		Online::Policy::random_t< HunterGathererMDPState >	BasePolicy;

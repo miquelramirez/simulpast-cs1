@@ -8,6 +8,12 @@
 #include <RamirezDemographics.hxx>
 #include <AlexisDemographics.hxx>
 #include <OriginalDemographics.hxx>
+#include <AgentController.hxx>
+#include <omp.h>
+
+#include <HunterGathererDecisionTreeController.hxx>
+#include <HunterGathererProgrammedController.hxx>
+#include <HunterGathererMDPController.hxx>
 
 namespace Gujarat 
 {
@@ -16,6 +22,7 @@ GujaratState * GujaratState::_instance = 0;
 CaloricRequirementsTable * GujaratState::_hgCaloricRequirements = 0;
 CaloricRequirementsTable * GujaratState::_apCaloricRequirements = 0;
 GujaratDemographics * GujaratState::_demographics = 0;
+//AgentController * GujaratState::_hgController = 0;
 
 GujaratState & GujaratState::instance()
 {
@@ -47,6 +54,13 @@ GujaratState::~GujaratState()
 		delete _demographics;
 		_demographics = 0;
 	}
+	
+	for(int i=0; i<_hgControllers.size(); i++)
+	{
+		delete _hgControllers.at(i);
+		_hgControllers.at(i) = 0;
+	}
+	_hgControllers.clear();
 }
 
 void GujaratState::setHGCaloricRequirements( TiXmlElement * element )
@@ -134,6 +148,59 @@ GujaratDemographics & GujaratState::demographics()
 	}
 	return *(instance()._demographics);
 }
+
+void GujaratState::setHGController( const std::string & type, const HunterGathererMDPConfig & config )
+{
+	for(int i=0; i<instance()._hgControllers.size(); i++)
+	{
+		delete instance()._hgControllers.at(i);
+	}
+	instance()._hgControllers.clear();
+	instance()._hgControllers.resize(omp_get_max_threads());
+
+	if( type.compare("MDP")==0)
+	{
+		for(int i=0; i<instance()._hgControllers.size(); i++)
+		{
+			instance()._hgControllers.at(i) = new HunterGathererMDPController( config );	
+		}	
+		return;
+	}
+	else if(type.compare("Random")==0)
+	{	
+		for(int i=0; i<instance()._hgControllers.size(); i++)
+		{
+			instance()._hgControllers.at(i) = new HunterGathererProgrammedController();
+		}
+		return;
+	}
+	else if(type.compare("DecisionTree")==0)
+	{	
+		for(int i=0; i<instance()._hgControllers.size(); i++)
+		{
+			instance()._hgControllers.at(i) = new HunterGathererDecisionTreeController();
+		}
+		return;
+	}
+	
+	std::stringstream oss;
+	oss << "GujaratState::setHGController() - unknown type of controller: " << type;
+	throw Engine::Exception(oss.str());
+}
+
+AgentController & GujaratState::controller()
+{
+	int numThread = omp_get_thread_num();
+	AgentController * controller = instance()._hgControllers.at(numThread);
+	if(!controller)
+	{
+		std::stringstream oss;
+		oss << "GujaratState::controller() - asking for controller without being initialized";
+		throw Engine::Exception(oss.str());
+	}
+	return *(instance()._hgControllers.at(numThread));
+}
+
 
 } // namespace Gujarat 
 

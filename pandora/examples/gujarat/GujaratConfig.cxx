@@ -64,10 +64,9 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	GujaratState::setDemographics(_demographicsModel);
 
 	retrieveAttributeMandatory( element, "controllerType", _hunterGathererController );
-	
-	_hunterGathererController = element->Attribute("controllerType");
-
 	parseHGMDPConfig( element->FirstChildElement("controllerConfig") );
+	GujaratState::setHGController( _hunterGathererController, *_controllerConfig);
+
 	TiXmlElement* calTable = element->FirstChildElement( "caloriesTable" );
 	if ( calTable == NULL )	
 	{
@@ -204,13 +203,11 @@ void GujaratConfig::parseHGMDPConfig( TiXmlElement* element )
 		std::cerr << "[CONFIG]: controllerConfig element not found on configuration document" << std::endl;
 		return;
 	}
-	// Agent controller is not set to be model-based action selection
-	if ( _hunterGathererController != std::string("MDP") ) return;
-	// Element is not a controllerConfig element
-	if (  element->ValueStr().compare("controllerConfig") ) return;
 	// Not model-based controller config
-	if ( element->Attribute("type") != std::string("MDP") ) return;
-
+	if ( element->Attribute("type")!=std::string("MDP"))
+	{
+		return;
+	}
 	_controllerConfig = new HunterGathererMDPConfig(element);
 }
  

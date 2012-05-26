@@ -12,8 +12,8 @@ using Problem::action_t;
 namespace Gujarat
 {
 
-HunterGathererMDPModel::HunterGathererMDPModel( HunterGatherer* a )
-	: _simAgent( a ), _initial( NULL )
+HunterGathererMDPModel::HunterGathererMDPModel()
+	: _simAgent(0), _initial( NULL )
 {
 }
 
@@ -29,10 +29,13 @@ void	HunterGathererMDPModel::setup( const HunterGathererMDPConfig& cfg )
 	setHorizon( cfg.getHorizon() );
 }
 
-void	HunterGathererMDPModel::reset()
+void	HunterGathererMDPModel::reset( GujaratAgent & agent )
 {
 	if ( _initial != NULL )
 		delete _initial;
+
+
+	_simAgent = dynamic_cast<HunterGatherer *>(&agent);
 
 	// Build initial state from current state in the simulation
 	_initial = new HunterGathererMDPState(	agentRef().getPosition(),

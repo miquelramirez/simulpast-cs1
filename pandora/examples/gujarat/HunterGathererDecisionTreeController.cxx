@@ -18,10 +18,8 @@
 namespace Gujarat
 {
 
-HunterGathererDecisionTreeController::HunterGathererDecisionTreeController( GujaratAgent* a )
-	: AgentController( a )
+HunterGathererDecisionTreeController::HunterGathererDecisionTreeController()
 {
-	_agentConcrete = dynamic_cast<HunterGatherer*>( a );
 	_DoNothingDaysCovered = 1; 
 }
 
@@ -30,13 +28,13 @@ HunterGathererDecisionTreeController::~HunterGathererDecisionTreeController()
 }
 
 
-Sector* HunterGathererDecisionTreeController::getMaxBiomassSector(  )
+Sector* HunterGathererDecisionTreeController::getMaxBiomassSector(  HunterGatherer & agent  )
 {
 	// Make Forage actions
 	std::vector< Sector* > validActionSectors;
 	std::vector< Sector* > actionSectors;
 
-	_agentConcrete->updateKnowledge( agentRef().getPosition(), agentRef().getWorld()->getDynamicRaster( "resources" ), actionSectors );
+	agent.updateKnowledge( agent.getPosition(), agent.getWorld()->getDynamicRaster( "resources" ), actionSectors );
 
 	// MRJ: Remove empty sectors if any
 	for ( unsigned i = 0; i < actionSectors.size(); i++ )
@@ -71,10 +69,10 @@ Sector* HunterGathererDecisionTreeController::getMaxBiomassSector(  )
 
 }
 
-MDPAction* HunterGathererDecisionTreeController::shouldDoNothing(  )
+MDPAction* HunterGathererDecisionTreeController::shouldDoNothing( HunterGatherer & agent )
 {	
 	// CollectedResources > ConsumedResourcesByAgent * #days
-	if( agentRef().getOnHandResources() > agentRef().computeConsumedResources( getDoNothingDaysCovered() ) )
+	if( agent.getOnHandResources() > agent.computeConsumedResources( getDoNothingDaysCovered() ) )
 	{
 		return new DoNothingAction();
 	}
@@ -84,15 +82,15 @@ MDPAction* HunterGathererDecisionTreeController::shouldDoNothing(  )
 	}
 }
 
-MDPAction* HunterGathererDecisionTreeController::shouldForage(  )
+MDPAction* HunterGathererDecisionTreeController::shouldForage( HunterGatherer & agent )
 {	
-	Sector* maxSector = getMaxBiomassSector();
+	Sector* maxSector = getMaxBiomassSector(agent);	
 
 	if( maxSector == NULL) 
 		return NULL;
 	
 	MDPAction* forage = NULL;
-	if( maxSector->getBiomassAmount() >=  agentRef().computeConsumedResources(1) )
+	if( maxSector->getBiomassAmount() >=  agent.computeConsumedResources(1) )
 		forage = new ForageAction( maxSector, true );
 
 	return forage;
@@ -100,25 +98,25 @@ MDPAction* HunterGathererDecisionTreeController::shouldForage(  )
 
 }
 
-MDPAction* HunterGathererDecisionTreeController::shouldMoveHome(  )
+MDPAction* HunterGathererDecisionTreeController::shouldMoveHome( HunterGatherer & agent )
 {
-	const Engine::Point2D<int>& agentPos = agentRef().getPosition();
+	const Engine::Point2D<int>& agentPos = agent.getPosition();
 	
 	// Put a BOX around the home range.	
-	int boxOriginX = agentPos._x - agentRef().getHomeMobilityRange();
-	int boxOriginY = agentPos._y - agentRef().getHomeMobilityRange();
-	int boxSizeX = 2*agentRef().getHomeMobilityRange()+1;
-	int boxSizeY = 2*agentRef().getHomeMobilityRange()+1;
+	int boxOriginX = agentPos._x - agent.getHomeMobilityRange();
+	int boxOriginY = agentPos._y - agent.getHomeMobilityRange();
+	int boxSizeX = 2*agent.getHomeMobilityRange()+1;
+	int boxSizeY = 2*agent.getHomeMobilityRange()+1;
 	Engine::Point2D<int> boxOrigin(boxOriginX, boxOriginY);	
 	Engine::Point2D<int> boxSize(boxSizeX,boxSizeY);	
 	Engine::Rectangle<int> unTrimmedHomeBox(boxOrigin,boxSize);
 	Engine::Rectangle<int> homeBox;
 	//TODO look out sectors, MPI regions, etc... Decide getBoundaries? or getOverlapBoundaries?
 	// MRJ: As I understand it, this should be getOverlapBoundaries(), very much as it was before
-	unTrimmedHomeBox.intersection(agentRef().getWorld()->getOverlapBoundaries(),homeBox);
+	unTrimmedHomeBox.intersection(agent.getWorld()->getOverlapBoundaries(),homeBox);
 	
 	// Retrieve the areas that have intersection non zero with homeBox
-	const GujaratWorld * world              = (GujaratWorld *)agentRef().getWorld();
+	const GujaratWorld * world              = (GujaratWorld *)agent.getWorld();
 	const SettlementAreas * settlementAreas = world->getSettlementAreas();
 	std::vector<int> candidates(0);
 	settlementAreas->intersectionFilter(homeBox,candidates);
@@ -159,7 +157,7 @@ MDPAction* HunterGathererDecisionTreeController::shouldMoveHome(  )
 			{
 				int d = ceil(agentPos.distance(index));
 				if ((world->getValue("soils",index) == DUNE) 
-				    && (d <= (double)agentRef().getHomeMobilityRange()))
+				    && (d <= (double)agent.getHomeMobilityRange()))
 				{
 			  
 					if ( d > maxDist )
@@ -196,16 +194,16 @@ MDPAction* HunterGathererDecisionTreeController::shouldMoveHome(  )
 
 }
 
-MDPAction*	HunterGathererDecisionTreeController::selectAction()
+MDPAction*	HunterGathererDecisionTreeController::selectAction(	GujaratAgent & agent )
 {
-
+	HunterGatherer & agentConcrete = dynamic_cast<HunterGatherer&>( agent );
         //Decission Tree: DoNothing --> Forage --> MoveHome
 
 	MDPAction* selectedAction = NULL;
 	
-	selectedAction = shouldDoNothing();	
-	selectedAction = (!selectedAction) ?  shouldForage() : selectedAction;
-	selectedAction = (!selectedAction) ?  shouldMoveHome() : selectedAction;
+	selectedAction = shouldDoNothing(agentConcrete);	
+	selectedAction = (!selectedAction) ?  shouldForage(agentConcrete) : selectedAction;
+	selectedAction = (!selectedAction) ?  shouldMoveHome(agentConcrete) : selectedAction;
 	
 	return selectedAction;
 	

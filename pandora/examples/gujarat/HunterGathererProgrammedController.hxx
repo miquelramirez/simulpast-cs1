@@ -6,18 +6,13 @@
 namespace Gujarat
 {
 
-class HunterGatherer;
-
 class HunterGathererProgrammedController : public AgentController
 {
 public:
-	HunterGathererProgrammedController( GujaratAgent* agent );
+	HunterGathererProgrammedController();
 	virtual ~HunterGathererProgrammedController();
 
-	virtual	MDPAction*	selectAction();
-
-private:
-	HunterGatherer*		_agentConcrete;
+	virtual	MDPAction*	selectAction( GujaratAgent & agent );
 };
 
 }

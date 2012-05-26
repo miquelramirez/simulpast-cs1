@@ -9,6 +9,8 @@
 #include <cassert>
 #include <AgentController.hxx>
 
+#include <GujaratState.hxx>
+
 namespace Gujarat
 {
 
@@ -185,7 +187,7 @@ void HunterGatherer::updateKnowledge()
 
 void HunterGatherer::selectActions()
 {
-	_actions.push_back( (Engine::Action*)(activeController()->selectAction()) );
+	_actions.push_back( (Engine::Action*)(GujaratState::controller().selectAction(*this)) );
 }
 
 void HunterGatherer::serializeAdditionalAttributes()

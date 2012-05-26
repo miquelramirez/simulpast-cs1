@@ -7,16 +7,13 @@
 #include <AgroPastoralist.hxx>
 #include <Exceptions.hxx>
 #include <GujaratConfig.hxx>
-#include <HunterGathererProgrammedController.hxx>
-#include <HunterGathererDecisionTreeController.hxx>
-#include <HunterGathererMDPController.hxx>
 #include <OriginalDemographics.hxx>
 #include <RamirezDemographics.hxx>
 #include <AlexisDemographics.hxx>
-#include <RasterLoader.hxx>
 
-#include <Logger.hxx>
 #include <GeneralState.hxx>
+#include <Logger.hxx>
+#include <RasterLoader.hxx>
 #include <Statistics.hxx>
 
 #include <limits>
@@ -42,13 +39,13 @@ GujaratWorld::~GujaratWorld()
 void GujaratWorld::createRasters()
 {
 	registerStaticRaster("soils", _config.isStorageRequired("soils"));
-	Engine::RasterLoader::instance()->fillGDALRaster(getStaticRaster("soils"), _config._soilFile, this);
+	Engine::GeneralState::rasterLoader().fillGDALRaster(getStaticRaster("soils"), _config._soilFile, this);	
 
 	registerStaticRaster("dem", _config.isStorageRequired("dem"));
-	Engine::RasterLoader::instance()->fillGDALRaster(getStaticRaster("dem"), _config._demFile, this);
+	Engine::GeneralState::rasterLoader().fillGDALRaster(getStaticRaster("dem"), _config._demFile, this);
 
 	registerStaticRaster("duneMap", _config.isStorageRequired("duneMap"));
-	Engine::RasterLoader::instance()->fillGDALRaster(getStaticRaster("duneMap"), _config._duneMapFile, this);
+	Engine::GeneralState::rasterLoader().fillGDALRaster(getStaticRaster("duneMap"), _config._duneMapFile, this);
 	
 	registerDynamicRaster("moisture", _config.isStorageRequired("moisture"));
 	getDynamicRaster("moisture").setInitValues(0, std::numeric_limits<int>::max(), 0);
@@ -120,18 +117,6 @@ void GujaratWorld::createAgents()
 			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );
 			agent->setNumSectors( _config._numSectors );
 
-			if ( _config._hunterGathererController == "MDP" )
-			{
-				agent->setController( new HunterGathererMDPController( agent, *_config._controllerConfig ) );
-			}
-			else if ( _config._hunterGathererController == "Random" )
-			{
-				agent->setController( new HunterGathererProgrammedController( agent ) );
-			}
-			else if ( _config._hunterGathererController == "DecisionTree" )
-			{
-				agent->setController( new HunterGathererDecisionTreeController( agent ) );
-			}
 			agent->initializePosition();
 			agent->createSectorsMask();
 			std::cout << _simulation.getId() << " new HunterGathrer: " << agent << std::endl;

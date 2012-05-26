@@ -14,17 +14,15 @@
 namespace Gujarat
 {
 
-HunterGathererProgrammedController::HunterGathererProgrammedController( GujaratAgent* a )
-	: AgentController( a )
+HunterGathererProgrammedController::HunterGathererProgrammedController()
 {
-	_agentConcrete = dynamic_cast<HunterGatherer*>( a );
 }
 
 HunterGathererProgrammedController::~HunterGathererProgrammedController()
 {
 }
 
-MDPAction*	HunterGathererProgrammedController::selectAction()
+MDPAction*	HunterGathererProgrammedController::selectAction( GujaratAgent & agent )
 {
 	// TODO: which order must follow the actions? random?
 	// now random
@@ -36,7 +34,7 @@ MDPAction*	HunterGathererProgrammedController::selectAction()
 	{
 		std::cout << "DEBUG: MoveHome action selected" << std::endl;
 		std::vector< MoveHomeAction* > possibleActions;
-		MoveHomeAction::generatePossibleActions( agentRef(), possibleActions );
+		MoveHomeAction::generatePossibleActions( agent, possibleActions );
 
 		// MRJ: Select Move Home action on a random basis
 		dice = Engine::GeneralState::statistics().getUniformDistValue( 0, possibleActions.size() - 1 );
@@ -49,13 +47,15 @@ MDPAction*	HunterGathererProgrammedController::selectAction()
 		return selectedAction;
 	}
 
+	HunterGatherer & agentConcrete =  dynamic_cast<HunterGatherer&>( agent );
+
 	do
 	{
-		dice = Engine::GeneralState::statistics().getUniformDistValue( 0, _agentConcrete->getSectors().size()-1 );
+		dice = Engine::GeneralState::statistics().getUniformDistValue( 0, agentConcrete.getSectors().size()-1 );
 	
-	} while ( _agentConcrete->getSectors()[dice]->isEmpty() );
+	} while ( agentConcrete.getSectors()[dice]->isEmpty() );
 
-	return new ForageAction( _agentConcrete->getSectors()[dice] );
+	return new ForageAction( agentConcrete.getSectors()[dice] );
 	
 }
 
