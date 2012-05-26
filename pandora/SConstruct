@@ -24,7 +24,7 @@ else:
 	pythonLibraryName = 'pyPandora'
 
 
-coreFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx RasterLoader.cxx Action.cxx Logger.cxx GeneralState.cxx')
+coreFiles = Split('World.cxx StaticRaster.cxx Raster.cxx Agent.cxx Statistics.cxx SimulationRecord.cxx AgentRecord.cxx Serializer.cxx Simulation.cxx Config.cxx MpiFactory.cxx IncrementalRaster.cxx RasterLoader.cxx Action.cxx Logger.cxx GeneralState.cxx ShpLoader.cxx')
 
 analysisFiles = Split('analysis/Analysis.cxx analysis/AgentMean.cxx analysis/AgentSum.cxx analysis/AgentNum.cxx analysis/Results.cxx analysis/RasterSum.cxx analysis/RasterMean.cxx')
 
@@ -36,15 +36,16 @@ for src in srcFiles:
 	srcBaseFiles.append('build/'+src)
 
 if int(mareNostrum)==1:
-	includeDirs = Split('. analysis/ /gpfs/apps/HDF5/1.6.5/include')
-	includeDirs += ['/gpfs/apps/BOOST/1_39_0/64/include/boost-1_39/']
+	includeDirs = Split('. analysis/ /gpfs/apps/HDF5/1.8.9/64/include')
+	includeDirs += ['/gpfs/apps/BOOST/1_48_0/include/']
 	includeDirs += ['/gpfs/apps/TINYXML/2.6.2/64/STL/include']
 	includeDirs += ['/gpfs/apps/GDAL/1.7.1/64/include']	
-	libDirs = Split('/gpfs/apps/HDF5/1.6.5/lib /opt/ibmcmp/vacpp/10.1/lib64/ /gpfs/apps/GDAL/1.7.1/64/lib /gpfs/apps/TINYXML/2.6.2/64/STL/lib')
+	libDirs = Split('/gpfs/apps/HDF5/1.8.9/64/lib /opt/ibmcmp/vacpp/10.1/lib64/ /gpfs/apps/GDAL/1.7.1/64/lib /gpfs/apps/TINYXML/2.6.2/64/STL/lib')
+	libDirs += ['/gpfs/apps/BOOST/1_48_0/lib/']
 	libs += ['gpfs']
 	libs += ['xl']
 else:
-	includeDirs = Split('. analysis/ /usr/local/include /usr/local/hdf5/include /usr/lib/grass64/include/')
+	includeDirs = Split('. analysis/ /usr/local/include /usr/local/hdf5/include /usr/lib/grass64/include/ /usr/include/gdal/')
 	libDirs = Split('. /usr/local/lib /usr/local/hdf5/lib/ /usr/lib/grass64/lib/')
 
 # if debug && mare nostrum mpitrace is added
@@ -53,26 +54,28 @@ if int(release)==0 and int(mareNostrum)==1:
 	libDirs += ['/gpfs/apps/CEPBATOOLS/mpitrace-stable-1.2-mx/lib']
 
 env.SharedLibrary(libraryName, srcBaseFiles, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs)
-if int(localmpich) == 1 :
-	envPython = Environment(ENV=os.environ, CXX='/usr/local/bin/mpicxx')
-else :
-	envPython = Environment(ENV=os.environ, CXX='mpicxx')
 
-envPython['LINKFLAGS'] = Split('-Wl,--export-dynamic,-no-undefined')
-envPython.VariantDir('build_py', '.')
+if int(mareNostrum)==0:
+	if int(localmpich) == 1 :
+		envPython = Environment(ENV=os.environ, CXX='/usr/local/bin/mpicxx')
+	else :
+		envPython = Environment(ENV=os.environ, CXX='mpicxx')
 
-srcPyFiles = [] 
-for src in srcFiles:
-	srcPyFiles.append('build_py/'+src)
+	envPython['LINKFLAGS'] = Split('-Wl,--export-dynamic,-no-undefined')
+	envPython.VariantDir('build_py', '.')
 
-srcPyFiles.append('build/pyBindings.cxx')
-srcPyFiles.append('build/MpiStubCode.cxx')
+	srcPyFiles = [] 
+	for src in srcFiles:
+		srcPyFiles.append('build_py/'+src)
 
-libsPython = libs
-libsPython += ['boost_python']
-libsPython += ['python2.7']
-includeDirsPython = includeDirs
-includeDirsPython += ['/usr/include/python2.7/']
+	srcPyFiles.append('build/pyBindings.cxx')
+	srcPyFiles.append('build/MpiStubCode.cxx')
 
-envPython.SharedLibrary(pythonLibraryName, srcPyFiles, CPPPATH=includeDirsPython, LIBS=libsPython, LIBPATH=libDirs )
+	libsPython = libs
+	libsPython += ['boost_python']
+	libsPython += ['python2.7']
+	includeDirsPython = includeDirs
+	includeDirsPython += ['/usr/include/python2.7/']
+
+	envPython.SharedLibrary(pythonLibraryName, srcPyFiles, CPPPATH=includeDirsPython, LIBS=libsPython, LIBPATH=libDirs )
 
