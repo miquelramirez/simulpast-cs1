@@ -22,10 +22,10 @@
 #ifndef __TestAgent_hxx__
 #define __TestAgent_hxx__
 
-#include "Agent.hxx"
+#include <Agent.hxx>
 #include <string>
 
-#include "Point2D.hxx"
+#include <Point2D.hxx>
 
 namespace Test
 {
@@ -40,7 +40,7 @@ public:
 	virtual ~TestAgent();
 	
 	void serialize();
-	void selectActions();
+	void updateState();
 
 	void setMessage( const std::string & message );
 	const std::string & getMessage();

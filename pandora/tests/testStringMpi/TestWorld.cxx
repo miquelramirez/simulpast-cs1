@@ -19,10 +19,10 @@
  * 
  */
 
-#include "TestWorld.hxx"
+#include <TestWorld.hxx>
 
-#include "Exceptions.hxx"
-#include "TestAgent.hxx"
+#include <Exceptions.hxx>
+#include <TestAgent.hxx>
 #include <assert.h>
 #include <sstream>
 
@@ -39,22 +39,32 @@ TestWorld::~TestWorld()
 
 void TestWorld::stepAgents()
 {
-	TestAgent * agent = (TestAgent*)getAgent("test_0");
-	if(agent)
+	std::cout << "foo" << std::endl;
+	Engine::Agent * baseAgent = getAgent("TestAgent_0");
+	std::cout << "base agent: " << baseAgent << std::endl;
+	if(baseAgent)
 	{
+		TestAgent * agent = (TestAgent*)baseAgent;
+		/*
 		const std::string & message = agent->getMessage();
 		std::stringstream match;
-		match << "string_" << getCurrentStep();
+		//match << "string_" << getCurrentStep();
+		match << "string_0";
 		assert(message.compare(match.str())==0);
+		*/
 	}
 	
-	agent = (TestAgent*)getAgent("test_1");
-	if(agent)
+	baseAgent = getAgent("TestAgent_1");
+	if(baseAgent)
 	{
+		TestAgent * agent = (TestAgent*)baseAgent;
+		/*
 		const std::string & message = agent->getMessage();
 		std::stringstream match;
-		match << "string_" << 199-getCurrentStep();
+		//match << "string_" << 199-getCurrentStep();
+		match << "string_199";
 		assert(message.compare(match.str())==0);
+		*/
 	}
 }
 
@@ -66,14 +76,14 @@ void TestWorld::createAgents()
 {
 	if(_simulation.getId()==0)
 	{
-		TestAgent * agent = new TestAgent("test_0", true);		
+		TestAgent * agent = new TestAgent("TestAgent_0", true);		
 		agent->setPosition(Engine::Point2D<int>(0,0));
 		addAgent(agent);
 		agent->setMessage("string_0");
 	}
 	if(_simulation.getId()==_simulation.getNumTasks()-1)
 	{
-		TestAgent * agent = new TestAgent("test_1", false);	
+		TestAgent * agent = new TestAgent("TestAgent_1", false);	
 		Engine::Point2D<int> pos(_simulation.getSize()-1, _simulation.getSize()-1);
 		agent->setPosition(pos);
 		addAgent(agent);

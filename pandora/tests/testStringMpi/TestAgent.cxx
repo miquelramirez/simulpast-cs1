@@ -19,10 +19,10 @@
  * 
  */
 
-#include "TestAgent.hxx"
-#include "World.hxx"
-#include "Exceptions.hxx"
-#include "Statistics.hxx"
+#include <TestAgent.hxx>
+#include <World.hxx>
+#include <Exceptions.hxx>
+#include <Statistics.hxx>
 #include <cstring>
 
 namespace Test
@@ -36,8 +36,9 @@ TestAgent::~TestAgent()
 {
 }
 
-void TestAgent::selectActions()	
+void TestAgent::updateState()	
 {
+	/*
 	std::stringstream newMessage;
 	if(_moveToDownLeft)
 	{
@@ -48,6 +49,7 @@ void TestAgent::selectActions()
 		newMessage << "string_" << 198-_world->getCurrentStep();
 	}
 	_message = newMessage.str();
+	*/
 
 	Engine::Point2D<int> newPosition = _position;
 	if(_moveToDownLeft)
