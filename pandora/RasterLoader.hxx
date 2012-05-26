@@ -33,11 +33,8 @@ class World;
 
 class RasterLoader
 {
-	static RasterLoader * _instance;
-protected:
-	RasterLoader();
 public:
-	static RasterLoader * instance();
+	RasterLoader();
 	virtual ~RasterLoader();
 
 	// load a GDAL file conforming World position

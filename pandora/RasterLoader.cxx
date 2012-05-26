@@ -27,7 +27,7 @@
 #include <Exceptions.hxx>
 
 #include <vector>
-#include <gdal/gdal_priv.h>
+#include <gdal_priv.h>
 #include <hdf5.h>
 
 extern "C" 
@@ -37,17 +37,6 @@ extern "C"
 
 namespace Engine
 {
-
-RasterLoader * RasterLoader::_instance = 0;
-
-RasterLoader * RasterLoader::instance()
-{
-	if(!_instance)
-	{
-		_instance = new RasterLoader;
-	}
-	return _instance;
-}
 
 RasterLoader::RasterLoader()
 {
@@ -204,7 +193,7 @@ void RasterLoader::fillHDF5Raster( StaticRaster & raster, const std::string & fi
 }
 
 void RasterLoader::fillGrassCellRaster( StaticRaster & raster, const std::string & rasterName, World * world )
-{	
+{
 	G_gisinit("pandora");
 	std::cout << "loading grass raster from : " << rasterName << " in location: " << G_location() << " and mapset: " << G_mapset() << "...";	
 	int fileId = G_open_cell_old(rasterName.c_str(), G_mapset());
