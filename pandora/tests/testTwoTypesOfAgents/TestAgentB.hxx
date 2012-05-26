@@ -22,7 +22,7 @@
 #ifndef __TestAgentB_hxx__
 #define __TestAgentB_hxx__
 
-#include "Agent.hxx"
+#include <Agent.hxx>
 #include <string>
 
 namespace Test
@@ -30,7 +30,7 @@ namespace Test
 
 class TestAgentB: public Engine::Agent
 {
-	int _testValueB; // MpiAttribute
+	int _testValueB; // MpiBasicAttribute
 
 	void move();
 	void serialize();
@@ -39,12 +39,14 @@ public:
 	TestAgentB( const std::string & id );
 	virtual ~TestAgentB();
 	
-	void step();
+	void updateState();
 	const int & getTestValueB();
 	
 	// Mpi related
 	TestAgentB( void * package );
 	void * fillPackage();
+	void sendVectorAttributes(int);
+	void receiveVectorAttributes(int);
 };
 
 } // namespace Test

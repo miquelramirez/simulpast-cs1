@@ -19,9 +19,9 @@
  * 
  */
 
-#include "TestAgentB.hxx"
-#include "World.hxx"
-#include "Point2D.hxx"
+#include <TestAgentB.hxx>
+#include <World.hxx>
+#include <Point2D.hxx>
 
 namespace Test
 {
@@ -46,7 +46,7 @@ void TestAgentB::move()
 	}
 }
 
-void TestAgentB::step()
+void TestAgentB::updateState()
 {
 	move();
 }

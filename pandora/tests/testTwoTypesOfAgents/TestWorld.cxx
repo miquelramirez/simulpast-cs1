@@ -19,14 +19,14 @@
  * 
  */
 
-#include "TestWorld.hxx"
+#include <TestWorld.hxx>
 
-#include "Raster.hxx"
-#include "Point2D.hxx"
-#include "Exceptions.hxx"
+#include <Raster.hxx>
+#include <Point2D.hxx>
+#include <Exceptions.hxx>
 
-#include "TestAgentA.hxx"
-#include "TestAgentB.hxx"
+#include <TestAgentA.hxx>
+#include <TestAgentB.hxx>
 
 #include <assert.h>
 #include <iostream>
@@ -97,15 +97,15 @@ void TestWorld::stepAgents()
 	}
 	if(_agents.size()!=0)
 	{
-		TestAgentA * agentA = (TestAgentA*)getAgent("testA_1");
-		assert(agentA->isType("testA")==true);
-		assert(agentA->isType("testB")==false);
+		TestAgentA * agentA = (TestAgentA*)getAgent("TestAgentA_1");
+		assert(agentA->isType("TestAgentA")==true);
+		assert(agentA->isType("TestAgentB")==false);
 		assert(agentA->getTestValueA()==10);
 		assert(agentA->getTestId().compare("test agent A")==0);
 
-		TestAgentB * agentB = (TestAgentB*)getAgent("testB_1");
-		assert(agentB->isType("testA")==false);
-		assert(agentB->isType("testB")==true);	
+		TestAgentB * agentB = (TestAgentB*)getAgent("TestAgentB_1");
+		assert(agentB->isType("TestAgentA")==false);
+		assert(agentB->isType("TestAgentB")==true);	
 		assert(agentB->getTestValueB()==5);
 	}
 }
@@ -114,11 +114,11 @@ void TestWorld::createAgents()
 {
 	if(_simulation.getId()==0)
 	{
-		TestAgentA * agent = new TestAgentA("testA_1");
+		TestAgentA * agent = new TestAgentA("TestAgentA_1");
 		agent->setPosition(Engine::Point2D<int>(0,10));
 		addAgent(agent);
 		
-		TestAgentB * agent2 = new TestAgentB("testB_1");
+		TestAgentB * agent2 = new TestAgentB("TestAgentB_1");
 		agent2->setPosition(Engine::Point2D<int>(0,20));
 		addAgent(agent2);
 		return;
