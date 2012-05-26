@@ -19,10 +19,10 @@
  * 
  */
 
-#include "TestAgent.hxx"
-#include "World.hxx"
-#include "Exceptions.hxx"
-#include "Statistics.hxx"
+#include <TestAgent.hxx>
+#include <World.hxx>
+#include <Exceptions.hxx>
+#include <Statistics.hxx>
 #include <cstring>
 
 namespace Test
@@ -36,8 +36,9 @@ TestAgent::~TestAgent()
 {
 }
 
-void TestAgent::selectActions()	
+void TestAgent::updateState()	
 {
+	std::cout << "agent: " << this << " being executed with move down: " << _moveToDownLeft << std::endl;
 	Engine::Point2D<int> newPosition = _position;
 	if(_moveToDownLeft)
 	{
@@ -53,8 +54,8 @@ void TestAgent::selectActions()
 	if(_world->checkPosition(newPosition))
 	{
 		_position = newPosition;
-		return;
 	}
+	std::cout << "agent: " << this << " moved" << std::endl;
 }
 
 void TestAgent::serialize()

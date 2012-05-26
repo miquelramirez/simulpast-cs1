@@ -19,10 +19,10 @@
  * 
  */
 
-#include "TestWorld.hxx"
+#include <TestWorld.hxx>
 
-#include "Exceptions.hxx"
-#include "TestAgent.hxx"
+#include <Exceptions.hxx>
+#include <TestAgent.hxx>
 #include <assert.h>
 #include <iostream>
 
@@ -39,7 +39,8 @@ TestWorld::~TestWorld()
 
 void TestWorld::stepAgents()
 {
-	TestAgent * agent = (TestAgent*)getAgent("test_0");
+	std::cout << "checking step agents" << std::endl;
+	TestAgent * agent = (TestAgent*)getAgent("TestAgent_0");
 	if(agent)
 	{
 		std::vector<int> & vectorInt = agent->getVectorInt();
@@ -51,6 +52,7 @@ void TestWorld::stepAgents()
 		}
 	}
 
+	/*
 	agent = (TestAgent*)getAgent("test_1");
 	if(agent)
 	{
@@ -62,6 +64,8 @@ void TestWorld::stepAgents()
 			assert(vectorFloat[199-i] == i);
 		}
 	}
+	*/
+	std::cout << "checking step agents done" << std::endl;
 }
 
 void TestWorld::createRasters()
@@ -72,7 +76,7 @@ void TestWorld::createAgents()
 {
 	if(_simulation.getId()==0)
 	{
-		TestAgent * agent = new TestAgent("test_0", true);
+		TestAgent * agent = new TestAgent("TestAgent_0", true);
 		agent->setPosition(Engine::Point2D<int>(0,0));
 		agent->getVectorInt().resize(200);
 		agent->getVectorFloat().resize(200);
@@ -83,6 +87,7 @@ void TestWorld::createAgents()
 		}
 		addAgent(agent);
 	}
+	/*
 	if(_simulation.getId()==_simulation.getNumTasks()-1)
 	{
 		TestAgent * agent = new TestAgent("test_1", false);
@@ -99,6 +104,7 @@ void TestWorld::createAgents()
 		
 		return;
 	}
+	*/
 }
 
 } // namespace Test 
