@@ -18,13 +18,13 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-#include "TestWorld.hxx"
+#include <TestWorld.hxx>
 
-#include "Simulation.hxx"
-#include "Point2D.hxx"
-#include "Exceptions.hxx"
+#include <Simulation.hxx>
+#include <Point2D.hxx>
+#include <Exceptions.hxx>
 
-#include "TestAgent.hxx"
+#include <TestAgent.hxx>
 
 #include <assert.h>
 #include <iostream>
@@ -133,12 +133,12 @@ void TestWorld::createAgents()
 {
 	if(_simulation.getId()==0)
 	{
-		TestAgent * agentVertical1 = new TestAgent("test_0", false);
+		TestAgent * agentVertical1 = new TestAgent("TestAgent_0", false);
 		Engine::Point2D<int> pos(31,0);
 		agentVertical1->setPosition(pos+_boundaries._origin);
 		addAgent(agentVertical1);
 
-		TestAgent * agentHorizontal1 = new TestAgent("test_2", true);
+		TestAgent * agentHorizontal1 = new TestAgent("TestAgent_2", true);
 		Engine::Point2D<int> pos2(0,31);
 		agentHorizontal1->setPosition(pos2+_boundaries._origin);
 		addAgent(agentHorizontal1);
@@ -146,7 +146,7 @@ void TestWorld::createAgents()
 	}
 	if(_simulation.getId()==1)
 	{
-		TestAgent * agentVertical2 = new TestAgent("test_1", false);
+		TestAgent * agentVertical2 = new TestAgent("TestAgent_1", false);
 		Engine::Point2D<int> pos(0,0);
 		agentVertical2->setPosition(pos+_boundaries._origin);
 		addAgent(agentVertical2);
@@ -155,7 +155,7 @@ void TestWorld::createAgents()
 	}
 	if(_simulation.getId()==2)
 	{
-		TestAgent * agentHorizontal2 = new TestAgent("test_3", true);
+		TestAgent * agentHorizontal2 = new TestAgent("TestAgent_3", true);
 		Engine::Point2D<int> pos(0,0);
 		agentHorizontal2->setPosition(pos+_boundaries._origin);
 		addAgent(agentHorizontal2);

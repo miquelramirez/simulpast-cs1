@@ -18,14 +18,14 @@
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-#include "TestWorld.hxx"
-#include "Exceptions.hxx"
-#include "Simulation.hxx"
+#include <TestWorld.hxx>
+#include <Exceptions.hxx>
+#include <Simulation.hxx>
 
 #include <iostream>
 #include <cstdlib>
 
-// this test checks wether all the copy/delete/add operations of agents are reflected on the rest of computer nodes
+// this test checks wether all needed ghost copies of agents are correctly sent to any neighbor node
 int main(int argc, char *argv[])
 {
 	try

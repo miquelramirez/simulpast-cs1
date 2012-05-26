@@ -21,7 +21,7 @@
 #ifndef __TestAgent_hxx__
 #define __TestAgent_hxx__
 
-#include "Agent.hxx"
+#include <Agent.hxx>
 #include <string>
 
 namespace Test
@@ -32,16 +32,18 @@ class TestAgent: public Engine::Agent
 	void move();
 	void serialize();
 
-	bool _horizontalMovement; // MpiAttribute
+	bool _horizontalMovement; // MpiBasicAttribute
 public:
 	TestAgent( const std::string & id, const bool & horizontalMovement );
 	virtual ~TestAgent();
 	
-	void step();
+	void updateState();
 	
 	// Mpi related
 	TestAgent( void * package );
 	void * fillPackage();
+	void sendVectorAttributes(int);
+	void receiveVectorAttributes(int);
 };
 
 } // namespace Test
