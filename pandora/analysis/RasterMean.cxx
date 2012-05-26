@@ -1,5 +1,5 @@
 
-#include <RasterMean.hxx>
+#include <analysis/RasterMean.hxx>
 #include <Raster.hxx>
 #include <Exceptions.hxx>
 

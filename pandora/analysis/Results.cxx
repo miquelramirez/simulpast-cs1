@@ -1,7 +1,7 @@
 
-#include <Results.hxx>
+#include <analysis/Results.hxx>
 
-#include <Analysis.hxx>
+#include <analysis/Analysis.hxx>
 #include <SimulationRecord.hxx>
 
 #include <iostream>

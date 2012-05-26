@@ -2,7 +2,7 @@
 #ifndef __AgentNum_hxx__
 #define __AgentNum_hxx__
 
-#include <Analysis.hxx>
+#include <analysis/Analysis.hxx>
 
 namespace Engine
 {

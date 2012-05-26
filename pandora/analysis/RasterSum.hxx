@@ -2,7 +2,7 @@
 #ifndef __RasterSum_hxx__
 #define __RasterSum_hxx__
 
-#include <Analysis.hxx>
+#include <analysis/Analysis.hxx>
 #include <SimulationRecord.hxx>
 
 /*

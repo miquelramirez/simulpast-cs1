@@ -1,5 +1,5 @@
 
-#include <RasterSum.hxx>
+#include <analysis/RasterSum.hxx>
 #include <Raster.hxx>
 
 namespace Analysis

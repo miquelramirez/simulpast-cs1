@@ -2,7 +2,7 @@
 #ifndef __RasterMean_hxx__
 #define __RasterMean_hxx__
 
-#include <Analysis.hxx>
+#include <analysis/Analysis.hxx>
 #include <SimulationRecord.hxx>
 
 /*

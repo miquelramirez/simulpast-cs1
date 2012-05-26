@@ -1,5 +1,5 @@
 
-#include <AgentSum.hxx>
+#include <analysis/AgentSum.hxx>
 #include <AgentRecord.hxx>
 
 namespace Analysis
