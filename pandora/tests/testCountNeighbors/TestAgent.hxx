@@ -22,10 +22,10 @@
 #ifndef __TestAgent_hxx__
 #define __TestAgent_hxx__
 
-#include "Agent.hxx"
+#include <Agent.hxx>
 #include <string>
 
-#include "Point2D.hxx"
+#include <Point2D.hxx>
 
 namespace Test
 {
@@ -38,11 +38,13 @@ public:
 	virtual ~TestAgent();
 	
 	void serialize();
-	void step();	
+	void updateState();	
 	
 	// MPI Script Generated code
 	TestAgent( void * );
 	void * fillPackage();
+	void sendVectorAttributes(int);
+	void receiveVectorAttributes(int);
 };
 
 } // namespace Test

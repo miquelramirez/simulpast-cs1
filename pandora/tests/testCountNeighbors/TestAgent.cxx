@@ -19,10 +19,10 @@
  * 
  */
 
-#include "TestAgent.hxx"
-#include "World.hxx"
-#include "Exceptions.hxx"
-#include "Statistics.hxx"
+#include <TestAgent.hxx>
+#include <World.hxx>
+#include <Exceptions.hxx>
+#include <Statistics.hxx>
 #include <cstring>
 
 namespace Test
@@ -36,7 +36,7 @@ TestAgent::~TestAgent()
 {
 }
 
-void TestAgent::step()	
+void TestAgent::updateState()	
 {
 	for(int i=0; i<100; i++)
 	{

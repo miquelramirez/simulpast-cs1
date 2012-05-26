@@ -19,9 +19,9 @@
  * 
  */
 
-#include "TestWorld.hxx"
-#include "Exceptions.hxx"
-#include "Simulation.hxx"
+#include <TestWorld.hxx>
+#include <Exceptions.hxx>
+#include <Simulation.hxx>
 
 #include <iostream>
 #include <cstdlib>
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 {
 	try
 	{
-		Engine::Simulation sim(64,1);
+		Engine::Simulation sim(128,1);
 		Test::TestWorld world(sim);
 		world.init(argc, argv);
 		world.run();
