@@ -19,13 +19,11 @@
  * 
  */
 
-#include "TestWorld.hxx"
+#include <TestWorld.hxx>
 
-#include "Raster.hxx"
-#include "Point2D.hxx"
-#include "Exceptions.hxx"
-
-#include "TestAgent.hxx"
+#include <Raster.hxx>
+#include <Point2D.hxx>
+#include <Exceptions.hxx>
 
 #include <assert.h>
 #include <iostream>
@@ -43,12 +41,6 @@ TestWorld::~TestWorld()
 
 void TestWorld::stepAgents()
 {
-	if(_simulation.getId()==0)
-	{
-		assert(_agents.size()==1);
-		TestAgent * agent = (TestAgent*)(*_agents.begin());
-		assert(agent->getId()=="test_0");
-	}
 	Engine::Point2D<int> index(0,0);
 	for(index._x=_boundaries._origin._x; index._x<_boundaries._origin._x+_boundaries._size._x; index._x++)		
 	{
@@ -79,13 +71,6 @@ void TestWorld::createRasters()
 
 void TestWorld::createAgents()
 {
-	if(_simulation.getId()==0)
-	{
-		TestAgent * agent = new TestAgent("test_0");
-		agent->setPosition(Engine::Point2D<int>(31,31));
-		addAgent(agent);
-		return;
-	}
 }
 
 } // namespace Test 

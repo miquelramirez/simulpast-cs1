@@ -19,16 +19,14 @@
  * 
  */
 
-#include "TestWorld.hxx"
-#include "Exceptions.hxx"
-#include "Simulation.hxx"
+#include <TestWorld.hxx>
+#include <Exceptions.hxx>
+#include <Simulation.hxx>
 
 #include <iostream>
 #include <cstdlib>
 
-// this test checks if initial data is correctly loaded in init time.
-// it creates an agent in an overlapping zone in order to check whether its ghosts are created in neighbor worlds
-// it checks raster data as well
+// this test checks if raster initial data is correctly loaded in init time.
 
 int main(int argc, char *argv[])
 {

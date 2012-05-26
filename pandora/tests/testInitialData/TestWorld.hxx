@@ -22,7 +22,7 @@
 #ifndef __TestWorld_hxx__
 #define __TestWorld_hxx__
 
-#include "World.hxx"
+#include <World.hxx>
 
 namespace Test
 {
