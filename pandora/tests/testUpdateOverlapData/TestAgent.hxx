@@ -37,11 +37,13 @@ public:
 	TestAgent( const std::string & id );
 	virtual ~TestAgent();
 	
-	void step();
+	void updateState();
 	
 	// Mpi related
 	TestAgent( void * package );
 	void * fillPackage();
+	void sendVectorAttributes(int);
+	void receiveVectorAttributes(int);
 };
 
 } // namespace Test

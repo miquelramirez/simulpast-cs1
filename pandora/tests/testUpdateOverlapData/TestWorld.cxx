@@ -62,7 +62,7 @@ void TestWorld::createAgents()
 {
 	if(_simulation.getId()==0)
 	{
-		TestAgent * agent = new TestAgent("test_0");
+		TestAgent * agent = new TestAgent("TestAgent_0");
 		agent->setPosition(Engine::Point2D<int>(0,0));
 		addAgent(agent);
 		return;

@@ -48,7 +48,7 @@ void TestAgent::move()
 	}
 }
 
-void TestAgent::step()
+void TestAgent::updateState()
 {
 	move();
 }
