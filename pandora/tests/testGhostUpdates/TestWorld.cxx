@@ -19,12 +19,12 @@
  * 
  */
 
-#include "TestWorld.hxx"
+#include <TestWorld.hxx>
 
-#include "Point2D.hxx"
-#include "Exceptions.hxx"
+#include <Point2D.hxx>
+#include <Exceptions.hxx>
 
-#include "TestAgent.hxx"
+#include <TestAgent.hxx>
 
 #include <assert.h>
 #include <iostream>
@@ -51,12 +51,22 @@ void TestWorld::stepAgents()
 	{
 		return;
 	}
+
 	int lastStep = getCurrentStep() - 1;
 	bool lastStepWasEven = false;
 	if(lastStep%2==0)
 	{
 		lastStepWasEven = true;
+	}	
+	
+	// only one task, agents does not have any neighbor so always is even until step 32 (where they cross the paths)
+	if(_simulation.getNumTasks()==1)
+	{
+		return;
 	}
+
+	// more than one task, agents turn the state of each other
+
 	for(AgentsList::iterator it=_agents.begin(); it!=_agents.end(); it++)
 	{
 		TestAgent * agent = (TestAgent*)(*it);
@@ -73,19 +83,19 @@ void TestWorld::createAgents()
 {
 	if(_simulation.getId()==0)
 	{
-		TestAgent * agentVertical1 = new TestAgent("test_0", false);
+		TestAgent * agentVertical1 = new TestAgent("TestAgent_0", false);
 		Engine::Point2D<int> pos(31,0);
-		agentVertical1->setPosition(pos+_boundaries._origin);
+		agentVertical1->setPosition(pos);
 		addAgent(agentVertical1);
-		TestAgent * agentHorizontal1 = new TestAgent("test_2", true);
+		TestAgent * agentHorizontal1 = new TestAgent("TestAgent_2", true);
 		Engine::Point2D<int> pos2(0,31);
-		agentHorizontal1->setPosition(pos2+_boundaries._origin);
+		agentHorizontal1->setPosition(pos2);
 		addAgent(agentHorizontal1);
 		return;
 	}
 	if(_simulation.getId()==1)
 	{
-		TestAgent * agentVertical2 = new TestAgent("test_1", false);
+		TestAgent * agentVertical2 = new TestAgent("TestAgent_1", false);
 		Engine::Point2D<int> pos(0,0);
 		agentVertical2->setPosition(pos+_boundaries._origin);
 		addAgent(agentVertical2);
@@ -94,7 +104,7 @@ void TestWorld::createAgents()
 	}
 	if(_simulation.getId()==2)
 	{
-		TestAgent * agentHorizontal2 = new TestAgent("test_3", true);
+		TestAgent * agentHorizontal2 = new TestAgent("TestAgent_3", true);
 		Engine::Point2D<int> pos(0,0);
 		agentHorizontal2->setPosition(pos+_boundaries._origin);
 		addAgent(agentHorizontal2);

@@ -22,7 +22,7 @@
 #ifndef __TestAgent_hxx__
 #define __TestAgent_hxx__
 
-#include "Agent.hxx"
+#include <Agent.hxx>
 #include <string>
 
 namespace Test
@@ -33,8 +33,8 @@ class TestAgent: public Engine::Agent
 	void move();
 	void serialize();
 
-	bool _horizontalMovement; // MpiAttribute
-	bool _evenTurn; // Mp
+	bool _horizontalMovement; // MpiBasicAttribute
+	bool _evenTurn; // MpiBasicAttribute
 
 	void updateTurnInformation();
 	void setEvenTurn( const bool & evenTurn );
@@ -43,11 +43,13 @@ public:
 	virtual ~TestAgent();
 	
 	bool isEvenTurn();
-	void step();
+	void updateState();
 	
 	// Mpi related
 	TestAgent( void * package );
 	void * fillPackage();
+	void sendVectorAttributes(int);
+	void receiveVectorAttributes(int);
 };
 
 } // namespace Test

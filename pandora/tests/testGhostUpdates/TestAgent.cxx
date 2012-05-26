@@ -19,9 +19,9 @@
  * 
  */
 
-#include "TestAgent.hxx"
-#include "World.hxx"
-#include "Point2D.hxx"
+#include <TestAgent.hxx>
+#include <World.hxx>
+#include <Point2D.hxx>
 
 namespace Test
 {
@@ -56,11 +56,10 @@ void TestAgent::updateTurnInformation()
 {
 	if(_world->getCurrentStep()%2==0)
 	{
-		//std::cout << "agent: " << this << " on even turn in step: " << _world->getCurrentStep() << std::endl;
 		_evenTurn = true;
 	}
 	else
-	{		
+	{
 		//std::cout << "agent: " << this << " on odd turn in step: " << _world->getCurrentStep() << std::endl;
 		Engine::World::AgentsList neighbors = _world->getNeighbours(this, 1);
 		for(Engine::World::AgentsList::iterator it=neighbors.begin(); it!=neighbors.end(); it++)
@@ -82,7 +81,7 @@ bool TestAgent::isEvenTurn()
 	return _evenTurn;
 }
 
-void TestAgent::step()
+void TestAgent::updateState()
 {
 	move();
 	updateTurnInformation();
