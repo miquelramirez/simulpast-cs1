@@ -49,6 +49,10 @@ class AgentNum(libpyPandora.AgentNumStub):
 	def __init__(self):
 		libpyPandora.AgentNumStub.__init__( self )
 
+class AgentHDFtoSHP(libpyPandora.AgentHDFtoSHPStub):
+	def __init__(self, fileName, numStep ):
+		libpyPandora.AgentHDFtoSHPStub.__init__( self, fileName, numStep )
+
 class RasterSum(libpyPandora.RasterSumStub):
 	def __init__(self):
 		libpyPandora.RasterSumStub.__init__( self )

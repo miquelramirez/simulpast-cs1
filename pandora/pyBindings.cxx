@@ -31,13 +31,16 @@
 #include <AgentRecord.hxx>
 #include <SimulationRecord.hxx>
 
+#include <analysis/Results.hxx>
+#include <analysis/Analysis.hxx>
+
 #include <analysis/AgentMean.hxx>
 #include <analysis/AgentSum.hxx>
 #include <analysis/AgentNum.hxx>
+#include <analysis/AgentHDFtoSHP.hxx>
+
 #include <analysis/RasterSum.hxx>
 #include <analysis/RasterMean.hxx>
-#include <analysis/Results.hxx>
-#include <analysis/Analysis.hxx>
 
 #include <string>
 
@@ -302,6 +305,10 @@ BOOST_PYTHON_MODULE(libpyPandora)
 	boost::python::class_< Analysis::AgentNum, std::auto_ptr< Analysis::AgentNum> , boost::python::bases<Analysis::AgentAnalysis> >("AgentNumStub")
 	;
 	boost::python::implicitly_convertible< std::auto_ptr< Analysis::AgentNum >, std::auto_ptr< Analysis::AgentAnalysis > >();
+	
+	boost::python::class_< Analysis::AgentHDFtoSHP, std::auto_ptr< Analysis::AgentHDFtoSHP> , boost::python::bases<Analysis::AgentAnalysis> >("AgentHDFtoSHPStub", boost::python::init< const std::string &, int >() )
+	;
+	boost::python::implicitly_convertible< std::auto_ptr< Analysis::AgentHDFtoSHP >, std::auto_ptr< Analysis::AgentAnalysis > >();
 
 	// concrete raster analysis
 	boost::python::class_< Analysis::RasterMean, std::auto_ptr< Analysis::RasterMean> , boost::python::bases<Analysis::RasterAnalysis> >("RasterMeanStub")
