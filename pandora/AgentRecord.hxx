@@ -42,13 +42,15 @@ public:
 public:
 	AgentRecord( const std::string & id, int numSteps );
 	virtual ~AgentRecord();
-	// TODO x and y must be integers or strings?
+	
 	void addState( int numStep, const std::string & id, int value );
 	int getState( int numStep, const std::string & key ) const;
 	std::string getCompleteState( int numStep ) const;
 
 	StatesMap::const_iterator beginStates() const;
 	StatesMap::const_iterator endStates() const;
+	const std::string & getId() const { return _id; }
+	int getNumSteps() const { return _numSteps; }
 };
 
 } // namespace Engine

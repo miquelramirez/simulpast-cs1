@@ -28,6 +28,7 @@
 #include "analysis/RasterMean.hxx"
 #include "analysis/RasterSum.hxx"
 #include "analysis/AgentNum.hxx"
+#include <analysis/AgentHDFtoSHP.hxx>
 #include <iostream>
 
 int main(int argc, char *argv[])
@@ -42,6 +43,7 @@ int main(int argc, char *argv[])
 		agentResults.addAnalysis(new Analysis::AgentMean("children"));
 		agentResults.addAnalysis(new Analysis::AgentSum("children"));
 		agentResults.addAnalysis(new Analysis::AgentMean("collected resources"));
+		agentResults.addAnalysis(new Analysis::AgentHDFtoSHP("shp/prova.shp"));
 
 		agentResults.apply();
 		

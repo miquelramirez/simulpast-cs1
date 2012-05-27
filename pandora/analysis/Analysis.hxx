@@ -20,8 +20,11 @@ class Analysis
 protected:
 	std::string _name;
 	std::vector<float> _results;
+	// if _writeResults is false _results will not be written in csv file
+	// it is used for analysis that produce other results (i.e. AgentHDFtoSHP parser)
+	bool _writeResults;
 public:
-	Analysis( const std::string & name );
+	Analysis( const std::string & name, bool writeResults = true );
 	virtual ~Analysis();
 	void setNumTimeSteps( int numTimeSteps );
 
@@ -29,13 +32,13 @@ public:
 	virtual void preProcess(){};
 	virtual void postProcess(){};
 	float getResult( int timeStep ) const;
-	
+	bool writeResults(){return _writeResults;}	
 };
 
 class RasterAnalysis : public Analysis
 {
 public:
-	RasterAnalysis( const std::string & name ) : Analysis(name)
+	RasterAnalysis( const std::string & name, bool writeResults = true ) : Analysis(name, writeResults)
 	{
 	}
 	virtual ~RasterAnalysis(){}
@@ -46,7 +49,7 @@ public:
 class AgentAnalysis : public Analysis
 {
 public:
-	AgentAnalysis( const std::string & name ) : Analysis(name)
+	AgentAnalysis( const std::string & name, bool writeResults = true ) : Analysis(name, writeResults)
 	{
 	}
 	virtual void computeAgent( const Engine::AgentRecord & ) = 0;

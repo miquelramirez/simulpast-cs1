@@ -42,7 +42,10 @@ void Results::apply() const
 	header << "timeStep" << _separator;
 	for(AnalysisList::const_iterator it=_analysisList.begin(); it!=_analysisList.end(); it++)
 	{
-		header << (*it)->getName() << ";";
+		if((*it)->writeResults())
+		{
+			header << (*it)->getName() << ";";
+		}
 	}
 	file << header.str() << std::endl;;
 
@@ -62,7 +65,10 @@ void Results::apply() const
 		newLine << i << _separator;
 		for(AnalysisList::const_iterator itL=_analysisList.begin(); itL!=_analysisList.end(); itL++)
 		{
-			newLine << (*itL)->getResult(i) << ";";
+			if((*itL)->writeResults())
+			{
+				newLine << (*itL)->getResult(i) << ";";
+			}
 		}
 		file << newLine.str() << std::endl;
 	}

@@ -5,7 +5,7 @@
 namespace Analysis
 {
 
-Analysis::Analysis( const std::string & name ) : _name(name)
+Analysis::Analysis( const std::string & name, bool writeResults ) : _name(name), _writeResults(writeResults)
 {
 }
 
