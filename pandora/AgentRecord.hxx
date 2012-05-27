@@ -33,9 +33,12 @@ namespace Engine
 class AgentRecord
 {
 	typedef std::vector<int> ValuesVector;
-	std::string _id;
+
 public:
 	typedef std::map<std::string, ValuesVector > StatesMap;
+
+private:
+	std::string _id;
 	// total number of steps in simulation (not agent life)
 	int _numSteps;
 	StatesMap _states;
