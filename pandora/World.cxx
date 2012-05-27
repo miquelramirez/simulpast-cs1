@@ -75,8 +75,6 @@ void World::init( int argc, char *argv[] )
 
 	_initialTime = MPI_Wtime();
 	
-	//srand(time(0)*(_simulation.getId()+1));	
-
 	stablishPosition();
 	createRasters();
 	
