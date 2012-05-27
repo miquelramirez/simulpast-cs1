@@ -5,6 +5,8 @@
 
 #include <string>
 #include <GeneralState.hxx>
+#include <Point2D.hxx>
+#include <Point3D.hxx>
 #include <vector>
 
 class TiXmlElement;
@@ -19,6 +21,10 @@ class HunterGathererMDPConfig;
 
 class GujaratState
 {
+public:
+	typedef std::vector< std::vector <int> > SectorsMask;
+
+private:
 	static GujaratState * _instance;
 
 	static CaloricRequirementsTable * _hgCaloricRequirements;
@@ -28,6 +34,7 @@ class GujaratState
 
 	static GujaratDemographics * _demographics;
 
+	SectorsMask _sectorsMask;
 
 protected:
 	GujaratState();
@@ -45,6 +52,9 @@ public:
 
 	static void setHGController( const std::string & type, const HunterGathererMDPConfig & config );
 	static AgentController & controller();
+
+	static void initializeSectorsMask( int numSectors, int homeRange );
+	static int sectorsMask( int i, int j );
 };
 
 } // namespace Gujarat

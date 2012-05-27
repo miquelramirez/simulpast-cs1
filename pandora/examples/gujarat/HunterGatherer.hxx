@@ -15,7 +15,6 @@ class HunterGatherer : public GujaratAgent
 	int 					_surplusWanted; // MpiBasicAttribute
 	int 					_homeRange; // MpiBasicAttribute
 	int 					_numSectors; // MpiBasicAttribute
-	std::vector< std::vector< int > >	_sectorsMask;
 
 	void updateKnowledge();
 
@@ -50,8 +49,6 @@ public:
 	bool needsResources();
 
 	void		updateResources( int v ) { _collectedResources += v; }
-	void 		createSectorsMask();
-
 	void		updateKnowledge( 	const Engine::Point2D<int>& agentPos,
 						const Engine::Raster& dataRaster,
 						std::vector< Sector* >& sectors ) const;

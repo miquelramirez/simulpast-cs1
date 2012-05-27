@@ -57,6 +57,8 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	retrieveAttributeMandatory( element, "adulthoodAge", _adulthoodAge );	
 	
 	retrieveAttributeMandatory( element, "numSectors", _numSectors );
+	GujaratState::initializeSectorsMask(_numSectors, _homeRange);
+
 	retrieveAttributeMandatory( element, "walkingSpeedHour", _walkingSpeedHour );
 	retrieveAttributeMandatory( element, "forageTimeCost", _forageTimeCost );
 	retrieveAttributeMandatory( element, "availableForageTime", _availableForageTime );

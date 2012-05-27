@@ -118,7 +118,6 @@ void GujaratWorld::createAgents()
 			agent->setNumSectors( _config._numSectors );
 
 			agent->initializePosition();
-			agent->createSectorsMask();
 			std::cout << _simulation.getId() << " new HunterGathrer: " << agent << std::endl;
 		}
 	}

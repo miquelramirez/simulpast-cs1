@@ -9,6 +9,8 @@
 #include <AlexisDemographics.hxx>
 #include <OriginalDemographics.hxx>
 #include <AgentController.hxx>
+#include <Geometry.hxx>
+
 #include <omp.h>
 
 #include <HunterGathererDecisionTreeController.hxx>
@@ -22,7 +24,6 @@ GujaratState * GujaratState::_instance = 0;
 CaloricRequirementsTable * GujaratState::_hgCaloricRequirements = 0;
 CaloricRequirementsTable * GujaratState::_apCaloricRequirements = 0;
 GujaratDemographics * GujaratState::_demographics = 0;
-//AgentController * GujaratState::_hgController = 0;
 
 GujaratState & GujaratState::instance()
 {
@@ -201,6 +202,68 @@ AgentController & GujaratState::controller()
 	return *(instance()._hgControllers.at(numThread));
 }
 
+int GujaratState::sectorsMask( int i, int j)
+{
+	if(instance()._sectorsMask.size()==0)
+	{
+		std::stringstream oss;
+		oss << "GujaratState::sectorsMask() - asking for sectors mask without being initialized";
+		throw Engine::Exception(oss.str());
+	}
+	return instance()._sectorsMask[i][j];
+}
+
+void GujaratState::initializeSectorsMask( int numSectors, int homeRange )
+{
+	std::vector< std::vector< Engine::Point2D<int> > > sectors;
+	
+	float alpha = 360/numSectors;
+	alpha = alpha * M_PI/180.0f;
+	Engine::Point2D<float> b;
+	Engine::Point2D<float> c;
+
+	sectors.resize( numSectors );
+	// center position + home Range in any direction
+	instance()._sectorsMask.resize( 1+2*homeRange );
+	for ( unsigned k = 0; k < 1+2*homeRange; k++ )
+	{
+		instance()._sectorsMask[k].resize( 1+2*homeRange );
+	}
+
+	b._x = 0;
+	b._y = - homeRange;
+
+	for(int i=0; i<numSectors; i++)
+	{
+		c._x = b._x*std::cos(alpha) - b._y*std::sin(alpha);
+		c._y = b._x*std::sin(alpha) + b._y*std::cos(alpha);
+		sectors[i].push_back( Engine::Point2D<int>( (int)b._x, (int)b._y ) );
+		sectors[i].push_back( Engine::Point2D<int>( (int)c._x, (int)c._y ) );
+		b = c;
+	}
+
+	for ( int x=-homeRange; x<=homeRange; x++ )
+	{
+		for ( int y=-homeRange; y<=homeRange; y++ )
+		{
+			if(x==0 && y==0)
+			{
+				continue;
+			}
+			Engine::Point2D<int> p( x, y );
+			instance()._sectorsMask[x+homeRange][y+homeRange] = -1;	
+			for ( unsigned k = 0; k < numSectors; k++ )
+			{
+				if ( Engine::insideTriangle( p, sectors[k][0], sectors[k][1] ) )
+				{
+					instance()._sectorsMask[x+homeRange][y+homeRange] = k;
+					break;
+				}
+			}
+		}
+	}
+
+}
 
 } // namespace Gujarat 
 
