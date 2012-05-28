@@ -28,7 +28,7 @@
 namespace Engine
 {
 
-StaticRaster::StaticRaster() : _maxValue(std::numeric_limits<int>::min()), _minValue(std::numeric_limits<int>::max())								   
+StaticRaster::StaticRaster() : _minValue(std::numeric_limits<int>::max()), _maxValue(std::numeric_limits<int>::min())
 {
 }
 
