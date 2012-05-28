@@ -6,6 +6,9 @@
 #include <HunterGathererMDPState.hxx>
 #include <cassert>
 
+#include <Logger.hxx>
+#include <GeneralState.hxx>
+
 namespace Gujarat
 {
 
@@ -38,7 +41,7 @@ std::string ForageAction::describe() const
 
 void ForageAction::execute( Engine::Agent & a )
 {
-	std::cout << "[DEBUG]: Agent " << a.getId() << " is executing Forage action..." << std::endl;
+	log_DEBUG(a.getId(), " executing Forage action"); 
 	HunterGatherer& agent = (HunterGatherer&) a;
 
 	// 1. collect nr adults

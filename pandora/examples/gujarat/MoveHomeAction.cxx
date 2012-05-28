@@ -12,6 +12,7 @@
 
 #include <Statistics.hxx>
 #include <GeneralState.hxx>
+#include <Logger.hxx>
 
 namespace Gujarat
 {
@@ -71,8 +72,6 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 	// Sort candidates following scores	
 	std::make_heap(candidates.begin(),candidates.end(),Gujarat::compareSettlementAreas(settlementAreas));		
 	
-	int i = 0;
-	
 	for ( unsigned i = 0; i < candidates.size(); i++ )
 	{
 		Engine::Rectangle<int> selectedArea = settlementAreas->getAreaById(candidates[i]);
@@ -115,7 +114,7 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 
 void MoveHomeAction::execute( Engine::Agent & agent )
 {
-	std::cout << "[DEBUG]: Agent " << agent.getId() << " is executing MoveHome action..." << std::endl;
+	log_DEBUG(agent.getId(), " executing MoveHome action"); 
 	int prevHomeActivity = agent.getWorld()->getValue( "homeActivity", _newHomeLoc );
 	agent.getWorld()->setValue( "homeActivity", _newHomeLoc, prevHomeActivity + 1 );
 	agent.setPosition( _newHomeLoc );

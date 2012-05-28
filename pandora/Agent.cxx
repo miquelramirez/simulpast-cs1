@@ -140,7 +140,7 @@ std::string Agent::getType() const
 
 void Agent::logAgentState()
 {
-	GeneralState::logger().log( getId()) << "Agent: " << this << " executing in timestep: " << getWorld()->getCurrentTimeStep() << std::endl;
+	log_DEBUG(getId(), "Agent: " << this << " executing in timestep: " << getWorld()->getCurrentTimeStep());
 }
 
 void Agent::executeActions()

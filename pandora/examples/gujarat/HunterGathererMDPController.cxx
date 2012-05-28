@@ -23,8 +23,8 @@ HunterGathererMDPController::~HunterGathererMDPController()
 
 MDPAction * HunterGathererMDPController::selectAction( GujaratAgent & agent )
 {
-	Engine::GeneralState::logger().log(agent.getId()+"_controller") << "timestep=" << agent.getWorld()->getCurrentTimeStep() << std::endl;
-	Engine::GeneralState::logger().log(agent.getId()+"_controller")<< "\tagent.position=" << agent.getPosition() << std::endl;
+	log_DEBUG(agent.getId()+"_controller",  "timestep=" << agent.getWorld()->getCurrentTimeStep());
+	log_DEBUG(agent.getId()+"_controller",  "\tagent.position=" << agent.getPosition());
 
 	_model->reset(agent);
 
@@ -37,7 +37,7 @@ MDPAction * HunterGathererMDPController::selectAction( GujaratAgent & agent )
 	
 	delete uctPolicy;
 
-	Engine::GeneralState::logger().log(agent.getId()+"_controller") << "\taction_selected=" << a->describe() << std::endl;
+	log_DEBUG(agent.getId()+"_controller",  "\taction_selected=" << a->describe());
 	
 	return a;
 }

@@ -374,26 +374,28 @@ void GujaratWorld::stepEnvironment()
 	updateResources();
 	getDynamicRaster("resources").updateCurrentMinMaxValues();
 
-	Engine::GeneralState::logger().log("World") << "timestep=" << getCurrentTimeStep() << std::endl;
+	std::stringstream logName;
+	logName << "World_" << _simulation.getId();
 
-	Engine::GeneralState::logger().log("World") << "\tagentPopulation=" << _agents.size() << std::endl;
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " timestep=" << getCurrentTimeStep());
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << "\tagentPopulation=" << _agents.size());
 
 	unsigned nrAdults = 0;
 	for ( AgentsList::iterator it = _agents.begin(); 
 		it != _agents.end(); it++ )
 		nrAdults += dynamic_cast<GujaratAgent*>((*it))->getNrAvailableAdults();	
 
-	Engine::GeneralState::logger().log("World")<< "\tadultPopulation=" << nrAdults << std::endl;
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << "\tadultPopulation=" << nrAdults );
 
 	unsigned nrChildren = 0;
 	for ( AgentsList::iterator it = _agents.begin(); 
 		it != _agents.end(); it++ )
 		nrChildren += dynamic_cast<GujaratAgent*>((*it))->getNrChildren();
 
-	Engine::GeneralState::logger().log("World")<< "\tchildrenPopulation=" << nrChildren << std::endl;
-	Engine::GeneralState::logger().log("World")<< "\tmaxCurrentResources=" << getDynamicRaster("resources").getCurrentMaxValue() << std::endl;
-	Engine::GeneralState::logger().log("World")<< "\tminCurrentResources=" << getDynamicRaster("resources").getCurrentMinValue() << std::endl;
-	Engine::GeneralState::logger().log("World")<< "\tavgCurrentResources=" << getDynamicRaster("resources").getAvgValue() << std::endl;
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << "\tchildrenPopulation=" << nrChildren);
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << "\tmaxCurrentResources=" << getDynamicRaster("resources").getCurrentMaxValue());
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << "\tminCurrentResources=" << getDynamicRaster("resources").getCurrentMinValue());
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << "\tavgCurrentResources=" << getDynamicRaster("resources").getAvgValue() );
 
 	// these rasters are only updated at the beginning of seasons
 	if ( !_climate.cellUpdateRequired() ) return;

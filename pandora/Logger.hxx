@@ -26,6 +26,15 @@
 #include <map>
 #include <fstream>
 
+// DEBUG activated if pandora is compiled in debug
+#ifdef PANDORADEBUG 
+#define log_DEBUG(file, message) Engine::GeneralState::logger().log(file) << message << std::endl;
+#else
+#define log_DEBUG(file, message)
+#endif
+
+#define log_INFO(file, message) Engine::GeneralState::logger().log(file) << message << std::endl;
+
 namespace Engine
 {
 

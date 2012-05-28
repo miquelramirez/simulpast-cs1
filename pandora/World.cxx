@@ -82,7 +82,10 @@ void World::init( int argc, char *argv[] )
 	serializeStaticRasters();
 	createAgents();
 	MpiFactory::instance()->registerTypes();
-	std::cout << _simulation.getId() << " finished init at: " << MPI_Wtime() - _initialTime << std::endl;
+
+	std::stringstream logName;
+	logName << "simulation_" << _simulation.getId();
+	log_INFO(logName.str(), "finished init at: "  << MPI_Wtime() - _initialTime);
 }
 
 void World::checkOverlapSize()
@@ -158,8 +161,10 @@ void World::stablishPosition()
 	_sections[2] = Rectangle<int>(Point2D<int>(_boundaries._origin._x, _boundaries._origin._y+_boundaries._size._y/2), _boundaries._size/2);
 	_sections[3] = Rectangle<int>(Point2D<int>(_boundaries._origin._x+_boundaries._size._x/2, _boundaries._origin._y+_boundaries._size._y/2), _boundaries._size/2);
 
-	std::cout << _simulation.getId() << " has pos: " << _worldPos << ", global boundaries: " << _globalBoundaries << ", boundaries: " << _boundaries << " and overlapped area: " << _overlapBoundaries << std::endl;
-	std::cout << _simulation.getId() << " has sections 0:" << _sections[0] << " 1: " << _sections[1] << " 2:" << _sections[2] << " 3: " << _sections[3] << std::endl;
+	std::stringstream logName;
+	logName << "simulation_" << _simulation.getId();
+	log_INFO(logName.str(), MPI_Wtime() - _initialTime << " pos: " << _worldPos << ", global boundaries: " << _globalBoundaries << ", boundaries: " << _boundaries << " and overlapped area: " << _overlapBoundaries);
+	log_INFO(logName.str(), MPI_Wtime() - _initialTime << " sections 0: " << _sections[0] << " - 1: " << _sections[1] << " - 2:" << _sections[2] << " - 3: " << _sections[3]);
 }
 
 void World::updateRasterToMaxValues( const std::string & key )
@@ -195,7 +200,7 @@ void World::sendGhostAgents( const int & sectionIndex )
 {
 	std::stringstream logName;
 	logName << "MPI_world_" << _simulation.getId();
-	GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " send ghost agents for section index: " << sectionIndex << std::endl;
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " send ghost agents for section index: " << sectionIndex );
 
 	std::vector<int> neighborsToUpdate;
 	for(int i=0; i<_neighbors.size(); i++)
@@ -203,14 +208,14 @@ void World::sendGhostAgents( const int & sectionIndex )
 		if(needsToBeUpdated(_neighbors[i], sectionIndex))
 		{
 			neighborsToUpdate.push_back(_neighbors[i]);
-			GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " section index: " << sectionIndex << " will send overlap to: " << _neighbors[i] << std::endl;
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " section index: " << sectionIndex << " will send overlap to: " << _neighbors[i]);
 		}
 	}
 
 	// for each type of agent we will send the collection of agents of the particular type to neighbors
 	for(MpiFactory::TypesMap::iterator itType=MpiFactory::instance()->beginTypes(); itType!=MpiFactory::instance()->endTypes(); itType++)
 	{
-		GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " section index: " << sectionIndex << " checking type: " << itType->first << std::endl;
+		log_DEBUG(logName.str(),  MPI_Wtime() - _initialTime << " step: " << _step << " section index: " << sectionIndex << " checking type: " << itType->first );
 		MPI_Datatype * agentType = itType->second;
 
 		std::vector< AgentsList > agentsToNeighbors;
@@ -224,13 +229,13 @@ void World::sendGhostAgents( const int & sectionIndex )
 				Agent * agent = *it;
 				// we check the type. TODO register the type in another string
 				// TODO refactor!!!
-				GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " agent: " << agent << " of type: " << itType->first << " test will be removed: " << willBeRemoved(agent) << " checking overlap zone: " << overlapZone << " overlap boundaries: " << _overlapBoundaries << " - test is inside zone: " << overlapZone.isInside(agent->getPosition()-_overlapBoundaries._origin) << std::endl;
+				log_DEBUG(logName.str(),  MPI_Wtime() - _initialTime << " step: " << _step << " agent: " << agent << " of type: " << itType->first << " test will be removed: " << willBeRemoved(agent) << " checking overlap zone: " << overlapZone << " overlap boundaries: " << _overlapBoundaries << " - test is inside zone: " << overlapZone.isInside(agent->getPosition()-_overlapBoundaries._origin));
 				if(agent->isType(itType->first))
 				{
 					if((!willBeRemoved(agent)) && (overlapZone.isInside(agent->getPosition()-_overlapBoundaries._origin)))
 					{
 						agentsToNeighbors[i].push_back(*it);
-						GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " sending ghost agent: " << agent << " to: " << neighborsToUpdate[i] << " in section index: " << sectionIndex << std::endl;
+						log_DEBUG(logName.str(),  MPI_Wtime() - _initialTime << " step: " << _step << " sending ghost agent: " << agent << " to: " << neighborsToUpdate[i] << " in section index: " << sectionIndex);
 					}
 				}
 			}
@@ -242,13 +247,13 @@ void World::sendGhostAgents( const int & sectionIndex )
 					if((!willBeRemoved(agent)) && (overlapZone.isInside(agent->getPosition()-_overlapBoundaries._origin)))
 					{
 						agentsToNeighbors[i].push_back(*it);
-						GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " will send modified ghost agent: " << agent << " to: " << neighborsToUpdate[i] << " in section index: " << sectionIndex << " and step: " << _step << std::endl;
+						log_DEBUG(logName.str(),  MPI_Wtime() - _initialTime << " step: " << _step << " will send modified ghost agent: " << agent << " to: " << neighborsToUpdate[i] << " in section index: " << sectionIndex << " and step: " << _step);
 					}
 				}
 			}
 
 			int numAgents = agentsToNeighbors[i].size();
-			GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " sending num ghost agents: " << numAgents << " to : " << neighborsToUpdate[i] << " in step: " << _step << " and section index: " << sectionIndex <<  std::endl;
+			log_DEBUG(logName.str(),  MPI_Wtime() - _initialTime << " step: " << _step << " sending num ghost agents: " << numAgents << " to : " << neighborsToUpdate[i] << " in step: " << _step << " and section index: " << sectionIndex );
 			int error = MPI_Send(&numAgents, 1, MPI_INTEGER, neighborsToUpdate[i], eNumGhostAgents, MPI_COMM_WORLD);
 			if(error != MPI_SUCCESS)
 			{
@@ -260,7 +265,7 @@ void World::sendGhostAgents( const int & sectionIndex )
 			{
 				Agent * agent = *it;
 				void * package = agent->fillPackage();
-				GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " sending ghost agent: " << *it << " from: " << _simulation.getId() << " to: " << neighborsToUpdate[i] << std::endl;
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " sending ghost agent: " << *it << " from: " << _simulation.getId() << " to: " << neighborsToUpdate[i]);
 				error = MPI_Send(package, 1, *agentType, neighborsToUpdate[i], eGhostAgent, MPI_COMM_WORLD);
 				delete package;
 				if(error != MPI_SUCCESS)
@@ -272,8 +277,8 @@ void World::sendGhostAgents( const int & sectionIndex )
 				agent->sendVectorAttributes(neighborsToUpdate[i]);
 			}
 		}
-	}	
-	GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " send ghost agents for section index: " << sectionIndex << " finished" << std::endl;
+	}
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " send ghost agents for section index: " << sectionIndex << " finished");
 
 }
 
@@ -281,7 +286,7 @@ void World::receiveGhostAgents( const int & sectionIndex )
 {
 	std::stringstream logName;
 	logName << "MPI_world_" << _simulation.getId();
-	GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " receive ghost agents for section index: " << sectionIndex << std::endl;
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receive ghost agents for section index: " << sectionIndex );
 
 
 	// we need to calculate how many neighbors will send data to this id
@@ -311,7 +316,7 @@ void World::receiveGhostAgents( const int & sectionIndex )
 				oss << "World::receiveGhostAgents - " << _simulation.getId() << " error in MPI_Recv: " << error;
 				throw Exception(oss.str());
 			}
-			GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " has received message from " << neighborsToUpdate[i] << ", num ghost agents: " << numAgentsToReceive << std::endl;
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " has received message from " << neighborsToUpdate[i] << ", num ghost agents: " << numAgentsToReceive );
 			for(int j=0; j<numAgentsToReceive; j++)
 			{
 				void * package = MpiFactory::instance()->createDefaultPackage(itType->first);
@@ -323,7 +328,7 @@ void World::receiveGhostAgents( const int & sectionIndex )
 					throw Exception(oss.str());
 				}
 				Agent * agent = MpiFactory::instance()->createAndFillAgent(itType->first, package);
-				GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " has received ghost agent: " << agent << " number: " << j << " from: " << neighborsToUpdate[i] << " in section index: " << sectionIndex << " and step: " << _step << std::endl;
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " has received ghost agent: " << agent << " number: " << j << " from: " << neighborsToUpdate[i] << " in section index: " << sectionIndex << " and step: " << _step );
 				delete package;
 				agent->receiveVectorAttributes(neighborsToUpdate[i]);
 
@@ -332,7 +337,7 @@ void World::receiveGhostAgents( const int & sectionIndex )
 				AgentsList::iterator it = getOwnedAgent(agent->getId());
 				if(it!=_agents.end())
 				{
-					GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " has received update of own agent: " << *it << " in step: " << _step << std::endl;
+					log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " has received update of own agent: " << *it << " in step: " << _step );
 					_agents.erase(it);
 					addAgent(agent);
 					worldOwnsAgent = true;
@@ -342,7 +347,7 @@ void World::receiveGhostAgents( const int & sectionIndex )
 					newGhostAgents.push_back(agent);
 				}
 			}
-			GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " num ghost agents sent for neighbor: " << neighborsToUpdate[i] << " in section index: " << sectionIndex << ": " << newGhostAgents.size() << std::endl;
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " num ghost agents sent for neighbor: " << neighborsToUpdate[i] << " in section index: " << sectionIndex << ": " << newGhostAgents.size());
 			// if the agent is in the zone to be updated, remove it
 			Rectangle<int> overlapZone = getOverlap(neighborsToUpdate[i], sectionIndex);
 			AgentsList::iterator it=_overlapAgents.begin();
@@ -354,12 +359,12 @@ void World::receiveGhostAgents( const int & sectionIndex )
 					// si l'agent no està en zona que s'ha d'actualitzar, continuar
 					if(overlapZone.isInside((*it)->getPosition()-_overlapBoundaries._origin))
 					{
-						GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " in section index: " << sectionIndex << " with overlap zone: " << overlapZone << " erasing agent: " << *it << std::endl;
+						log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " in section index: " << sectionIndex << " with overlap zone: " << overlapZone << " erasing agent: " << *it);
 						it = _overlapAgents.erase(it);
 					}
 					else
 					{
-						GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " in section index: " << sectionIndex <<  " with overlap zone: " << overlapZone << " maintaining agent: " << *it << std::endl;
+						log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " in section index: " << sectionIndex <<  " with overlap zone: " << overlapZone << " maintaining agent: " << *it );
 						it++;
 					}
 				}
@@ -371,12 +376,12 @@ void World::receiveGhostAgents( const int & sectionIndex )
 			// afterwards we will add the new ghost agents
 			for(it=newGhostAgents.begin(); it!=newGhostAgents.end(); it++)
 			{
-				GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " in section index: " << sectionIndex << " adding ghost agent: " << *it << std::endl;
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " in section index: " << sectionIndex << " adding ghost agent: " << *it );
 				_overlapAgents.push_back(*it);
 			}
 		}
 	}
-	GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " receive ghost agents for section index: " << sectionIndex << " finished" << std::endl;
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receive ghost agents for section index: " << sectionIndex << " finished");
 
 }
 
@@ -395,6 +400,9 @@ void World::addAgent( Agent * agent )
 
 void World::stepSection( const int & sectionIndex )
 {
+	std::stringstream logName;
+	logName << "MPI_world_" << _simulation.getId();
+
 	// first of all we will execute raster rules for the zone where stepSection is executed
 	stepRastersSection(sectionIndex, _sections[sectionIndex]);
 
@@ -438,14 +446,13 @@ void World::stepSection( const int & sectionIndex )
 		//Agent * agent = *it;
 		if(_sections[sectionIndex].isInside(agent->getPosition()) && !hasBeenExecuted(agent))
 		{
-			std::cout << "agent: " << agent << " being executed at index: " << sectionIndex << " of task: "<< _simulation.getId() << " in step: " << _step << std::endl;
-			
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " agent: " << agent << " being executed at index: " << sectionIndex << " of task: "<< _simulation.getId() << " in step: " << _step );
 			agent->executeActions();
 			agent->updateState();
-			std::cout << "agent: " << agent << " has been executed at index: " << sectionIndex << " of task: "<< _simulation.getId() << " in step: " << _step << std::endl;
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " agent: " << agent << " has been executed at index: " << sectionIndex << " of task: "<< _simulation.getId() << " in step: " << _step );
 			if(!_boundaries.isInside(agent->getPosition()) && !willBeRemoved(agent))
 			{
-				std::cout << "migrating agent: " << agent << " being executed at index: " << sectionIndex << " of task: "<< _simulation.getId() << std::endl;
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " migrating agent: " << agent << " being executed at index: " << sectionIndex << " of task: "<< _simulation.getId() );
 				agentsToSend.push_back(agent);
 
 				// the agent is no longer property of this world
@@ -454,11 +461,11 @@ void World::stepSection( const int & sectionIndex )
 				_agents.erase(it);
 				// it will be deleted				
 				_overlapAgents.push_back(agent);
-				std::cout << _simulation.getId() << " putting agent: " << agent << " to overlap" << std::endl;
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime <<  "putting agent: " << agent << " to overlap");
 			}
 			else
 			{
-				std::cout << _simulation.getId() << " finished agent: " << agent << std::endl;
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " finished agent: " << agent);
 				it++;
 			}
 			_executedAgents.push_back(agent);
@@ -473,11 +480,11 @@ void World::stepSection( const int & sectionIndex )
 		*/
 	}
 
-	std::cout << _simulation.getId() << " will send agents in section: " << sectionIndex << " and step: " << _step << std::endl;
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " sending agents in section: " << sectionIndex << " and step: " << _step);
 	sendAgents(agentsToSend);
-	std::cout << _simulation.getId() << " has finished section: " << sectionIndex << " and step: " << _step << std::endl;
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " has finished section: " << sectionIndex << " and step: " << _step);
 	
-	std::cout << MPI_Wtime() - _initialTime<< " - world: " << _simulation.getId() << " at pos: " << _worldPos << " has executed step: " << _step << " section: " << sectionIndex << " in zone: " << _sections[sectionIndex] << " with num executed agents: " << numExecutedAgents << " total agents: " << _agents.size() << " and overlap agents: " << _overlapAgents.size() << std::endl;
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " executed step: " << _step << " section: " << sectionIndex << " in zone: " << _sections[sectionIndex] << " with num executed agents: " << numExecutedAgents << " total agents: " << _agents.size() << " and overlap agents: " << _overlapAgents.size());
 }
 
 void World::serializeAgents()
@@ -502,13 +509,12 @@ void World::sendAgents( AgentsList & agentsToSend )
 	//TODO: es poden enviar missatges de forma no sincronitzada ni predestinada?
 	std::stringstream logName;
 	logName << "MPI_world_" << _simulation.getId();
-	GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " sendAgent: " << agentsToSend.size() << " agents" << std::endl;		
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " sendAgent: " << agentsToSend.size() << " agents");
 
-//	MPI_Datatype * agentType = createType();
 	// for each neighbor, we send the number of agents to send
 	for(MpiFactory::TypesMap::iterator itType=MpiFactory::instance()->beginTypes(); itType!=MpiFactory::instance()->endTypes(); itType++)
 	{
-		GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " sendAgent - checking mpi type: " << itType->first << std::endl;;
+		log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " sendAgent - checking mpi type: " << itType->first );
 		// add each agent to the list of the neighbour where it will be sent
 		std::vector< AgentsList > agentsToNeighbors;
 		agentsToNeighbors.resize(_neighbors.size());
@@ -528,7 +534,7 @@ void World::sendAgents( AgentsList & agentsToSend )
 		for(int i=0; i<_neighbors.size(); i++)
 		{	
 			int numAgents = agentsToNeighbors[i].size();
-			GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " sendAgent - sending num agents: " << numAgents << " to: " << _neighbors[i] << std::endl;
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " sendAgent - sending num agents: " << numAgents << " to: " << _neighbors[i]);
 			int error = MPI_Send(&numAgents, 1, MPI_INTEGER, _neighbors[i], eNumAgents, MPI_COMM_WORLD);
 			if(error != MPI_SUCCESS)
 			{
@@ -541,7 +547,7 @@ void World::sendAgents( AgentsList & agentsToSend )
 			{
 				Agent * agent = *it;
 				void * package = agent->fillPackage();
-				GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " sendAgent - sending agent: " << *it << " to: " << _neighbors[i] << std::endl;
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " sendAgent - sending agent: " << *it << " to: " << _neighbors[i] );
 				error = MPI_Send(package, 1, *agentType, _neighbors[i], eAgent, MPI_COMM_WORLD);
 				delete package;
 				if(error != MPI_SUCCESS)
@@ -556,7 +562,7 @@ void World::sendAgents( AgentsList & agentsToSend )
 			}
 		}
 	}
-	GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " sendAgent -  end checking agents to send: " << agentsToSend.size() << std::endl;
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " sendAgent -  end checking agents to send: " << agentsToSend.size());
 }
 
 void World::sendOverlapZones( const int & sectionIndex, const bool & entireOverlap )
@@ -661,15 +667,16 @@ void World::receiveAgents( const int & sectionIndex )
 {
 	std::stringstream logName;
 	logName << "MPI_world_" << _simulation.getId();
-	GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " receiving agents for section index: " << sectionIndex << std::endl;	
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receiving agents for section index: " << sectionIndex);
 	for(MpiFactory::TypesMap::iterator itType=MpiFactory::instance()->beginTypes(); itType!=MpiFactory::instance()->endTypes(); itType++)
 	{
-		GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " receiveAgent - checking mpi type: " << itType->first << std::endl;;
+		log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receiveAgent - checking mpi type: " << itType->first);
 		MPI_Datatype * agentType = itType->second;
 
 		for(int i=0; i<_neighbors.size(); i++)
 		{
-			GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " receiveAgent - checking mpi type: " << itType->first << " for neighbor: " << _neighbors[i] << std::endl;;
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receiveAgent - checking mpi type: " << itType->first << " for neighbor: " << _neighbors[i] );
+
 			int numAgentsToReceive;
 			MPI_Status status;
 			int error = MPI_Recv(&numAgentsToReceive, 1, MPI_INTEGER, _neighbors[i], eNumAgents, MPI_COMM_WORLD, &status);			
@@ -679,7 +686,7 @@ void World::receiveAgents( const int & sectionIndex )
 				oss << "World::receiveAgents - " << _simulation.getId() << " error in MPI_Recv: " << error;
 				throw Exception(oss.str());
 			}
-			GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " receiveAgents - received message from " << _neighbors[i] << ", num agents: " << numAgentsToReceive << std::endl;
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime <<  " receiveAgents - received message from " << _neighbors[i] << ", num agents: " << numAgentsToReceive);
 			for(int j=0; j<numAgentsToReceive; j++)
 			{
 				void * package = MpiFactory::instance()->createDefaultPackage(itType->first);
@@ -691,7 +698,7 @@ void World::receiveAgents( const int & sectionIndex )
 					throw Exception(oss.str());
 				}
 				Agent * agent = MpiFactory::instance()->createAndFillAgent(itType->first, package);
-				GeneralState::logger().log(logName.str()) << MPI_Wtime() - _initialTime << " step: " << _step << " receiveAgents - received agent: " << agent << " number: " << j << " from: " << _neighbors[i] << std::endl;
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receiveAgents - received agent: " << agent << " number: " << j << " from: " << _neighbors[i]);
 				delete package;
 				agent->receiveVectorAttributes(_neighbors[i]);
 				addAgent(agent);
@@ -787,7 +794,11 @@ void World::receiveMaxOverlapData()
 
 void World::step()
 {
-	std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << std::endl;
+
+	std::stringstream logName;
+	logName << "simulation_" << _simulation.getId();
+	log_INFO(logName.str(), MPI_Wtime() - _initialTime << " executing step: " << _step );
+
 	// actualitzar el món (raster i agents), si s'escau
 	serializeRasters();
 	//std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " has serialized rasters" << std::endl;	
@@ -810,33 +821,39 @@ void World::step()
 	//random_shuffle(_agents.begin(), _agents.end());
 	_executedAgents.clear();
 
+	std::stringstream logNameMpi;
+	logNameMpi << "MPI_world_" << _simulation.getId();
+
 	for(int sectionIndex=0; sectionIndex<4; sectionIndex++)
 	{
 		stepSection(sectionIndex);
 
-		std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " and section: " << sectionIndex << " has been executed" << std::endl;	
+		log_DEBUG(logNameMpi.str(), MPI_Wtime() - _initialTime << " executing step: " << _step << " and section: " << sectionIndex << " has been executed");
 		receiveAgents(sectionIndex);
-		std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " and section: " << sectionIndex << " has received agents" << std::endl;	
+		log_DEBUG(logNameMpi.str(), MPI_Wtime() - _initialTime << " executing step: " << _step << " and section: " << sectionIndex << " has received agents");
 
 		sendGhostAgents(sectionIndex);
-		std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " and section: " << sectionIndex << " sent ghosts" << std::endl;	
+		log_DEBUG(logNameMpi.str(), MPI_Wtime() - _initialTime << " executing step: " << _step << " and section: " << sectionIndex << " sent ghosts");
 		receiveGhostAgents(sectionIndex);
-		std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " and section: " << sectionIndex << " received ghosts" << std::endl;
+		log_DEBUG(logNameMpi.str(), MPI_Wtime() - _initialTime << " executing step: " << _step << " and section: " << sectionIndex << " received ghosts");
 
 		sendOverlapZones(sectionIndex);
-		std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " and section: " << sectionIndex << " sent overlap" << std::endl;
+		log_DEBUG(logNameMpi.str(), MPI_Wtime() - _initialTime << " executing step: " << _step << " and section: " << sectionIndex << " sent overlap");
 		receiveOverlapData(sectionIndex);
-		std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " and section: " << sectionIndex << " received overlap" << std::endl;
+		log_DEBUG(logNameMpi.str(), MPI_Wtime() - _initialTime << " executing step: " << _step << " and section: " << sectionIndex << " received overlap" );
 
 		//MPI_Barrier(MPI_COMM_WORLD);
 	}
 	removeAgents();
-	std::cout << MPI_Wtime() - _initialTime<< " - world: " << _simulation.getId() << " at pos: " << _worldPos << " has executed step: " << _step << std::endl;
+	log_INFO(logName.str(), MPI_Wtime() - _initialTime<< " - world: " << _simulation.getId() << " at pos: " << _worldPos << " finished step: " << _step);
+	log_DEBUG(logNameMpi.str(), MPI_Wtime() - _initialTime<< " - world: " << _simulation.getId() << " at pos: " << _worldPos << " finished step: " << _step);
 }
 
 void World::run()
 {
-	std::cout << MPI_Wtime() - _initialTime << " - " << _simulation.getId() << " executing " << _simulation.getNumSteps() << " steps..." << std::endl;
+	std::stringstream logName;
+	logName << "simulation_" << _simulation.getId();
+	log_INFO(logName.str(), MPI_Wtime() - _initialTime << " executing " << _simulation.getNumSteps() << " steps...");
 
 	// we need to send the agents and data in overlap zone to adjacent computer nodes	
 	sendMaxOverlapZones();
@@ -862,11 +879,11 @@ void World::run()
 	serializeRasters();
 	serializeAgents();
 	
-	std::cout << _simulation.getId() << " closing files at: " << MPI_Wtime() - _initialTime << std::endl;
+	log_INFO(logName.str(), MPI_Wtime() - _initialTime << " closing files");
 	_serializer.finish();
 
 	MpiFactory::instance()->cleanTypes();
-	std::cout << _simulation.getId() << " finished simulation at: " << MPI_Wtime() - _initialTime << std::endl; 
+	log_INFO(logName.str(), MPI_Wtime() - _initialTime << " simulation finished");
 	MPI_Finalize();
 }
 

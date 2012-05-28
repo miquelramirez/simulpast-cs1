@@ -56,10 +56,9 @@ Logger::~Logger()
 		 file->close();
 		 delete file;
 	}
-
 }
 
-std::ofstream & Logger::log( const std::string & key )
+std::ofstream & Logger::log( const std::string & key)
 {
 	FilesMap::iterator it = _files.find(key);
 	std::ofstream * file = 0;

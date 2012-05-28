@@ -15,7 +15,7 @@ env.VariantDir('build', '.')
 libs = Split('pthread mpich gdal hdf5 mpl z tinyxml grass_gis boost_filesystem boost_system')
 
 if int(release) == 0:
-	env['CCFLAGS'] = Split('-g -Wall -DTIXML_USE_STL -fopenmp')
+	env['CCFLAGS'] = Split('-g -Wall -DTIXML_USE_STL -fopenmp -DPANDORADEBUG')
 	libraryName = 'pandorad'
 	pythonLibraryName = 'pyPandorad'
 else:
@@ -64,6 +64,11 @@ if int(mareNostrum)==0:
 	envPython['LINKFLAGS'] = Split('-Wl,--export-dynamic,-no-undefined')
 	envPython.VariantDir('build_py', '.')
 
+	if int(release) == 0:
+		envPython['CCFLAGS'] = Split('-g -Wall -DTIXML_USE_STL -DPANDORADEBUG')
+	else:
+		envPython['CCFLAGS'] = Split('-O3 -Wall -DTIXML_USE_STL')
+	
 	srcPyFiles = [] 
 	for src in srcFiles:
 		srcPyFiles.append('build_py/'+src)

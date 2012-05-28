@@ -5,6 +5,9 @@
 #include <HunterGathererMDPState.hxx>
 #include <iostream>
 
+#include <Logger.hxx>
+#include <GeneralState.hxx>
+
 namespace Gujarat
 {
 
@@ -23,7 +26,7 @@ MDPAction*	DoNothingAction::copy() const
 
 void DoNothingAction::execute( Engine::Agent& agent )
 {
-	std::cout << "[DEBUG]: Agent " << agent.getId() << " is executing DoNothing action" << std::endl; 
+	log_DEBUG(agent.getId(), " executing DoNothing action"); 
 }
 
 void DoNothingAction::generatePossibleActions( GujaratAgent& agent, std::vector< DoNothingAction* >& actions )
