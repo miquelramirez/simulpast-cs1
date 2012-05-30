@@ -22,8 +22,9 @@
 #include <TestAgent.hxx>
 #include <World.hxx>
 #include <Exceptions.hxx>
-#include <Statistics.hxx>
 #include <cstring>
+#include <Logger.hxx>
+#include <GeneralState.hxx>
 
 namespace Test
 {
@@ -38,7 +39,9 @@ TestAgent::~TestAgent()
 
 void TestAgent::updateState()	
 {
-	std::cout << "agent: " << this << " being executed with move down: " << _moveToDownLeft << std::endl;
+	std::stringstream logName;
+	logName << "agents_" << _world->getId() << "_" << getId();
+
 	Engine::Point2D<int> newPosition = _position;
 	if(_moveToDownLeft)
 	{
@@ -50,12 +53,30 @@ void TestAgent::updateState()
 		newPosition._x--;
 		newPosition._y--;
 	}
+	log_DEBUG(logName.str(), "Agent: " << this << " will move to: " << newPosition);
+
+	log_DEBUG(logName.str(), "vector int - with size: " << _vectorInt.size());
+	std::stringstream intVector;
+	for(int i=0; i<_vectorInt.size(); i++)
+	{
+		intVector << "[" << i << "] = " << _vectorInt.at(i) << ", ";
+	}
+	intVector << std::endl;
+	log_DEBUG(logName.str(), intVector.str());
+	
+	log_DEBUG(logName.str(), "vector float - with size: " << _vectorFloat.size());
+	std::stringstream floatVector;
+	for(int i=0; i<_vectorFloat.size(); i++)
+	{
+		floatVector << "[" << i << "] = " << _vectorFloat.at(i) << ", ";
+	}
+	floatVector << std::endl;
+	log_DEBUG(logName.str(), floatVector.str());
 
 	if(_world->checkPosition(newPosition))
 	{
 		_position = newPosition;
 	}
-	std::cout << "agent: " << this << " moved" << std::endl;
 }
 
 void TestAgent::serialize()
