@@ -22,6 +22,8 @@
 #include <TestAgent.hxx>
 #include <World.hxx>
 #include <Point2D.hxx>
+#include <Logger.hxx>
+#include <GeneralState.hxx>
 
 namespace Test
 {
@@ -60,12 +62,14 @@ void TestAgent::updateTurnInformation()
 	}
 	else
 	{
-		//std::cout << "agent: " << this << " on odd turn in step: " << _world->getCurrentStep() << std::endl;
+		std::stringstream logName;
+		logName << "agents_" << _world->getId() << "_" << getId();
+		log_DEBUG(logName.str(), "Agent: " << this << " on odd turn in step: " << _world->getCurrentStep());
 		Engine::World::AgentsList neighbors = _world->getNeighbours(this, 1);
 		for(Engine::World::AgentsList::iterator it=neighbors.begin(); it!=neighbors.end(); it++)
 		{
 			TestAgent * agent = (TestAgent*)(*it);
-			//std::cout << "agent: " << this << " is updating: " << agent << std::endl;
+			log_DEBUG(logName.str(), "agent: " << this << " is updating: " << agent);
 			agent->setEvenTurn(false);
 		}
 	}

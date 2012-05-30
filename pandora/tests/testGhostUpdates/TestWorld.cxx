@@ -66,7 +66,6 @@ void TestWorld::stepAgents()
 	}
 
 	// more than one task, agents turn the state of each other
-
 	for(AgentsList::iterator it=_agents.begin(); it!=_agents.end(); it++)
 	{
 		TestAgent * agent = (TestAgent*)(*it);
