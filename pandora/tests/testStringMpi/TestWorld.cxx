@@ -39,32 +39,24 @@ TestWorld::~TestWorld()
 
 void TestWorld::stepAgents()
 {
-	std::cout << "foo" << std::endl;
 	Engine::Agent * baseAgent = getAgent("TestAgent_0");
-	std::cout << "base agent: " << baseAgent << std::endl;
 	if(baseAgent)
 	{
 		TestAgent * agent = (TestAgent*)baseAgent;
-		/*
 		const std::string & message = agent->getMessage();
 		std::stringstream match;
-		//match << "string_" << getCurrentStep();
-		match << "string_0";
+		match << "string_" << getCurrentStep();
 		assert(message.compare(match.str())==0);
-		*/
 	}
 	
 	baseAgent = getAgent("TestAgent_1");
 	if(baseAgent)
 	{
 		TestAgent * agent = (TestAgent*)baseAgent;
-		/*
 		const std::string & message = agent->getMessage();
 		std::stringstream match;
-		//match << "string_" << 199-getCurrentStep();
-		match << "string_199";
+		match << "string_" << 199-getCurrentStep();
 		assert(message.compare(match.str())==0);
-		*/
 	}
 }
 

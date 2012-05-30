@@ -24,11 +24,13 @@
 #include <Exceptions.hxx>
 #include <Statistics.hxx>
 #include <cstring>
+#include <Logger.hxx>
+#include <GeneralState.hxx>
 
 namespace Test
 {
 
-TestAgent::TestAgent( const std::string & id , bool moveToDownLeft ) : Agent(id), _moveToDownLeft(moveToDownLeft), _message("")
+TestAgent::TestAgent( const std::string & id , bool moveToDownLeft ) : Agent(id), _message("") , _moveToDownLeft(moveToDownLeft)
 {
 }
 
@@ -37,8 +39,11 @@ TestAgent::~TestAgent()
 }
 
 void TestAgent::updateState()	
-{
-	/*
+{	
+	std::stringstream logName;
+	logName << "agents_" << _world->getId() << "_" << getId();
+	log_DEBUG(logName.str(), "Agent: " << this << " has message: " << _message);
+
 	std::stringstream newMessage;
 	if(_moveToDownLeft)
 	{
@@ -49,8 +54,7 @@ void TestAgent::updateState()
 		newMessage << "string_" << 198-_world->getCurrentStep();
 	}
 	_message = newMessage.str();
-	*/
-
+	
 	Engine::Point2D<int> newPosition = _position;
 	if(_moveToDownLeft)
 	{
@@ -67,7 +71,6 @@ void TestAgent::updateState()
 	{
 		_position = newPosition;
 	}
-	std::cout << "message: " << _message << std::endl;
 }
 
 void TestAgent::serialize()

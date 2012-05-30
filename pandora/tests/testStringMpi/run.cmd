@@ -4,9 +4,9 @@
 # @ output           = testStringMpi.log
 # @ error            = testStringMpi.err
 # @ total_tasks      = 4
-# @ cpus_per_task    = 1
+# @ cpus_per_task    = 4
 # @ tracing          = 0
-# @ wall_clock_limit = 00:05:00
+# @ wall_clock_limit = 00:02:00
 
 date
 srun  ./testStringMpi

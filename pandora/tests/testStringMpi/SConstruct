@@ -34,13 +34,12 @@ else:
 
 libs = Split('pthread')
 if int(release) == 0:
-	env['CCFLAGS'] = Split('-g -O0 -Wall -DTIXML_USE_STL')
+	env['CCFLAGS'] = Split('-g -O0 -Wall -DTIXML_USE_STL -DPANDORADEBUG')
 	libs += ['pandorad']
-	linkFlags = Split('')
 else:
 	env['CCFLAGS'] = Split('-O3 -DTIXML_USE_STL -fopenmp')
 	libs += ['pandora']
-	linkFlags = Split('-fopenmp')
+linkFlags = Split('-fopenmp')
 
 
 includeDirs = Split('./ ../../')
@@ -62,10 +61,9 @@ else:
 	libs += ['mpl']
 
 # if debug && mare nostrum mpitrace is added
-if int(release)==0 and int(mareNostrum)==1:
-	libs += ['mpitrace']
-	libDirs += ['/gpfs/apps/CEPBATOOLS/mpitrace-stable-1.2-mx/lib']
-
+#if int(release)==0 and int(mareNostrum)==1:
+#	libs += ['mpitrace']
+#	libDirs += ['/gpfs/apps/CEPBATOOLS/mpitrace-stable-1.2-mx/lib']v
 # add the list of mpi code that must be generated & compiled
 mpiAgentsSrc = ['mpiCode/FactoryCode.cxx']
 agentsSrc = ['main.cxx']
