@@ -51,49 +51,55 @@ void GujaratAgent::updateKnowledge()
 
 void GujaratAgent::logAgentState()
 {
-	log_DEBUG( getId(), "timestep=" << getWorld()->getCurrentTimeStep());
-	log_DEBUG( getId(), "\tagent.collectedResourcesBeforeAction=" << getOnHandResources());
-	log_DEBUG( getId(), "\tagent.nrAdults=" << getNrAvailableAdults());
-	log_DEBUG( getId(), "\tagent.adultAges=[");
+	std::stringstream logName;
+	logName << "agents_" << _world->getId() << "_" << getId();
+
+	log_DEBUG( logName.str(), "timestep=" << getWorld()->getCurrentTimeStep());
+	log_DEBUG( logName.str(), "\tagent.collectedResourcesBeforeAction=" << getOnHandResources());
+	log_DEBUG( logName.str(), "\tagent.nrAdults=" << getNrAvailableAdults());
+	log_DEBUG( logName.str(), "\tagent.adultAges=[");
 
 	for ( unsigned k = 0; k < _populationAges.size(); k++ )
 	{
 		if ( _populationAges[k] >= ((GujaratWorld*)_world)->getConfig()._adulthoodAge )
 		{
-			log_DEBUG( getId(),  "\t" << _populationAges[k] );
+			log_DEBUG( logName.str(),  "\t" << _populationAges[k] );
 		}
 	}
-	log_DEBUG( getId(), "\t]");
+	log_DEBUG( logName.str(), "\t]");
 	
-	log_DEBUG( getId(), "\tagent.nrChildren=" << getNrChildren() );
-	log_DEBUG( getId(),"\tagent.childrenAges=[");
+	log_DEBUG( logName.str(), "\tagent.nrChildren=" << getNrChildren() );
+	log_DEBUG( logName.str(),"\tagent.childrenAges=[");
 	for ( unsigned k = 0; k < _populationAges.size(); k++ )
 	{
 		if ( _populationAges[k] >= 0 && _populationAges[k] < ((GujaratWorld*)_world)->getConfig()._adulthoodAge )
 		{
-			log_DEBUG( getId(), "\t" << _populationAges[k]);
+			log_DEBUG( logName.str(), "\t" << _populationAges[k]);
 		}
 	}
-	log_DEBUG( getId(), "\t]");
+	log_DEBUG( logName.str(), "\t]");
 
-	log_DEBUG( getId(), "\tagent.resourcesNeeded=" << computeConsumedResources(1));
+	log_DEBUG( logName.str(), "\tagent.resourcesNeeded=" << computeConsumedResources(1));
 }
 
 void GujaratAgent::updateState()
 {
-	log_DEBUG( getId(), "\tagent.collectedResourcesAfterAction=" << getOnHandResources());
+	std::stringstream logName;
+	logName << "agents_" << _world->getId() << "_" << getId();
+
+	log_DEBUG( logName.str(), "\tagent.collectedResourcesAfterAction=" << getOnHandResources());
 	_collectedResources -= computeConsumedResources(1);
-	log_DEBUG( getId(), "\tagent.collectedResourcesAfterConsumption=" << getOnHandResources());
+	log_DEBUG( logName.str(), "\tagent.collectedResourcesAfterConsumption=" << getOnHandResources());
 	if ( _collectedResources < 0 )
 	{
 		_starved = true;
 		_emigrationProbability += 1.0f/(float)(((GujaratWorld*)_world)->getConfig()._daysPerSeason);
-		log_DEBUG( getId(),  "\tagent.isStarving=yes");
+		log_DEBUG( logName.str(),  "\tagent.isStarving=yes");
 		_collectedResources = 0;
 	}
 	else
 	{
-		log_DEBUG( getId(), "\tagent.isStarving=no");
+		log_DEBUG( logName.str(), "\tagent.isStarving=no");
 		_starved = false;
 		_reproductionProbability += 1.0/(float)(3*((GujaratWorld*)_world)->getConfig()._daysPerSeason);
 		// Decay factor, modeling spoilage
@@ -107,7 +113,7 @@ void GujaratAgent::updateState()
 	{
 		if( checkEmigration() )
 		{
-			log_DEBUG( getId(), "\tagent.emigration=yes");
+			log_DEBUG( logName.str(), "\tagent.emigration=yes");
 			_world->removeAgent(this);
 			return;
 		}
