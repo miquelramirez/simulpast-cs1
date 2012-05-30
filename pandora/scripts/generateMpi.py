@@ -261,14 +261,12 @@ def writeVectorAttributesPassing( f, agentName, vectorAttributesMap ):
 	f.write('{\n')
 	f.write('\tint sizeVector = 0;\n')
 	f.write('\tMPI_Status status;\n')
-	f.write('\tvoid * data = 0;\n')
 	for nameAttribute in vectorAttributesMap.keys():		
 		print 'receiving vector: ' + nameAttribute + ' with type: ' + vectorAttributesMap[nameAttribute]
 		f.write('\tMPI_Recv(&sizeVector, 1, MPI_INTEGER, origin, eSizeVector, MPI_COMM_WORLD, &status);\n')
-		mpiType = getMpiTypeConversion(vectorAttributesMap[nameAttribute])
-		f.write('\tMPI_Recv(data, sizeVector, '+mpiType+', origin, eVectorAttribute, MPI_COMM_WORLD, &status);\n')
 		f.write('\t'+nameAttribute+'.resize(sizeVector);\n')
-		f.write('\tmemcpy(&'+nameAttribute+'[0], data, sizeof('+vectorAttributesMap[nameAttribute]+'));\n')
+		mpiType = getMpiTypeConversion(vectorAttributesMap[nameAttribute])
+		f.write('\tMPI_Recv(&'+nameAttribute+'[0], sizeVector, '+mpiType+', origin, eVectorAttribute, MPI_COMM_WORLD, &status);\n')
 		f.write('\n')
 	f.write('}\n')
 	f.write('\n')
