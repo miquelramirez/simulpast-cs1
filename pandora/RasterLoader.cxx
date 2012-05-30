@@ -30,10 +30,12 @@
 #include <gdal_priv.h>
 #include <hdf5.h>
 
+/*
 extern "C" 
 {
 #include <grass/gis.h>
 }
+*/
 
 namespace Engine
 {
@@ -194,6 +196,7 @@ void RasterLoader::fillHDF5Raster( StaticRaster & raster, const std::string & fi
 
 void RasterLoader::fillGrassCellRaster( StaticRaster & raster, const std::string & rasterName, World * world )
 {
+	/*
 	G_gisinit("pandora");
 	std::cout << "loading grass raster from : " << rasterName << " in location: " << G_location() << " and mapset: " << G_mapset() << "...";	
 	int fileId = G_open_cell_old(rasterName.c_str(), G_mapset());
@@ -266,6 +269,7 @@ void RasterLoader::fillGrassCellRaster( StaticRaster & raster, const std::string
 		dynamicRaster->updateCurrentMinMaxValues();
 	}
 	std::cout << std::endl;
+	*/
 }
 
 } // namespace Engine
