@@ -701,6 +701,7 @@ void World::receiveAgents( const int & sectionIndex )
 				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receiveAgents - received agent: " << agent << " number: " << j << " from: " << _neighbors[i]);
 				delete package;
 				agent->receiveVectorAttributes(_neighbors[i]);
+				_executedAgents.push_back(agent);
 				addAgent(agent);
 			}
 		}
@@ -923,7 +924,7 @@ Agent * World::getAgent( const std::string & id )
 		}
 	}
 	it = getGhostAgent(id);
-	if(it!=_agents.end())
+	if(it!=_overlapAgents.end())
 	{
 		Agent * agent = (*it);
 		if(agent->exists())
