@@ -26,6 +26,13 @@
 #include <map>
 #include <fstream>
 
+// Extreme debug activated if pandora is compiled in edebug and edebug=1
+#ifdef PANDORAEDEBUG 
+#define log_EDEBUG(file, message) Engine::GeneralState::logger().log(file) << message << std::endl;
+#else
+#define log_EDEBUG(file, message)
+#endif
+
 // DEBUG activated if pandora is compiled in debug
 #ifdef PANDORADEBUG 
 #define log_DEBUG(file, message) Engine::GeneralState::logger().log(file) << message << std::endl;

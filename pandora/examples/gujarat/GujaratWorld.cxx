@@ -22,7 +22,7 @@ namespace Gujarat
 {
 
 GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config ) 
-	: World(simulation, 1+config._homeRange, true, config._resultsFile), _agentKey(0), _climate(config,*this), _config(config)					
+	: World(simulation, 25, true, config._resultsFile), _agentKey(0), _climate(config,*this), _config(config)					
 {
 	// overlap is maxHomeRange + 1 to allow splits to be in adjacent worlds
 	// TODO code a function proces config for resources 
@@ -38,6 +38,9 @@ GujaratWorld::~GujaratWorld()
 
 void GujaratWorld::createRasters()
 {
+	std::stringstream logName;
+	logName << "simulation_" << _simulation.getId();
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " creating static rasters");
 	registerStaticRaster("soils", _config.isStorageRequired("soils"));
 	Engine::GeneralState::rasterLoader().fillGDALRaster(getStaticRaster("soils"), _config._soilFile, this);	
 
@@ -46,7 +49,8 @@ void GujaratWorld::createRasters()
 
 	registerStaticRaster("duneMap", _config.isStorageRequired("duneMap"));
 	Engine::GeneralState::rasterLoader().fillGDALRaster(getStaticRaster("duneMap"), _config._duneMapFile, this);
-	
+
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " creating dynamic rasters");
 	registerDynamicRaster("moisture", _config.isStorageRequired("moisture"));
 	getDynamicRaster("moisture").setInitValues(0, std::numeric_limits<int>::max(), 0);
 	registerDynamicRaster("resources", _config.isStorageRequired("resources")); // DEBUG Resources will be generated with an explicit function
@@ -65,38 +69,23 @@ void GujaratWorld::createRasters()
 	registerDynamicRaster("sectors", _config.isStorageRequired("sectors")); 
 	getDynamicRaster("sectors").setInitValues(0, _config._numSectors, 0);
 
-	registerStaticRaster( "DuneAreas", _config.isStorageRequired( "DuneAreas" ) );
-	getStaticRaster( "DuneAreas" ).setDefaultInitValues( -1,std::numeric_limits<int>::max(), -1 );
-
-	updateMoisture();
-	setSettlementAreasInRaster();
-}
-
-void GujaratWorld::setSettlementAreasInRaster()
-{
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " generating settlement areas");
 	_settlementAreas.generateAreas( *this );
-	const std::vector< Engine::Rectangle<int> >& areas = _settlementAreas.getAreas();
-	
-	for( unsigned i = 0; i < areas.size(); i++ )
-	{
-		const Engine::Rectangle<int>& currentArea = areas[i];		
-		Engine::Point2D<int> index;
-		for(index._x=currentArea._origin._x; index._x<currentArea._origin._x+currentArea._size._x; index._x++)		
-		{
-			for(index._y=currentArea._origin._y; index._y<currentArea._origin._y+currentArea._size._y; index._y++)			
-			{
-				getStaticRaster( "DuneAreas" ).setInitValue( index, 1 );
-			}
-		}
-	}
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " updating moisture");
+	updateMoisture();
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " create rasters done");
 }
 
 void GujaratWorld::createAgents()
 {
+	std::stringstream logName;
+	logName << "simulation_" << _simulation.getId();
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " creating agents");
 	for(int i=0; i<_config._numHG; i++)
 	{ 
 		if((i%_simulation.getNumTasks())==_simulation.getId())
-		{
+		{			
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " new HG with index: " << i);
 			std::ostringstream oss;
  			oss << "HunterGatherer_" << i;
 			HunterGatherer * agent = new HunterGatherer(oss.str());
@@ -118,7 +107,7 @@ void GujaratWorld::createAgents()
 			agent->setNumSectors( _config._numSectors );
 
 			agent->initializePosition();
-			std::cout << _simulation.getId() << " new HunterGathrer: " << agent << std::endl;
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " new HG: " << agent);
 		}
 	}
 
@@ -143,8 +132,6 @@ void GujaratWorld::createAgents()
 		}
 	}
 }
-
-/*------------------------------*/
 
 float GujaratWorld::moistureFunction( const Soils & soilType, const float & rain, const Seasons & season )
 {

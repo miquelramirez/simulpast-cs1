@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 {
 	try
 	{	
-		Engine::Simulation testSim(64, 10);
+		Engine::Simulation testSim(64, 1);
 		Test::TestWorld world(testSim);
 		world.init(argc, argv);
 		world.run();

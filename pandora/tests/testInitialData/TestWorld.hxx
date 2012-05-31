@@ -31,7 +31,7 @@ class TestWorld : public Engine::World
 {
 	void createRasters();
 	void createAgents();
-	void stepAgents();
+	void stepRasters();
 public:
 	TestWorld( const Engine::Simulation & sim );
 	virtual ~TestWorld();

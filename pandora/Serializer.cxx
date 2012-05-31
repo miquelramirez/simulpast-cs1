@@ -29,6 +29,8 @@
 #include <Simulation.hxx>
 #include <Exceptions.hxx>
 #include <boost/filesystem.hpp>
+#include <Logger.hxx>
+#include <GeneralState.hxx>
 
 namespace Engine
 {
@@ -246,6 +248,10 @@ void Serializer::serializeStaticRaster( const std::string & key, StaticRaster & 
 
 void Serializer::serializeRaster( StaticRaster & raster, World & world, const std::string & datasetKey )
 {
+	std::stringstream logName;
+	logName << "MPI_Serializer_world_" << world.getSimulation().getId();
+	log_EDEBUG(logName.str(), "serializing raster: " << datasetKey);
+
 	// if it is not a border, it will copy from overlap
 	hsize_t	offset[2];
     offset[0] = world.getBoundaries()._origin._y;
@@ -272,12 +278,16 @@ void Serializer::serializeRaster( StaticRaster & raster, World & world, const st
 	int * data = (int *) malloc(sizeof(int)*block[0]*block[1]);
 	
 	Point2D<int> overlapDist = world.getBoundaries()._origin-world.getOverlapBoundaries()._origin;
+	log_EDEBUG(logName.str(), "overlap dist: " << overlapDist << "boundaries: " << world.getBoundaries() << " and overlap: " << world.getOverlapBoundaries());
 	for(int i=0; i<block[0]; i++)
 	{
 		for(int j=0; j<block[1]; j++)
 		{	
 			int index = i*block[1]+j;
+			log_EDEBUG(logName.str(), "index: " << i << "/" << j << " - " << index);
+			log_EDEBUG(logName.str(), "getting value: " << Point2D<int> (j+overlapDist._x,i+overlapDist._y));
 			data[index] = raster.getValue(Point2D<int> (j+overlapDist._x,i+overlapDist._y));
+			log_EDEBUG(logName.str(), "value: " << data[index]);
 		}
 	}
     // Create property list for collective dataset write.
@@ -291,6 +301,7 @@ void Serializer::serializeRaster( StaticRaster & raster, World & world, const st
     H5Sclose(memorySpace);	
 	H5Sclose(fileSpace);
 	H5Dclose(dataSetId);
+	log_EDEBUG(logName.str(), "serializing raster: " << datasetKey << " done");
 }
 	
 } // namespace Engine

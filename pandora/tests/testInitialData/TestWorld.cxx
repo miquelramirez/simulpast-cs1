@@ -39,30 +39,31 @@ TestWorld::~TestWorld()
 {
 }
 
-void TestWorld::stepAgents()
+void TestWorld::stepRasters()
 {
+	/*
 	Engine::Point2D<int> index(0,0);
 	for(index._x=_boundaries._origin._x; index._x<_boundaries._origin._x+_boundaries._size._x; index._x++)		
 	{
 		for(index._y=_boundaries._origin._y; index._y<_boundaries._origin._y+_boundaries._size._y; index._y++)			
 		{
-			assert(getValue("test", index)==_simulation.getId()+1);
+			//assert(getValue("test", index)==_simulation.getId()+1);
 		}
 	}
+	*/
 }
 
 void TestWorld::createRasters()
-{	
-	registerDynamicRaster("test", false);
-	getDynamicRaster("test").setInitValues(0, 5, 0);
+{
+	registerDynamicRaster("test", true);
+	getDynamicRaster("test").setInitValues(0, _simulation.getNumTasks(), 0);
 
 	// at least each cell has value 1
 	Engine::Point2D<int> index(0,0);
-	for(index._x=_boundaries._origin._x; index._x<_boundaries._origin._x+_boundaries._size._x; index._x++)		
+	for(index._x=_boundaries._origin._x; index._x<_boundaries._origin._x+_boundaries._size._x; index._x++)          
 	{
-		for(index._y=_boundaries._origin._y; index._y<_boundaries._origin._y+_boundaries._size._y; index._y++)			
+		for(index._y=_boundaries._origin._y; index._y<_boundaries._origin._y+_boundaries._size._y; index._y++)                  
 		{
-			//std::cout << _id << " setting value: " << index << " with boundaries: " << _boundaries << " at pos: " << index-_overlapBoundaries._origin << std::endl;
 			setMaxValue("test", index, _simulation.getId()+1);
 		}
 	}

@@ -26,6 +26,9 @@
 #include <World.hxx>
 #include <Exceptions.hxx>
 
+#include <GeneralState.hxx>
+#include <Logger.hxx>
+
 #include <vector>
 #include <gdal_priv.h>
 #include <hdf5.h>
@@ -50,6 +53,10 @@ RasterLoader::~RasterLoader()
 
 void RasterLoader::fillGDALRaster( StaticRaster & raster, const std::string & fileName, World * world )
 {
+	std::stringstream logName;
+	logName << "RasterLoader_world_" << world->getSimulation().getId();
+	log_DEBUG(logName.str(), "loading file: " << fileName);
+
 	Simulation & simulation(world->getSimulation());
 	GDALAllRegister();
 	GDALDataset * dataset = (GDALDataset *)GDALOpen(fileName.c_str(), GA_ReadOnly );
@@ -74,8 +81,10 @@ void RasterLoader::fillGDALRaster( StaticRaster & raster, const std::string & fi
 		oss << "StaticRaster::loadFile - file: " << fileName << " with size: " << size << " different from defined size: " << simulation.getSize() << std::endl;
 		throw Engine::Exception(oss.str());
 	}
+	log_DEBUG(logName.str(), "size of raster: " << size);
 
 	raster.resize(world->getOverlapBoundaries()._size);
+	log_DEBUG(logName.str(), "resize done with value: " << world->getOverlapBoundaries()._size);
 
 	GDALRasterBand * band = dataset->GetRasterBand(1);
 	double minMaxValues[2];
@@ -91,7 +100,10 @@ void RasterLoader::fillGDALRaster( StaticRaster & raster, const std::string & fi
 
 	band->RasterIO( GF_Read, world->getOverlapBoundaries()._origin._x, world->getOverlapBoundaries()._origin._y, world->getOverlapBoundaries()._size._x, world->getOverlapBoundaries()._size._y, pafScanline, world->getOverlapBoundaries()._size._x, world->getOverlapBoundaries()._size._y, GDT_Float32, 0, 0 );
 
+	log_DEBUG(logName.str(), "raster IO done");
 	const Rectangle<int> & overlapBoundaries = world->getOverlapBoundaries();
+	log_DEBUG(logName.str(), "overlap boundaries of world: " << overlapBoundaries);
+
 	Point2D<int> index;
 
 	for(index._x=overlapBoundaries._origin._x; index._x<overlapBoundaries._origin._x+overlapBoundaries._size._x; index._x++)
@@ -99,9 +111,15 @@ void RasterLoader::fillGDALRaster( StaticRaster & raster, const std::string & fi
 		for(index._y=overlapBoundaries._origin._y; index._y<overlapBoundaries._origin._y+overlapBoundaries._size._y; index._y++)
 		{
 			Point2D<int> index2(index - overlapBoundaries._origin);
+			log_EDEBUG(logName.str(), "index: " << index << " and index2: " << index2 << " accessing to: " << overlapBoundaries._size._y*index2._y+index2._x);
+			int value = (int)(pafScanline[overlapBoundaries._size._y*index2._y+index2._x]);
+			log_EDEBUG(logName.str(), "value: " << value);
+
 			raster._values[index2._x][index2._y] = (int)(pafScanline[overlapBoundaries._size._y*index2._y+index2._x]);
+			log_EDEBUG(logName.str(), "value in index2: " << index2 << " is: " << value);
 		}
 	}
+	log_DEBUG(logName.str(), "done, update minmax values");	
 	raster.updateMinMaxValues();
 	
 	// if dynamic, copy to maxValues
@@ -111,7 +129,9 @@ void RasterLoader::fillGDALRaster( StaticRaster & raster, const std::string & fi
 		std::copy(dynamicRaster->_values.begin(), dynamicRaster->_values.end(), dynamicRaster->_maxValues.begin());
 		dynamicRaster->updateCurrentMinMaxValues();
 	}
+	log_DEBUG(logName.str(), "finished, closing");	
 	GDALClose(dataset);
+	log_DEBUG(logName.str(), "done!");	
 }
 
 void RasterLoader::fillHDF5Raster( StaticRaster & raster, const std::string & fileName, const std::string & rasterName, World * world )

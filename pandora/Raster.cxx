@@ -55,11 +55,11 @@ void Raster::updateRasterIncrement()
 {
 	for(int i=0; i<_values.size(); i++)
 	{
-		for(int j=0; j<_values.size(); j++)
+		for(int j=0; j<_values[i].size(); j++)
 		{
-			if(_values[i][j] < _maxValues[i][j])
+			if(_values.at(i).at(j) < _maxValues[i][j])
 			{
-				_values[i][j]++;
+				_values.at(i).at(j)++;
 			}
 		}
 	}

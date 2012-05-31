@@ -30,6 +30,7 @@
 #include <cstdlib>
 
 #include <Interval.hxx> 
+#include <Point2D.hxx>
 
 namespace Engine
 {

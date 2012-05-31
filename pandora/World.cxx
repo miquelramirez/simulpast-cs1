@@ -26,6 +26,7 @@
 #include <MpiFactory.hxx>
 
 #include <GeneralState.hxx>
+#include <Logger.hxx>
 #include <Statistics.hxx>
 
 #include <cstdlib>
@@ -163,7 +164,7 @@ void World::stablishPosition()
 
 	std::stringstream logName;
 	logName << "simulation_" << _simulation.getId();
-	log_INFO(logName.str(), MPI_Wtime() - _initialTime << " pos: " << _worldPos << ", global boundaries: " << _globalBoundaries << ", boundaries: " << _boundaries << " and overlapped area: " << _overlapBoundaries);
+	log_INFO(logName.str(), MPI_Wtime() - _initialTime << " pos: " << _worldPos << ", global boundaries: " << _globalBoundaries << ", boundaries: " << _boundaries << " and overlapped area: " << _overlapBoundaries << " with size: " << _overlapBoundaries._size );
 	log_INFO(logName.str(), MPI_Wtime() - _initialTime << " sections 0: " << _sections[0] << " - 1: " << _sections[1] << " - 2:" << _sections[2] << " - 3: " << _sections[3]);
 }
 
@@ -199,7 +200,7 @@ bool World::willBeRemoved( Agent * agent )
 void World::sendGhostAgents( const int & sectionIndex )
 {
 	std::stringstream logName;
-	logName << "MPI_world_" << _simulation.getId();
+	logName << "MPI_agents_world_" << _simulation.getId();
 	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " send ghost agents for section index: " << sectionIndex );
 
 	std::vector<int> neighborsToUpdate;
@@ -285,7 +286,7 @@ void World::sendGhostAgents( const int & sectionIndex )
 void World::receiveGhostAgents( const int & sectionIndex )
 {
 	std::stringstream logName;
-	logName << "MPI_world_" << _simulation.getId();
+	logName << "MPI_agents_world_" << _simulation.getId();
 	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receive ghost agents for section index: " << sectionIndex );
 
 
@@ -395,13 +396,19 @@ void World::addAgent( Agent * agent )
 	{
 		_overlapAgents.erase(it);
 	}
-	_agents.push_back(agent);
+	_agents.push_back(agent);	
+	
+	std::stringstream logName;
+	logName << "agents_" << getId() << "_" << agent->getId();
+	log_EDEBUG( logName.str(), "agent: " << agent << " added at time step: " << getCurrentTimeStep());
 }
 
 void World::stepSection( const int & sectionIndex )
 {
 	std::stringstream logName;
-	logName << "MPI_world_" << _simulation.getId();
+	logName << "simulation_" << _simulation.getId();
+
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " beginning step: " << _step << " section: " << sectionIndex);
 
 	// first of all we will execute raster rules for the zone where stepSection is executed
 	stepRastersSection(sectionIndex, _sections[sectionIndex]);
@@ -508,7 +515,7 @@ void World::sendAgents( AgentsList & agentsToSend )
 	}
 	//TODO: es poden enviar missatges de forma no sincronitzada ni predestinada?
 	std::stringstream logName;
-	logName << "MPI_world_" << _simulation.getId();
+	logName << "MPI_agents_world_" << _simulation.getId();
 	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " sendAgent: " << agentsToSend.size() << " agents");
 
 	// for each neighbor, we send the number of agents to send
@@ -567,37 +574,43 @@ void World::sendAgents( AgentsList & agentsToSend )
 
 void World::sendOverlapZones( const int & sectionIndex, const bool & entireOverlap )
 {
+	std::stringstream logName;
+	logName << "MPI_raster_world_" << _simulation.getId();
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " sendOverlapZones");
 	std::vector<int> neighborsToUpdate;
+	
 	for(int i=0; i<_neighbors.size(); i++)
 	{
 		if(needsToBeUpdated(_neighbors[i], sectionIndex))
 		{
 			neighborsToUpdate.push_back(_neighbors[i]);
-			//std::cout << _simulation.getId() << " - step: " << _step << "/" << sectionIndex << " will send overlap to: " << _neighbors[i] << std::endl;
 		}
 	}
 
 	for(RastersMap::iterator it=_dynamicRasters.begin(); it!=_dynamicRasters.end(); it++)
 	{
+		log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " sending raster: " << it->first);
 		for(int i=0; i<neighborsToUpdate.size(); i++)
 		{
 			Rectangle<int> overlapZone;
 			if(entireOverlap)
 			{
 				overlapZone = getOverlap(neighborsToUpdate[i], sectionIndex);
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " send entire overlap: " << overlapZone << " to: " << neighborsToUpdate[i]);
 			}
 			else
 			{
 				overlapZone = getInternalOverlap(neighborsToUpdate[i]);
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " send partial overlap: " << overlapZone << " to: " << neighborsToUpdate[i]);
 			}
 			int dataSize = overlapZone._size._x * overlapZone._size._y;
 			int data[dataSize];
-			//std::cout << _simulation.getId() << " - step: " << _step << "/" << sectionIndex << " will send overlap to: " << neighborsToUpdate[i] << " with zone: " << overlapZone << std::endl;
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " will send overlap to: " << neighborsToUpdate[i] << " with size: " << dataSize << " and zone: " << overlapZone);
 			for(int n=0; n<dataSize; n++)
 			{
 				Point2D<int> index(overlapZone._origin._x+n%overlapZone._size._x, overlapZone._origin._y+n/overlapZone._size._x);
 				data[n] = getDynamicRaster(it->first).getValue(index);
-				//std::cout << "\t" << _simulation.getId() << " sending data : " << dataSize << " to: " << neighborsToUpdate[i] << " - send index: " << index << " in global pos: " << index+_overlapBoundaries._origin << " value: " << data[n] << " section index: " << sectionIndex << " and step: " << _step << std::endl;
+				log_EDEBUG(logName.str(), "\t" << MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " send index: " << index << " in global pos: " << index+_overlapBoundaries._origin << " value: " << data[n]);
 			}
 			if(MPI_Send(&data, dataSize, MPI_INTEGER, neighborsToUpdate[i], eRasterData, MPI_COMM_WORLD)!= MPI_SUCCESS)
 			{
@@ -606,24 +619,31 @@ void World::sendOverlapZones( const int & sectionIndex, const bool & entireOverl
 				throw Exception(oss.str());
 			}
 		}
+		log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " raster: " << it->first << " sent");
 	}
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: "  << "/" << sectionIndex << _step << " sendOverlapZones ended");
 }
 
 void World::sendMaxOverlapZones()
 {
+	std::stringstream logName;
+	logName << "MPI_raster_world_" << _simulation.getId();
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: "  << _step << " sendMaxOverlapZones");
 	for(RastersMap::iterator it=_dynamicRasters.begin(); it!=_dynamicRasters.end(); it++)
 	{
+		log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " sending max raster: " << it->first);
 		for(int i=0; i<_neighbors.size(); i++)
 		{
 			Rectangle<int> overlapZone = getInternalOverlap(_neighbors[i]);
 			int dataSize = overlapZone._size._x * overlapZone._size._y;
 			int data[dataSize];
-			//std::cout << _simulation.getId() << " - step: " << _step << " will send overlap to: " << _neighbors[i] << " with zone: " << overlapZone << std::endl;
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " will send max overlap to: " << _neighbors[i] << " with size: " << dataSize << " and zone: " << overlapZone << " to " << _neighbors[i]);
+			
 			for(int n=0; n<dataSize; n++)
 			{
 				Point2D<int> index(overlapZone._origin._x+n%overlapZone._size._x, overlapZone._origin._y+n/overlapZone._size._x);
 				data[n] = getDynamicRaster(it->first).getMaxValueAt(index);
-				//std::cout << "\t" << _simulation.getId() << " sending max data : " << dataSize << " to: " << _neighbors[i] << " - send index: " << index << " in global pos: " << index+_overlapBoundaries._origin << " value: " << data[n] << " and step: " << _step << std::endl;
+				log_EDEBUG(logName.str(), "\t" << MPI_Wtime() - _initialTime << " step: " << _step << " send index: " << index << " in global pos: " << index+_overlapBoundaries._origin << " max value: " << data[n]);
 			}
 			if(MPI_Send(&data, dataSize, MPI_INTEGER, _neighbors[i], eRasterMaxData, MPI_COMM_WORLD)!= MPI_SUCCESS)
 			{
@@ -632,7 +652,9 @@ void World::sendMaxOverlapZones()
 				throw Exception(oss.str());
 			}
 		}
+		log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " raster: " << it->first << " max data sent");
 	}
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " sendMaxOverlapZones ended");
 }
 
 
@@ -666,7 +688,7 @@ int World::getNeighborIndex( const int & id )
 void World::receiveAgents( const int & sectionIndex )
 {
 	std::stringstream logName;
-	logName << "MPI_world_" << _simulation.getId();
+	logName << "MPI_agents_world_" << _simulation.getId();
 	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receiving agents for section index: " << sectionIndex);
 	for(MpiFactory::TypesMap::iterator itType=MpiFactory::instance()->beginTypes(); itType!=MpiFactory::instance()->endTypes(); itType++)
 	{
@@ -710,6 +732,10 @@ void World::receiveAgents( const int & sectionIndex )
 
 void World::receiveOverlapData( const int & sectionIndex, const bool & entireOverlap )
 {
+	std::stringstream logName;
+	logName << "MPI_raster_world_" << _simulation.getId();
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: "  << "/" << sectionIndex << _step << " receiveOverlapData");
+
 	// we need to calculate how many neighbors will send data to this id
 	std::vector<int> neighborsToUpdate;
 	for(int i=0; i<_neighbors.size(); i++)
@@ -724,21 +750,24 @@ void World::receiveOverlapData( const int & sectionIndex, const bool & entireOve
 	// for each raster, we receive data from all the active neighbors
 	for(RastersMap::iterator it=_dynamicRasters.begin(); it!=_dynamicRasters.end(); it++)
 	{
+		log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " receiving raster: " << it->first);
 		for(int i=0; i<neighborsToUpdate.size(); i++)
 		{
 			Rectangle<int> overlapZone;
 			if(entireOverlap)
 			{
 				overlapZone = getOverlap(neighborsToUpdate[i], sectionIndex);
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " receive entire overlap: " << overlapZone << " from " << neighborsToUpdate[i]);
 			}
 			else
 			{
 				overlapZone = getExternalOverlap(neighborsToUpdate[i]);
+				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " receive external overlap: " << overlapZone << " from " << neighborsToUpdate[i]);
 			}
 
 			int dataSize = overlapZone._size._x*overlapZone._size._y;	
 			int data[dataSize];
-			//std::cout << _simulation.getId() << " will receive from: " << neighborsToUpdate[i] << " dataSize: " << dataSize << " with overlap: " << overlapZone << " in section index: " << sectionIndex << std::endl;
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " will receive overlap from: " << neighborsToUpdate[i] << " with size: " << dataSize << " and zone: " << overlapZone);
 			MPI_Status status;
 			int error = MPI_Recv(&data, dataSize, MPI_INTEGER, neighborsToUpdate[i], eRasterData, MPI_COMM_WORLD, &status);					
 			if(error!=MPI_SUCCESS)
@@ -756,23 +785,31 @@ void World::receiveOverlapData( const int & sectionIndex, const bool & entireOve
 					getDynamicRaster(it->first).setMaxValue(index, data[n]);
 				}
 				*/
+				log_EDEBUG(logName.str(), "\t" << MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " receive index: " << index << " value: " << data[n]);
 				//std::cout << "\t" << _simulation.getId() << " receiving data : " << dataSize << " from: " << neighborsToUpdate[i] << " - index: " << index << " in global pos: " << index+_overlapBoundaries._origin << " value: " << data[n] << " section index: " << sectionIndex << " and step: " << _step << std::endl;
 				getDynamicRaster(it->first).setValue(index, data[n]);
 			}
 		}
+		log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " raster: " << it->first << " received");
 	}
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << "/" << sectionIndex << " receiveOverlapData ended");
 }
 
 void World::receiveMaxOverlapData()
 {
+	std::stringstream logName;
+	logName << "MPI_raster_world_" << _simulation.getId();
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: "  << _step << " receiveMaxOverlapData");
 	// for each raster, we receive data from all the active neighbors
 	for(RastersMap::iterator it=_dynamicRasters.begin(); it!=_dynamicRasters.end(); it++)
 	{
+		log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receiving max raster: " << it->first);
 		for(int i=0; i<_neighbors.size(); i++)			
 		{
 			Rectangle<int> overlapZone = getExternalOverlap(_neighbors[i]);
 			int dataSize = overlapZone._size._x*overlapZone._size._y;	
 			int data[dataSize];
+			log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " will receive max overlap to: " << _neighbors[i] << " with size: " << dataSize << " and zone: " << overlapZone << " from " << _neighbors[i]);
 			//std::cout << _simulation.getId() << " will receive max values from: " << _neighbors[i] << " dataSize: " << dataSize << " with overlap: " << overlapZone <<  std::endl;
 			MPI_Status status;
 			int error = MPI_Recv(&data, dataSize, MPI_INTEGER, _neighbors[i], eRasterMaxData, MPI_COMM_WORLD, &status);					
@@ -785,11 +822,14 @@ void World::receiveMaxOverlapData()
 			for(int n=0; n<dataSize; n++)
 			{
 				Point2D<int> index(overlapZone._origin._x+n%overlapZone._size._x, overlapZone._origin._y+n/overlapZone._size._x);
+				log_EDEBUG(logName.str(), "\t" << MPI_Wtime() - _initialTime << " step: " << _step << " receive index: " << index << " max value: " << data[n]);
 				//std::cout << "\t" << _simulation.getId() << " receiving max data : " << dataSize << " from: " << _neighbors[i] << " - index: " << index <<  " in global pos: " << index+_overlapBoundaries._origin << " value: " << data[n] << in step: " << _step << std::endl;
 				getDynamicRaster(it->first).setMaxValue(index, data[n]);
 			}
 		}
+		log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step  << " raster: " << it->first << " max data received");
 	}
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receiveMaxOverlapData ended");
 }
 
 
@@ -802,14 +842,16 @@ void World::step()
 
 	// actualitzar el món (raster i agents), si s'escau
 	serializeRasters();
-	//std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " has serialized rasters" << std::endl;	
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " has serialized rasters");
 	serializeAgents();
-	//std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " has serialized agents" << std::endl;	
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " has serialized agents");
+	
 	// TODO if we modify agents in this step, they won't be updated in other nodes!
 	stepAgents();
-	//std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " has executed stepAgents" << std::endl;	
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " has executed step agents");
 	// TODO the same with raster modification?
 	stepEnvironment();
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " has executed step environment");
 	for(int sectionIndex=0; sectionIndex<4; sectionIndex++)
 	{
 		// section index doesn't matter if is the entire overlap
@@ -817,14 +859,16 @@ void World::step()
 		sendOverlapZones(sectionIndex, false);
 		receiveOverlapData(sectionIndex, false);
 	}
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " has executed update overlap");
 	//std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " has executed stepAgents" << std::endl;	
 	// TODO shuffle
 	//random_shuffle(_agents.begin(), _agents.end());
 	_executedAgents.clear();
 
 	std::stringstream logNameMpi;
-	logNameMpi << "MPI_world_" << _simulation.getId();
+	logNameMpi << "simulation_" << _simulation.getId();
 
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " executing sections");
 	for(int sectionIndex=0; sectionIndex<4; sectionIndex++)
 	{
 		stepSection(sectionIndex);
@@ -1287,7 +1331,16 @@ Rectangle<int> World::getInternalOverlap( const int & id ) const
 	}
 	else
 	{
-		result._origin._x = _boundaries._size._x - _overlap;
+		// if left border just remove an overlap
+		if(_boundaries._origin._x==0)
+		{
+			result._origin._x = _boundaries._size._x - _overlap;
+		}
+		// else sum and remove an overlap
+		else
+		{
+			result._origin._x = _boundaries._size._x;
+		}
 	}
 	
 	if(diff._y==-1)
@@ -1313,8 +1366,17 @@ Rectangle<int> World::getInternalOverlap( const int & id ) const
 		}
 	}
 	else
-	{
-		result._origin._y = _boundaries._size._y - _overlap;
+	{	
+		// if top border just remove an overlap
+		if(_boundaries._origin._y==0)
+		{
+			result._origin._y = _boundaries._size._y - _overlap;
+		}
+		// else sum and remove an overlap
+		else
+		{
+			result._origin._y = _boundaries._size._y;
+		}
 	}
 
 	// size
@@ -1335,7 +1397,9 @@ Rectangle<int> World::getInternalOverlap( const int & id ) const
 	{
 		result._size._y = _boundaries._size._y;
 	}
-	//std::cout << "internal overlap between: " << _simulation.getId()  << " with world pos: " << _worldPos << " and neighbor: " << id << " and diff: " << diff << " in section index: " << sectionIndex << " is: " << result << std::endl;
+	std::stringstream logName;
+	logName << "MPI_raster_world_" << _simulation.getId();
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " internal overlap with: " << id << " and diff: " << diff << " - " << result);
 	return result;
 }
 
@@ -1363,8 +1427,17 @@ Rectangle<int> World::getExternalOverlap( const int & id) const
 		}
 	}
 	else
-	{
-		result._origin._x = _boundaries._size._x;
+	{	
+		// if left border it doesn't have a left overlap		
+		if(_boundaries._origin._x==0)
+		{
+			result._origin._x = _boundaries._size._x;
+		}
+		// else sum an overlap
+		else
+		{
+			result._origin._x = _boundaries._size._x + _overlap;
+		}
 	}
 	
 	if(diff._y==-1)
@@ -1383,8 +1456,17 @@ Rectangle<int> World::getExternalOverlap( const int & id) const
 		}
 	}
 	else
-	{
-		result._origin._y = _boundaries._size._y;
+	{	
+		// if left border it doesn't have a left overlap		
+		if(_boundaries._origin._y==0)
+		{
+			result._origin._y = _boundaries._size._y;
+		}
+		// else sum an overlap
+		else
+		{
+			result._origin._y = _boundaries._size._y + _overlap;
+		}
 	}
 
 	// size
@@ -1405,7 +1487,10 @@ Rectangle<int> World::getExternalOverlap( const int & id) const
 	{	
 		result._size._y = _boundaries._size._y;
 	}
-	//std::cout << "external overlap between: " << _simulation.getId()  << " with world pos: " << _worldPos << " and neighbor: " << id << " and diff: " << diff << " in section index: " << sectionIndex << " is: " << result << std::endl;
+	
+	std::stringstream logName;
+	logName << "MPI_raster_world_" << _simulation.getId();
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " external overlap with: " << id << " and diff: " << diff << " - " << result);
 	return result;
 }
 
@@ -1438,7 +1523,16 @@ Rectangle<int> World::getOverlap( const int & id, const int & sectionIndex) cons
 	}
 	else
 	{
-		result._origin._x = _boundaries._size._x - _overlap;
+		// if left border just remove an overlap
+		if(_boundaries._origin._x==0)
+		{
+			result._origin._x = _boundaries._size._x - _overlap;
+		}
+		// else sum and remove an overlap
+		else
+		{
+			result._origin._x = _boundaries._size._x;
+		}
 	}
 	
 	if(diff._y==-1)
@@ -1462,7 +1556,16 @@ Rectangle<int> World::getOverlap( const int & id, const int & sectionIndex) cons
 	}
 	else
 	{
-		result._origin._y = _boundaries._size._y - _overlap;
+		// if top border just remove an overlap
+		if(_boundaries._origin._y==0)
+		{
+			result._origin._y = _boundaries._size._y - _overlap;
+		}
+		// else sum and remove an overlap
+		else
+		{
+			result._origin._y = _boundaries._size._y;
+		}
 	}
 
 	// size
@@ -1531,7 +1634,9 @@ Rectangle<int> World::getOverlap( const int & id, const int & sectionIndex) cons
 			}
 		}
 	}
-	//std::cout << "overlap between: " << _simulation.getId()  << " with world pos: " << _worldPos << " and neighbor: " << id << " and diff: " << diff << " in section index: " << sectionIndex << " is: " << result << std::endl;
+	std::stringstream logName;
+	logName << "MPI_raster_world_" << _simulation.getId();
+	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " overlap with: " << id << " and diff: " << diff << " in section Index: " << sectionIndex << " - " << result);
 	return result;
 }
 

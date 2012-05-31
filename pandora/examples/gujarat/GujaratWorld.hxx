@@ -44,7 +44,6 @@ class GujaratWorld : public Engine::World
 
 	//*********************************************
 	void createRasters();
-	void setSettlementAreasInRaster();
 	/*! \callgraph 
 	* fill the world with agents
 	*/

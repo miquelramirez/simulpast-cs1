@@ -18,7 +18,6 @@ GujaratAgent::GujaratAgent( const std::string & id )
 	 _spentTime(0), _collectedResources(0), _age(0),
 	_socialRange( 50 ), _starved( false )
 {
-	
 	_emigrationProbability = 0.0;
 	_reproductionProbability = 0.0;
 

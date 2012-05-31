@@ -3,6 +3,7 @@ import os
 
 release = ARGUMENTS.get('release', 1)
 mareNostrum = ARGUMENTS.get('mn', 0)
+extremeDebug = ARGUMENTS.get('edebug', 0)
 localmpich = ARGUMENTS.get('localmpich',0)
 
 if int(localmpich) == 1 :
@@ -17,6 +18,8 @@ libs = Split('pthread mpich gdal hdf5 z tinyxml boost_filesystem boost_system')
 
 if int(release) == 0:
 	env['CCFLAGS'] = Split('-g -Wall -DTIXML_USE_STL -fopenmp -DPANDORADEBUG')
+	if int(extremeDebug)==1:
+		env['CCFLAGS'] += ['-DPANDORAEDEBUG']
 	libraryName = 'pandorad'
 	pythonLibraryName = 'pyPandorad'
 else:
@@ -66,7 +69,9 @@ if int(mareNostrum)==0:
 	envPython.VariantDir('build_py', '.')
 
 	if int(release) == 0:
-		envPython['CCFLAGS'] = Split('-g -Wall -DTIXML_USE_STL -DPANDORADEBUG')
+		envPython['CCFLAGS'] = Split('-g -Wall -DTIXML_USE_STL -DPANDORADEBUG')	
+		if int(extremeDebug)==1:
+			env['CCFLAGS'] += ['-DPANDORAEDEBUG']
 	else:
 		envPython['CCFLAGS'] = Split('-O3 -Wall -DTIXML_USE_STL')
 	
