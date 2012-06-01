@@ -51,6 +51,13 @@ namespace Engine
 {
 class Agent;
 
+struct MpiOverlap
+{
+	std::string _rasterName;
+	std::vector<int> _data;
+	Rectangle<int> _overlap;
+	MPI_Request _request;
+};
 
 class World
 {
@@ -110,6 +117,11 @@ protected:
 
 	//! provides a random valid position inside boundaries
 	Point2D<int> getRandomPosition();
+
+	std::list<MpiOverlap*> _sendRequests;
+	std::list<MpiOverlap*> _receiveRequests;
+	// this method checks whether all the requests in the pool created by MPI_Isend and MPI_Irecv are finished before continuing
+	void clearRequests();
 private:
 	//! PENDENT amount of width around one boundary considering the side of the World object that owns _overlap
 	int _overlap;
