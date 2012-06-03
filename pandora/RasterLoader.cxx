@@ -33,12 +33,10 @@
 #include <gdal_priv.h>
 #include <hdf5.h>
 
-/*
 extern "C" 
 {
 #include <grass/gis.h>
 }
-*/
 
 namespace Engine
 {
@@ -136,7 +134,17 @@ void RasterLoader::fillGDALRaster( StaticRaster & raster, const std::string & fi
 
 void RasterLoader::fillHDF5Raster( StaticRaster & raster, const std::string & fileName, const std::string & rasterName, World * world )
 {
-	std::cout << "loading static raster " << rasterName << " from: " << fileName << "...";
+	std::stringstream logName;
+	if(world)
+	{
+		logName << "RasterLoader_world_" << world->getSimulation().getId();
+	}
+	else
+	{
+		logName << "RasterLoader";
+	}
+	log_DEBUG(logName.str(), "loading file: " << fileName << " rasterName: " << rasterName);
+
 	std::ostringstream oss;
 	oss << "/" << rasterName << "/values";
 	hid_t fileId = H5Fopen(fileName.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
@@ -149,13 +157,13 @@ void RasterLoader::fillHDF5Raster( StaticRaster & raster, const std::string & fi
 	if(dims[0]!=dims[1])
 	{
 		std::stringstream oss;
-		oss << "StaticRaster::loadHDF5File - file: " << fileName << " and raster name: " << rasterName << " not squared, with width: " << dims[0] << " and height: " << dims[1] << std::endl;
+		oss << "RasterLoader::fillHDF5Raster - file: " << fileName << " and raster name: " << rasterName << " not squared, with width: " << dims[0] << " and height: " << dims[1] << std::endl;
 		throw Engine::Exception(oss.str());
 	}
 	if(world && dims[0]!=world->getSimulation().getSize())
 	{
 		std::stringstream oss;
-		oss << "StaticRaster::loadHDF5File - file: " << fileName << " and raster name: " << rasterName << " with size: " << dims[0] << " different from defined size: " << world->getSimulation().getSize() << std::endl;
+		oss << "RasterLoader::fillHDF5Raster - file: " << fileName << " and raster name: " << rasterName << " with size: " << dims[0] << " different from defined size: " << world->getSimulation().getSize() << std::endl;
 		throw Engine::Exception(oss.str());
 	}
 	
@@ -202,7 +210,7 @@ void RasterLoader::fillHDF5Raster( StaticRaster & raster, const std::string & fi
 	}
 	free(dset_data);
 	H5Fclose(fileId);
-	raster.updateMinMaxValues();	
+	raster.updateMinMaxValues();
 	
 	// if dynamic, copy to maxValues
 	Raster * dynamicRaster = dynamic_cast<Raster*>(&raster);
@@ -211,12 +219,14 @@ void RasterLoader::fillHDF5Raster( StaticRaster & raster, const std::string & fi
 		std::copy(dynamicRaster->_values.begin(), dynamicRaster->_values.end(), dynamicRaster->_maxValues.begin());
 		dynamicRaster->updateCurrentMinMaxValues();
 	}
-	std::cout << std::endl;
+	log_DEBUG(logName.str(), "file: " << fileName << " rasterName: " << rasterName << " loaded");
 }
 
 void RasterLoader::fillGrassCellRaster( StaticRaster & raster, const std::string & rasterName, World * world )
 {
-	/*
+	std::stringstream logName;
+	logName << "RasterLoader_world_" << world->getSimulation().getId();
+	log_DEBUG(logName.str(), "loading GRASS raster: " << rasterName);
 	G_gisinit("pandora");
 	std::cout << "loading grass raster from : " << rasterName << " in location: " << G_location() << " and mapset: " << G_mapset() << "...";	
 	int fileId = G_open_cell_old(rasterName.c_str(), G_mapset());
@@ -288,8 +298,7 @@ void RasterLoader::fillGrassCellRaster( StaticRaster & raster, const std::string
 		std::copy(dynamicRaster->_values.begin(), dynamicRaster->_values.end(), dynamicRaster->_maxValues.begin());
 		dynamicRaster->updateCurrentMinMaxValues();
 	}
-	std::cout << std::endl;
-	*/
+	log_DEBUG(logName.str(), "raster: " << rasterName << " loaded");
 }
 
 } // namespace Engine

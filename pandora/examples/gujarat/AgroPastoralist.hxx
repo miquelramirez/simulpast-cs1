@@ -17,8 +17,6 @@ class AgroPastoralist : public GujaratAgent
 
 	void selectActions();
 	
-	void serializeAdditionalAttributes();
-	
 	GujaratAgent * createNewAgent();
 
 	CultivatedField * _cultivatedField;
@@ -39,6 +37,8 @@ public:
 	bool hasCultivatedField() { return _cultivatedField != NULL; }
 	bool cultivatedFieldOutOfReach();
 	void acquireResources( int amount ) { _collectedResources += amount; }
+
+	void serialize(){}
 
 	// MPI Script Generated code
 	AgroPastoralist( void * );

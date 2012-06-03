@@ -17,6 +17,13 @@ HunterGatherer::HunterGatherer( const std::string & id )
 	: GujaratAgent(id), _surplusForReproductionThreshold(2), _surplusWanted(1), _homeRange(50),
 	_numSectors( -1 )
 {
+	registerIntAttribute("agent age");
+	registerIntAttribute("male alive");
+	registerIntAttribute("male age");
+	registerIntAttribute("female alive");
+	registerIntAttribute("female age");
+	registerIntAttribute("children");
+	registerIntAttribute("collected resources");
 }
 
 HunterGatherer::~HunterGatherer()
@@ -121,11 +128,6 @@ void HunterGatherer::selectActions()
 	_actions.push_back( (Engine::Action*)(GujaratState::controller().selectAction(*this)) );
 }
 
-void HunterGatherer::serializeAdditionalAttributes()
-{
-	serializeAttribute("collected resources", _collectedResources);
-}
-
 GujaratAgent * HunterGatherer::createNewAgent()
 {	
 	std::cout << "creating new agent" << std::endl;
@@ -169,6 +171,44 @@ bool	HunterGatherer::cellRelevant( Engine::Point2D<int>& loc )
 	Soils soilType = (Soils) _world->getValue("soils", loc);
 	int resourceType = _world->getValue("resourceType", loc);
 	return soilType == INTERDUNE && resourceType == WILD;
+}
+
+void HunterGatherer::serialize()
+{
+	serializeAttribute("agent age", _age);
+
+	if(_populationAges[0]!=-1)
+	{
+		serializeAttribute("male alive", 1);
+		serializeAttribute("male age", _populationAges[0]);
+	}
+	else
+	{
+		serializeAttribute("male alive", 0);
+		serializeAttribute("male age", std::numeric_limits<int>::max());
+	}
+	
+	if(_populationAges[1]!=-1)
+	{
+		serializeAttribute("female alive", 1);
+		serializeAttribute("female age", _populationAges[1]);
+	}
+	else
+	{
+		serializeAttribute("female alive", 0);
+		serializeAttribute("female age", std::numeric_limits<int>::max());
+	}
+
+	int numChildren = 0;
+	for(unsigned i=2; i<_populationAges.size(); i++)
+	{
+		if(_populationAges[i]!=-1)
+		{
+			numChildren++;
+		}
+	}
+	serializeAttribute("children", numChildren);
+	serializeAttribute("collected resources", _collectedResources);
 }
 
 } // namespace Gujarat

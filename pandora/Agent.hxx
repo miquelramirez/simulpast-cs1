@@ -42,6 +42,14 @@ class Action;
 
 class Agent
 {
+public:
+	typedef std::list<std::string> AttributesList;
+	
+private:
+	// list of attributes of an agent
+	AttributesList _intAttributes;
+	AttributesList _stringAttributes;
+
 protected:
 	/** Agent identifier **/
 	std::string _id;
@@ -52,10 +60,14 @@ protected:
 	/** Pointer to the world that owns this agent **/
 	World * _world;
 	
-	/** *? pendent **/
 	void serializeAttribute( const std::string & name, const int & value );
+	void serializeAttribute( const std::string & name, const std::string & value );
 	
 	std::list<Engine::Action*> _actions;
+
+
+	void registerIntAttribute(const std::string & name ) { _intAttributes.push_back(name); }
+	void registerStringAttribute(const std::string & name ) { _stringAttributes.push_back(name); }
 public:
 	
 	//! Standard constructor.
@@ -113,6 +125,12 @@ public:
 	// mpi related
 	virtual void sendVectorAttributes( int target ) = 0;
 	virtual void receiveVectorAttributes(int origin) = 0;
+
+	AttributesList::iterator beginStringAttributes(){ return _stringAttributes.begin(); }
+	AttributesList::iterator endStringAttributes(){ return _stringAttributes.end(); }
+
+	AttributesList::iterator beginIntAttributes(){ return _intAttributes.begin(); }
+	AttributesList::iterator endIntAttributes(){ return _intAttributes.end(); }
 };
 
 } // namespace Engine

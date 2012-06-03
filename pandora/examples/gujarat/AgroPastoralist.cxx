@@ -95,10 +95,6 @@ void * AgroPastoralist::createPackage()
 	return 0;
 }
 
-void AgroPastoralist::serializeAdditionalAttributes()
-{
-}
-	
 GujaratAgent * AgroPastoralist::createNewAgent()
 {	
 	GujaratWorld * world = (GujaratWorld*)_world;

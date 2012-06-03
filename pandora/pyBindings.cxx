@@ -141,6 +141,7 @@ public:
 
 	void * fillPackage()
 	{
+		return 0;
 	}
 
 	void sendVectorAttributes(int target)

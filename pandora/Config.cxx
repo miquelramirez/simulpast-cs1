@@ -51,7 +51,7 @@ TiXmlElement * Config::openTiXml(const std::string & filename)
 	if (!_doc->LoadFile())
 	{
 		std::stringstream oss;
-		oss << "Exception, error at open for file " << filename << std::endl;
+		oss << "Exception, error while opening config file " << filename << std::endl;
 		throw Engine::Exception(oss.str());
 		return 0;
 	}
@@ -85,7 +85,7 @@ void Config::extractAttribs(TiXmlElement *pRoot)
 }
 
 void Config::deserialize(const std::string & filename)
-{    
+{
 	TiXmlElement *pRoot = openTiXml(filename);
 	if( pRoot )
 	{

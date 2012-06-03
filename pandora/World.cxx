@@ -26,6 +26,7 @@
 #include <MpiFactory.hxx>
 
 #include <GeneralState.hxx>
+#include <Serializer.hxx>
 #include <Logger.hxx>
 #include <Statistics.hxx>
 
@@ -44,11 +45,10 @@ World::World( const Simulation & simulation, const int & overlap, const bool & a
     , _allowMultipleAgentsPerCell(allowMultipleAgentsPerCell)
     , _step(0)
     , _overlap(overlap)
-    , _serializer(fileName)
     , _searchAgents(true)
     , _initialTime(0.0f)
 {
-
+	GeneralState::serializer().setResultsFile(fileName);
 }
 
 World::~World()
@@ -79,7 +79,7 @@ void World::init( int argc, char *argv[] )
 	stablishPosition();
 	createRasters();
 	
-	_serializer.init(_simulation, _staticRasters, _dynamicRasters, *this);
+	GeneralState::serializer().init(_simulation, _staticRasters, _dynamicRasters, *this);
 	serializeStaticRasters();
 	createAgents();
 	MpiFactory::instance()->registerTypes();
@@ -175,6 +175,12 @@ void World::updateRasterToMaxValues( const std::string & key )
 
 bool World::hasBeenExecuted( Agent * agent )
 {
+	if(_executedAgentsHash.find(agent->getId())==_executedAgentsHash.end())
+	{
+		return false;
+	}
+	return true;
+	/*
 	for(AgentsList::iterator it=_executedAgents.begin(); it!=_executedAgents.end(); it++)
 	{
 		if((*it)->getId().compare(agent->getId())==0)
@@ -183,6 +189,7 @@ bool World::hasBeenExecuted( Agent * agent )
 		}
 	}
 	return false;
+	*/
 }
 
 bool World::willBeRemoved( Agent * agent )
@@ -476,7 +483,8 @@ void World::stepSection( const int & sectionIndex )
 				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " finished agent: " << agent);
 				it++;
 			}
-			_executedAgents.push_back(agent);
+			//_executedAgents.push_back(agent);
+			_executedAgentsHash.insert(make_pair(agent->getId(), agent));
 			numExecutedAgents++;
 		}
 		/*
@@ -498,14 +506,18 @@ void World::stepSection( const int & sectionIndex )
 void World::serializeAgents()
 {
 	AgentsList::iterator it=_agents.begin();
+	int i = 0;
 	while(it!=_agents.end())
 	{
 		if((*it)->exists())
 		{
-			_serializer.serializeAgent((*it), _step);
+			GeneralState::serializer().serializeAgent((*it), _step, *this, i);
+			i++;
 		}
 		it++;
 	}
+	// serialize remaining agents
+	GeneralState::serializer().finishAgentsSerialization(_step, *this);
 }
 
 void World::sendAgents( AgentsList & agentsToSend )
@@ -716,7 +728,8 @@ void World::receiveAgents( const int & sectionIndex )
 				log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " receiveAgents - received agent: " << agent << " number: " << j << " from: " << _neighbors[i]);
 				delete package;
 				agent->receiveVectorAttributes(_neighbors[i]);
-				_executedAgents.push_back(agent);
+				_executedAgentsHash.insert(make_pair(agent->getId(), agent));
+				//_executedAgents.push_back(agent);
 				addAgent(agent);
 			}
 		}
@@ -822,10 +835,12 @@ void World::step()
 		receiveOverlapData(sectionIndex, false);
 	}
 	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " step: " << _step << " has executed update overlap");
+
 	//std::cout << MPI_Wtime() - _initialTime << " - world: " << _simulation.getId() << " at pos: " << _worldPos << " executing step: " << _step << " has executed stepAgents" << std::endl;	
 	// TODO shuffle
 	//random_shuffle(_agents.begin(), _agents.end());
-	_executedAgents.clear();
+	//_executedAgents.clear();
+	_executedAgentsHash.clear();
 
 	std::stringstream logNameMpi;
 	logNameMpi << "simulation_" << _simulation.getId();
@@ -851,6 +866,7 @@ void World::step()
 
 		//MPI_Barrier(MPI_COMM_WORLD);
 	}
+
 	removeAgents();
 	log_INFO(logName.str(), MPI_Wtime() - _initialTime<< " - world at pos: " << _worldPos << " finished step: " << _step);
 	log_DEBUG(logNameMpi.str(), MPI_Wtime() - _initialTime<< " - world at pos: " << _worldPos << " finished step: " << _step);
@@ -942,7 +958,7 @@ void World::run()
 	serializeAgents();
 	
 	log_INFO(logName.str(), MPI_Wtime() - _initialTime << " closing files");
-	_serializer.finish();
+	GeneralState::serializer().finish();
 
 	MpiFactory::instance()->cleanTypes();
 	log_INFO(logName.str(), MPI_Wtime() - _initialTime << " simulation finished");
@@ -1107,7 +1123,7 @@ void World::serializeRasters()
 	{
 		if(rasterToSerialize(it->first))
 		{
-			_serializer.serializeRaster(it->first, it->second, *this, _step);
+			GeneralState::serializer().serializeRaster(it->first, it->second, *this, _step);
 		}
 	}
 }
@@ -1118,7 +1134,7 @@ void World::serializeStaticRasters()
 	{
 		if(rasterToSerialize(it->first))
 		{
-			_serializer.serializeStaticRaster(it->first, it->second, *this);
+			GeneralState::serializer().serializeStaticRaster(it->first, it->second, *this);
 		}
 	}
 }
@@ -1983,11 +1999,6 @@ World::AgentsList World::getNeighbours( Agent * target, const double & radius, c
 	*/
 }
 
-Serializer & World::getSerializer()
-{
-	return _serializer;
-}
-
 const int & World::getOverlap()
 {
 	return _overlap;
@@ -2014,6 +2025,11 @@ bool World::rasterToSerialize( const std::string & key )
 		return true;
 	}
 	return false;
+}
+	
+double World::getMpiTime() const
+{
+	return MPI_Wtime() - _initialTime;
 }
 
 } // namespace Engine

@@ -20,7 +20,6 @@ GujaratAgent::GujaratAgent( const std::string & id )
 {
 	_emigrationProbability = 0.0;
 	_reproductionProbability = 0.0;
-
 }
 
 GujaratAgent::~GujaratAgent()
@@ -307,44 +306,6 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 void GujaratAgent::checkMortality()
 {
 	GujaratState::demographics().checkMortality(*this);
-}
-
-void GujaratAgent::serialize()
-{
-	serializeAttribute("agent age", _age);
-
-	if(_populationAges[0]!=-1)
-	{
-		serializeAttribute("male alive", 1);
-		serializeAttribute("male age", _populationAges[0]);
-	}
-	else
-	{
-		serializeAttribute("male alive", 0);
-		serializeAttribute("male age", std::numeric_limits<int>::max());
-	}
-	
-	if(_populationAges[1]!=-1)
-	{
-		serializeAttribute("female alive", 1);
-		serializeAttribute("female age", _populationAges[1]);
-	}
-	else
-	{
-		serializeAttribute("female alive", 0);
-		serializeAttribute("female age", std::numeric_limits<int>::max());
-	}
-
-	int numChildren = 0;
-	for(unsigned i=2; i<_populationAges.size(); i++)
-	{
-		if(_populationAges[i]!=-1)
-		{
-			numChildren++;
-		}
-	}
-	serializeAttribute("children", numChildren);
-	serializeAttribute("collected resources", _collectedResources);
 }
 
 void	GujaratAgent::initializePosition( )

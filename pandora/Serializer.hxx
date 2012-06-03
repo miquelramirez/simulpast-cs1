@@ -26,6 +26,7 @@
 #include <hdf5.h>
 #include <string>
 #include <map>
+#include <vector>
 
 namespace Engine
 {
@@ -40,7 +41,13 @@ class Serializer
 {
 	typedef std::map< std::string, Raster> RastersMap;
 	typedef std::map< std::string, StaticRaster> StaticRastersMap;
-	std::string _fileName;
+
+	typedef std::map< std::string, std::vector<int> * > IntMap;
+	typedef std::map< std::string, std::vector<std::string> * > StringMap;
+	typedef std::map< std::string, IntMap * > IntAttributesMap;
+	typedef std::map< std::string, StringMap * > StringAttributesMap;
+
+	std::string _resultsFile;
 
 	hid_t _agentsFileId;
 	hid_t _fileId;
@@ -48,17 +55,39 @@ class Serializer
 	hid_t _currentAgentDatasetId;
 
 	void serializeRaster( StaticRaster & raster, World & world, const std::string & datasetKey );
+
+	// register the type of agent into the data structures _agentIndexsMap, _stringAttributes and _intAttributes and create HDF5 structures
+	void registerType( Agent * agent, World & world );
+	// list of agent types registered until this moment
+
+	IntAttributesMap _intAttributes;
+	StringAttributesMap _stringAttributes;
+
+	std::map<std::string, int> _agentIndexMap;
+	
+	void executeAgentSerialization( const std::string & type, int step, World & world);
+	void resetCurrentIndexs();
+
+	int getDataSize( const std::string & type );
+
 public:
-	Serializer( const std::string & fileName = "data/simulation.h5");
+	Serializer();
 	virtual ~Serializer();
 
 	void init( Simulation & simulation, StaticRastersMap & staticRasters, RastersMap & rasters, World & world );
 	void finish();
 
-	void serializeAgent( Agent * agent, const int & step );
+	void serializeAgent( Agent * agent, const int & step, World & world, int index);
 	void serializeAttribute( const std::string & name, const int & value );
 	void serializeRaster( const std::string & key, Raster & raster, World & world, const int & step );
 	void serializeStaticRaster( const std::string & key, StaticRaster & raster, World & world );
+	void finishAgentsSerialization( int step, World & world);
+	
+	void addStringAttribute( const std::string & type, const std::string & key, const std::string & value );
+	void addIntAttribute( const std::string & type, const std::string & key, int value );
+
+	void setResultsFile( const std::string & resultsFile ) { _resultsFile = resultsFile; }
+
 };
 
 } // namespace Engine

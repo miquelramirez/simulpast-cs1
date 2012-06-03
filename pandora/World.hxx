@@ -42,8 +42,8 @@ enum MpiMessageType
 #include <StaticRaster.hxx>
 #include <Rectangle.hxx>
 #include <Point2D.hxx>
-#include <Serializer.hxx>
 #include <Simulation.hxx>
+#include <mpi.h>
 
 #include <algorithm>
 
@@ -80,7 +80,8 @@ protected:
 	std::vector<int> _neighbors;
 
 	//! list of already executed agents
-	AgentsList _executedAgents;
+	//AgentsList _executedAgents;
+	std::map<std::string, Agent *> _executedAgentsHash;	
 	//! global list of agents
 	AgentsList _agents;
 	AgentsList _overlapAgents;
@@ -126,8 +127,6 @@ private:
 	//! PENDENT amount of width around one boundary considering the side of the World object that owns _overlap
 	int _overlap;
 	
-	Serializer _serializer;
-
 	// if this variable is set to true, getNeighbours will look through the list of agents instead of searching by position. It is false by default
 	bool _searchAgents;
 	
@@ -343,9 +342,6 @@ public:
 	//! returns the simulation id where that World is in (??? TODO verifica això)
 	int getId();
 
-	//! returns the object that dumps rasters and agents
-	Serializer & getSerializer();
-
 	bool rasterToSerialize( const std::string & key );
 	//! returns the attribute _overlap
 	const int & getOverlap();
@@ -356,6 +352,7 @@ public:
 	virtual void createRasters() = 0;
 
 	int	getCurrentTimeStep() const { return _step; }
+	double getMpiTime() const;
 };
 
 } // namespace Engine

@@ -24,8 +24,6 @@ class HunterGatherer : public GujaratAgent
 	
 	void selectActions();
 	
-	void serializeAdditionalAttributes();
-	
 	GujaratAgent * createNewAgent();
 
 	std::vector<Sector *> _sectors;
@@ -52,6 +50,8 @@ public:
 	void		updateKnowledge( 	const Engine::Point2D<int>& agentPos,
 						const Engine::Raster& dataRaster,
 						std::vector< Sector* >& sectors ) const;
+	
+	void serialize();
 
 	
 	// MPI Script Generated code

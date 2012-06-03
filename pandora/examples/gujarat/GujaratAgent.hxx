@@ -27,9 +27,6 @@ private:
 
 	virtual GujaratAgent * createNewAgent() = 0;
 
-
-	virtual void serializeAdditionalAttributes() = 0;
-
 	virtual bool checkEmigration();
 
 protected:
@@ -63,8 +60,6 @@ protected:
 public:
 	GujaratAgent( const std::string & id );
 	virtual ~GujaratAgent();
-
-	void serialize();
 
 	void	setSocialRange( int v ) { _socialRange = v; }
 	int	getSocialRange() const { return _socialRange; }

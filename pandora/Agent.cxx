@@ -37,6 +37,9 @@ namespace Engine
 
 Agent::Agent( const std::string & id ) : _id(id), _exists(true), _position(-1,-1), _world(0)
 {
+	_stringAttributes.push_back("id");
+	_intAttributes.push_back("x");
+	_intAttributes.push_back("y");
 }
 
 Agent::~Agent()
@@ -81,7 +84,12 @@ const Point2D<int> & Agent::getPosition() const
 
 void Agent::serializeAttribute( const std::string & name, const int & value )
 {
-	_world->getSerializer().serializeAttribute(name,value);
+	GeneralState::serializer().addIntAttribute(getType(), name,value);
+}
+
+void Agent::serializeAttribute( const std::string & name, const std::string & value)
+{
+	GeneralState::serializer().addStringAttribute(getType(), name,value);
 }
 
 const std::string & Agent::getId()
@@ -147,6 +155,9 @@ void Agent::logAgentState()
 
 void Agent::executeActions()
 {
+	std::stringstream logName;
+	logName << "agents_" << _world->getId() << "_" << getId();
+
 	std::list<Action *>::iterator it = _actions.begin();
 	unsigned i = 0;
 	while(it!=_actions.end())
@@ -156,7 +167,7 @@ void Agent::executeActions()
 		//if(_spentTime<=_availableTime)
 		//{
 		nextAction->execute((Engine::Agent&)(*this));
-		GeneralState::logger().log( getId()) << "\tagent.action[" << i << "]=" << nextAction->describe() << std::endl;
+		log_DEBUG(logName.str(), "\tagent.action[" << i << "]=" << nextAction->describe());
 		//}
 		it = _actions.erase(it);
 		delete nextAction;
@@ -166,7 +177,7 @@ void Agent::executeActions()
 	
 void Agent::setRandomPosition()
 {
-	const Engine::Rectangle<int> & worldBoundaries = _world->getBoundaries();
+	const Engine::Rectangle<int> & worldBoundaries = _world->getOverlapBoundaries();
 	while(1)
 	{
 		int x = GeneralState::statistics().getUniformDistValue(worldBoundaries._origin._x,worldBoundaries._origin._x+worldBoundaries._size._x);
