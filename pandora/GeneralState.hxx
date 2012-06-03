@@ -5,6 +5,7 @@
 #include <Logger.hxx>
 #include <Statistics.hxx>
 #include <RasterLoader.hxx>
+#include <Serializer.hxx>
 #include <ShpLoader.hxx>
 
 namespace Engine
@@ -19,6 +20,7 @@ class GeneralState
 	Statistics _statistics;
 	RasterLoader _rasterLoader;
 	ShpLoader _shpLoader;
+	Serializer _serializer;
 protected:
 	GeneralState();
 
@@ -44,6 +46,11 @@ public:
 	static ShpLoader & shpLoader()
 	{
 		return instance()._shpLoader;
+	}
+
+	static Serializer & serializer()
+	{
+		return instance()._serializer;
 	}
 };
 

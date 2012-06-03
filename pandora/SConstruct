@@ -13,8 +13,8 @@ else :
 
 env.VariantDir('build', '.')
 
-#libs = Split('pthread mpich gdal hdf5 mpl z tinyxml grass_gis boost_filesystem boost_system')
-libs = Split('pthread mpich gdal hdf5 z tinyxml boost_filesystem boost_system')
+libs = Split('pthread mpich gdal hdf5 mpl z tinyxml grass_gis boost_filesystem boost_system')
+#libs = Split('pthread mpich gdal hdf5 z tinyxml boost_filesystem boost_system')
 
 if int(release) == 0:
 	env['CCFLAGS'] = Split('-g -Wall -DTIXML_USE_STL -fopenmp -DPANDORADEBUG')
