@@ -25,6 +25,7 @@
 
 #include <vector>
 #include <string>
+#include <list>
 #include <map>
 #include <hdf5.h>
 
@@ -66,8 +67,13 @@ private:
 	// we need this function in order to be called by H5Giterate. It must be static to match the C call signature
 	static herr_t registerAgentStep( hid_t loc_id, const char *name, void *opdata );
 
+	static herr_t iterateAgentTypes( hid_t loc_id, const char * name, const H5L_info_t *linfo, void *opdata );
+	static herr_t iterateAgentDatasets( hid_t loc_id, const char * name, const H5L_info_t *linfo, void *opdata );
+
 	float _loadingPercentageDone;
 	std::string _loadingState;
+	static std::list< std::string > _agentTypes;
+	static std::list< std::string > _agentAttributes;
 public:
 	SimulationRecord( int resolution = 1 );
 	virtual ~SimulationRecord();

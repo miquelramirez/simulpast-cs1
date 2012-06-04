@@ -220,13 +220,14 @@ void Serializer::registerType( Agent * agent, World & world  )
 	// create a dataset for each timestep
 	for(int i=0; i<=world.getSimulation().getNumSteps(); i++)
 	{
+		std::ostringstream oss;
+		oss<<"step"<<i;
+		hid_t stepGroup = H5Gcreate(agentTypeGroup, oss.str().c_str(),  0, H5P_DEFAULT, H5P_DEFAULT);
 		for(Agent::AttributesList::iterator it=agent->beginIntAttributes(); it!=agent->endIntAttributes(); it++)
 		{	
 			log_DEBUG(logName.str(), "\tnew int attribute: " << *it);
 			newTypeIntMap->insert( make_pair(*it, new std::vector<int>() ));
-			std::ostringstream oss;
-			oss << "step" << i << "_" << *it;
-			hid_t idDataset= H5Dcreate(agentTypeGroup, oss.str().c_str(), H5T_NATIVE_INT, agentFileSpace, H5P_DEFAULT, propertyListId, H5P_DEFAULT);
+			hid_t idDataset= H5Dcreate(stepGroup, (*it).c_str(), H5T_NATIVE_INT, agentFileSpace, H5P_DEFAULT, propertyListId, H5P_DEFAULT);
 			H5Dclose(idDataset);
 		}
 		
@@ -236,11 +237,10 @@ void Serializer::registerType( Agent * agent, World & world  )
 		{		
 			log_DEBUG(logName.str(), "\tnew string attribute: " << *it);
 			newTypeStringMap->insert( make_pair(*it, new std::vector<std::string>() ));
-			std::ostringstream oss;
-			oss << "step" << i << "_" << *it;
-			hid_t idDataset= H5Dcreate(agentTypeGroup, oss.str().c_str(), idType, agentFileSpace, H5P_DEFAULT, propertyListId, H5P_DEFAULT);
+			hid_t idDataset= H5Dcreate(stepGroup, (*it).c_str(), idType, agentFileSpace, H5P_DEFAULT, propertyListId, H5P_DEFAULT);
 			H5Dclose(idDataset);
 		}
+		H5Gclose(stepGroup);
 	}
 	H5Gclose(agentTypeGroup);
 	H5Sclose(agentFileSpace);
@@ -301,7 +301,7 @@ void Serializer::executeAgentSerialization( const std::string & type, int step, 
 		newSize[0] = currentIndex+data->size();
 
 		std::ostringstream oss;
-		oss << type << "/step" << step << "_" << itM->first;
+		oss << type << "/step" << step << "/" << itM->first;
 		hid_t datasetId = H5Dopen(_agentsFileId, oss.str().c_str(), H5P_DEFAULT);
 		H5Dset_extent( datasetId, newSize);
 		hid_t fileSpace = H5Dget_space(datasetId);
@@ -330,7 +330,7 @@ void Serializer::executeAgentSerialization( const std::string & type, int step, 
 		itI->second = currentIndex+data->size();
 
 		std::ostringstream oss;
-		oss << type << "/step" << step << "_" << itM->first;
+		oss << type << "/step" << step << "/" << itM->first;
 
 		hid_t datasetId = H5Dopen(_agentsFileId, oss.str().c_str(), H5P_DEFAULT);
 		H5Dset_extent( datasetId, newSize);
@@ -397,7 +397,7 @@ void Serializer::serializeAgent( Agent * agent, const int & step, World & world,
 
 	addStringAttribute(type, "id", agent->getId());
 	addIntAttribute(type, "x", agent->getPosition()._x);
-	addIntAttribute(type, "y", agent->getPosition()._x);
+	addIntAttribute(type, "y", agent->getPosition()._y);
 	agent->serialize();
 
 	if(getDataSize(type)>=20000)

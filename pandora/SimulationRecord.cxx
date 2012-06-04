@@ -36,6 +36,9 @@
 namespace Engine 
 {
 
+std::list<std::string> SimulationRecord::_agentTypes;
+std::list<std::string> SimulationRecord::_agentAttributes;
+
 SimulationRecord::SimulationRecord( int resolution ) : _name("unknown"), _numSteps(0), _loadingStep(0), _resolution(resolution), _loadingPercentageDone(0.0f), _loadingState("no load")
 {	
 }
@@ -231,19 +234,143 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 				std::ostringstream agentsFileName;
 				agentsFileName << path << "agents-" << i<< ".abm";
 
-				hid_t agentsFileId = H5Fopen(agentsFileName.str().c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+				hid_t agentsFileId = H5Fopen(agentsFileName.str().c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);				
+				hid_t rootGroup = H5Gopen(agentsFileId, "/", H5P_DEFAULT);
+				
+				int idx_f = H5Literate(rootGroup, H5_INDEX_NAME, H5_ITER_INC, 0, iterateAgentTypes, 0);
 
-				for(_loadingStep=0; _loadingStep<=_numSteps; _loadingStep=_loadingStep+_resolution)
+				for(std::list<std::string>::iterator it=_agentTypes.begin(); it!=_agentTypes.end(); it++)
 				{
-					std::stringstream line;
-					line << "loading agents of task: "<< i+1 << "/" << numTasks << " - step: " << _loadingStep << "/" << _numSteps;
-					_loadingState = line.str();
-					std::ostringstream oss;
-					oss << "/step" << _loadingStep;
-					H5Giterate(agentsFileId, oss.str().c_str(), 0, registerAgentStep, this);
-					_loadingPercentageDone += increase;
+					_types.insert( make_pair( *it, AgentRecordsMap()));
 				}
+
+	
+				/*
+				hid_t typeGroup = H5Gopen(loc_id, name, H5P_DEFAULT); 
+	
+				int idx_f = H5Literate_by_name(typeGroup, H5_INDEX_NAME, H5_ITER_INC, 0, iterateAgentDatasets, 0);
+	
+				H5Gclose(typeGroup);
+				*/
+				// id
+				for(AgentTypesMap::iterator typeIt=_types.begin(); typeIt!=_types.end(); typeIt++)
+				{
+					for(_loadingStep=0; _loadingStep<=_numSteps; _loadingStep=_loadingStep+_resolution)
+					{
+						std::stringstream line;
+						line << "loading agents of task: "<< i+1 << "/" << numTasks << " - step: " << _loadingStep << "/" << _numSteps;
+						_loadingState = line.str();
+						
+						std::ostringstream oss;
+						oss << "/" << typeIt->first << "/step" << _loadingStep;
+
+						hid_t stepGroup = H5Gopen(agentsFileId, oss.str().c_str(), H5P_DEFAULT);
+
+						H5Literate(stepGroup, H5_INDEX_NAME, H5_ITER_INC, 0, iterateAgentDatasets, 0);
+
+
+
+						hid_t datasetId = H5Dopen(stepGroup, "id", H5P_DEFAULT);						
+
+						hid_t tid1 = H5Tcopy (H5T_C_S1);
+						H5Tset_size (tid1, H5T_VARIABLE);
+						
+						hid_t stringSpace = H5Dget_space(datasetId);
+						hssize_t numElements = H5Sget_simple_extent_npoints(stringSpace);
+
+						std::vector<std::string> indexAgents;
+
+						char ** foo = (char **) malloc (numElements * sizeof (char *));
+						H5Dread(datasetId, tid1, H5S_ALL, H5S_ALL, H5P_DEFAULT, foo);						
+				
+						AgentRecordsMap & agents = typeIt->second;
+
+						for(int iAgent=0; iAgent<numElements; iAgent++)
+						{
+							std::string agentName(foo[iAgent]);	
+							indexAgents.push_back(agentName);
+							AgentRecordsMap::iterator it = agents.find(agentName);
+							// new agent
+							if(it==agents.end())
+							{
+								// +1 due to init state, new agent record with size of num steps +1
+								std::cout << " creating new agent: " << agentName << std::endl;
+								agents.insert( make_pair( agentName, new AgentRecord(agentName, (_numSteps/_resolution)+1)));
+								it = agents.find(agentName);
+							}
+							AgentRecord * agentRecord = it->second;
+							agentRecord->addState( _loadingStep/_resolution, "exists", true);
+						}
+						H5Dvlen_reclaim (tid1, stringSpace, H5P_DEFAULT, foo);
+					    free (foo);
+						H5Sclose(stringSpace);
+						H5Tclose(tid1);
+						H5Dclose(datasetId);
+
+						// rest of attributes
+						for(std::list<std::string>::iterator itA=_agentAttributes.begin(); itA!=_agentAttributes.end(); itA++)
+						{
+							// if already parsed
+							if((*itA).compare("id")==0)
+							{
+								continue;
+							}
+
+							hid_t attributeDatasetId = H5Dopen(stepGroup, (*itA).c_str(), H5P_DEFAULT);
+							hid_t typeAttribute = H5Dget_type(attributeDatasetId);
+							H5T_class_t t_class = H5Tget_class(typeAttribute);
+							if(t_class == H5T_INTEGER)
+							{
+								std::cout << "\tattribute: " << *itA << " is int!" << std::endl;
+								std::vector<int> data;
+								data.resize(numElements);
+								H5Dread(attributeDatasetId, typeAttribute, H5S_ALL, H5S_ALL, H5P_DEFAULT, &(data.at(0)));	
+								for(int iAgent=0; iAgent<numElements; iAgent++)
+								{
+									std::string agentName= indexAgents.at(iAgent);
+									AgentRecordsMap::iterator it = agents.find(agentName);
+									AgentRecord * agentRecord = it->second;
+									agentRecord->addState( _loadingStep/_resolution, *itA, data.at(iAgent));
+									
+									ValuesMap::iterator itMin = _minAttributeValues.find(*itA);
+									if(itMin==_minAttributeValues.end())
+									{
+										_minAttributeValues.insert( make_pair(*itA, data.at(iAgent)));
+									}
+									else if(data.at(iAgent)<itMin->second)
+									{
+										itMin->second = data.at(iAgent);
+									}			
+									ValuesMap::iterator itMax = _maxAttributeValues.find(*itA);
+									if(itMax==_maxAttributeValues.end())
+									{
+										_maxAttributeValues.insert( make_pair(*itA, data.at(iAgent)));
+									}
+									else if(data.at(iAgent)>itMax->second)
+									{
+										itMax->second = data.at(iAgent);
+									}
+								}
+							}
+							else if(t_class == H5T_STRING)
+							{
+								std::cout << "attribute: " << *itA << " is string!" << std::endl;
+							}
+							H5Tclose(typeAttribute);
+							H5Dclose(attributeDatasetId);
+						}
+
+						H5Gclose(stepGroup);
+						SimulationRecord::_agentAttributes.clear();
+					}
+
+					//H5Giterate(agentsFileId, oss.str().c_str(), 0, registerAgentStep, this);
+					//_loadingPercentageDone += increase;
+				}
+
+				H5Gclose(rootGroup);
 				H5Fclose(agentsFileId);
+				SimulationRecord::_agentTypes.clear();
 			}
 		}
 	}
@@ -251,6 +378,18 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 	_loadingState = "no loading";
 	_loadingPercentageDone = 100.0f;
 	return true;
+}
+
+herr_t SimulationRecord::iterateAgentDatasets( hid_t loc_id, const char * name, const H5L_info_t *linfo, void *opdata )
+{
+	SimulationRecord::_agentAttributes.push_back(name);	
+	return 0;
+}
+
+herr_t SimulationRecord::iterateAgentTypes( hid_t loc_id, const char * name, const H5L_info_t *linfo, void *opdata )
+{
+	SimulationRecord::_agentTypes.push_back(name);	
+	return 0;
 }
 	
 SimulationRecord::RasterHistory & SimulationRecord::getRasterHistory( const std::string & key )
