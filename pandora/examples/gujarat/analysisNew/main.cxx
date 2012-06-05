@@ -43,15 +43,17 @@ int main(int argc, char *argv[])
 		agentResults.addAnalysis(new Analysis::AgentMean("children"));
 		agentResults.addAnalysis(new Analysis::AgentSum("children"));
 		agentResults.addAnalysis(new Analysis::AgentMean("collected resources"));
-		agentResults.addAnalysis(new Analysis::AgentHDFtoSHP("shp/prova.shp"));
+		agentResults.addAnalysis(new Analysis::AgentHDFtoSHP("shp/gujarat.shp", Engine::Point2D<int>(774000,2623000), 31.5f, "EPSG:24312"));
 
 		agentResults.apply();
 		
+		/*
 		Analysis::RasterResults rasterResults(simRecord, "resources.csv", "resources");
 		rasterResults.addAnalysis(new Analysis::RasterMean());
-		rasterResults.addAnalysis(new Analysis::RasterSum());
+		rasterResults.addAnalysis(new Analysis::RasterSum());		
 
 		rasterResults.apply();
+		*/
 	}
 	catch( std::exception & exceptionThrown )
 	{
