@@ -5,11 +5,15 @@
 #include <Exceptions.hxx>
 #include <sstream>
 #include <boost/filesystem.hpp>
-
+#include <iomanip>
 namespace Analysis
 {
 
-AgentHDFtoSHP::AgentHDFtoSHP( const std::string & fileName, int numStep ) : AgentAnalysis("Agent HDF to SHP parser", false), _numStep(numStep), _fileName(fileName), _dataSource(0), _layer(0), _definitionComplete(false)
+AgentHDFtoSHP::AgentHDFtoSHP( const std::string & fileName, int numStep ) : AgentAnalysis("Agent HDF to SHP parser", false), _numStep(numStep), _fileName(fileName), _dataSource(0), _layer(0), _origin(0,0), _resolution(1.0f), _srs("no specified"), _definitionComplete(false)
+{
+}
+
+AgentHDFtoSHP::AgentHDFtoSHP( const std::string & fileName, const Engine::Point2D<int> & origin, float resolution, const std::string & srs, int numStep ) : AgentAnalysis("Agent HDF to SHP parser", false), _numStep(numStep), _fileName(fileName), _dataSource(0), _layer(0), _origin(origin), _resolution(resolution), _srs(srs), _definitionComplete(false)
 {
 }
 
@@ -49,7 +53,12 @@ void AgentHDFtoSHP::preProcess()
 		throw Engine::Exception(oss.str());
 		return;
 	}
-	_layer = _dataSource->CreateLayer("base", 0, wkbPoint, 0);
+	OGRSpatialReference * projection = 0;
+	if(_srs.compare("no specified")!=0)
+	{
+		projection = new OGRSpatialReference(_srs.c_str());
+	}
+	_layer = _dataSource->CreateLayer("base", projection, wkbPoint, 0);
 	if(!_layer)
 	{
 		std::stringstream oss;
@@ -80,6 +89,10 @@ void AgentHDFtoSHP::preProcess()
 			throw Engine::Exception(oss.str());
 			return;
     	}
+	}
+	if(projection)
+	{
+		delete projection;
 	}
 }
 
@@ -113,8 +126,11 @@ void AgentHDFtoSHP::createFeature( const Engine::AgentRecord & agentRecord, int 
 
 	// position
 	OGRPoint point;
-	point.setX(agentRecord.getState(timeStep, "x"));
-	point.setY(agentRecord.getState(timeStep, "y"));
+	float newX = _origin._x+_resolution*agentRecord.getState(timeStep, "x");	
+	float newY = _origin._y-_resolution*agentRecord.getState(timeStep, "y");
+	std::cout << std::setprecision(10) << agentRecord.getState(timeStep, "x") << "/" << agentRecord.getState(timeStep, "y") << " to: " << newX << "/" << newY << std::endl;
+	point.setX(newX);
+	point.setY(newY);
 	feature->SetGeometry(&point);
 	
 	// register feature in layer
