@@ -62,7 +62,6 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 	_loadingState = "loading file: "+fileName+"...";
 	_name = fileName;
 	hid_t fileId = H5Fopen(fileName.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
-	//std::cout << "FILE ID: " << fileId << " with path: " << fileName.c_str() << std::endl;
 	if(fileId<0)
 	{
 		return false;
@@ -318,12 +317,13 @@ void SimulationRecord::loadAttributes( const hid_t & stepGroup, hssize_t & numEl
 		{
 			std::vector<int> data;
 			data.resize(numElements);
-			H5Dread(attributeDatasetId, typeAttribute, H5S_ALL, H5S_ALL, H5P_DEFAULT, &(data.at(0)));	
+			H5Dread(attributeDatasetId, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, &(data.at(0)));
 			for(int iAgent=0; iAgent<numElements; iAgent++)
 			{
 				std::string agentName = indexAgents.at(iAgent);
 				AgentRecordsMap::iterator it = agents.find(agentName);
 				AgentRecord * agentRecord = it->second;
+				std::cout << "adding value: " << data.at(iAgent) << " for attribute: " << *itA << " in step: " << _loadingStep/_resolution << std::endl;
 				agentRecord->addState( _loadingStep/_resolution, *itA, data.at(iAgent));
 				updateMinMaxAttributeValues(*itA, data.at(iAgent));
 			}
@@ -366,8 +366,11 @@ void SimulationRecord::loadAgentsFiles( const std::string & path, int numStepsTo
 		float increase = 50.0f/(numTasks*_types.size()*numStepsToLoad);
 
 		// for each type check the agents in each loaded time step
-		for(AgentTypesMap::iterator typeIt=_types.begin(); typeIt!=_types.end(); typeIt++)
+		// we use _agentTypes because _types contains the whole list of agent types of the entire simulation
+		// _agentTypes only has the agents of this particular computer node file
+		for(std::list< std::string >::iterator typeAgent=_agentTypes.begin(); typeAgent!=_agentTypes.end(); typeAgent++)
 		{
+			AgentTypesMap::iterator typeIt = _types.find(*typeAgent);
 			for(_loadingStep=0; _loadingStep<=_numSteps; _loadingStep=_loadingStep+_resolution)
 			{
 				std::stringstream line;
