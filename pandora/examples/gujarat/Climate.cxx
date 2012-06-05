@@ -3,12 +3,15 @@
 #include <Climate.hxx>
 #include <GujaratConfig.hxx>
 #include <GujaratWorld.hxx>
+#include <GeneralState.hxx>
+#include <Statistics.hxx>
 
 namespace Gujarat
 {
 
-Climate::Climate( const GujaratConfig & config, const GujaratWorld& theWorld ) 
-	: _randomGenerator(config._climateSeed), _currentSeason(HOTDRY),  
+Climate::Climate( const GujaratConfig & config, const GujaratWorld& theWorld ) 	
+	: _randomGenerator(Engine::GeneralState::statistics().getNewSeed()), _currentSeason(HOTDRY),  
+//	: _randomGenerator(config._climateSeed), _currentSeason(HOTDRY),  
 	_currentRain(0.0f),
 	_uniformDistribution(_randomGenerator, boost::uniform_real <> (0,1)), 
 	_config(config), _theWorld( theWorld )
