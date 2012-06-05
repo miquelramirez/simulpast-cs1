@@ -23,6 +23,8 @@
 
 #include <Config.hxx>
 #include <Exceptions.hxx>
+#include <GeneralState.hxx>
+#include <Logger.hxx>
 #include <sstream>
 #include <cstring>
 
@@ -76,8 +78,13 @@ void Config::closeTiXml()
   
 void Config::extractAttribs(TiXmlElement *pRoot)
 {
-	TiXmlElement *pParm = pRoot->FirstChildElement("resultsFile");
-	_resultsFile = pParm->Attribute("value");
+	TiXmlElement *pParm = pRoot->FirstChildElement("output");
+	retrieveAttributeMandatory( pParm, "resultsFile", _resultsFile);
+
+	std::string logsDir;
+	retrieveAttributeMandatory( pParm, "logsDir", logsDir);
+	GeneralState::logger().setLogsDir(logsDir);
+
 	pParm = pRoot->FirstChildElement("numSteps");
 	_numSteps = atoi(pParm->Attribute("value"));
     

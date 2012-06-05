@@ -29,23 +29,8 @@
 namespace Engine
 {
 
-//Logger * Logger::_instance = 0;
-
-	/*
-Logger & Logger::instance()
+Logger::Logger() : _logsDir("./logs")
 {
-	if(!_instance)
-	{
-		_instance = new Logger;
-		// create dir where logs will be stored if it is not already created
-		boost::filesystem::create_directory("logs");
-	}
-	return *_instance;
-}
-*/
-Logger::Logger()
-{
-	boost::filesystem::create_directory("logs");
 }
 
 Logger::~Logger()
@@ -66,7 +51,7 @@ std::ofstream & Logger::log( const std::string & key)
 	if(it==_files.end())
 	{
 		std::stringstream fileName;
-		fileName<< "logs/" << key<< ".log";
+		fileName<< _logsDir << "/" << key<< ".log";
 
 		_files.insert( make_pair( key, new std::ofstream( fileName.str().c_str() )));
 		it = _files.find(key);
@@ -74,5 +59,12 @@ std::ofstream & Logger::log( const std::string & key)
 	file = it->second;
 	return *file;
 }
+
+void Logger::setLogsDir( const std::string & logsDir )
+{
+	_logsDir = logsDir;
+	boost::filesystem::create_directory(_logsDir);
+}
+
 } // namespace Engine
 

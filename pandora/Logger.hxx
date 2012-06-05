@@ -48,22 +48,18 @@ namespace Engine
 class Logger
 {
 	typedef std::map <std::string, std::ofstream *> FilesMap;
-//	static Logger * _instance;
 
 	FilesMap _files;
+	std::string _logsDir;
 public:
-//protected:
 	Logger();
-
-public:
-//	static Logger & instance();
 	virtual ~Logger();
 	// message to file
 	std::ofstream & log( const std::string & fileName );
+	void setLogsDir( const std::string & logsDir );
 };
 
 } // namespace  Engine
-
 
 #endif // __Logger_hxx__
 
