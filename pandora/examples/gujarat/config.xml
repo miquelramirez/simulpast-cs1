@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <config>  
 	<!-- Global simulation parameters -->
-	<resultsFile value="./data/gujarat.h5"/>
-	<numSteps value="3600"/>
+	<output resultsFile="./data/gujarat.h5" logsDir="./logs"/>
+	<numSteps value="100"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
@@ -25,9 +25,9 @@
 	<biomassDistVariance type="dune" value="500" />
 	<biomassDistVariance type="interdune" value="100" />
 	<!-- GIS rasters -->
-	<soil fileName="./resources/gujarat_400_soil_reclass.tiff" size="400"/>
-	<dem fileName="./resources/gujarat_400_dem.tiff" size="400"/>
-	<duneMap fileName="./resources/dunes_400_0ha_simple.tiff" size="400"/>
+	<soil fileName="./resources/400/soils_400.tiff" size="400"/>
+	<dem fileName="./resources/400/dem_400.tiff" size="400"/>
+	<duneMap fileName="./resources/400/dunes_400_low.tiff" size="400"/>
 	<!-- Climatic model parameters -->
 	<climateSeed value="432432"/>
 	<rainHistoricalDistribution shape="2.628" scale="5278.807" mean="4643.847826087"/>
@@ -37,7 +37,7 @@
 	<!-- * Available Forage Time = # hours a day the forage action takes -->
 	<!-- * forageTimeCost = how much time (in hours) does it cost the agent to exploit a tile resources -->
 	<hunterGatherers 
-		num="50" homeRange="30"
+		num="1" homeRange="30"
 		surplusForReproductionThreshold="2" 
 		surplusWanted="1"
 		surplusSpoilage="0.25"		
@@ -48,7 +48,7 @@
 		forageTimeCost="0.5"
 		availableForageTime="4.5"
 		demographicsModel="ramirez"
-		controllerType="MDP" >
+		controllerType="Random" >
 		<!-- * width = number of trials before selecting an action, the higher the
 		 	the number, the more informed is the action selection and more
 			computation time is required -->
