@@ -74,6 +74,17 @@ private:
 	std::string _loadingState;
 	static std::list< std::string > _agentTypes;
 	static std::list< std::string > _agentAttributes;
+
+	// loads the agents of simulation 
+	void loadAgentsFiles( const std::string & path, int numStepsToLoad, int numTasks  );
+	// registers the complete list of agent types into SimulationRecord
+	void registerAgentTypes( const hid_t & rootGroup );
+	// looks for the list of agents present at a given time step (defined by stepGroyp) and type (defined in agents)
+	hssize_t registerAgentIds( const hid_t & stepGroup, std::vector<std::string> & indexAgents, AgentRecordsMap & agents );
+	// loads the attributes of the agents present at a given time step (defined by stepGroyp) and type (defined in agents)
+	void loadAttributes( const hid_t & stepGroup, hssize_t & numElements, const std::vector<std::string> & indexAgents, AgentRecordsMap & agents );
+	// updates min/max values checking value for the attribute key
+	void updateMinMaxAttributeValues( const std::string & key, int value );
 public:
 	SimulationRecord( int resolution = 1 );
 	virtual ~SimulationRecord();
