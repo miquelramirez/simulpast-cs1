@@ -393,8 +393,8 @@ void GujaratWorld::stepEnvironment()
 	if ( !_climate.cellUpdateRequired() ) return;
 
 
-	//updateMoisture();
-	//updateSoilCondition();
+	updateMoisture();
+	updateSoilCondition();
 }
 
 const Climate & GujaratWorld::getClimate() const
