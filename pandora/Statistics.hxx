@@ -31,11 +31,6 @@ namespace Engine
 
 class Statistics
 {
-	public:
-	// to create random numbers using /dev/urandom
-	//! Gets a random number from /dev/urandom to be used as a seed.
-	uint64_t getNewSeed();
-	private:
 	typedef boost::mt19937 RandomEngine;
 	RandomEngine _randomGenerator;
 	static const int _distributionSize = 100000;
@@ -57,6 +52,9 @@ public:
 
 	// uniform dist does not need to generate numbers, as randomNumbers itself is a 
 	int getUniformDistValue( int min, int max ) const;
+	//! Gets a random number from /dev/urandom to be used as a seed.
+	uint64_t getNewSeed();
+
 };
 
 } // namespace Engine
