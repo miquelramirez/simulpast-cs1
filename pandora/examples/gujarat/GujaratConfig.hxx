@@ -33,7 +33,8 @@ class GujaratConfig : public Engine::Config
 	int		_daysPerYear;
 	// # meters corresponding to the side of a cell
 	float _cellResolution;
-
+	// # real cells for each one in a map on low resolution
+	int _lowResolution;
 	// MRJ: Hunter Gatherers attributes
 	int		_surplusForReproductionThreshold;
 	int		_surplusWanted;	

@@ -22,7 +22,7 @@ namespace Gujarat
 {
 
 GujaratWorld::GujaratWorld( Engine::Simulation & simulation, const GujaratConfig & config ) 
-	: World(simulation, 25, true, config._resultsFile), _agentKey(0), _climate(config,*this), _config(config)					
+	: World(simulation, config._homeRange+1, true, config._resultsFile), _agentKey(0), _climate(config,*this), _config(config)					
 {
 	// overlap is maxHomeRange + 1 to allow splits to be in adjacent worlds
 	// TODO code a function proces config for resources 
@@ -69,8 +69,13 @@ void GujaratWorld::createRasters()
 	registerDynamicRaster("sectors", _config.isStorageRequired("sectors")); 
 	getDynamicRaster("sectors").setInitValues(0, _config._numSectors, 0);
 
+	/*
+	registerDynamicRaster("tmpDunes", true); 
+	getDynamicRaster("tmpDunes").setInitValues(0, 100, 0);
+	*/
+
 	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " generating settlement areas");
-	_settlementAreas.generateAreas( *this );
+	_settlementAreas.generateAreas( *this, _config._lowResolution);
 	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " updating moisture");
 	updateMoisture();
 	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " create rasters done");

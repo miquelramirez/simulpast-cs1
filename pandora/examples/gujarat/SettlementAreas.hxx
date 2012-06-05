@@ -24,12 +24,14 @@ namespace Gujarat
 		// create new area that will expand from point loc
 		void setNewArea(const Engine::Point2D<int> & position, GujaratWorld &w,std::vector<bool> & duneInArea);
 
+		// this method checks wether is there dunes inside newArea; if it is the case, newArea is added to _areas.
+		void testDuneInside( const Engine::Rectangle<int> & newArea, GujaratWorld & world );
 	public:
 
 		SettlementAreas();
 		virtual ~SettlementAreas();
   
-		void generateAreas(GujaratWorld &w);
+		void generateAreas(GujaratWorld &w, int lowResolution);
 		const std::vector< Engine::Rectangle<int> >& getAreas() const { return _areas; } 
 		const Engine::Rectangle<int> & getAreaById(int id) const { return _areas[id]; }
 		int getScoreByAreaId(int id) const { return _scoreAreas[id]; } 

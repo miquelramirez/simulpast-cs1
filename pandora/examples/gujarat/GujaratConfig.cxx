@@ -140,6 +140,9 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	element = root->FirstChildElement("cellResolution");
 	retrieveAttributeMandatory( element, "value", _cellResolution );
 
+	element = root->FirstChildElement("lowResolution");
+	retrieveAttributeMandatory( element, "value", _lowResolution);
+
 	element = root->FirstChildElement("massToEnergyRate" );
 	retrieveAttributeMandatory( element, "value", _massToEnergyRate );
 	element = root->FirstChildElement("energyToCaloriesRate" );

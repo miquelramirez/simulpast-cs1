@@ -148,8 +148,55 @@ void SettlementAreas::setNewArea( const Engine::Point2D<int> & position,GujaratW
 	_scoreAreas.push_back(ComputeAreaScore(newArea,w));
 }
 
-void SettlementAreas::generateAreas(GujaratWorld &w)
+void SettlementAreas::testDuneInside( const Engine::Rectangle<int> & newArea, GujaratWorld & w )
 {
+	Engine::Point2D<int> insidePosition(newArea._origin);
+	for(insidePosition._x=newArea._origin._x; insidePosition._x<newArea._origin._x+newArea._size._x; insidePosition._x++)
+	{
+		for(insidePosition._y=newArea._origin._y; insidePosition._y<newArea._origin._y+newArea._size._y; insidePosition._y++)
+		{
+			// if only one point is dune, add new area
+			if(w.getValue("duneMap", insidePosition)==DUNE)
+			{
+				_areas.push_back(newArea);
+				_scoreAreas.push_back(ComputeAreaScore(newArea,w));
+				return;
+			}
+		}
+	}
+}
+
+void SettlementAreas::generateAreas(GujaratWorld &w, int lowResolution)
+{
+	std::stringstream logName;
+	logName << "SettlementAreas_world_" << w.getSimulation().getId();
+
+	Engine::Point2D<int> position;
+	for(position._x=w.getOverlapBoundaries()._origin._x; position._x<w.getOverlapBoundaries()._origin._x+w.getOverlapBoundaries()._size._x; position._x+=lowResolution)
+	{
+		for(position._y=w.getOverlapBoundaries()._origin._y; position._y<w.getOverlapBoundaries()._origin._y+w.getOverlapBoundaries()._size._y; position._y+=lowResolution)
+		{
+			log_DEBUG(logName.str(), "checking position: " << position << " with resolution: " << lowResolution);
+			if(!w.getOverlapBoundaries().isInside(position))
+			{
+				continue;
+			}
+			Engine::Rectangle<int> newArea(position, Engine::Point2D<int>(lowResolution,lowResolution));
+
+			// adjust border
+			if(position._x+lowResolution>=w.getOverlapBoundaries()._origin._x+w.getOverlapBoundaries()._size._x)
+			{
+				newArea._size._x = w.getOverlapBoundaries()._origin._x+w.getOverlapBoundaries()._size._x-position._x;
+			}
+			if(position._y+lowResolution>=w.getOverlapBoundaries()._origin._y+w.getOverlapBoundaries()._size._y)
+			{
+				newArea._size._y = w.getOverlapBoundaries()._origin._y+w.getOverlapBoundaries()._size._y-position._y;
+			}
+			testDuneInside(newArea, w);
+		}
+	}
+
+/*
 	std::vector<bool> duneInArea	(w.getOverlapBoundaries()._size._x*w.getOverlapBoundaries()._size._y,false);
 	Engine::Point2D<int> position;
 	int width = w.getOverlapBoundaries()._size._x;
@@ -165,6 +212,22 @@ void SettlementAreas::generateAreas(GujaratWorld &w)
 			}
 		}
 	}
+*/
+	/*
+	for(int i=0; i<_areas.size(); i++)
+	{
+		Engine::Rectangle<int> & area = _areas.at(i);
+		Engine::Point2D<int> index = area._origin;
+		for(index._x=area._origin._x; index._x<area._origin._x+area._size._x; index._x++)
+		{
+			for(index._y=area._origin._y; index._y<area._origin._y+area._size._y; index._y++)
+			{
+				w.setValue("tmpDunes", index, w.getValue("tmpDunes", index)+1);
+			}
+		}
+	}
+	*/
+
 }
 
 void SettlementAreas::intersectionFilter(Engine::Rectangle<int> & r, std::vector<int> & candidates) const
