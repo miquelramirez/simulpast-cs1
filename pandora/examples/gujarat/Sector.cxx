@@ -49,9 +49,10 @@ void	Sector::computeBiomassAmount( const Engine::Raster& r )
 	int maxBiomassAmount = r.getCurrentMaxValue();
 
 
+	// TODO refactor
 	for ( unsigned i = 0; i < _cells.size(); i++ )
 	{
-		_biomassAmount += r.getValue( _cells[i] );
+		_biomassAmount += r.getValue( _cells[i]-_world->getOverlapBoundaries()._origin );
 	}
 	
 	double normAmount = (double)_biomassAmount;
@@ -76,8 +77,10 @@ void	Sector::updateFeatures( const Engine::Raster& r )
 
 void	Sector::updateFeatures()
 {
-	assert( _world != NULL );
-	if ( _world == NULL ) throw Engine::Exception( "Sector::updateFeatures() : _world is NULL" );
+	if (_world == 0)
+	{
+		throw Engine::Exception( "Sector::updateFeatures() : _world is NULL" );
+	}
 	computeBiomassAmount(_world->getDynamicRaster("resources"));
 }
 
@@ -130,6 +133,15 @@ void	Sector::getAdjacent( Engine::Point2D<int> p, std::vector<Engine::Point2D<in
 		if ( delta._x <= 1 && delta._y <= 1 )
 			adjList.push_back( _cells[i] );
 	}	
+}
+	
+Engine::World & Sector::getWorld() const
+{
+	if (_world == 0)
+	{
+		throw Engine::Exception( "Sector::updateFeatures() : _world is NULL" );
+	}
+	return *_world;
 }
 
 } // namespace Gujarat

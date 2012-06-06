@@ -73,6 +73,7 @@ public:
 
 	void	showFeatures( std::ostream& );
 	std::string	biomassClass() const;
+	Engine::World & getWorld() const;
 };
 
 class SectorBestFirstSortPtrVecPredicate
