@@ -210,7 +210,7 @@ int GujaratState::sectorsMask( int i, int j)
 		oss << "GujaratState::sectorsMask() - asking for sectors mask without being initialized";
 		throw Engine::Exception(oss.str());
 	}
-	return instance()._sectorsMask[i][j];
+	return instance()._sectorsMask.at(i).at(j);
 }
 
 void GujaratState::initializeSectorsMask( int numSectors, int homeRange )
@@ -227,7 +227,7 @@ void GujaratState::initializeSectorsMask( int numSectors, int homeRange )
 	instance()._sectorsMask.resize( 1+2*homeRange );
 	for ( unsigned k = 0; k < 1+2*homeRange; k++ )
 	{
-		instance()._sectorsMask[k].resize( 1+2*homeRange );
+		instance()._sectorsMask.at(k).resize( 1+2*homeRange );
 	}
 
 	b._x = 0;
@@ -237,8 +237,8 @@ void GujaratState::initializeSectorsMask( int numSectors, int homeRange )
 	{
 		c._x = b._x*std::cos(alpha) - b._y*std::sin(alpha);
 		c._y = b._x*std::sin(alpha) + b._y*std::cos(alpha);
-		sectors[i].push_back( Engine::Point2D<int>( (int)b._x, (int)b._y ) );
-		sectors[i].push_back( Engine::Point2D<int>( (int)c._x, (int)c._y ) );
+		sectors.at(i).push_back( Engine::Point2D<int>( (int)b._x, (int)b._y ) );
+		sectors.at(i).push_back( Engine::Point2D<int>( (int)c._x, (int)c._y ) );
 		b = c;
 	}
 
@@ -251,12 +251,12 @@ void GujaratState::initializeSectorsMask( int numSectors, int homeRange )
 				continue;
 			}
 			Engine::Point2D<int> p( x, y );
-			instance()._sectorsMask[x+homeRange][y+homeRange] = -1;	
+			instance()._sectorsMask.at(x+homeRange).at(y+homeRange) = -1;	
 			for ( unsigned k = 0; k < numSectors; k++ )
 			{
-				if ( Engine::insideTriangle( p, sectors[k][0], sectors[k][1] ) )
+				if ( Engine::insideTriangle( p, sectors.at(k).at(0), sectors.at(k).at(1) ) )
 				{
-					instance()._sectorsMask[x+homeRange][y+homeRange] = k;
+					instance()._sectorsMask.at(x+homeRange).at(y+homeRange) = k;
 					break;
 				}
 			}
