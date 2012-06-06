@@ -128,7 +128,7 @@ void AgentHDFtoSHP::createFeature( const Engine::AgentRecord & agentRecord, int 
 	OGRPoint point;
 	float newX = _origin._x+_resolution*agentRecord.getState(timeStep, "x");	
 	float newY = _origin._y-_resolution*agentRecord.getState(timeStep, "y");
-	std::cout << std::setprecision(10) << agentRecord.getState(timeStep, "x") << "/" << agentRecord.getState(timeStep, "y") << " to: " << newX << "/" << newY << std::endl;
+	//std::cout << std::setprecision(10) << agentRecord.getState(timeStep, "x") << "/" << agentRecord.getState(timeStep, "y") << " to: " << newX << "/" << newY << std::endl;
 	point.setX(newX);
 	point.setY(newY);
 	feature->SetGeometry(&point);
