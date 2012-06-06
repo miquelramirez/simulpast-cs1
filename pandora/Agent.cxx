@@ -92,7 +92,7 @@ void Agent::serializeAttribute( const std::string & name, const std::string & va
 	GeneralState::serializer().addStringAttribute(getType(), name,value);
 }
 
-const std::string & Agent::getId()
+const std::string & Agent::getId() const
 {
 	return _id;
 }

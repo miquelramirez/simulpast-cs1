@@ -86,7 +86,7 @@ public:
 	
 	virtual ~Agent();
 
-	const std::string & getId();
+	const std::string & getId() const;
 
 	bool exists();
 	void setExists(bool exists);
@@ -131,6 +131,8 @@ public:
 
 	AttributesList::iterator beginIntAttributes(){ return _intAttributes.begin(); }
 	AttributesList::iterator endIntAttributes(){ return _intAttributes.end(); }
+
+	virtual void registerAttributes(){}
 };
 
 } // namespace Engine
