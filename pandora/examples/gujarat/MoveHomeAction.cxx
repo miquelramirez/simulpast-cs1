@@ -47,6 +47,11 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 						const Engine::Point2D<int>& agentPos, 
 						std::vector< MoveHomeAction* >& actions )
 {
+	std::stringstream logName;
+	logName << "agents_" << agent.getWorld()->getId() << "_" << agent.getId();
+
+	log_DEBUG(logName.str(), "generate possible actions for pos: " << agentPos);
+
 	// Put a BOX around the home range.	
 	int boxOriginX = agentPos._x - agent.getHomeMobilityRange();
 	int boxOriginY = agentPos._y - agent.getHomeMobilityRange();
@@ -75,6 +80,7 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 	for ( unsigned i = 0; i < candidates.size(); i++ )
 	{
 		Engine::Rectangle<int> selectedArea = settlementAreas->getAreaById(candidates[i]);
+		log_DEBUG(logName.str(), "selected area: " << selectedArea << " from origin: " << agentPos);
 		Engine::Rectangle<int> intersection;
 		// MRJ: If the selected area is outside of the "homeBox" then why caring about it all?
 		// ATM: above you will find settlementAreas->intersectionFilter method call. This ensures any
@@ -92,6 +98,8 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 		{
 			for (index._y = intersection._origin._y; index._y < intersection._origin._y+intersection._size._y; index._y++)			
 			{
+				log_DEBUG(logName.str(), "checking pos: " << index << " from origin: " << agentPos);
+
 				if ((world->getValue("soils",index) == DUNE) 
 					&& (ceil(agentPos.distance(index)) <= (double)agent.getHomeMobilityRange()))
 				{
@@ -110,11 +118,15 @@ void MoveHomeAction::generatePossibleActions( const GujaratAgent& agent,
 	}
 	assert( !actions.empty() );
 	candidates.clear();
+	log_DEBUG(logName.str(), "generate possible actions for pos: " << agentPos << " finished");
 }
 
 void MoveHomeAction::execute( Engine::Agent & agent )
 {
-	log_DEBUG(agent.getId(), " executing MoveHome action"); 
+	std::stringstream logName;
+	logName << agent.getWorld()->getId() << "_" << agent.getId() << "_actions";
+	log_DEBUG(logName.str(), " executing MoveHome action"); 
+
 	int prevHomeActivity = agent.getWorld()->getValue( "homeActivity", _newHomeLoc );
 	agent.getWorld()->setValue( "homeActivity", _newHomeLoc, prevHomeActivity + 1 );
 	agent.setPosition( _newHomeLoc );

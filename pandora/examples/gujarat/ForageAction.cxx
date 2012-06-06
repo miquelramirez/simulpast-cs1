@@ -41,7 +41,10 @@ std::string ForageAction::describe() const
 
 void ForageAction::execute( Engine::Agent & a )
 {
-	log_DEBUG(a.getId(), " executing Forage action"); 
+	std::stringstream logName;
+	logName << a.getWorld()->getId() << "_" << a.getId() << "_actions";
+	log_DEBUG(logName.str(), " executing Forage action"); 
+
 	HunterGatherer& agent = (HunterGatherer&) a;
 
 	// 1. collect nr adults
@@ -71,7 +74,7 @@ void	ForageAction::selectBestNearestCell( 	const Engine::Point2D<int>& n,
 
 	for ( unsigned k = 0; k < _forageArea->numCells(); k++ )
 	{
-		int score =  r.getValue( sectorCells[k] );
+		int score =  r.getValue( sectorCells[k] - _forageArea->getWorld().getOverlapBoundaries()._origin );
 		double dist = sectorCells[k].distance(n);
 		if ( score > bestScore )
 		{
@@ -121,8 +124,8 @@ void	ForageAction::doWalk( GujaratAgent& agent, const Engine::Point2D<int>& n0,
 		collected += amtCollected;
 
 		// 4. update cell resources & amount collected
-		int prevValue = r.getValue(n); 
-		r.setValue( n, prevValue - amtCollected );
+		int prevValue = r.getValue(n - agent.getWorld()->getOverlapBoundaries()._origin); 
+		r.setValue( n - agent.getWorld()->getOverlapBoundaries()._origin, prevValue - amtCollected );
 	}
 }
 
@@ -148,8 +151,8 @@ void	ForageAction::doWalk( const GujaratAgent& agent, const Engine::Point2D<int>
 		collected += amtCollected;
 
 		// 4. update cell resources & amount collected
-		int prevValue = r.getValue(n); 
-		r.setValue( n, prevValue - amtCollected );
+		int prevValue = r.getValue(n - agent.getWorld()->getOverlapBoundaries()._origin); 
+		r.setValue( n - agent.getWorld()->getOverlapBoundaries()._origin, prevValue - amtCollected );
 	}
 }
 

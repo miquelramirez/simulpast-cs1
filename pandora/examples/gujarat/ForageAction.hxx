@@ -18,29 +18,15 @@ class GujaratWorld;
 
 class ForageAction : public MDPAction
 {
-private:
+	Sector* _forageArea;
+	bool _ownsForageAreaPointer;
+	int	_biomassCollected;
+	int	_caloriesCollected;
 
-	Sector*		_forageArea;
-	bool		_ownsForageAreaPointer;
-	int		_biomassCollected;
-	int		_caloriesCollected;
+	void selectBestNearestCell( const Engine::Point2D<int>& n, const Engine::Raster& r, int& bestScore, Engine::Point2D<int>& best ) const; 
 
-	void		selectBestNearestCell( 	const Engine::Point2D<int>& current,
-						const Engine::Raster& r,
-						int& bestScore,
-						Engine::Point2D<int>& best ) const;
-
-	void		doWalk( const GujaratAgent& agent, 
-				const Engine::Point2D<int>& n0, 
-				double maxDist, 
-				Engine::Raster& r, 
-				int& collected ) const;
-
-	void		doWalk( GujaratAgent& agent, 
-				const Engine::Point2D<int>& n0, 
-				double maxDist, 
-				Engine::Raster& r, 
-				int& collected );
+	void doWalk( const GujaratAgent& agent, const Engine::Point2D<int>& n0, double maxDist, Engine::Raster& r, int& collected ) const;
+	void doWalk( GujaratAgent& agent, const Engine::Point2D<int>& n0, double maxDist, Engine::Raster& r, int& collected );
 
 public:
 	ForageAction( Sector* loc, bool ownsPointer = false );

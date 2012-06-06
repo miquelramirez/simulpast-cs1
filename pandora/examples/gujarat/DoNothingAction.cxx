@@ -26,7 +26,9 @@ MDPAction*	DoNothingAction::copy() const
 
 void DoNothingAction::execute( Engine::Agent& agent )
 {
-	log_DEBUG(agent.getId(), " executing DoNothing action"); 
+	std::stringstream logName;
+	logName << agent.getWorld()->getId() << "_" << agent.getId() << "_actions";
+	log_DEBUG(logName.str(), " executing DoNothing action"); 
 }
 
 void DoNothingAction::generatePossibleActions( GujaratAgent& agent, std::vector< DoNothingAction* >& actions )
