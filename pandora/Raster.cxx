@@ -67,23 +67,8 @@ void Raster::updateRasterIncrement()
 
 void Raster::updateRasterToMaxValues()
 {
-	// TODO
-	// could it be done with a memcopy?
-	// use std::copy(_maxValues.begin(), _maxValues.end(), _values) 
-	// how often that method is called?
-	
 	// std::copy is deep oriented.
 	std::copy(_maxValues.begin(), _maxValues.end(), _values.begin());
-	/*
-	for(int i=0; i<_values.size(); i++)
-	{
-	
-		for(int j=0; j<_values[i].size(); j++)
-		{
-			_values[i][j] = _maxValues[i][j];
-		}
-	}
-	*/
 }
 
 int Raster::getMaxValueAt( Point2D<int> position )
