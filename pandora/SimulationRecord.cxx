@@ -323,7 +323,6 @@ void SimulationRecord::loadAttributes( const hid_t & stepGroup, hssize_t & numEl
 				std::string agentName = indexAgents.at(iAgent);
 				AgentRecordsMap::iterator it = agents.find(agentName);
 				AgentRecord * agentRecord = it->second;
-				std::cout << "adding value: " << data.at(iAgent) << " for attribute: " << *itA << " in step: " << _loadingStep/_resolution << std::endl;
 				agentRecord->addState( _loadingStep/_resolution, *itA, data.at(iAgent));
 				updateMinMaxAttributeValues(*itA, data.at(iAgent));
 			}
