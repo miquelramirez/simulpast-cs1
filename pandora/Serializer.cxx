@@ -392,6 +392,7 @@ void Serializer::serializeAgent( Agent * agent, const int & step, World & world,
 	// new type, must be in _stringAttributes because at least id attribute must exist
 	if(_stringAttributes.find(type)==_stringAttributes.end())
 	{
+		agent->registerAttributes();
 		registerType(agent, world);
 	}
 
