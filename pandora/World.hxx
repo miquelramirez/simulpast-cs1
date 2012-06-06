@@ -122,7 +122,7 @@ protected:
 	std::list<MpiOverlap*> _sendRequests;
 	std::list<MpiOverlap*> _receiveRequests;
 	// this method checks whether all the requests in the pool created by MPI_Isend and MPI_Irecv are finished before continuing
-	void clearRequests();
+	void clearRequests( bool updateMaxValues );
 private:
 	//! PENDENT amount of width around one boundary considering the side of the World object that owns _overlap
 	int _overlap;
@@ -340,7 +340,7 @@ public:
 	//! given the id of a neighbour world section, returns its index, the position in the vector _neighbors
 	int getNeighborIndex( const int & id );
 	//! returns the simulation id where that World is in (??? TODO verifica això)
-	int getId();
+	int getId() const;
 
 	bool rasterToSerialize( const std::string & key );
 	//! returns the attribute _overlap
