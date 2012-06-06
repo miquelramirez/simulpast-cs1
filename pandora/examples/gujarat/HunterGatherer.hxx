@@ -52,7 +52,7 @@ public:
 						std::vector< Sector* >& sectors ) const;
 	
 	void serialize();
-
+	void registerAttributes();
 	
 	// MPI Script Generated code
 	HunterGatherer( void * );

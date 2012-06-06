@@ -32,7 +32,6 @@ MDPAction*	HunterGathererProgrammedController::selectAction( GujaratAgent & agen
 
 	if ( dice >= 8 ) // p=0.2 agent chooses to move its home
 	{
-		std::cout << "DEBUG: MoveHome action selected" << std::endl;
 		std::vector< MoveHomeAction* > possibleActions;
 		MoveHomeAction::generatePossibleActions( agent, possibleActions );
 

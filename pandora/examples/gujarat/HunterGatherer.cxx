@@ -9,6 +9,8 @@
 #include <AgentController.hxx>
 
 #include <GujaratState.hxx>
+#include <GeneralState.hxx>
+#include <Logger.hxx>
 
 namespace Gujarat
 {
@@ -17,6 +19,15 @@ HunterGatherer::HunterGatherer( const std::string & id )
 	: GujaratAgent(id), _surplusForReproductionThreshold(2), _surplusWanted(1), _homeRange(50),
 	_numSectors( -1 )
 {
+}
+
+void HunterGatherer::registerAttributes()
+{
+	std::stringstream logName;
+	logName << "Serializer_" << _world->getId();
+	
+	log_DEBUG(logName.str(), "registering attributes for type: " << getType());
+
 	registerIntAttribute("agent age");
 	registerIntAttribute("male alive");
 	registerIntAttribute("male age");
@@ -24,6 +35,7 @@ HunterGatherer::HunterGatherer( const std::string & id )
 	registerIntAttribute("female age");
 	registerIntAttribute("children");
 	registerIntAttribute("collected resources");
+	log_DEBUG(logName.str(), "registering attributes for type: " << getType() << " finished");
 }
 
 HunterGatherer::~HunterGatherer()
@@ -56,7 +68,7 @@ void HunterGatherer::updateKnowledge( 	const Engine::Point2D<int>& agentPos,
 			Engine::Point2D<int> p;
 			p._x = agentPos._x + x;
 			p._y = agentPos._y + y;
-			if ( !_world->getBoundaries().isInside(p) )
+			if ( !_world->getOverlapBoundaries().isInside(p) )
 			{
 				continue;
 			}
@@ -73,7 +85,12 @@ void HunterGatherer::updateKnowledge( 	const Engine::Point2D<int>& agentPos,
 
 void HunterGatherer::updateKnowledge()
 {
+	std::stringstream logName;
+	logName << "agents_" << _world->getId() << "_" << getId();
+
+	log_DEBUG(logName.str(), "update knowledge");
 	// sectors not initialized
+	log_DEBUG(logName.str(), "new sectors");
 	if(_sectors.size()==0)
 	{
 		_sectors.resize(_numSectors);
@@ -82,7 +99,6 @@ void HunterGatherer::updateKnowledge()
 			_sectors[k] = new Sector( _world );
 		}
 	}
-	// if initialized, clean past computations
 	else
 	{
 		for ( unsigned k = 0; k < _numSectors; k++ )
@@ -93,6 +109,7 @@ void HunterGatherer::updateKnowledge()
 		}
 	}
 
+	log_DEBUG(logName.str(), "create sectors with home range: " << _homeRange);
 	for ( int x=-_homeRange; x<=_homeRange; x++ )
 	{
 		for ( int y=-_homeRange; y<=_homeRange; y++ )
@@ -106,6 +123,7 @@ void HunterGatherer::updateKnowledge()
 			Engine::Point2D<int> p;
 			p._x = _position._x + x;
 			p._y = _position._y + y;
+			// TODO overlapboundaries
 			if ( !_world->getBoundaries().isInside(p) )
 			{
 				continue;
@@ -114,6 +132,7 @@ void HunterGatherer::updateKnowledge()
 			getWorld()->setValue( "sectors", p, 1 );
 		}
 	}
+	log_DEBUG(logName.str(), "update features");
 
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
@@ -121,6 +140,7 @@ void HunterGatherer::updateKnowledge()
 		_sectors[k]->updateFeatures();
 		//_sectors[k]->showFeatures( std::cout );
 	}
+	log_DEBUG(logName.str(), "end update knowledge");
 }
 
 void HunterGatherer::selectActions()
