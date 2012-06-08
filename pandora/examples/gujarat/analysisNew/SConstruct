@@ -34,22 +34,23 @@ else:
 includeDirs = Split('./ ../../../')
 
 if int(mareNostrum)==1:
-	libDirs = Split('../../../ /gpfs/apps/HDF5/1.6.5/lib /gpfs/apps/GDAL/1.7.1/64/lib /opt/ibmcmp/vacpp/10.1/lib64/ /gpfs/apps/TINYXML/2.6.2/64/')  
-	includeDirs += ['/gpfs/apps/HDF5/1.6.5/include']
-	includeDirs += ['/gpfs/apps/GDAL/1.7.1/64/include']
-	includeDirs += ['/gpfs/apps/BOOST/1_39_0/64/include/boost-1_39/']
-	includeDirs += ['/gpfs/apps/TINYXML/2.6.2/64/']
+	includeDirs += ['/gpfs/apps/HDF5/1.8.9/64/include']
+	includeDirs += ['/gpfs/apps/BOOST/1_48_0/include/']
+	includeDirs += ['/gpfs/apps/TINYXML/2.6.2/64/STL/include']
+	includeDirs += ['/gpfs/apps/GDAL/1.7.1/64/include']	
+	includeDirs += ['/gpfs/apps/GRASS/6.4.2/grass-6.4.2/include/']
+
+	libDirs = Split('../../../ /gpfs/apps/HDF5/1.8.9/64/lib /opt/ibmcmp/vacpp/10.1/lib64/ /gpfs/apps/GDAL/1.7.1/64/lib /gpfs/apps/TINYXML/2.6.2/64/STL/lib')
+	libDirs += ['/gpfs/apps/GRASS/6.4.2/grass-6.4.2/lib/']
+	libDirs += ['/gpfs/apps/BOOST/1_48_0/lib/']
 	libs += ['gpfs']
-	libs += ['z']
 	libs += ['xl']
+	libs += ['boost_filesystem']
+	libs += ['boost_system']
 else:
-	libDirs = Split('../../../ /usr/local/lib/ /usr/local/hdf5/lib/') 
-	includeDirs += ['/usr/local/include/', '../../../libs/libmdp','/usr/local/hdf5/include']
-        libDirs += ['/usr/lib/grass64/lib/']
-# if debug && mare nostrum mpitrace is added
-if int(release)==0 and int(mareNostrum)==1:
-	libs += ['mpitrace']
-	libDirs += ['/gpfs/apps/CEPBATOOLS/mpitrace-stable-1.2-mx/lib']
+	includeDirs += ['/usr/local/include','/usr/local/hdf5/include','/usr/lib/grass64/include/','/usr/include/gdal/']
+	libDirs = Split('../../../ /usr/local/lib /usr/local/hdf5/lib/ /usr/lib/grass64/lib/')
+	libs += ['mpl']
 
 env.Program(nameProgram, srcFiles, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs, LINKFLAGS=linkFlags)
 
