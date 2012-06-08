@@ -1037,23 +1037,24 @@ Agent * World::getAgent( const std::string & id )
 	return 0;
 }
 
-Agent * World::getAgent( const Point2D<int> & position )
+std::vector<Agent *> World::getAgent( const Point2D<int> & position, const std::string & type )
 {
+	std::vector<Agent *> result;
 	for(AgentsList::iterator it=_agents.begin(); it!=_agents.end(); it++)
 	{
-		if((*it)->getPosition().isEqual(position))
+		if((*it)->getPosition().isEqual(position) && (*it)->isType(type)) 
 		{
-			return *it;
+			result.push_back(*it);
 		}
 	}
 	for(AgentsList::iterator it=_overlapAgents.begin(); it!=_overlapAgents.end(); it++)		
 	{
-		if((*it)->getPosition().isEqual(position))
-		{
-			return *it;
+		if((*it)->getPosition().isEqual(position) && (*it)->isType(type))
+		{	
+			result.push_back(*it);
 		}
 	}
-	return 0;
+	return result;
 }
 
 /*
@@ -1220,10 +1221,18 @@ bool World::checkPosition( const Point2D<int> & newPosition )
 	}
 	
 	// checking if it is already occupied
-	Agent * host = getAgent(newPosition);
-	if(host && host->exists())
+	std::vector<Agent *> hosts = getAgent(newPosition);
+	if(hosts.size()==0)
 	{
-		return false;
+		return true;
+	}
+	for(int i=0; i<hosts.size(); i++)
+	{
+		Agent * agent = hosts.at(i);
+		if(agent->exists())
+		{
+			return false;
+		}
 	}
 	return true;
 }
@@ -1259,19 +1268,18 @@ Raster & World::getDynamicRaster( const std::string & key )
 	return it->second;
 }
 
-/*
-const Raster & World::getDynamicRaster( const std::string & key ) const
+const Raster & World::getConstDynamicRaster( const std::string & key ) const
 {
 	RastersMap::const_iterator it = _dynamicRasters.find(key);
 	if(it==_dynamicRasters.end())
 	{
 		// the key does not exists	
 		std::stringstream oss;
-		oss << "World::getDynamicRaster - searching for unregistered raster: " << key;
+		oss << "World::getConstDynamicRaster - searching for unregistered raster: " << key;
 		throw Exception(oss.str());
 	}
 	return it->second;
-}*/
+}
 
 StaticRaster & World::getRasterTmp( const std::string & key )
 {
@@ -1905,8 +1913,8 @@ void World::removeAgents()
 			return;
 		}
 		_agents.erase(itAg);
-		it++;
-		//delete agent;
+		it = _removedAgents.erase(it);
+		delete agent;
 	}
 	_removedAgents.clear();
 }
@@ -1921,10 +1929,8 @@ bool World::getSearchAgents()
 	return _searchAgents;
 }
 
-
 int World::countNeighbours( Agent * target, const double & radius, const std::string & type )
 {
-
 	int numAgents = for_each(_agents.begin(), _agents.end(), aggregatorCount<Engine::Agent>(radius,*target, type))._count;
 	int numOverlapAgents = for_each(_overlapAgents.begin(), _overlapAgents.end(), aggregatorCount<Engine::Agent>(radius,*target, type))._count;
 	return numAgents+numOverlapAgents;

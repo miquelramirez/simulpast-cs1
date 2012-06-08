@@ -218,9 +218,7 @@ public:
 
 	//! this method will return an agent, both looking at owned and ghost agents
 	Agent * getAgent( const std::string & id );
-	//! TODO what about more than one agent in position??
-	// return a Vector<Agent&>?
-	Agent * getAgent( const Point2D<int> & position );
+	std::vector<Agent *> getAgent( const Point2D<int> & position, const std::string & type="all" );
 
 	//! return an agent, if it is in the list of owned
 	AgentsList::iterator getOwnedAgent( const std::string & id );
@@ -273,7 +271,6 @@ public:
 		}
 		int _count;
 	};
-	
 	template<class T> struct aggregatorGet : public aggregator<T>
 	{
 		aggregatorGet( double radius, T & center, const std::string & type ) : aggregator<T>(radius,center,type) {}
@@ -307,7 +304,7 @@ public:
 
 	//! returns raster identified by parameter 'key'.
 	Raster & getDynamicRaster( const std::string & key );
-//	const Raster& getDynamicRaster( const std::string& key ) const;
+	const Raster& getConstDynamicRaster( const std::string& key ) const;
 
 	//! create a new static raster map with the stablished size and given key
 	void registerStaticRaster( const std::string & key, const bool & serialize );
