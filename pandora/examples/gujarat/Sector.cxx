@@ -8,11 +8,12 @@
 namespace Gujarat
 {
 
-Sector::Sector( Engine::World * world ) 
+Sector::Sector( const Engine::World & world ) 
 	: _world(world), _biomassAmount(0)
 {
 }
 
+/*
 Sector::Sector( const Sector& other )
 {
 	_world = other._world;
@@ -20,6 +21,7 @@ Sector::Sector( const Sector& other )
 	_biomassAmount = other._biomassAmount;
 	_biomassAmountClass = other._biomassAmountClass;
 }
+*/
 
 Sector::~Sector()
 {
@@ -52,7 +54,7 @@ void	Sector::computeBiomassAmount( const Engine::Raster& r )
 	// TODO refactor
 	for ( unsigned i = 0; i < _cells.size(); i++ )
 	{
-		_biomassAmount += r.getValue( _cells[i]-_world->getOverlapBoundaries()._origin );
+		_biomassAmount += r.getValue( _cells[i]-_world.getOverlapBoundaries()._origin );
 	}
 	
 	double normAmount = (double)_biomassAmount;
@@ -77,11 +79,8 @@ void	Sector::updateFeatures( const Engine::Raster& r )
 
 void	Sector::updateFeatures()
 {
-	if (_world == 0)
-	{
-		throw Engine::Exception( "Sector::updateFeatures() : _world is NULL" );
-	}
-	computeBiomassAmount(_world->getDynamicRaster("resources"));
+	const Engine::Raster & raster = _world.getConstDynamicRaster("resources");
+	computeBiomassAmount(raster);
 }
 
 std::string Sector::biomassClass() const
@@ -135,13 +134,9 @@ void	Sector::getAdjacent( Engine::Point2D<int> p, std::vector<Engine::Point2D<in
 	}	
 }
 	
-Engine::World & Sector::getWorld() const
+const Engine::World & Sector::getWorld() const
 {
-	if (_world == 0)
-	{
-		throw Engine::Exception( "Sector::updateFeatures() : _world is NULL" );
-	}
-	return *_world;
+	return _world;
 }
 
 } // namespace Gujarat

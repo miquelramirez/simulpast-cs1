@@ -24,7 +24,7 @@ enum	BiomassAmountClass
 
 class Sector
 {
-	Engine::World*	 			_world;
+	const Engine::World & _world;
 	std::vector< Engine::Point2D<int> >	_cells;
 	int					_biomassAmount;
 	BiomassAmountClass			_biomassAmountClass;
@@ -34,8 +34,8 @@ private:
 	void	computeBiomassAmount( const Engine::Raster& r );
 
 public:
-	Sector( Engine::World * world = NULL );
-	Sector( const Sector& other );
+	Sector( const Engine::World & world );
+//	Sector( const Sector& other );
 	virtual ~Sector();
 
 	bool		isEmpty() const { return _cells.empty(); }
@@ -73,7 +73,7 @@ public:
 
 	void	showFeatures( std::ostream& );
 	std::string	biomassClass() const;
-	Engine::World & getWorld() const;
+	const Engine::World & getWorld() const;
 };
 
 class SectorBestFirstSortPtrVecPredicate

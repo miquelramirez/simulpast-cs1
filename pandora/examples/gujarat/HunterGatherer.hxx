@@ -49,7 +49,7 @@ public:
 	void		updateResources( int v ) { _collectedResources += v; }
 	void		updateKnowledge( 	const Engine::Point2D<int>& agentPos,
 						const Engine::Raster& dataRaster,
-						std::vector< Sector* >& sectors ) const;
+						std::vector< Sector* >& sectors )const;
 	
 	void serialize();
 	void registerAttributes();

@@ -52,7 +52,7 @@ void HunterGatherer::updateKnowledge( 	const Engine::Point2D<int>& agentPos,
 {
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
-		sectors.push_back( new Sector() );
+		sectors.push_back( new Sector(*getWorld()) );
 	}
 
 	for ( int x=-_homeRange; x<=_homeRange; x++ )
@@ -96,7 +96,7 @@ void HunterGatherer::updateKnowledge()
 		_sectors.resize(_numSectors);
 		for ( unsigned k = 0; k < _numSectors; k++ )
 		{
-			_sectors[k] = new Sector( _world );
+			_sectors[k] = new Sector( getWorldRef());
 		}
 	}
 	else
@@ -180,9 +180,20 @@ bool	HunterGatherer::cellValid( Engine::Point2D<int>& loc )
 	if ( !_world->getOverlapBoundaries().isInside(loc) )
 		return false;
 	// Check that the home of another agent resides in loc
-	Agent * agent = _world->getAgent(loc);
-	if ( agent && agent->exists() && (agent != this ) )
-		return false;
+	std::vector<Agent * > agents = _world->getAgent(loc);
+	if(agents.size()==0)
+	{
+		return true;
+	}
+
+	for(int i=0; i<agents.size(); i++)
+	{
+		Agent * agent = agents.at(i);
+		if(agent->exists() && agent!=this)
+		{
+			return false;
+		}
+	}
 	return true;
 }
 
