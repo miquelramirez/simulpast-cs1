@@ -249,6 +249,14 @@ hssize_t SimulationRecord::registerAgentIds( const hid_t & stepGroup, std::vecto
 	hid_t stringSpace = H5Dget_space(datasetId);
 	hssize_t numElements = H5Sget_simple_extent_npoints(stringSpace);
 
+	if(numElements==0)
+	{
+		H5Sclose(stringSpace);
+		H5Tclose(stringType);
+		H5Dclose(datasetId);
+		return numElements;
+	}
+
 	char ** stringIds = (char **) malloc (numElements * sizeof (char *));	
 	H5Dread(datasetId, stringType, H5S_ALL, H5S_ALL, H5P_DEFAULT, stringIds);						
 				
@@ -385,7 +393,10 @@ void SimulationRecord::loadAgentsFiles( const std::string & path, int numStepsTo
 				
 				std::vector<std::string> indexAgents;
 				hssize_t numElement = registerAgentIds(stepGroup, indexAgents, typeIt->second );
-				loadAttributes(stepGroup, numElement, indexAgents, typeIt->second);
+				if(numElement!=0)
+				{
+					loadAttributes(stepGroup, numElement, indexAgents, typeIt->second);
+				}
 				_loadingPercentageDone += increase;
 				H5Gclose(stepGroup);
 				SimulationRecord::_agentAttributes.clear();
