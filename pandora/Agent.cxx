@@ -97,7 +97,7 @@ const std::string & Agent::getId() const
 	return _id;
 }
 
-bool Agent::exists()
+bool Agent::exists() const
 {
 	return _exists;
 }
@@ -131,7 +131,7 @@ void Agent::remove()
 	_world->removeAgent(this);
 }
 	
-bool Agent::isType( const std::string & type )
+bool Agent::isType( const std::string & type ) const
 {
 	if(type.compare(getType())==0)
 	{

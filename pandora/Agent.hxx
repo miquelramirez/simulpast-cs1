@@ -88,7 +88,7 @@ public:
 
 	const std::string & getId() const;
 
-	bool exists();
+	bool exists() const;
 	void setExists(bool exists);
 
 	const Point2D<int> & getPosition() const;
@@ -110,7 +110,7 @@ public:
 	//void interactionWithAgent(Agent * agent);
 	virtual void * fillPackage() = 0;
 	// this function returns true if the type of the agent is the one passed by reference
-	bool isType( const std::string & type );
+	bool isType( const std::string & type ) const;
 	std::string getType() const;
 	
 	// defined in children, it must use serializeAttribute to save valuble data
