@@ -37,7 +37,7 @@ random.seed()
 
 for numExecution in range(0,numExecutions):
 	# each n.execution  has the same seed in all parameter space
-	randomValue = str(random.random())
+	randomValue = str(random.randint(0,10000000))
 	for mapSize in mapSizes:
 		for numHG in numHGs:
 			for controller in controllers:
