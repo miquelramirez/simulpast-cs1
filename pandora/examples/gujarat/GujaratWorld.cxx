@@ -68,7 +68,8 @@ void GujaratWorld::createRasters()
 	getDynamicRaster("resourceType").setInitValues(0, SEASONALFALLOW, WILD);
 	registerDynamicRaster("consecutiveYears", _config.isStorageRequired("consecutiveYears")); // years passed using a given cell for a particular use
 	getDynamicRaster("consecutiveYears").setInitValues(0, 3, 0);
-	registerDynamicRaster("sectors", _config.isStorageRequired("sectors")); 
+	registerDynamicRaster("sectors", _config.isStorageRequired("sectors"));
+	getDynamicRaster("sectors").setInitValues(0, _config._numSectors, 0);
 
 	/*
 	registerDynamicRaster("tmpDunes", true); 
