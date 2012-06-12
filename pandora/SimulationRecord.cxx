@@ -39,7 +39,7 @@ namespace Engine
 std::list<std::string> SimulationRecord::_agentTypes;
 std::list<std::string> SimulationRecord::_agentAttributes;
 
-SimulationRecord::SimulationRecord( int resolution ) : _name("unknown"), _numSteps(0), _loadingStep(0), _resolution(resolution), _loadingPercentageDone(0.0f), _loadingState("no load")
+SimulationRecord::SimulationRecord( int resolution, bool gui) : _name("unknown"), _numSteps(0), _loadingStep(0), _resolution(resolution), _gui(gui), _loadingPercentageDone(0.0f), _loadingState("no load")
 {	
 }
 
@@ -60,6 +60,10 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 	_resources.clear();
 
 	_loadingState = "loading file: "+fileName+"...";
+	if(!_gui)
+	{
+		std::cout << _loadingPercentageDone << "% - " << _loadingState  << std::endl;
+	}
 	_name = fileName;
 	hid_t fileId = H5Fopen(fileName.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
 	if(fileId<0)
@@ -116,6 +120,10 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 		for(StaticRasterMap::iterator it=_staticRasters.begin(); it!=_staticRasters.end(); it++)
 		{
 			_loadingState = "loading static raster: "+it->first;
+			if(!_gui)
+			{
+				std::cout << _loadingPercentageDone << "% - " << _loadingState << std::endl;
+			}
 			GeneralState::rasterLoader().fillHDF5Raster(it->second, fileName, it->first );
 		}
 
@@ -140,6 +148,10 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 			for(RasterMap::iterator it=_resources.begin(); it!=_resources.end(); it++)
 			{
 				_loadingState = "loading dynamic raster: "+it->first;
+				if(!_gui)
+				{
+					std::cout << _loadingPercentageDone << "% - " << _loadingState << std::endl;
+				}
 				int maxValue = std::numeric_limits<int>::min();
 				int minValue = std::numeric_limits<int>::max();
 				for(int i=0; i<=_numSteps; i=i+_resolution)
@@ -147,6 +159,10 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 					std::stringstream line;
 					line << "loading raster " << it->first << " - step: " << i << "/" << _numSteps;
 					_loadingState = line.str();
+					if(!_gui)
+					{
+						std::cout << _loadingPercentageDone << "% - " << _loadingState << std::endl;
+					}
 
 					std::ostringstream oss;
 					oss << "/" << it->first << "/step" << i;
@@ -218,6 +234,10 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 
 	_loadingPercentageDone = 50.0f;
 	_loadingState = "loading agents";
+	if(!_gui)
+	{
+		std::cout << _loadingPercentageDone << "% - " << _loadingState << std::endl;
+	}
 
 	if(loadAgents)
 	{
@@ -383,6 +403,10 @@ void SimulationRecord::loadAgentsFiles( const std::string & path, int numStepsTo
 				std::stringstream line;
 				line << "loading agents of task: "<< i+1 << "/" << numTasks << " - step: " << _loadingStep << "/" << _numSteps;
 				_loadingState = line.str();
+				if(!_gui)
+				{
+					std::cout << _loadingPercentageDone << "% - " << _loadingState << std::endl;
+				}
 				
 				std::ostringstream oss;
 				oss << "/" << typeIt->first << "/step" << _loadingStep;
