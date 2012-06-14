@@ -109,14 +109,16 @@ void RasterLoader::fillGDALRaster( StaticRaster & raster, const std::string & fi
 		for(index._y=overlapBoundaries._origin._y; index._y<overlapBoundaries._origin._y+overlapBoundaries._size._y; index._y++)
 		{
 			Point2D<int> index2(index - overlapBoundaries._origin);
-			log_EDEBUG(logName.str(), "index: " << index << " and index2: " << index2 << " accessing to: " << overlapBoundaries._size._y*index2._y+index2._x);
-			int value = (int)(pafScanline[overlapBoundaries._size._y*index2._y+index2._x]);
+			log_EDEBUG(logName.str(), "index: " << index << " and index2: " << index2 << " accessing to: " << overlapBoundaries._size._x*index2._y+index2._x);
+			int value = (int)(pafScanline[overlapBoundaries._size._x*index2._y+index2._x]);
 			log_EDEBUG(logName.str(), "value: " << value);
 
-			raster._values[index2._x][index2._y] = (int)(pafScanline[overlapBoundaries._size._y*index2._y+index2._x]);
+			raster._values[index2._x][index2._y] = (int)(pafScanline[overlapBoundaries._size._x*index2._y+index2._x]);
 			log_EDEBUG(logName.str(), "value in index2: " << index2 << " is: " << value);
 		}
 	}
+
+	CPLFree(pafScanline);
 	log_DEBUG(logName.str(), "done, update minmax values");	
 	raster.updateMinMaxValues();
 	
