@@ -45,24 +45,34 @@ Serializer::~Serializer()
 
 void Serializer::init( Simulation & simulation, StaticRastersMap & staticRasters, RastersMap & rasters, World & world )
 {
+	std::stringstream logName;
+	logName << "Serializer_" << world.getId();
+	log_DEBUG(logName.str(), " init serializer");
+
 	// check if directory exists
 	unsigned int filePos = _resultsFile.find_last_of("/");
 	std::string path = _resultsFile.substr(0,filePos+1);
+	log_DEBUG(logName.str(), " num tasks: " << simulation.getNumTasks() << " num steps: " << simulation.getNumSteps());
 
 	// create dir where logs will be stored if it is not already created
 	boost::filesystem::create_directory(path);
+	log_DEBUG(logName.str(), " 2 num tasks: " << simulation.getNumTasks() << " num steps: " << simulation.getNumSteps());
 
 	// creating base file in a parallel environment
 	hid_t propertyListId = H5Pcreate(H5P_FILE_ACCESS);
 
+	log_DEBUG(logName.str(), " 3 num tasks: " << simulation.getNumTasks() << " num steps: " << simulation.getNumSteps());
 	// workaround, it crashes in serial without this clause
 	if(simulation.getNumTasks()>1)		
 	{
 		H5Pset_fapl_mpio(propertyListId, MPI_COMM_WORLD, MPI_INFO_NULL);
 	}
+
+	log_DEBUG(logName.str(), " 4 num tasks: " << simulation.getNumTasks() << " num steps: " << simulation.getNumSteps());
 	_fileId = H5Fcreate(_resultsFile.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, propertyListId);
 	H5Pclose(propertyListId);
 
+	log_DEBUG(logName.str(), " 5 num tasks: " << simulation.getNumTasks() << " num steps: " << simulation.getNumSteps());
 	// adding a group with global generic data
 	hsize_t simpleDimension = 1;
 	hid_t globalFileSpace = H5Screate_simple(1, &simpleDimension, NULL);
