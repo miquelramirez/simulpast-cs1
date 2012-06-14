@@ -51,8 +51,10 @@ void GujaratWorld::createRasters()
 	Engine::GeneralState::rasterLoader().fillGDALRaster(getStaticRaster("duneMap"), _config._duneMapFile, this);
 
 	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " creating dynamic rasters");
+	/*
 	registerDynamicRaster("moisture", _config.isStorageRequired("moisture"));
 	getDynamicRaster("moisture").setInitValues(0, std::numeric_limits<int>::max(), 0);
+	*/
 	registerDynamicRaster("resources", _config.isStorageRequired("resources")); // DEBUG Resources will be generated with an explicit function
 	getDynamicRaster("resources").setInitValues(0, std::numeric_limits<int>::max(), 0);
 	registerDynamicRaster("forageActivity", _config.isStorageRequired("forageActivity")); 
@@ -61,12 +63,12 @@ void GujaratWorld::createRasters()
 	getDynamicRaster("homeActivity").setInitValues(0, std::numeric_limits<int>::max(), 0);
 	registerDynamicRaster("farmingActivity", _config.isStorageRequired("farmingActivity"));
 	getDynamicRaster("farmingActivity").setInitValues(0, std::numeric_limits<int>::max(), 0);
-	
+
 	registerDynamicRaster("resourceType", _config.isStorageRequired("resourceType")); // type of resources: wild, domesticated or fallow
 	getDynamicRaster("resourceType").setInitValues(0, SEASONALFALLOW, WILD);
 	registerDynamicRaster("consecutiveYears", _config.isStorageRequired("consecutiveYears")); // years passed using a given cell for a particular use
 	getDynamicRaster("consecutiveYears").setInitValues(0, 3, 0);
-	registerDynamicRaster("sectors", _config.isStorageRequired("sectors")); 
+	registerDynamicRaster("sectors", _config.isStorageRequired("sectors"));
 	getDynamicRaster("sectors").setInitValues(0, _config._numSectors, 0);
 
 	/*
@@ -76,8 +78,8 @@ void GujaratWorld::createRasters()
 
 	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " generating settlement areas");
 	_settlementAreas.generateAreas( *this, _config._lowResolution);
-	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " updating moisture");
-	updateMoisture();
+	//log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " updating moisture");
+	//updateMoisture();
 	log_DEBUG(logName.str(), MPI_Wtime() - _initialTime << " create rasters done");
 }
 
@@ -393,8 +395,8 @@ void GujaratWorld::stepEnvironment()
 	if ( !_climate.cellUpdateRequired() ) return;
 
 
-	updateMoisture();
-	updateSoilCondition();
+	//updateMoisture();
+	//updateSoilCondition();
 }
 
 const Climate & GujaratWorld::getClimate() const

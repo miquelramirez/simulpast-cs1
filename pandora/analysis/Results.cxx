@@ -59,7 +59,7 @@ void Results::apply() const
 		std::cout << " done" << std::endl;
 	}
 
-	for(int i=0; i<=_simRecord.getNumSteps(); i++)
+	for(int i=0; i<=_simRecord.getNumSteps()/_simRecord.getResolution(); i++)		
 	{
 		std::stringstream newLine;
 		newLine << i << _separator;
@@ -77,7 +77,7 @@ void Results::apply() const
 
 void Results::addAnalysis( Analysis * analysis )
 {
-	analysis->setNumTimeSteps(1+_simRecord.getNumSteps());
+	analysis->setNumTimeSteps(1+(_simRecord.getNumSteps()/_simRecord.getResolution()));	
 	_analysisList.push_back(analysis);
 }
 

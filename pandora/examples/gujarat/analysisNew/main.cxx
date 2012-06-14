@@ -33,9 +33,9 @@
 
 int main(int argc, char *argv[])
 {
-	if(argc!=2)
+	if(argc!=5)
 	{
-		throw Engine::Exception("USAGE: statisticsGujarat file.h5");
+		throw Engine::Exception("USAGE: statisticsGujarat file.h5 agent.csv resources.csv agents.shp");
 		return 0;		
 	}
 
@@ -44,16 +44,16 @@ int main(int argc, char *argv[])
 		Engine::SimulationRecord simRecord;
 		simRecord.loadHDF5(argv[1], true, true);
 
-		Analysis::AgentResults agentResults(simRecord, "agents.csv", "HunterGatherer");
+		Analysis::AgentResults agentResults(simRecord, argv[2], "HunterGatherer");
 		agentResults.addAnalysis(new Analysis::AgentNum());
 		agentResults.addAnalysis(new Analysis::AgentMean("children"));
 		agentResults.addAnalysis(new Analysis::AgentSum("children"));
 		agentResults.addAnalysis(new Analysis::AgentMean("collected resources"));
-		agentResults.addAnalysis(new Analysis::AgentHDFtoSHP("gis/gujarat.shp", Engine::Point2D<int>(774000,2623000), 31.5f, "EPSG:24312"));
+		agentResults.addAnalysis(new Analysis::AgentHDFtoSHP(argv[4], Engine::Point2D<int>(774000,2623000), 31.5f, "EPSG:24312"));
 
 		agentResults.apply();
 		
-		Analysis::RasterResults rasterResults(simRecord, "resources.csv", "resources");
+		Analysis::RasterResults rasterResults(simRecord, argv[3], "resources");
 		rasterResults.addAnalysis(new Analysis::RasterMean());
 		rasterResults.addAnalysis(new Analysis::RasterSum());		
 

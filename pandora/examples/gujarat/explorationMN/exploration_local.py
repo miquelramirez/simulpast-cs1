@@ -1,13 +1,14 @@
 #!/usr/bin/python
 import fileinput, sys, os, random
 
-mapSizes = ['400','800','1600']
+#mapSizes = ['400','800','1600']
+mapSizes = ['400']
 
 numExecutions = 3
-numHGs = ['100','200']
-controllers = ['Random','DecisionTree','MDP']
+numHGs = ['100']
+controllers = ['MDP']
 
-xmlTemplate = 'templates/config_template.xml'
+xmlTemplate = 'templates/config_template_local.xml'
 runTemplate = 'templates/run_template.cmd'
 
 mapSizeKey = 'MAPSIZE'
@@ -66,6 +67,6 @@ for mapSize in mapSizes:
 			for numExecution in range(0,numExecutions):
 				print 'submitting gujarat instance: ' + str(index) + ' for map: ' + mapSize + ' numHG: ' + numHG + ' with controller: ' + controller + ' and execution: ' + str(numExecution)
 				dirName = 'results_size'+mapSize+'_numHG'+numHG+'_controller_'+controller+'_ex'+str(numExecution)
-				os.system('mnsubmit '+dirName+'/run.cmd')
+				os.system('../gujarat '+dirName+'/config.xml >'+dirName+'/gujarat.log 2>'+dirName+'/gujarat.err &')
 				index += 1
 

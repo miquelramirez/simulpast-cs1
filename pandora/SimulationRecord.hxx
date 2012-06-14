@@ -70,6 +70,8 @@ private:
 	static herr_t iterateAgentTypes( hid_t loc_id, const char * name, const H5L_info_t *linfo, void *opdata );
 	static herr_t iterateAgentDatasets( hid_t loc_id, const char * name, const H5L_info_t *linfo, void *opdata );
 
+	// false if loading without gui
+	bool _gui;
 	float _loadingPercentageDone;
 	std::string _loadingState;
 	static std::list< std::string > _agentTypes;
@@ -86,7 +88,7 @@ private:
 	// updates min/max values checking value for the attribute key
 	void updateMinMaxAttributeValues( const std::string & key, int value );
 public:
-	SimulationRecord( int resolution = 1 );
+	SimulationRecord( int resolution = 1, bool gui = true );
 	virtual ~SimulationRecord();
 
 	// the real method, called from registerAgentStep
