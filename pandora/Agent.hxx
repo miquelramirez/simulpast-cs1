@@ -65,10 +65,10 @@ protected:
 	
 	std::list<Engine::Action*> _actions;
 
+public:
 
 	void registerIntAttribute(const std::string & name ) { _intAttributes.push_back(name); }
 	void registerStringAttribute(const std::string & name ) { _stringAttributes.push_back(name); }
-public:
 	
 	//! Standard constructor.
     /*! 

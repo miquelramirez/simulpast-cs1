@@ -27,7 +27,7 @@ class Agent(libpyPandora.AgentStub):
 class World(libpyPandora.WorldStub):
 	_listOfAgents = []
 	def __init__(self, simulation ):
-		libpyPandora.WorldStub.__init__( self, simulation, 0, 1, "data/testWorld.h5")
+		libpyPandora.WorldStub.__init__( self, simulation, 0, 1, "data/results.h5")
 
 	def addAgent(self, agent):
 		self.addAgentStub(agent)
