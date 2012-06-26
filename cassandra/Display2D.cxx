@@ -63,71 +63,73 @@ void Display2D::setSimulationRecord( Engine::SimulationRecord * simulationRecord
 
 void Display2D::paintEvent(QPaintEvent *event)
 {
-	if(!_simulationRecord || _simulationRecord->getLoadingPercentageDone()!=100.0f || _orderedRasters.empty())
+	if(!_simulationRecord || _simulationRecord->getLoadingPercentageDone()!=100.0f) //|| _orderedRasters.empty())
 	{
 		return;
 	}
-	QPixmap imageToDraw(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom);
+	//QPixmap imageToDraw(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom);
+	QImage imageToDraw(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom, QImage::Format_ARGB32_Premultiplied);
 	QPainter painter(&imageToDraw);
 	QPen pen;
 	pen.setWidth(_zoom);
 
-	imageToDraw.fill(QColor(255,0,0));
+	imageToDraw.fill(QColor(100,100,100));
 
-	Engine::StaticRaster & rasterTmp(_simulationRecord->getRasterTmp(*(_orderedRasters.begin()), _viewedStep));
-	Engine::Point2D<int> size = rasterTmp.getSize();
-
-	for(int i=0; i<size._x; i++)
+	if(!_orderedRasters.empty())
 	{
-		for(int j=0; j<size._y; j++)
+		Engine::StaticRaster & rasterTmp(_simulationRecord->getRasterTmp(*(_orderedRasters.begin()), _viewedStep));
+		Engine::Point2D<int> size = rasterTmp.getSize();
+
+		for(int i=0; i<size._x; i++)
 		{
-			std::list<std::string>::const_iterator it =_orderedRasters.end();
-			while(it!=_orderedRasters.begin())
+			for(int j=0; j<size._y; j++)
 			{
-				it--;
-				RasterConfiguration * rasterConfig = ProjectConfiguration::instance()->getRasterConfig(*it);
-				Engine::StaticRaster & raster(_simulationRecord->getRasterTmp(*it, _viewedStep));				
-				int value = raster.getValue(Engine::Point2D<int>(i,j));
-				if(rasterConfig->isTransparentEnabled() && value==rasterConfig->getTransparentValue())
+				std::list<std::string>::const_iterator it =_orderedRasters.end();
+				while(it!=_orderedRasters.begin())
 				{
-					continue;
+					it--;
+					RasterConfiguration * rasterConfig = ProjectConfiguration::instance()->getRasterConfig(*it);
+					Engine::StaticRaster & raster(_simulationRecord->getRasterTmp(*it, _viewedStep));				
+					int value = raster.getValue(Engine::Point2D<int>(i,j));
+					if(rasterConfig->isTransparentEnabled() && value==rasterConfig->getTransparentValue())
+					{
+						continue;
+					}
+					ColorSelector & colorSelector = rasterConfig->getColorRamp();
+					pen.setColor(colorSelector.getColor(value));
+					
+					//pen.setWidth(_zoom);
+					//if(maxValue>0)
+					//{
+					//	int colorValue = 255*value/maxValue;
+					//	pen.setColor(QColor(0,colorValue, 0));
+					//}
+					//else
+					//{
+					//	pen.setBrush(QColor(200,200,200));
+					//}
+					painter.setPen(pen);
+					// horizontal
+					//painter.drawLine(i*_zoom, j*_zoom, (i+1)*_zoom, j*_zoom);
+					//painter.drawLine(i*_zoom, (j+1)*_zoom, (i+1)*_zoom, (j+1)*_zoom);
+					// vertical
+					//painter.drawLine(i*_zoom, j*_zoom, i*_zoom, (j+1)*_zoom);
+					//painter.drawLine((i+1)*_zoom, j*_zoom, (i+1)*_zoom, (j+1)*_zoom);
+					painter.drawPoint(i*_zoom+_zoom/2,j*_zoom+_zoom/2);
+					//QPolygon foo(QRect(i*_zoom, j*_zoom, _zoom, _zoom));
+					//painter.drawPolygon(foo);
+					//painter.drawRect(i*_zoom,j*_zoom, _zoom, _zoom);
+					break;
 				}
-				ColorSelector & colorSelector = rasterConfig->getColorRamp();
-				pen.setColor(colorSelector.getColor(value));
-				/*
-				//pen.setWidth(_zoom);
-				if(maxValue>0)
-				{
-					int colorValue = 255*value/maxValue;
-					pen.setColor(QColor(0,colorValue, 0));
-				}
-				else
-				{
-					pen.setBrush(QColor(200,200,200));
-				}
-				*/
-				painter.setPen(pen);
-				// horizontal
-				//painter.drawLine(i*_zoom, j*_zoom, (i+1)*_zoom, j*_zoom);
-				//painter.drawLine(i*_zoom, (j+1)*_zoom, (i+1)*_zoom, (j+1)*_zoom);
-				// vertical
-				//painter.drawLine(i*_zoom, j*_zoom, i*_zoom, (j+1)*_zoom);
-				//painter.drawLine((i+1)*_zoom, j*_zoom, (i+1)*_zoom, (j+1)*_zoom);
-				painter.drawPoint(i*_zoom+_zoom/2,j*_zoom+_zoom/2);
-				//QPolygon foo(QRect(i*_zoom, j*_zoom, _zoom, _zoom));
-				//painter.drawPolygon(foo);
-				//painter.drawRect(i*_zoom,j*_zoom, _zoom, _zoom);
-				break;
 			}
 		}
 	}
-
 
 	if(!_showAgents)
 	{
 		QPainter screenPainter(this);	
 		screenPainter.save();
-		screenPainter.drawPixmap(_offset, imageToDraw); //.scaled(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom));
+		screenPainter.drawImage(_offset, imageToDraw); //.scaled(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom));
 		screenPainter.restore();
 		return;
 	}
@@ -163,10 +165,13 @@ void Display2D::paintEvent(QPaintEvent *event)
 				{
 					int x = agent->getState(_viewedStep/_simulationRecord->getResolution(), "x");
 					int y = agent->getState(_viewedStep/_simulationRecord->getResolution(), "y");
+					QBrush brush(Qt::SolidPattern);
 					if(_state=="unknown")
 					{
-						agentsPen.setBrush(colorToUse);
+						agentsPen.setColor(colorToUse);
+						brush.setColor(colorToUse);
 						painter.setPen(agentsPen);
+						painter.setBrush(brush);
 					}
 					else
 					{
@@ -183,18 +188,21 @@ void Display2D::paintEvent(QPaintEvent *event)
 						catch( Engine::Exception & exceptionThrown )
 						{
 						}
-						agentsPen.setBrush(QColor(255,255-value,255-value));
+						agentsPen.setColor(QColor(255,255-value,255-value));
+						brush.setColor(QColor(255,255-value,255-value));
 						painter.setPen(agentsPen);
+						painter.setBrush(brush);
 					}
-
-					painter.drawPoint(x*_zoom+_zoom/2, y*_zoom+_zoom/2);
+					int size = agentConfig->getSize();
+					//painter.drawPoint(x*_zoom+_zoom/2, y*_zoom+_zoom/2);
+					painter.drawRect(x*_zoom+_zoom/2,y*_zoom+_zoom/2, size*_zoom, size*_zoom);
 				}
 			}
 		}
 	}
 	QPainter screenPainter(this);	
 	screenPainter.save();
-	screenPainter.drawPixmap(_offset, imageToDraw); //.scaled(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom));
+	screenPainter.drawImage(_offset, imageToDraw); //.scaled(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom));
 	screenPainter.restore();
 }
 
@@ -249,20 +257,21 @@ void Display2D::zoomOut()
 	zoom(-1);
 }
 
-void Display2D::zoom( int value )
+void Display2D::zoom( float value )
 {
 	if(!_simulationRecord)
 	{
 		return;
 	}
-	_zoom += value;
-	if(_zoom<1)
+	_zoom *= 1+(value*0.1f);
+
+	if(_zoom<0.001f)
 	{
-		_zoom = 1;
+		_zoom = 0.001f;
 	}
-	else if(_zoom>30)
+	else if(_zoom>100.0f)
 	{
-		_zoom = 30;
+		_zoom = 100.0f;
 	}
 	update();
 }
@@ -322,26 +331,24 @@ std::string Display2D::getAgentToolTip( const Engine::Point2D<int> & position )
 
 bool Display2D::event(QEvent *event)
 {  
-	if(_simulationRecord && event->type()==QEvent::ToolTip) 
+	if(event->type()==QEvent::ToolTip) 
 	{
-		if(_orderedRasters.empty())
-		{
-			return QWidget::event(event);
-		}
-
 		QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 		Engine::Point2D<int> position(helpEvent->pos().x()-_offset.x(), helpEvent->pos().y()-_offset.y());
 		// TODO program /= i *= in Engine::Point2D
 		position._x /= _zoom;
 		position._y /= _zoom;
 
-		Engine::StaticRaster & raster = _simulationRecord->getRasterTmp(*(_orderedRasters.begin()), _viewedStep);
-		if(position._x<0 || position._y<0 || position._x>=raster.getSize()._x || position._y>=raster.getSize()._y)
+		std::string finalToolTip("");
+		std::stringstream posToolTip;
+		posToolTip << "position: " << position << " zoom: " << _zoom;
+		finalToolTip += posToolTip.str();
+	
+		if(!_simulationRecord || position._x<0 || position._y<0 || position._x>=_simulationRecord->getSize() || position._y>=_simulationRecord->getSize())
 		{
+			QToolTip::showText(helpEvent->globalPos(), finalToolTip.c_str());
 			return QWidget::event(event);
 		}
-
-		std::string finalToolTip("");
 		finalToolTip += getRasterToolTip(position);
 		finalToolTip += getAgentToolTip(position);		
 		

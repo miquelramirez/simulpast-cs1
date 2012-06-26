@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
 	srand(time(0));
 	try
 	{
+		QApplication::setGraphicsSystem("raster");
 		QApplication app(argc, argv);
 		GUI::MainWindow mainWindow;
 		mainWindow.show();

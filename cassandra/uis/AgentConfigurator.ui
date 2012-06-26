@@ -39,7 +39,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="Display2D">
     <attribute name="title">
@@ -111,7 +111,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="size2D"/>
+       <widget class="QSpinBox" name="size2D">
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

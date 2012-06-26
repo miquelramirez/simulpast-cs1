@@ -54,10 +54,10 @@ class Display2D : public QWidget
 	
 	int _viewedStep;
 	
-	int _zoom;
+	float _zoom;
 	bool _showAgents;
 
-	void zoom( int value );
+	void zoom( float value );
 
 	QPoint _offset;
 	QPoint _clickedPos;
