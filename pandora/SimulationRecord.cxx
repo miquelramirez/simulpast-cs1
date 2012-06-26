@@ -221,14 +221,6 @@ bool SimulationRecord::loadHDF5( const std::string & fileName, const bool & load
 				}
 			}
 		}
-		// if no rasters we will create one
-		if(_resources.size()==0 && _staticRasters.size()==0)
-		{
-			_staticRasters.insert( std::make_pair( "base", StaticRaster()));
-			StaticRaster & raster = _staticRasters.begin()->second;
-			raster.resize(Engine::Point2D<int>(_size, _size));
-			raster.setDefaultInitValues(0, 0, 0);
-		}
 	}
 	H5Fclose(fileId);
 
