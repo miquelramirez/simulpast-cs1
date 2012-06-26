@@ -118,7 +118,19 @@ std::ostream & operator<<( std::ostream & stream, Agent * agent )
 		return stream << "id: " << agent->getId() << " pos: " << agent->getPosition() << " exists: " << agent->exists() << " without world";
 	}
 }
-	
+
+std::ostream & operator<<( std::ostream & stream, Agent & agent )
+{
+	if(agent.getWorld())
+	{
+		return stream << "id: " << agent.getId() << " pos: " << agent.getPosition() << " exists: " << agent.exists() << " at world: " << agent.getWorld()->getId();
+	}
+	else
+	{
+		return stream << "id: " << agent.getId() << " pos: " << agent.getPosition() << " exists: " << agent.exists() << " without world";
+	}
+}
+
 void Agent::remove()
 {
 	_exists = false;
