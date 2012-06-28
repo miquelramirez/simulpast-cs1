@@ -30,6 +30,11 @@ void RandomAgent::updateState()
 	}
 }
 
+void RandomAgent::registerAttributes()
+{
+	registerIntAttribute("resources");
+}
+
 void RandomAgent::serialize()
 {
 	serializeAttribute("resources", _resources);
