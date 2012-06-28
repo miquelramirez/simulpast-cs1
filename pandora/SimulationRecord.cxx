@@ -393,7 +393,7 @@ void SimulationRecord::loadAgentsFiles( const std::string & path, int numStepsTo
 			for(_loadingStep=0; _loadingStep<=_numSteps; _loadingStep=_loadingStep+_resolution)
 			{
 				std::stringstream line;
-				line << "loading agents of task: "<< i+1 << "/" << numTasks << " - step: " << _loadingStep << "/" << _numSteps;
+				line << "loading agents of type: " << *typeAgent << " in task: "<< i+1 << "/" << numTasks << " - step: " << _loadingStep << "/" << _numSteps;
 				_loadingState = line.str();
 				if(!_gui)
 				{

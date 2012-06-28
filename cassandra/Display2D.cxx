@@ -57,7 +57,7 @@ void Display2D::setSimulationRecord( Engine::SimulationRecord * simulationRecord
 {
 	_simulationRecord = simulationRecord;
 	_viewedStep = 0;
-	_zoom = 1;
+	_zoom = 600.0f/float(simulationRecord->getSize());
 	update();
 }
 
@@ -67,8 +67,8 @@ void Display2D::paintEvent(QPaintEvent *event)
 	{
 		return;
 	}
-	//QPixmap imageToDraw(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom);
-	QImage imageToDraw(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom, QImage::Format_ARGB32_Premultiplied);
+	QPixmap imageToDraw(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom);
+	//QImage imageToDraw(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom, QImage::Format_ARGB32_Premultiplied);
 	QPainter painter(&imageToDraw);
 	QPen pen;
 	pen.setWidth(_zoom);
@@ -129,14 +129,13 @@ void Display2D::paintEvent(QPaintEvent *event)
 	{
 		QPainter screenPainter(this);	
 		screenPainter.save();
-		screenPainter.drawImage(_offset, imageToDraw); //.scaled(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom));
+		screenPainter.drawPixmap(_offset, imageToDraw); //.scaled(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom));
 		screenPainter.restore();
 		return;
 	}
-	
-	QPen agentsPen;
-	agentsPen.setWidth(_zoom);
-	
+
+	painter.end();
+	painter.begin(&imageToDraw);
 	for(Engine::SimulationRecord::AgentTypesMap::const_iterator itType = _simulationRecord->beginTypes(); itType!=_simulationRecord->endTypes(); itType++)
 	{
 		AgentConfiguration * agentConfig = ProjectConfiguration::instance()->getAgentConfig(itType->first);
@@ -163,12 +162,14 @@ void Display2D::paintEvent(QPaintEvent *event)
 				bool exists = agent->getState(_viewedStep/_simulationRecord->getResolution(), "exists");
 				if(exists)
 				{
+					QPen agentsPen;
 					int x = agent->getState(_viewedStep/_simulationRecord->getResolution(), "x");
 					int y = agent->getState(_viewedStep/_simulationRecord->getResolution(), "y");
 					QBrush brush(Qt::SolidPattern);
 					if(_state=="unknown")
 					{
-						agentsPen.setColor(colorToUse);
+						agentsPen.setColor(QColor(colorToUse.red()*0.5f, colorToUse.green()*0.5f, colorToUse.blue()*0.5f));
+						agentsPen.setWidth(std::max(1.0f,_zoom/20.0f));
 						brush.setColor(colorToUse);
 						painter.setPen(agentsPen);
 						painter.setBrush(brush);
@@ -188,21 +189,23 @@ void Display2D::paintEvent(QPaintEvent *event)
 						catch( Engine::Exception & exceptionThrown )
 						{
 						}
-						agentsPen.setColor(QColor(255,255-value,255-value));
+						int halfValue = value*0.5f;
+						agentsPen.setColor(QColor(128, 128-halfValue, 128-halfValue));
 						brush.setColor(QColor(255,255-value,255-value));
 						painter.setPen(agentsPen);
 						painter.setBrush(brush);
 					}
 					int size = agentConfig->getSize();
-					//painter.drawPoint(x*_zoom+_zoom/2, y*_zoom+_zoom/2);
-					painter.drawRect(x*_zoom+_zoom/2,y*_zoom+_zoom/2, size*_zoom, size*_zoom);
+					int xPos = x*_zoom - ((size-1)*_zoom)/2;
+					int yPos = y*_zoom - ((size-1)*_zoom)/2;
+					painter.drawEllipse(xPos, yPos, size*_zoom, size*_zoom);
 				}
 			}
 		}
 	}
 	QPainter screenPainter(this);	
 	screenPainter.save();
-	screenPainter.drawImage(_offset, imageToDraw); //.scaled(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom));
+	screenPainter.drawPixmap(_offset, imageToDraw); //.scaled(_simulationRecord->getSize()*_zoom, _simulationRecord->getSize()*_zoom));
 	screenPainter.restore();
 }
 
