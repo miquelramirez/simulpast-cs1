@@ -1042,16 +1042,22 @@ std::vector<Agent *> World::getAgent( const Point2D<int> & position, const std::
 	std::vector<Agent *> result;
 	for(AgentsList::iterator it=_agents.begin(); it!=_agents.end(); it++)
 	{
-		if((*it)->getPosition().isEqual(position) && (*it)->isType(type)) 
+		if((*it)->getPosition().isEqual(position))
 		{
-			result.push_back(*it);
+			if(type.compare("all")==0 || (*it)->isType(type))
+			{
+				result.push_back(*it);
+			}
 		}
 	}
 	for(AgentsList::iterator it=_overlapAgents.begin(); it!=_overlapAgents.end(); it++)		
 	{
-		if((*it)->getPosition().isEqual(position) && (*it)->isType(type))
+		if((*it)->getPosition().isEqual(position))
 		{	
-			result.push_back(*it);
+			if(type.compare("all")==0 || (*it)->isType(type))
+			{
+				result.push_back(*it);
+			}
 		}
 	}
 	return result;
