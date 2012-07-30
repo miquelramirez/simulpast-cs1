@@ -54,10 +54,9 @@ class Display2D : public QWidget
 	
 	int _viewedStep;
 	
-	int _zoom;
+	float _zoom;
 	bool _showAgents;
 
-	void zoom( int value );
 
 	QPoint _offset;
 	QPoint _clickedPos;
@@ -71,6 +70,7 @@ class Display2D : public QWidget
 	std::string getRasterToolTip( const Engine::Point2D<int> & position );
 	std::string getAgentToolTip( const Engine::Point2D<int> & position );
 public:
+	void zoom( float value );
 	Display2D(QWidget * parent);
 	virtual ~Display2D();
 	void setSimulationRecord( Engine::SimulationRecord * simulationRecord );

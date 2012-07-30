@@ -1037,7 +1037,7 @@ Agent * World::getAgent( const std::string & id )
 	return 0;
 }
 
-std::vector<Agent *> World::getAgent( const Point2D<int> & position, const std::string & type )
+World::AgentsVector World::getAgent( const Point2D<int> & position, const std::string & type )
 {
 	std::vector<Agent *> result;
 	for(AgentsList::iterator it=_agents.begin(); it!=_agents.end(); it++)
@@ -1942,12 +1942,13 @@ int World::countNeighbours( Agent * target, const double & radius, const std::st
 	return numAgents+numOverlapAgents;
 }
 
-World::AgentsList World::getNeighbours( Agent * target, const double & radius, const std::string & type )
+World::AgentsVector World::getNeighbours( Agent * target, const double & radius, const std::string & type )
 {
-	AgentsList agentsList = for_each(_agents.begin(), _agents.end(), aggregatorGet<Engine::Agent>(radius,*target, type))._neighbors;
-	AgentsList overlapAgentsList =  for_each(_overlapAgents.begin(), _overlapAgents.end(), aggregatorGet<Engine::Agent>(radius,*target, type))._neighbors;
-	agentsList.merge(overlapAgentsList);
-	return agentsList;
+	AgentsVector agentsVector = for_each(_agents.begin(), _agents.end(), aggregatorGet<Engine::Agent>(radius,*target, type))._neighbors;
+	AgentsVector overlapAgentsVector =  for_each(_overlapAgents.begin(), _overlapAgents.end(), aggregatorGet<Engine::Agent>(radius,*target, type))._neighbors;
+	std::copy(overlapAgentsVector.begin(), overlapAgentsVector.end(), std::back_inserter(agentsVector));
+	std::random_shuffle(agentsVector.begin(), agentsVector.end());
+	return agentsVector;
 //	.merge(for_each(_overlapAgents.begin(), _overlapAgents.end(), aggregatorGet<Engine::Agent>(radius,*target, type))._neighbors);
 	/*
 	AgentsList neighbours;

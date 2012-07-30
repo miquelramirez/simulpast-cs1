@@ -174,9 +174,9 @@ double	GujaratAgent::computeMaxForagingDistance() const
 
 GujaratAgent * GujaratAgent::getMarriageCandidate()
 {
-	std::vector<GujaratAgent*> possible;
-	Engine::World::AgentsList listOfNeighbors = _world->getNeighbours(this, _socialRange, getType());
-	for(Engine::World::AgentsList::iterator it=listOfNeighbors.begin(); it!=listOfNeighbors.end(); it++)
+	Engine::World::AgentsVector possible;
+	Engine::World::AgentsVector neighbors = _world->getNeighbours(this, _socialRange, getType());
+	for(Engine::World::AgentsVector::iterator it=neighbors.begin(); it!=neighbors.end(); it++)
 	{
 		GujaratAgent * possibleAgent = (GujaratAgent*)(*it);
 		for(unsigned i=2; i<possibleAgent->_populationAges.size(); i++)
@@ -194,7 +194,7 @@ GujaratAgent * GujaratAgent::getMarriageCandidate()
 		return 0;
 	}
 	std::random_shuffle(possible.begin(), possible.end());
-	return possible[0];
+	return (GujaratAgent*)(possible.at(0));
 }
 
 void GujaratAgent::checkMarriage()

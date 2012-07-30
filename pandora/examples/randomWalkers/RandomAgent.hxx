@@ -21,6 +21,7 @@ public:
 	
 	void selectActions();
 	void updateState();
+	void registerAttributes();
 	void serialize();
 
 	void setResources( int resources );

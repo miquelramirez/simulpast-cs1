@@ -151,6 +151,26 @@ public:
 	void receiveVectorAttributes(int origin)
 	{		
 	}
+
+	void serializeIntAttribute( const std::string & key, int value )
+	{
+		serializeAttribute(key, value);
+	}
+	
+	void registerAttributes()
+	{
+		if (boost::python::override registerAttributes = this->get_override("registerAttributes"))
+		{
+			registerAttributes();
+			return;
+		}
+		Engine::Agent::registerAttributes();
+	}
+
+	void default_RegisterAttributes()
+	{
+		Engine::Agent::registerAttributes();
+	}
 };
 
 class WorldWrap : public Engine::World, public boost::python::wrapper<Engine::World>
@@ -263,13 +283,18 @@ BOOST_PYTHON_MODULE(libpyPandora)
 		.def("getDynamicRaster", &Engine::World::getDynamicRaster, boost::python::return_value_policy<boost::python::reference_existing_object>())
 		.def("run", &Engine::World::run)
 		.def("addAgentStub", &WorldWrap::addAgent)
+		.def("setValue", &Engine::World::setValue)
+		.def("getValue", &Engine::World::getValue)
 		.add_property("currentStep", &Engine::World::getCurrentStep)
 	;
 	
 	boost::python::class_< AgentWrap, std::auto_ptr<AgentWrap>, boost::noncopyable >("AgentStub", boost::python::init< const std::string & > () )
 		.def("updateState", &Engine::Agent::updateState, &AgentWrap::default_UpdateState)
+		.def("registerAttributes", &Engine::Agent::registerAttributes, &AgentWrap::default_RegisterAttributes)
 		.def("getWorld", &Engine::Agent::getWorldRef, boost::python::return_value_policy<boost::python::reference_existing_object>())
 		.def("serialize", boost::python::pure_virtual(&Engine::Agent::serialize))
+		.def("registerIntAttribute", &Engine::Agent::registerIntAttribute)
+		.def("serializeIntAttribute", &AgentWrap::serializeIntAttribute)
 		.def("setRandomPosition", &Engine::Agent::setRandomPosition)
 		.add_property("id", boost::python::make_function(&Engine::Agent::getId, boost::python::return_value_policy<boost::python::copy_const_reference>()))
 		.add_property("position", boost::python::make_function(&Engine::Agent::getPosition, boost::python::return_value_policy<boost::python::reference_existing_object>()), &Engine::Agent::setPosition )

@@ -33,15 +33,15 @@
 
 int main(int argc, char *argv[])
 {
-	if(argc!=5)
+	if(argc!=4)
 	{
-		throw Engine::Exception("USAGE: statisticsGujarat file.h5 agent.csv resources.csv agents.shp");
+		throw Engine::Exception("USAGE: statisticsGujarat file.h5 agent.csv rasters.csv");
 		return 0;		
 	}
 
 	try
 	{
-		Engine::SimulationRecord simRecord;
+		Engine::SimulationRecord simRecord( 120, false);
 		simRecord.loadHDF5(argv[1], true, true);
 
 		Analysis::AgentResults agentResults(simRecord, argv[2], "HunterGatherer");
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 		agentResults.addAnalysis(new Analysis::AgentMean("children"));
 		agentResults.addAnalysis(new Analysis::AgentSum("children"));
 		agentResults.addAnalysis(new Analysis::AgentMean("collected resources"));
-		agentResults.addAnalysis(new Analysis::AgentHDFtoSHP(argv[4], Engine::Point2D<int>(774000,2623000), 31.5f, "EPSG:24312"));
+//		agentResults.addAnalysis(new Analysis::AgentHDFtoSHP(argv[4], Engine::Point2D<int>(774000,2623000), 31.5f, "EPSG:24312"));
 
 		agentResults.apply();
 		

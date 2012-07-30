@@ -44,7 +44,7 @@ void Results::apply() const
 	{
 		if((*it)->writeResults())
 		{
-			header << (*it)->getName() << ";";
+			header << (*it)->getName() << _separator;
 		}
 	}
 	file << header.str() << std::endl;;
@@ -67,7 +67,7 @@ void Results::apply() const
 		{
 			if((*itL)->writeResults())
 			{
-				newLine << (*itL)->getResult(i) << ";";
+				newLine << (*itL)->getResult(i) << _separator;				
 			}
 		}
 		file << newLine.str() << std::endl;

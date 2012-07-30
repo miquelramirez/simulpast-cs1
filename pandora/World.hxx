@@ -65,6 +65,7 @@ public:
 	typedef std::map< std::string, StaticRaster > StaticRastersMap;
 	typedef std::map< std::string, Raster > RastersMap;
 	typedef std::list< Agent* > AgentsList;
+	typedef std::vector< Agent* > AgentsVector;
 protected:		
 	Simulation _simulation;
 
@@ -218,7 +219,7 @@ public:
 
 	//! this method will return an agent, both looking at owned and ghost agents
 	Agent * getAgent( const std::string & id );
-	std::vector<Agent *> getAgent( const Point2D<int> & position, const std::string & type="all" );
+	AgentsVector getAgent( const Point2D<int> & position, const std::string & type="all" );
 
 	//! return an agent, if it is in the list of owned
 	AgentsList::iterator getOwnedAgent( const std::string & id );
@@ -278,13 +279,13 @@ public:
 		{
 			_neighbors.push_back(&neighbor);
 		}
-		AgentsList _neighbors;
+		AgentsVector _neighbors;
 	};
 
 	//! returns the number of neighbours of agent 'target' within the radius 'radius' using Euclidean Distance.
 	int countNeighbours( Agent * target, const double & radius, const std::string & type="all" );
 	//! returns a list with the neighbours of agent 'target' within the radius 'radius' using Euclidean Distance.
-	AgentsList getNeighbours( Agent * target, const double & radius, const std::string & type="all" );
+	AgentsVector getNeighbours( Agent * target, const double & radius, const std::string & type="all" );
 	//! returns an integer identifying the current step where the simulation is. The identifiers denote an order from older to newer steps.
 	int getCurrentStep() const;
 	//! this method can be redefined by the children in order to modify the execution of each step on a given resource field. Default is grow 1 until max

@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <config>  
 	<!-- Global simulation parameters -->
-	<output resultsFile="./data/gujarat.h5" logsDir="./logs"/>
-	<numSteps value="3600"/>
+	<output resultsFile="/gpfs/scratch/bsc21/bsc21887/data_cpu_1/gujarat.h5" logsDir="/gpfs/scratch/bsc21/bsc21887/logs_cpu_1"/>
+	<numSteps value="50"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
@@ -25,9 +25,9 @@
 	<biomassDistVariance type="dune" value="500" />
 	<biomassDistVariance type="interdune" value="100" />
 	<!-- GIS rasters -->
-	<soil fileName="./resources/800/soils_800.tiff" size="800"/>
-	<dem fileName="./resources/800/dem_800.tiff" size="800"/>
-	<duneMap fileName="./resources/800/dunes_800_low.tiff" size="800"/>
+	<soil fileName="./resources/1200/soils_1200.tiff" size="1200"/>
+	<dem fileName="./resources/1200/dem_1200.tiff" size="1200"/>
+	<duneMap fileName="./resources/1200/dunes_1200_low.tiff" size="1200"/>
 	<!-- Climatic model parameters -->
 	<climateSeed value="432432"/>
 	<rainHistoricalDistribution shape="2.628" scale="5278.807" mean="4643.847826087"/>
@@ -37,7 +37,7 @@
 	<!-- * Available Forage Time = # hours a day the forage action takes -->
 	<!-- * forageTimeCost = how much time (in hours) does it cost the agent to exploit a tile resources -->
 	<hunterGatherers 
-		num="100" homeRange="100"
+		num="100" homeRange="30"
 		surplusForReproductionThreshold="2" 
 		surplusWanted="1"
 		surplusSpoilage="0.25"		
@@ -47,8 +47,8 @@
 		walkingSpeedHour="3000"
 		forageTimeCost="0.5"
 		availableForageTime="4.5"
-		demographicsModel="original"
-		controllerType="Random" >
+		demographicsModel="ramirez"
+		controllerType="MDP" >
 		<!-- * width = number of trials before selecting an action, the higher the
 		 	the number, the more informed is the action selection and more
 			computation time is required -->
@@ -60,7 +60,7 @@
 					nrForageActions="8"
 					nrMoveHomeActions="5"
 					doNothingIsAllowed="true"
-					horizon="7"
+					horizon="8"
 					width="100"
 					explorationBonus ="10.0"
 		/>

@@ -118,7 +118,19 @@ std::ostream & operator<<( std::ostream & stream, Agent * agent )
 		return stream << "id: " << agent->getId() << " pos: " << agent->getPosition() << " exists: " << agent->exists() << " without world";
 	}
 }
-	
+
+std::ostream & operator<<( std::ostream & stream, Agent & agent )
+{
+	if(agent.getWorld())
+	{
+		return stream << "id: " << agent.getId() << " pos: " << agent.getPosition() << " exists: " << agent.exists() << " at world: " << agent.getWorld()->getId();
+	}
+	else
+	{
+		return stream << "id: " << agent.getId() << " pos: " << agent.getPosition() << " exists: " << agent.exists() << " without world";
+	}
+}
+
 void Agent::remove()
 {
 	_exists = false;
@@ -150,7 +162,7 @@ void Agent::logAgentState()
 {
 	std::stringstream logName;
 	logName << "agents_" << _world->getId() << "_" << getId();
-	log_DEBUG(logName.str(), "Agent: " << this << " executing in timestep: " << getWorld()->getCurrentTimeStep());
+	log_EDEBUG(logName.str(), "Agent: " << this << " executing in timestep: " << getWorld()->getCurrentTimeStep());
 }
 
 void Agent::executeActions()
@@ -167,7 +179,7 @@ void Agent::executeActions()
 		//if(_spentTime<=_availableTime)
 		//{
 		nextAction->execute((Engine::Agent&)(*this));
-		log_DEBUG(logName.str(), "\tagent.action[" << i << "]=" << nextAction->describe());
+		log_EDEBUG(logName.str(), "\tagent.action[" << i << "]=" << nextAction->describe());
 		//}
 		it = _actions.erase(it);
 		delete nextAction;
