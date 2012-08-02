@@ -55,7 +55,10 @@ void Serializer::init( Simulation & simulation, StaticRastersMap & staticRasters
 	log_DEBUG(logName.str(), " num tasks: " << simulation.getNumTasks() << " num steps: " << simulation.getNumSteps());
 
 	// create dir where logs will be stored if it is not already created
-	boost::filesystem::create_directory(path);
+	if(!path.empty())
+	{
+		boost::filesystem::create_directory(path);
+	}
 	log_DEBUG(logName.str(), " 2 num tasks: " << simulation.getNumTasks() << " num steps: " << simulation.getNumSteps());
 
 	// creating base file in a parallel environment
@@ -134,7 +137,12 @@ void Serializer::init( Simulation & simulation, StaticRastersMap & staticRasters
 	
 	// creating a file with the agents of each computer node
 	std::ostringstream oss;
-	oss << path << "/agents-" << simulation.getId() << ".abm";
+	if(!path.empty())
+	{
+		oss << path << "/";
+	}
+	oss << "agents-" << simulation.getId() << ".abm";
+
 	_agentsFileId = H5Fcreate(oss.str().c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 	/*
 	for(int i=0; i<=simulation.getNumSteps(); i++)
