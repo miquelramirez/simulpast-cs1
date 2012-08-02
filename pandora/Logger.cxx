@@ -50,8 +50,16 @@ std::ofstream & Logger::log( const std::string & key)
 	// create a new file if it is closed
 	if(it==_files.end())
 	{
+		if(!_logsDir.empty())
+		{
+			boost::filesystem::create_directory(_logsDir);
+		}
 		std::stringstream fileName;
-		fileName<< _logsDir << "/" << key<< ".log";
+		if(!_logsDir.empty())
+		{
+			fileName<< _logsDir << "/";
+		}
+		fileName << key<< ".log";
 
 		_files.insert( make_pair( key, new std::ofstream( fileName.str().c_str() )));
 		it = _files.find(key);
@@ -63,7 +71,10 @@ std::ofstream & Logger::log( const std::string & key)
 void Logger::setLogsDir( const std::string & logsDir )
 {
 	_logsDir = logsDir;
-	boost::filesystem::create_directory(_logsDir);
+	if(!_logsDir.empty())
+	{
+		boost::filesystem::create_directory(_logsDir);
+	}
 }
 
 } // namespace Engine
