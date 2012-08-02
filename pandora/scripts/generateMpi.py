@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys
+import sys, os
 
 
 def writeRegisterTypes( f, listAgents ):
@@ -355,6 +355,55 @@ def getAttributesFromClass( className, attributesMap, vectorAttributesMap):
 	f.close()
 	return parentName
 
+def checkHeader(agentName, headerName):
+	print '\tchecking if header: ' + headerName + ' for agent: ' + agentName + ' defines needed methods...'
+
+	# if this is not defined, we will add the four needed methods
+	fillPackageName = 'fillPackage'
+	f = open(headerName, 'r')
+	for line in f:
+		if line.find(fillPackageName) != -1:
+			print '\theader: ' + headerName + ' correct'
+			return
+	f.close()
+	print '\theader: ' + headerName + ' does not contain parallel methods, adding...'
+
+	headerNameTmp = headerName + '_tmp'
+	f = open(headerName, 'r')
+	fTmp = open(headerNameTmp, 'w')
+
+	insideClass = 0
+	lastLine = ''
+	for line in f:
+		if insideClass == 0:
+			if line.find('class')!=-1 and line.find(agentName) != -1:
+				print 'accessing agent declaration: ' + agentName
+				insideClass = 1
+			fTmp.write(line)
+		elif line.find('};') != -1:
+			print 'end of agent declaration: ' + agentName
+			insideClass = 0
+			fTmp.write('\n')
+			fTmp.write('\t////////////////////////////////////////////////\n')
+			fTmp.write('\t// This code has been automatically generated //\n')
+			fTmp.write('\t/////// Please do not modify it ////////////////\n')
+			fTmp.write('\t////////////////////////////////////////////////\n')
+			fTmp.write('\t'+agentName+'( void * );\n')
+			fTmp.write('\tvoid * fillPackage();\n')
+			fTmp.write('\tvoid sendVectorAttributes(int);\n')
+			fTmp.write('\tvoid receiveVectorAttributes(int);\n')
+			fTmp.write('\t////////////////////////////////////////////////\n')
+			fTmp.write('\t//////// End of generated code /////////////////\n')
+			fTmp.write('\t////////////////////////////////////////////////\n')
+			fTmp.write('\n')
+			fTmp.write(line)
+		else:
+			fTmp.write(line)
+	f.close()
+	fTmp.close()
+	os.rename(headerNameTmp, headerName)
+	return 
+
 def execute( target, source, env ):
 	print 'generating code for mpi communication...'
 	listAgents = []
@@ -364,6 +413,7 @@ def execute( target, source, env ):
 		sourceName = str(source[i])
 		headerName = sourceName.replace(".cxx", ".hxx")
 		listAgents += [sourceName.replace(".cxx", "")]
+		checkHeader(sourceName.replace(".cxx", ""), headerName)
 		print '\tprocessing agent: ' + listAgents[i-1]
 		# get the list of attributes to send/receive in MPI
 		attributesMap = {}
