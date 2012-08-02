@@ -12,8 +12,4 @@ GujaratDemographics::~GujaratDemographics()
 {
 }
 
-void GujaratDemographics::checkStarvationMortality( GujaratAgent & agent )
-{
-}
-
 }

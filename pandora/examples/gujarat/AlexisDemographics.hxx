@@ -13,10 +13,10 @@ public:
 	AlexisDemographics();
 	virtual	~AlexisDemographics();
 	
-	virtual bool checkEmigration (GujaratAgent& agent);
+//	virtual bool checkEmigration (GujaratAgent& agent);
 	virtual void checkMortality (GujaratAgent& agent);
 	virtual void checkReproduction (GujaratAgent& agent);
-	virtual void checkStarvationMortality (GujaratAgent& agent);
+//	virtual void checkStarvationMortality (GujaratAgent& agent);
 };
 
 

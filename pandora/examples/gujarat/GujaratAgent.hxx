@@ -27,7 +27,7 @@ private:
 
 	virtual GujaratAgent * createNewAgent() = 0;
 
-	virtual bool checkEmigration();
+	//virtual bool checkEmigration();
 
 protected:
 	int _availableTime; // MpiBasicAttribute
@@ -63,7 +63,6 @@ public:
 
 	void	setSocialRange( int v ) { _socialRange = v; }
 	int	getSocialRange() const { return _socialRange; }
-	void	setAvailableTime( int daysPerSeason );
 	void	setHomeMobilityRange( int v ) { _homeMobilityRange = v; }
 	int	getHomeMobilityRange( ) const { return _homeMobilityRange; } 
 	
@@ -81,7 +80,7 @@ public:
 	void	checkDeath( int minAge, int maxAge, int chance );
 	void	checkDeathByAging( int minAge );
 	// if male or female died, reproduction is impossible	
-	void	checkIndividualStarvationDeath(int index, int deficitRatioPer1000);
+	//void	checkIndividualStarvationDeath(int index, int deficitRatioPer1000);
 	bool	canReproduce() const;
 	void	addNewIndividual( int age );
 	void	addNewChild();

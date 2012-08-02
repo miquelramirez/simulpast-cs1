@@ -156,16 +156,17 @@ GujaratAgent * HunterGatherer::createNewAgent()
 	oss << "HunterGatherer_" << world->getId() << "-" << world->getNewKey();
 	
 	HunterGatherer * agent = new HunterGatherer(oss.str());
-	_world->addAgent(agent);
-	
-	agent->setAvailableTime( _availableTime );
+
+	std::cout << "created, filling in: " << agent << std::endl;
 	agent->setSocialRange( _socialRange );
 	agent->setHomeMobilityRange( _homeMobilityRange );
 	agent->setHomeRange( _homeRange );
 	agent->setSurplusForReproductionThreshold( _surplusForReproductionThreshold );
 	agent->setSurplusWanted( _surplusWanted );
 	agent->setNumSectors( _sectors.size() );
-	agent->setPosition(_position);
+	// initially the agent will be a couple
+	agent->_populationAges.resize(2);
+	std::cout << "creating new agent done" << std::endl;
 
 	return agent;
 }

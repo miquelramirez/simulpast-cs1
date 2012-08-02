@@ -7,6 +7,7 @@
 #include <MoveHomeAction.hxx>
 #include <ForageAction.hxx>
 #include <HunterGatherer.hxx>
+#include <DoNothingAction.hxx>
 
 #include <Statistics.hxx>
 #include <GeneralState.hxx>
@@ -24,6 +25,7 @@ HunterGathererProgrammedController::~HunterGathererProgrammedController()
 
 MDPAction*	HunterGathererProgrammedController::selectAction( GujaratAgent & agent )
 {
+	/*
 	// TODO: which order must follow the actions? random?
 	// now random
 
@@ -55,7 +57,8 @@ MDPAction*	HunterGathererProgrammedController::selectAction( GujaratAgent & agen
 	} while ( agentConcrete.getSectors()[dice]->isEmpty() );
 
 	return new ForageAction( agentConcrete.getSectors()[dice] );
-	
+	*/
+	return new DoNothingAction();
 }
 
 }

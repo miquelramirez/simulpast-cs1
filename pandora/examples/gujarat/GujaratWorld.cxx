@@ -98,7 +98,6 @@ void GujaratWorld::createAgents()
 			HunterGatherer * agent = new HunterGatherer(oss.str());
 			addAgent(agent);
 			_config._hgInitializer->initialize(agent);
-			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
 			agent->setHomeMobilityRange( _config._homeRange );
 			agent->setHomeRange( _config._homeRange );
@@ -127,7 +126,6 @@ void GujaratWorld::createAgents()
 			AgroPastoralist * agent = new AgroPastoralist(oss.str());
 			addAgent(agent); 
 			_config._apInitializer->initialize(agent);
-			agent->setAvailableTime( _config._daysPerSeason );
 			agent->setSocialRange( _config._socialRange );
 			agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
 			agent->setHomeMobilityRange( _config._socialRange );

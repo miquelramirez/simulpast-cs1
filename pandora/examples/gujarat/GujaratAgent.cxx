@@ -38,11 +38,6 @@ int	GujaratAgent::computeEffectiveBiomassForaged( int nominal ) const
 	
 }
 
-void GujaratAgent::setAvailableTime( int daysPerSeason )
-{
-	_availableTime = ((GujaratWorld*)_world)->getConfig()._daysPerSeason / daysPerSeason;
-}
-
 void GujaratAgent::updateKnowledge()
 {
 }
@@ -82,6 +77,7 @@ void GujaratAgent::logAgentState()
 
 void GujaratAgent::updateState()
 {
+	/*
 	std::stringstream logName;
 	logName << "agents_" << _world->getId() << "_" << getId();
 
@@ -104,8 +100,6 @@ void GujaratAgent::updateState()
 		_collectedResources *= getSurplusSpoilageFactor();
 	}
 
-	checkStarvationMortality();
-
 	if ( (getWorld()->getCurrentTimeStep() % ((GujaratWorld*)_world)->getConfig()._daysPerSeason == 0) 
 		&& (getWorld()->getCurrentTimeStep() > ((GujaratWorld*)_world)->getConfig()._daysPerSeason-1) ) 
 	{
@@ -116,11 +110,11 @@ void GujaratAgent::updateState()
 			return;
 		}
 	}
-	
+	*/
 	
 	// end of year, evaluate reproduction, mortality and update age
-	if( (getWorld()->getCurrentTimeStep() % ((GujaratWorld*)_world)->getConfig()._daysPerYear == 0) 
-		&& (getWorld()->getCurrentTimeStep() > ((GujaratWorld*)_world)->getConfig()._daysPerYear-1) ) // last day of the year
+	if((getWorld()->getCurrentTimeStep() % ((GujaratWorld*)_world)->getConfig()._daysPerYear == 0))
+	//	&& (getWorld()->getCurrentTimeStep() > ((GujaratWorld*)_world)->getConfig()._daysPerYear-1) ) // last day of the year
 	{
 		updateAges();
 		checkMortality();
@@ -130,17 +124,15 @@ void GujaratAgent::updateState()
 	}
 }
 
+/*
 bool	GujaratAgent::checkEmigration()
 {
 	return GujaratState::demographics().checkEmigration(*this);
 
 }
+*/
 
-void	GujaratAgent::checkStarvationMortality()
-{
-	GujaratState::demographics().checkStarvationMortality(*this);
-}
-
+/*
 void	GujaratAgent::checkIndividualStarvationDeath(int index, int deficitRatioPer1000)
 {
 	int probabSurvPer10000;
@@ -158,6 +150,7 @@ void	GujaratAgent::checkIndividualStarvationDeath(int index, int deficitRatioPer
 		_populationAges[index]=-1;
 	}
 }
+*/
 
 
 double 	GujaratAgent::getTimeSpentForagingTile() const
@@ -211,7 +204,6 @@ void GujaratAgent::checkMarriage()
 				return;
 			}
 			
-			// TODO male female??
 			GujaratAgent * newAgent = agent->createNewAgent();
 
 			newAgent->_populationAges[0] = _populationAges[i];
@@ -227,6 +219,7 @@ void GujaratAgent::checkMarriage()
 				}
 			}
 			// location inside home range of husband family
+			_world->addAgent(newAgent);
 			newAgent->setPosition(getNearLocation(getSocialRange()));
 			//std::cout << "new agent created: " << newAgent << " with husband age: " << newAgent->_populationAges[0] << " and wife age: " << newAgent->_populationAges[1] << std::endl;
 		}

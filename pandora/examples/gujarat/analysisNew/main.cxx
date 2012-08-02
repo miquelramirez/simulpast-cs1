@@ -41,23 +41,27 @@ int main(int argc, char *argv[])
 
 	try
 	{
-		Engine::SimulationRecord simRecord( 120, false);
-		simRecord.loadHDF5(argv[1], true, true);
+		Engine::SimulationRecord simRecord( 360, false);
+		simRecord.loadHDF5(argv[1], false, true);
 
 		Analysis::AgentResults agentResults(simRecord, argv[2], "HunterGatherer");
 		agentResults.addAnalysis(new Analysis::AgentNum());
 		agentResults.addAnalysis(new Analysis::AgentMean("children"));
 		agentResults.addAnalysis(new Analysis::AgentSum("children"));
-		agentResults.addAnalysis(new Analysis::AgentMean("collected resources"));
+		//agentResults.addAnalysis(new Analysis::AgentMean("collected resources"));
+		agentResults.addAnalysis(new Analysis::AgentSum("female alive"));
+		agentResults.addAnalysis(new Analysis::AgentSum("male alive"));
 //		agentResults.addAnalysis(new Analysis::AgentHDFtoSHP(argv[4], Engine::Point2D<int>(774000,2623000), 31.5f, "EPSG:24312"));
 
 		agentResults.apply();
-		
+
+		/*
 		Analysis::RasterResults rasterResults(simRecord, argv[3], "resources");
 		rasterResults.addAnalysis(new Analysis::RasterMean());
 		rasterResults.addAnalysis(new Analysis::RasterSum());		
 
 		rasterResults.apply();
+		*/
 	}
 	catch( std::exception & exceptionThrown )
 	{

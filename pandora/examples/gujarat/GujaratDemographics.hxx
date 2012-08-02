@@ -12,10 +12,9 @@ public:
 	GujaratDemographics();
 	virtual ~GujaratDemographics();
 
-	virtual bool	checkEmigration( GujaratAgent & agent ) = 0;
+//	virtual bool	checkEmigration( GujaratAgent & agent ) = 0;	
 	virtual	void	checkMortality( GujaratAgent & agent  ) = 0;
 	virtual void	checkReproduction( GujaratAgent & agent ) = 0;	
-	virtual	void	checkStarvationMortality( GujaratAgent & agent );
 };
 
 }
