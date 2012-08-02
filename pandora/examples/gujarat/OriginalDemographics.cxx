@@ -37,12 +37,12 @@ void	OriginalDemographics::checkMortality( GujaratAgent& agent )
 	*/
 
 	// Adult mortality check
-//	agent.checkDeath( 15, 1000, 2 );
+	agent.checkDeath( 15, 1000, 2 );
 	// Children mortality check
-//	agent.checkDeath( 0, 3, 10 );
-//	agent.checkDeath( 3, 15, 2 );
+	agent.checkDeath( 0, 3, 10 );
+	agent.checkDeath( 3, 15, 2 );
 	// Old age death check
-//	agent.checkDeathByAging( 50 );
+	agent.checkDeathByAging( 50 );
 }
 
 void	OriginalDemographics::checkReproduction( GujaratAgent& agent )

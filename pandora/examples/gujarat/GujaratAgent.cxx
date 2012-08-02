@@ -113,7 +113,7 @@ void GujaratAgent::updateState()
 	*/
 	
 	// end of year, evaluate reproduction, mortality and update age
-	if((getWorld()->getCurrentTimeStep() % ((GujaratWorld*)_world)->getConfig()._daysPerYear == 0))
+	if((getWorld()->getCurrentTimeStep() % ((GujaratWorld*)_world)->getConfig()._daysPerYear == 0) && getWorld()->getCurrentTimeStep()!=0)
 	//	&& (getWorld()->getCurrentTimeStep() > ((GujaratWorld*)_world)->getConfig()._daysPerYear-1) ) // last day of the year
 	{
 		updateAges();
@@ -121,6 +121,17 @@ void GujaratAgent::updateState()
 		checkReproduction();
 		checkMarriage();
 		checkAgentRemoval();
+		int numChildren = 0;
+		std::cout << "agent: " << this << " with male : " << _populationAges.at(0) << " female: " << _populationAges.at(1) << " -- children: ";
+		for(int i=2; i<_populationAges.size(); i++)
+		{
+			if(_populationAges.at(i)!=-1)
+			{
+				numChildren++;
+				std::cout << "[" << i << "]=" << _populationAges.at(i) << " - ";
+			}
+		}
+		std::cout << " total: " << numChildren << std::endl;
 	}
 }
 
@@ -404,7 +415,7 @@ void	GujaratAgent::checkDeath( int minAge, int maxAge, int chance )
 		if ( _populationAges[index] < minAge
 			|| _populationAges[index] >= maxAge )
 			continue;
-		int die = Engine::GeneralState::statistics().getUniformDistValue(0,1000);
+		int die = Engine::GeneralState::statistics().getUniformDistValue(0,100);
 		if ( die < chance )
 			_populationAges[index] = -1;
 	}
@@ -451,6 +462,31 @@ void	GujaratAgent::addNewChild()
 	addNewIndividual(0);
 	//std::cout << this << " have a new baby!" << std::endl;
 	// we look for an empty space or add a new one
+}
+
+void GujaratAgent::createInitialPopulation()
+{
+	_populationAges.resize(2);
+	_populationAges.at(0) = Engine::GeneralState::statistics().getUniformDistValue(15, 50);
+	_populationAges.at(1) = Engine::GeneralState::statistics().getUniformDistValue(15, 50);
+	int reproductiveYears = std::min(_populationAges.at(0), _populationAges.at(1));
+	// if more than 15 years, stick to 15 because other children are already independent
+	reproductiveYears = std::min(15,reproductiveYears);
+
+	// we create a set of children, taking into account mortality. It is assumed that parents survived the entire init period
+	for(int i=0; i<reproductiveYears; i++)
+	{
+		GujaratState::demographics().checkReproduction(*this);	
+		checkDeath( 0, 3, 10 );
+		checkDeath( 3, 15, 2 );
+		for(int j=2; j<_populationAges.size(); j++)
+		{
+			if(_populationAges.at(j) != -1)
+			{
+				_populationAges.at(j)++;
+			}
+		}
+	}
 }
 
 } // namespace Gujarat
