@@ -2,7 +2,7 @@
 #ifndef __GeneralState_hxx__
 #define __GeneralState_hxx__
 
-#include <Logger.hxx>
+#include <LoggerBase.hxx>
 #include <Statistics.hxx>
 #include <RasterLoader.hxx>
 #include <Serializer.hxx>

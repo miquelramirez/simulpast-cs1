@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2012
  * COMPUTER APPLICATIONS IN SCIENCE & ENGINEERING
@@ -17,30 +16,32 @@
  * 
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
- * 
  */
 
-#ifndef __Logger_hxx__
-#define __Logger_hxx__
+#ifndef __LoggerBase_hxx__
+#define __LoggerBase_hxx__
 
+#include <map>
+#include <fstream>
 
-#include <GeneralState.hxx>
+namespace Engine
+{
 
-// Extreme debug activated if pandora is compiled in edebug and edebug=1
-#ifdef PANDORAEDEBUG 
-#define log_EDEBUG(file, message) Engine::GeneralState::logger().log(file) << message << std::endl;
-#else
-#define log_EDEBUG(file, message)
-#endif
+class Logger
+{
+	typedef std::map <std::string, std::ofstream *> FilesMap;
 
-// DEBUG activated if pandora is compiled in debug
-#ifdef PANDORADEBUG 
-#define log_DEBUG(file, message) Engine::GeneralState::logger().log(file) << message << std::endl;
-#else
-#define log_DEBUG(file, message)
-#endif
+	FilesMap _files;
+	std::string _logsDir;
+public:
+	Logger();
+	virtual ~Logger();
+	// message to file
+	std::ofstream & log( const std::string & fileName );
+	void setLogsDir( const std::string & logsDir );
+};
 
-#define log_INFO(file, message) Engine::GeneralState::logger().log(file) << message << std::endl;
+} // namespace Engine
 
-#endif // __Logger_hxx__
+#endif // __LoggerBase_hxx__
 
