@@ -4,6 +4,8 @@
 #include <Statistics.hxx>
 #include <GeneralState.hxx>
 #include <GujaratAgent.hxx>
+#include <GujaratWorld.hxx>
+#include <GujaratConfig.hxx>
 
 namespace Gujarat
 {
@@ -23,6 +25,7 @@ bool	OriginalDemographics::checkEmigration(  GujaratAgent& agent )
 
 void	OriginalDemographics::checkMortality( GujaratAgent& agent )
 {
+
 	/*
 	// TODO check resources, now year, must be seasonal
 	int popSize = agent.getPopulationSize();
@@ -35,6 +38,9 @@ void	OriginalDemographics::checkMortality( GujaratAgent& agent )
 		agent.decimatePopulation();
 	}
 	*/
+
+	std::cout << "agent: " << this << " starved: " << agent.getStarved() << " days - percentage: " << agent.getPercentageOfStarvingDays() << std::endl;
+	agent.checkDeath(0, 1000, agent.getPercentageOfStarvingDays());
 
 	// Adult mortality check
 	agent.checkDeath( 15, 1000, 2 );

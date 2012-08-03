@@ -53,7 +53,7 @@ protected:
 	float _emigrationProbability; // MpiBasicAttribute
 	float _reproductionProbability; // MpiBasicAttribute
 
-	bool _starved; // MpiBasicAttribute
+	int _starved; // MpiBasicAttribute
 	
 	Engine::Point2D<int> getNearLocation( int range );
 
@@ -90,7 +90,7 @@ public:
 	double	computeMaxForagingDistance( ) const;
 	int	computeEffectiveBiomassForaged( int nominal ) const;
 	int	convertBiomassToCalories( int biomass ) const;
-	bool	starvationLastTimeStep() const { return _starved; }
+//	bool	starvationLastTimeStep() const { return _starved; }
 
 	void	setSurplusSpoilageFactor( float v ) { _surplusSpoilageFactor = v; }
 	float	getSurplusSpoilageFactor() const { return _surplusSpoilageFactor; }
@@ -121,6 +121,8 @@ public:
 	// in particular, both parents will have ages between 15 and 50
 	// taking into account the minimum age of parents a set of children is generated following the rules of the system
 	void createInitialPopulation();
+	float getPercentageOfStarvingDays() const;
+	int getStarved() const {return _starved;}
 };
 
 } // namespace Gujarat

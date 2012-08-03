@@ -16,7 +16,7 @@ namespace Gujarat
 GujaratAgent::GujaratAgent( const std::string & id ) 
 	: Engine::Agent(id), 
 	 _spentTime(0), _collectedResources(0), _age(0),
-	_socialRange( 50 ), _starved( false )
+	_socialRange( 50 ), _starved( 0 )
 {
 	_emigrationProbability = 0.0;
 	_reproductionProbability = 0.0;
@@ -77,29 +77,27 @@ void GujaratAgent::logAgentState()
 
 void GujaratAgent::updateState()
 {
-	/*
 	std::stringstream logName;
 	logName << "agents_" << _world->getId() << "_" << getId();
 
 	log_DEBUG( logName.str(), "\tagent.collectedResourcesAfterAction=" << getOnHandResources());
-	_collectedResources -= computeConsumedResources(1);
-	log_DEBUG( logName.str(), "\tagent.collectedResourcesAfterConsumption=" << getOnHandResources());
-	if ( _collectedResources < 0 )
+	int surplus = _collectedResources - computeConsumedResources(1);
+	log_DEBUG( logName.str(), "\tagent.collectedResourcesAfterConsumption=" << surplus);
+	if ( surplus < 0 )
 	{
-		_starved = true;
-		_emigrationProbability += 1.0f/(float)(((GujaratWorld*)_world)->getConfig()._daysPerSeason);
+		//_emigrationProbability += 1.0f/(float)(((GujaratWorld*)_world)->getConfig()._daysPerSeason);
 		log_DEBUG( logName.str(),  "\tagent.isStarving=yes");
-		_collectedResources = 0;
+		_starved++;
 	}
 	else
 	{
 		log_DEBUG( logName.str(), "\tagent.isStarving=no");
-		_starved = false;
-		_reproductionProbability += 1.0/(float)(3*((GujaratWorld*)_world)->getConfig()._daysPerSeason);
+		//_reproductionProbability += 1.0/(float)(3*((GujaratWorld*)_world)->getConfig()._daysPerSeason);
 		// Decay factor, modeling spoilage
-		_collectedResources *= getSurplusSpoilageFactor();
+		//_collectedResources *= getSurplusSpoilageFactor();
 	}
 
+	/*
 	if ( (getWorld()->getCurrentTimeStep() % ((GujaratWorld*)_world)->getConfig()._daysPerSeason == 0) 
 		&& (getWorld()->getCurrentTimeStep() > ((GujaratWorld*)_world)->getConfig()._daysPerSeason-1) ) 
 	{
@@ -113,8 +111,7 @@ void GujaratAgent::updateState()
 	*/
 	
 	// end of year, evaluate reproduction, mortality and update age
-	if((getWorld()->getCurrentTimeStep() % ((GujaratWorld*)_world)->getConfig()._daysPerYear == 0) && getWorld()->getCurrentTimeStep()!=0)
-	//	&& (getWorld()->getCurrentTimeStep() > ((GujaratWorld*)_world)->getConfig()._daysPerYear-1) ) // last day of the year
+	if((getWorld()->getCurrentTimeStep() % ((GujaratWorld*)_world)->getConfig()._daysPerYear == ((GujaratWorld*)_world)->getConfig()._daysPerYear -1))
 	{
 		updateAges();
 		checkMortality();
@@ -132,6 +129,7 @@ void GujaratAgent::updateState()
 			}
 		}
 		std::cout << " total: " << numChildren << std::endl;
+		_starved = 0;
 	}
 }
 
@@ -487,6 +485,12 @@ void GujaratAgent::createInitialPopulation()
 			}
 		}
 	}
+}
+	
+float GujaratAgent::getPercentageOfStarvingDays() const
+{
+	GujaratWorld * world = (GujaratWorld*)_world;
+	return float(_starved*100)/float((world->getConfig()._daysPerYear));
 }
 
 } // namespace Gujarat

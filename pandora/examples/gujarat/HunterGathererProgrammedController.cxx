@@ -25,14 +25,12 @@ HunterGathererProgrammedController::~HunterGathererProgrammedController()
 
 MDPAction*	HunterGathererProgrammedController::selectAction( GujaratAgent & agent )
 {
-	/*
 	// TODO: which order must follow the actions? random?
 	// now random
 
 	// action pack : move Home, hunting, gathering
 	int dice = Engine::GeneralState::statistics().getUniformDistValue(1,10);
-
-	if ( dice >= 8 ) // p=0.2 agent chooses to move its home
+	if ( dice > 8 ) // p=0.2 agent chooses to move its home
 	{
 		std::vector< MoveHomeAction* > possibleActions;
 		MoveHomeAction::generatePossibleActions( agent, possibleActions );
@@ -40,11 +38,15 @@ MDPAction*	HunterGathererProgrammedController::selectAction( GujaratAgent & agen
 		// MRJ: Select Move Home action on a random basis
 		dice = Engine::GeneralState::statistics().getUniformDistValue( 0, possibleActions.size() - 1 );
 
-		MoveHomeAction* selectedAction = possibleActions[dice];
-		possibleActions[dice] = NULL;
+		MoveHomeAction* selectedAction = possibleActions.at(dice);
+		possibleActions[dice] = 0;
 		for ( unsigned i = 0; i < possibleActions.size(); i++ )
-			if ( possibleActions[i] != NULL )
+		{
+			if (possibleActions.at(i))
+			{
 				delete possibleActions[i];
+			}
+		}
 		return selectedAction;
 	}
 
@@ -57,8 +59,7 @@ MDPAction*	HunterGathererProgrammedController::selectAction( GujaratAgent & agen
 	} while ( agentConcrete.getSectors()[dice]->isEmpty() );
 
 	return new ForageAction( agentConcrete.getSectors()[dice] );
-	*/
-	return new DoNothingAction();
 }
 
-}
+} // namespace Gujarat
+

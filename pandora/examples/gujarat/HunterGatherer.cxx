@@ -35,6 +35,7 @@ void HunterGatherer::registerAttributes()
 	registerIntAttribute("female age");
 	registerIntAttribute("children");
 	registerIntAttribute("collected resources");
+	registerIntAttribute("starving days");
 	log_DEBUG(logName.str(), "registering attributes for type: " << getType() << " finished");
 }
 
@@ -80,11 +81,17 @@ void HunterGatherer::updateKnowledge( 	const Engine::Point2D<int>& agentPos,
 	{
 		sectors[k]->updateFeatures(dataRaster);
 	}
-
 }
 
 void HunterGatherer::updateKnowledge()
 {
+	// H/G can't preserve resources
+	std::cout << "collected from last time: " << _collectedResources << " surplus: " << _collectedResources - computeConsumedResources(1);
+	//_collectedResources -= computeConsumedResources(1);
+	//_collectedResources *= getSurplusSpoilageFactor();
+
+	std::cout << " spoiled: " << _collectedResources << " needed resources: " << computeConsumedResources(1) <<  std::endl;
+	_collectedResources = 0;
 	std::stringstream logName;
 	logName << "agents_" << _world->getId() << "_" << getId();
 
@@ -108,7 +115,7 @@ void HunterGatherer::updateKnowledge()
 			//std::cout << "DONE!" <<  std::endl;
 		}
 	}
-
+	
 	log_DEBUG(logName.str(), "create sectors with home range: " << _homeRange);
 	for ( int x=-_homeRange; x<=_homeRange; x++ )
 	{
@@ -150,14 +157,12 @@ void HunterGatherer::selectActions()
 
 GujaratAgent * HunterGatherer::createNewAgent()
 {	
-	std::cout << "creating new agent" << std::endl;
 	GujaratWorld * world = (GujaratWorld*)_world;
 	std::ostringstream oss;
 	oss << "HunterGatherer_" << world->getId() << "-" << world->getNewKey();
 	
 	HunterGatherer * agent = new HunterGatherer(oss.str());
 
-	std::cout << "created, filling in: " << agent << std::endl;
 	agent->setSocialRange( _socialRange );
 	agent->setHomeMobilityRange( _homeMobilityRange );
 	agent->setHomeRange( _homeRange );
@@ -166,17 +171,16 @@ GujaratAgent * HunterGatherer::createNewAgent()
 	agent->setNumSectors( _sectors.size() );
 	// initially the agent will be a couple
 	agent->_populationAges.resize(2);
-	std::cout << "creating new agent done" << std::endl;
 
 	return agent;
 }
 
-bool	HunterGatherer::needsResources()
+bool HunterGatherer::needsResources()
 {
 	return _collectedResources < (_surplusForReproductionThreshold + _surplusWanted);
 }
 
-bool	HunterGatherer::cellValid( Engine::Point2D<int>& loc )
+bool HunterGatherer::cellValid( Engine::Point2D<int>& loc )
 {
 	if ( !_world->getOverlapBoundaries().isInside(loc) )
 		return false;
@@ -198,7 +202,7 @@ bool	HunterGatherer::cellValid( Engine::Point2D<int>& loc )
 	return true;
 }
 
-bool	HunterGatherer::cellRelevant( Engine::Point2D<int>& loc )
+bool HunterGatherer::cellRelevant( Engine::Point2D<int>& loc )
 {
 	Soils soilType = (Soils) _world->getValue("soils", loc);
 	int resourceType = _world->getValue("resourceType", loc);
@@ -241,6 +245,7 @@ void HunterGatherer::serialize()
 	}
 	serializeAttribute("children", numChildren);
 	serializeAttribute("collected resources", _collectedResources);
+	serializeAttribute("starving days", _starved);
 }
 
 } // namespace Gujarat
