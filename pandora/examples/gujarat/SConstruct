@@ -46,7 +46,6 @@ else:
 
 linkFlags = Split('-fopenmp')
 libs = Split('tinyxml pthread grass_gis grass_datetime')
-#libs = Split('pthread mpich pandorad gdal hdf5 tinyxml grass_gis')
 if int(release) == 0:
 	env['CCFLAGS'] = Split('-g -O0 -Wall -DTIXML_USE_STL -fopenmp -DPANDORADEBUG')
 	if int(extremeDebug)==1:
