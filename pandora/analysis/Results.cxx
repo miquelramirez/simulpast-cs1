@@ -108,6 +108,10 @@ void AgentResults::concreteApply() const
 	}
 	else
 	{
+		if(!_simRecord.hasAgentType(_type))
+		{
+			return;
+		}
 		for(AnalysisList::const_iterator itL=_analysisList.begin(); itL!=_analysisList.end(); itL++)
 		{
 			std::cout << "Computing analysis: " << (*itL)->getName() << "...";

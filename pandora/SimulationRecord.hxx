@@ -111,6 +111,7 @@ public:
 	AgentRecordsMap::const_iterator beginAgents( AgentTypesMap::const_iterator & it ) const;
 	AgentRecordsMap::const_iterator endAgents( AgentTypesMap::const_iterator & it ) const;
 
+	bool hasAgentType( const std::string & type ) const;
 	AgentTypesMap::const_iterator beginTypes() const;
 	AgentTypesMap::const_iterator endTypes() const;
 

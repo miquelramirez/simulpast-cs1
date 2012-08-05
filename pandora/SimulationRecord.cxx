@@ -524,6 +524,16 @@ int SimulationRecord::getResolution() const
 	return _resolution;
 }
 
+bool SimulationRecord::hasAgentType( const std::string & type ) const
+{
+	AgentTypesMap::const_iterator it = _types.find(type);
+	if(it==_types.end())
+	{
+		return false;
+	}
+	return true;
+}
+
 SimulationRecord::AgentTypesMap::const_iterator SimulationRecord::beginTypes() const
 {
 	return _types.begin();
