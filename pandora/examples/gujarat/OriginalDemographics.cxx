@@ -40,7 +40,7 @@ void	OriginalDemographics::checkMortality( GujaratAgent& agent )
 	*/
 
 	std::cout << "agent: " << this << " starved: " << agent.getStarved() << " days - percentage: " << agent.getPercentageOfStarvingDays() << std::endl;
-	agent.checkDeath(0, 1000, agent.getPercentageOfStarvingDays());
+	agent.checkDeath(0, 1000, agent.getPercentageOfStarvingDays()/10);
 
 	// Adult mortality check
 	agent.checkDeath( 15, 1000, 2 );
@@ -55,12 +55,12 @@ void	OriginalDemographics::checkReproduction( GujaratAgent& agent )
 {
 	if (!agent.canReproduce()) return;
 	
-	// 50% chance of having new child
-	/*
+	// regular behavior is 1 child every 2 years
 	if(Engine::GeneralState::statistics().getUniformDistValue(0,1)==0)
+	{
 		agent.addNewChild();
-	*/
-	agent.addNewChild();
+	}
+	//agent.addNewChild();
 }
 
 }

@@ -473,7 +473,7 @@ void GujaratAgent::createInitialPopulation()
 
 	// we create a set of children, taking into account mortality. It is assumed that parents survived the entire init period
 	for(int i=0; i<reproductiveYears; i++)
-	{
+	{		
 		GujaratState::demographics().checkReproduction(*this);	
 		checkDeath( 0, 3, 10 );
 		checkDeath( 3, 15, 2 );

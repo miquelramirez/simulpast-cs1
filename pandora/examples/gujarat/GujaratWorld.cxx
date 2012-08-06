@@ -55,8 +55,12 @@ void GujaratWorld::createRasters()
 	registerDynamicRaster("moisture", _config.isStorageRequired("moisture"));
 	getDynamicRaster("moisture").setInitValues(0, std::numeric_limits<int>::max(), 0);
 	*/
-	registerDynamicRaster("resources", _config.isStorageRequired("resources")); // DEBUG Resources will be generated with an explicit function
+	registerDynamicRaster("resources", _config.isStorageRequired("resources"));
 	getDynamicRaster("resources").setInitValues(0, std::numeric_limits<int>::max(), 0);
+	// we need to keep track of resource fractions
+	registerDynamicRaster("resourcesFraction", false);
+	getDynamicRaster("resourcesFraction").setInitValues(0, 100, 0);
+	
 	registerDynamicRaster("forageActivity", _config.isStorageRequired("forageActivity")); 
 	getDynamicRaster("forageActivity").setInitValues(0, std::numeric_limits<int>::max(), 0);
 	registerDynamicRaster("homeActivity", _config.isStorageRequired("homeActivity"));
@@ -301,19 +305,27 @@ void GujaratWorld::updateResources()
 			// 3. Increment or Decrement cell biomass depending on yearly biomass
 			//    figures and current timestep
 			int currentValue = getValue("resources", index);
+			float currentFraction = (float)getValue("resourcesFraction", index)/100.0f;
 			Soils cellSoil = (Soils)getValue("soils", index);
 			if(cellSoil!=WATER)
 			{
 				Seasons season = _climate.getSeason();
 				// increasing biomass
+				float newValue = 0;
 				if(season==HOTWET)
 				{
-					setValue("resources", index,  std::max(0.0f, currentValue+_dailyRainSeasonBiomassIncrease[cellSoil]));
+					newValue = std::max(0.0f, currentValue+currentFraction+_dailyRainSeasonBiomassIncrease[cellSoil]);
+					//setValue("resources", index,  std::max(0.0f, currentValue+_dailyRainSeasonBiomassIncrease[cellSoil]));
 				}			
 				else
 				{
-					setValue("resources", index,  std::max(0.0f, currentValue-_dailyDrySeasonBiomassDecrease[cellSoil]));
+					newValue = std::max(0.0f, currentValue+currentFraction-_dailyDrySeasonBiomassDecrease[cellSoil]);
 				}
+				currentValue = newValue;
+				float fraction = 100.0f*(newValue  - currentValue);
+				//std::cout << "new value: " << newValue << " int: " << currentValue << " fraction: " << (int)fraction << std::endl;
+				setValue("resources", index, currentValue);
+				setValue("resourcesFraction", index, (int)fraction);
 			}
 		}
 	}

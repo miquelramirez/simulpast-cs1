@@ -29,7 +29,7 @@
 	<dem fileName="./resources/1200/dem_1200.tiff" size="1200"/>
 	<duneMap fileName="./resources/1200/dunes_1200_low.tiff" size="1200"/>
 	<!-- Climatic model parameters -->
-	<climateSeed value="432432"/>
+	<climateSeed value="21321321"/>
 	<rainHistoricalDistribution shape="2.628" scale="5278.807" mean="4643.847826087"/>
 	<!-- Agents definition -->
 	<!-- overlap will be defined as homeRange + 1. It must be < 1/4 of world size -->
@@ -37,7 +37,7 @@
 	<!-- * Available Forage Time = # hours a day the forage action takes -->
 	<!-- * forageTimeCost = how much time (in hours) does it cost the agent to exploit a tile resources -->
 	<hunterGatherers 
-		num="1" homeRange="100"
+		num="100" homeRange="100"
 		surplusForReproductionThreshold="2" 
 		surplusWanted="1"
 		surplusSpoilage="1.0"		
@@ -48,7 +48,7 @@
 		forageTimeCost="0.5"
 		availableForageTime="4.5"
 		demographicsModel="original"
-		controllerType="MDP" >
+		controllerType="DecisionTree" >
 		<!-- * width = number of trials before selecting an action, the higher the
 		 	the number, the more informed is the action selection and more
 			computation time is required -->
@@ -60,8 +60,8 @@
 					nrForageActions="8"
 					nrMoveHomeActions="5"
 					doNothingIsAllowed="true"
-					horizon="7"
-					width="100"
+					horizon="4"
+					width="30"
 					explorationBonus ="10.0"
 		/>
 		<!-- TODO: Proposal for representing individual initialization
@@ -91,7 +91,7 @@
 	<storeRaster name="soils" value="yes" />
 	<storeRaster name="dem" value="yes" />
 	<storeRaster name="moisture" value="no" />
-	<storeRaster name="resources" value="yes" />
+	<storeRaster name="resources" value="no" />
 	<storeRaster name="forageActivity" value="no" />
 	<storeRaster name="homeActivity" value="no" />
 	<storeRaster name="farmingActivity" value="no" />

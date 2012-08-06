@@ -35,7 +35,7 @@ void HunterGatherer::registerAttributes()
 	registerIntAttribute("female age");
 	registerIntAttribute("children");
 	registerIntAttribute("collected resources");
-	registerIntAttribute("starving days");
+	registerIntAttribute("starving");
 	log_DEBUG(logName.str(), "registering attributes for type: " << getType() << " finished");
 }
 
@@ -47,9 +47,7 @@ HunterGatherer::~HunterGatherer()
 	}
 }
 
-void HunterGatherer::updateKnowledge( 	const Engine::Point2D<int>& agentPos,
-					const Engine::Raster& dataRaster, 
-					std::vector<Sector*>& sectors ) const
+void HunterGatherer::updateKnowledge( const Engine::Point2D<int>& agentPos, const Engine::Raster& dataRaster, std::vector<Sector*>& sectors ) const
 {
 	for ( unsigned k = 0; k < _numSectors; k++ )
 	{
@@ -86,11 +84,11 @@ void HunterGatherer::updateKnowledge( 	const Engine::Point2D<int>& agentPos,
 void HunterGatherer::updateKnowledge()
 {
 	// H/G can't preserve resources
-	std::cout << "collected from last time: " << _collectedResources << " surplus: " << _collectedResources - computeConsumedResources(1);
+	//std::cout << "collected from last time: " << _collectedResources << " surplus: " << _collectedResources - computeConsumedResources(1);
 	//_collectedResources -= computeConsumedResources(1);
 	//_collectedResources *= getSurplusSpoilageFactor();
 
-	std::cout << " spoiled: " << _collectedResources << " needed resources: " << computeConsumedResources(1) <<  std::endl;
+	//std::cout << " spoiled: " << _collectedResources << " needed resources: " << computeConsumedResources(1) <<  std::endl;
 	_collectedResources = 0;
 	std::stringstream logName;
 	logName << "agents_" << _world->getId() << "_" << getId();
@@ -245,7 +243,7 @@ void HunterGatherer::serialize()
 	}
 	serializeAttribute("children", numChildren);
 	serializeAttribute("collected resources", _collectedResources);
-	serializeAttribute("starving days", _starved);
+	serializeAttribute("starving", getPercentageOfStarvingDays());
 }
 
 } // namespace Gujarat
