@@ -166,7 +166,15 @@ GujaratAgent * HunterGatherer::createNewAgent()
 	agent->setHomeRange( _homeRange );
 	agent->setSurplusForReproductionThreshold( _surplusForReproductionThreshold );
 	agent->setSurplusWanted( _surplusWanted );
+	agent->setSurplusSpoilageFactor( _surplusSpoilageFactor );
+	agent->setFoodNeedsForReproduction( _foodNeedsForReproduction );			
+
+	agent->setWalkingSpeedHour( _walkingSpeedHour );
+	agent->setForageTimeCost( _forageTimeCost );
+	agent->setAvailableForageTime( _availableForageTime );
+	agent->setMassToCaloriesRate( _massToCaloriesRate );
 	agent->setNumSectors( _sectors.size() );
+	
 	// initially the agent will be a couple
 	agent->_populationAges.resize(2);
 
