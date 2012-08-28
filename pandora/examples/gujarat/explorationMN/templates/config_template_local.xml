@@ -2,13 +2,13 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="data_controllerCTYPE_sizeMAPSIZE_hgNUMHG_exNUMEXEC/gujarat.h5" logsDir="logs_controllerCTYPE_sizeMAPSIZE_hgNUMHG_exNUMEXEC"/>
-	<numSteps value="14400"/>
+	<numSteps value="18000"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
 	<energyToCaloriesRate value="0.239006" />
 	<!-- Global agent parameters !-->
-	<socialRange value="25" />
+	<socialRange value="100" />
 	<!-- Simulation time scale -->
 	<daysPerSeason value="120" />
 	<daysPerYear value="360" />
@@ -60,8 +60,8 @@
 					nrForageActions="8"
 					nrMoveHomeActions="5"
 					doNothingIsAllowed="true"
-					horizon="7"
-					width="100"
+					horizon="3"
+					width="20"
 					explorationBonus ="10.0"
 		/>
 		<!-- TODO: Proposal for representing individual initialization
