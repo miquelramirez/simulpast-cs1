@@ -39,14 +39,24 @@ void	OriginalDemographics::checkMortality( GujaratAgent& agent )
 	}
 	*/
 
-	std::cout << "agent: " << agent << " starved: " << agent.getStarved() << " days - percentage: " << agent.getPercentageOfStarvingDays() << std::endl;
-	//agent.checkDeath(0, 1000, agent.getPercentageOfStarvingDays());
+	int originalPopulation = agent.getPopulationSize();
+	int popSize = agent.getPopulationSize();
+	agent.checkDeath(0, 1000, agent.getPercentageOfStarvingDays());
+	int deathByStarvation = popSize - agent.getPopulationSize();
+	popSize = agent.getPopulationSize();
 
 	// Adult mortality check
 	agent.checkDeath( 15, 1000, 2 );
+	agent.checkDeath( 3, 15, 2 );
+	int adultsNaturalDeath = popSize - agent.getPopulationSize();
+	popSize = agent.getPopulationSize();
 	// Children mortality check
 	agent.checkDeath( 0, 3, 10 );
-	agent.checkDeath( 3, 15, 2 );
+	int childNaturalDeath = popSize - agent.getPopulationSize();
+	popSize = agent.getPopulationSize();
+
+	std::cout << "agent: " << agent << " starved: " << agent.getStarved() << " days - percentage: " << agent.getPercentageOfStarvingDays() << " original pop: " << originalPopulation << " current pop: " << popSize << " death by starvation: " << deathByStarvation << " adults natural death: " << adultsNaturalDeath << " children natural death: " << childNaturalDeath << std::endl;
+	
 	// Old age death check
 	//agent.checkDeathByAging( 50 );
 }
