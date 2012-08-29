@@ -4,9 +4,9 @@ import fileinput, sys, os, random
 #mapSizes = ['400','800','1600']
 mapSizes = ['800']
 
-numExecutions = 1
-numHGs = ['50']
-controllers = ['DecisionTree']
+numExecutions = 2
+numHGs = ['10']
+controllers = ['DecisionTree', 'MDP']
 
 xmlTemplate = 'templates/config_template_local.xml'
 runTemplate = 'templates/run_template.cmd'
