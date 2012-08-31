@@ -43,15 +43,15 @@ protected:
 	int _homeMobilityRange; // MpiBasicAttribute
 
 	float _massToCaloriesRate; // MpiBasicAttribute
-	float _surplusSpoilageFactor; // MpiBasicAttribute
+	//float _surplusSpoilageFactor;
 	
-	float   _foodNeedsForReproduction; // MpiBasicAttribute
+	//float   _foodNeedsForReproduction;
 
 	float _walkingSpeedHour; // MpiBasicAttribute
 	float _forageTimeCost; // MpiBasicAttribute
 	float _availableForageTime; // MpiBasicAttribute
-	float _emigrationProbability; // MpiBasicAttribute
-	float _reproductionProbability; // MpiBasicAttribute
+	//float _emigrationProbability; 
+	//float _reproductionProbability;
 
 	int _starved; // MpiBasicAttribute
 	
@@ -92,10 +92,10 @@ public:
 	int	convertBiomassToCalories( int biomass ) const;
 //	bool	starvationLastTimeStep() const { return _starved; }
 
-	void	setSurplusSpoilageFactor( float v ) { _surplusSpoilageFactor = v; }
-	float	getSurplusSpoilageFactor() const { return _surplusSpoilageFactor; }
+	//void	setSurplusSpoilageFactor( float v ) { _surplusSpoilageFactor = v; }
+	//float	getSurplusSpoilageFactor() const { return _surplusSpoilageFactor; }
 
-	void 	setFoodNeedsForReproduction( float v) { _foodNeedsForReproduction = v; }
+	//void 	setFoodNeedsForReproduction( float v) { _foodNeedsForReproduction = v; }
 	
 	void	setWalkingSpeedHour( float v ) { _walkingSpeedHour = v; }
 	float	getWalkingSpeedHour() const { return _walkingSpeedHour; }
@@ -106,10 +106,10 @@ public:
 	void	setAvailableForageTime( float v ) { _availableForageTime = v; }
 	float	getAvailableForageTime() const { return _availableForageTime; }
 
-	void	setEmigrationProbability( float v ) { _emigrationProbability = v; }
-	float	getEmigrationProbability() const { return _emigrationProbability; }
-	void	setReproductionProbability( float v ) { _reproductionProbability = v; }
-	float	getReproductionProbability() const { return _reproductionProbability; }
+	//void	setEmigrationProbability( float v ) { _emigrationProbability = v; }
+	//float	getEmigrationProbability() const { return _emigrationProbability; }
+	//void	setReproductionProbability( float v ) { _reproductionProbability = v; }
+	//float	getReproductionProbability() const { return _reproductionProbability; }
 
 	double	getTimeSpentForagingTile() const;
 

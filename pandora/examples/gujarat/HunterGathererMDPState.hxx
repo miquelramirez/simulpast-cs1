@@ -60,7 +60,7 @@ public:
 	
 	int					getDaysStarving() const { return _daysStarving; }
 
-	void					spoilage( float v ) { _onHandResources = (float)_onHandResources * v; }
+	//void					spoilage( float v ) { _onHandResources = (float)_onHandResources * v; }
 	void					setLocation( Engine::Point2D<int> newLoc ) { _mapLocation = newLoc; }
 	const Engine::Point2D<int>&		getLocation() const { return _mapLocation; }
 	Engine::IncrementalRaster&		getResourcesRaster() { return _resources; }

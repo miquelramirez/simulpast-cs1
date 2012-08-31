@@ -11,8 +11,8 @@ class ForageAction;
 
 class HunterGatherer : public GujaratAgent
 {	
-	int 					_surplusForReproductionThreshold; // MpiBasicAttribute
-	int 					_surplusWanted; // MpiBasicAttribute
+	//int 					_surplusForReproductionThreshold;
+	//int 					_surplusWanted;
 	int 					_homeRange; // MpiBasicAttribute
 	int 					_numSectors; // MpiBasicAttribute
 
@@ -38,13 +38,13 @@ public:
 	int  getNumSectors() const { return _numSectors; }
 	std::vector<Sector *>&	getSectors() { return _sectors; }
 
-	void setSurplusForReproductionThreshold( int v ) { _surplusForReproductionThreshold = v; }
-	void setSurplusWanted( int v ) { _surplusWanted = v; }
+	//void setSurplusForReproductionThreshold( int v ) { _surplusForReproductionThreshold = v; }
+	//void setSurplusWanted( int v ) { _surplusWanted = v; }
 	bool cellValid( Engine::Point2D<int>& loc );
 	bool cellRelevant( Engine::Point2D<int>& loc );
 	
-	bool needsResources(int timeSteps);
-	bool needsResources();
+//	bool needsResources(int timeSteps);
+//	bool needsResources();
 
 	void		updateResources( int v ) { _collectedResources += v; }
 	void		updateKnowledge( 	const Engine::Point2D<int>& agentPos, const Engine::Raster& dataRaster, std::vector< Sector* >& sectors )const;

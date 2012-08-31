@@ -16,7 +16,7 @@ namespace Gujarat
 {
 
 HunterGatherer::HunterGatherer( const std::string & id ) 
-	: GujaratAgent(id), _surplusForReproductionThreshold(2), _surplusWanted(1), _homeRange(50),
+	: GujaratAgent(id)/*, _surplusForReproductionThreshold(2), _surplusWanted(1)*/, _homeRange(50),
 	_numSectors( -1 )
 {
 }
@@ -164,10 +164,10 @@ GujaratAgent * HunterGatherer::createNewAgent()
 	agent->setSocialRange( _socialRange );
 	agent->setHomeMobilityRange( _homeMobilityRange );
 	agent->setHomeRange( _homeRange );
-	agent->setSurplusForReproductionThreshold( _surplusForReproductionThreshold );
-	agent->setSurplusWanted( _surplusWanted );
-	agent->setSurplusSpoilageFactor( _surplusSpoilageFactor );
-	agent->setFoodNeedsForReproduction( _foodNeedsForReproduction );			
+	//agent->setSurplusForReproductionThreshold( _surplusForReproductionThreshold );
+	//agent->setSurplusWanted( _surplusWanted );
+	//agent->setSurplusSpoilageFactor( _surplusSpoilageFactor );
+	//agent->setFoodNeedsForReproduction( _foodNeedsForReproduction );			
 
 	agent->setWalkingSpeedHour( _walkingSpeedHour );
 	agent->setForageTimeCost( _forageTimeCost );
@@ -181,10 +181,12 @@ GujaratAgent * HunterGatherer::createNewAgent()
 	return agent;
 }
 
+/*
 bool HunterGatherer::needsResources()
 {
 	return _collectedResources < (_surplusForReproductionThreshold + _surplusWanted);
 }
+*/
 
 bool HunterGatherer::cellValid( Engine::Point2D<int>& loc )
 {

@@ -18,8 +18,8 @@ GujaratAgent::GujaratAgent( const std::string & id )
 	 _spentTime(0), _collectedResources(0), _age(0),
 	_socialRange( 50 ), _starved( 0 )
 {
-	_emigrationProbability = 0.0;
-	_reproductionProbability = 0.0;
+	//_emigrationProbability = 0.0;
+	//_reproductionProbability = 0.0;
 }
 
 GujaratAgent::~GujaratAgent()
@@ -295,13 +295,11 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 	{
 		if(_populationAges[index]!=-1)
 		{
-			CaloricRequirementsTable & foo = GujaratState::caloricRequirements(getType());
-			requiredResources += foo.getCaloriesFor(_populationAges[index]);
+			CaloricRequirementsTable & table = GujaratState::caloricRequirements(getType());
+			requiredResources += table.getCaloriesFor(_populationAges[index]);
 		}
 	}
-	
-	requiredResources += _foodNeedsForReproduction;
-	
+	//requiredResources += _foodNeedsForReproduction;
 	return requiredResources * timeSteps;	
 }
 
@@ -467,6 +465,12 @@ void	GujaratAgent::addNewChild()
 
 void GujaratAgent::createInitialPopulation()
 {
+	_populationAges.resize(4);
+	_populationAges[0] = 25;
+	_populationAges[1] = 22;
+	_populationAges[2] = 5;
+	_populationAges[3] = 7;
+	/*
 	_populationAges.resize(2);
 	_populationAges.at(0) = Engine::GeneralState::statistics().getUniformDistValue(15, 50);
 	_populationAges.at(1) = Engine::GeneralState::statistics().getUniformDistValue(15, 50);
@@ -488,6 +492,7 @@ void GujaratAgent::createInitialPopulation()
 			}
 		}
 	}
+	*/
 }
 	
 float GujaratAgent::getPercentageOfStarvingDays() const
