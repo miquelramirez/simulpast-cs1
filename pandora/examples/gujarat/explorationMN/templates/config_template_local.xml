@@ -2,10 +2,10 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="data_controllerCTYPE_sizeMAPSIZE_hgNUMHG_exNUMEXEC/gujarat.h5" logsDir="logs_controllerCTYPE_sizeMAPSIZE_hgNUMHG_exNUMEXEC"/>
-	<numSteps value="18000"/>
+	<numSteps value="360"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
-	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
+	<!-- 1 Cal = 4.184 KJ, Conversion Rate = 1/4.184 -->
 	<energyToCaloriesRate value="0.239006" />
 	<!-- Global agent parameters !-->
 	<socialRange value="100" />
@@ -38,10 +38,6 @@
 	<!-- * forageTimeCost = how much time (in hours) does it cost the agent to exploit a tile resources -->
 	<hunterGatherers 
 		num="NUMHG" homeRange="100"
-		surplusForReproductionThreshold="2" 
-		surplusWanted="1"
-		surplusSpoilage="0.25"		
-		foodNeedsForReproduction="500.0"
 		adulthoodAge="15"
 		numSectors="8"
 		walkingSpeedHour="3000"
@@ -67,21 +63,11 @@
 		<!-- TODO: Proposal for representing individual initialization
 		<initialization type="randomized" />
 		-->
-		<initialization type="fixed" >	
-			<individual age="15"/>
-			<individual age="15"/>
-		</initialization>
 		<caloriesTable>
 			<entry ageMin="0" ageMax="1000" value="2000"/>
 		</caloriesTable>
 	</hunterGatherers>
-	<agroPastoralists num="0" 
-		maxCropHomeDistance="10" >
-		<initialization type="fixed" >	
-			<individual age="15"/>
-			<individual age="15"/>
-		</initialization>
-
+	<agroPastoralists num="0" maxCropHomeDistance="10" >
 		<caloriesTable>
 			<entry ageMin="0" ageMax="1000" value="2000"/>
 		</caloriesTable>
