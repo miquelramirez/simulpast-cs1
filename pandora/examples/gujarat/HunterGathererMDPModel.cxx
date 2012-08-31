@@ -71,6 +71,7 @@ bool HunterGathererMDPModel::applicable( const HunterGathererMDPState& s,
 float HunterGathererMDPModel::cost( const HunterGathererMDPState& s,
 					action_t a ) const
 {
+	// TODO XRC: what is that 10??
 	float cost = s.getDaysStarving()*10;
 	cost += s.availableActions(a)->getTimeNeeded();
 	return cost;
@@ -93,7 +94,7 @@ void HunterGathererMDPModel::next( 	const HunterGathererMDPState &s,
 void	HunterGathererMDPModel::applyFrameEffects( const HunterGathererMDPState& s,  HunterGathererMDPState& sp ) const
 {
 	sp.consume();
-	sp.spoilage( agentRef().getSurplusSpoilageFactor() );
+	//sp.spoilage( agentRef().getSurplusSpoilageFactor() );
 	sp.increaseTimeIndex();
 }
 

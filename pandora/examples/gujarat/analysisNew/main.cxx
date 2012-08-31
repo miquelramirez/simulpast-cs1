@@ -19,15 +19,15 @@
  * 
  */
 
-#include "Exceptions.hxx"
-#include "SimulationRecord.hxx"
+#include <Exceptions.hxx>
+#include <SimulationRecord.hxx>
 
-#include "analysis/Results.hxx"
-#include "analysis/AgentMean.hxx"
-#include "analysis/AgentSum.hxx"
-#include "analysis/RasterMean.hxx"
-#include "analysis/RasterSum.hxx"
-#include "analysis/AgentNum.hxx"
+#include <analysis/Results.hxx>
+#include <analysis/AgentMean.hxx>
+#include <analysis/AgentSum.hxx>
+#include <analysis/RasterMean.hxx>
+#include <analysis/RasterSum.hxx>
+#include <analysis/AgentNum.hxx>
 #include <analysis/AgentHDFtoSHP.hxx>
 #include <iostream>
 

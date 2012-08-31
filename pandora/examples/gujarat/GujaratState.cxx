@@ -5,8 +5,8 @@
 #include <Exceptions.hxx>
 #include <CaloricRequirementsTable.hxx>
 #include <GujaratDemographics.hxx>
-#include <RamirezDemographics.hxx>
-#include <AlexisDemographics.hxx>
+//#include <RamirezDemographics.hxx>
+//#include <AlexisDemographics.hxx>
 #include <OriginalDemographics.hxx>
 #include <AgentController.hxx>
 #include <Geometry.hxx>
@@ -116,7 +116,9 @@ void GujaratState::setDemographics( const std::string & model )
 	{
 		delete _demographics;
 	}
+	_demographics = new OriginalDemographics;
 
+	/*
 	if(model.compare("original")==0)
 	{
 		_demographics = new OriginalDemographics;
@@ -132,11 +134,13 @@ void GujaratState::setDemographics( const std::string & model )
 		_demographics = new AlexisDemographics;
 		return;
 	}
-	
-	
+	*/
+
+	/*
 	std::stringstream oss;
 	oss << "GujaratState::setDemographics() - unknown model: " << model;
 	throw Engine::Exception(oss.str());
+	*/
 }
 
 GujaratDemographics & GujaratState::demographics()

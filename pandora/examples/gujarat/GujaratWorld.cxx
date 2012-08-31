@@ -108,11 +108,11 @@ void GujaratWorld::createAgents()
 			agent->setSocialRange( _config._socialRange );
 			agent->setHomeMobilityRange( _config._homeRange );
 			agent->setHomeRange( _config._homeRange );
-			agent->setSurplusForReproductionThreshold( _config._surplusForReproductionThreshold );
-			agent->setSurplusWanted( _config._surplusWanted );
-			agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
+			//agent->setSurplusForReproductionThreshold( _config._surplusForReproductionThreshold );
+			//agent->setSurplusWanted( _config._surplusWanted );
+			//agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
 			
-			agent->setFoodNeedsForReproduction(_config._hgFoodNeedsForReproduction);			
+			//agent->setFoodNeedsForReproduction(_config._hgFoodNeedsForReproduction);			
 			agent->setWalkingSpeedHour( _config._walkingSpeedHour / _config._cellResolution );
 			agent->setForageTimeCost( _config._forageTimeCost );
 			agent->setAvailableForageTime( _config._availableForageTime );
@@ -134,7 +134,7 @@ void GujaratWorld::createAgents()
 			addAgent(agent); 
 			_config._apInitializer->initialize(agent);
 			agent->setSocialRange( _config._socialRange );
-			agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
+			//agent->setSurplusSpoilageFactor( _config._surplusSpoilage );
 			agent->setHomeMobilityRange( _config._socialRange );
 			agent->setMaxCropHomeDistance( _config._maxCropHomeDistance );
 			agent->setMassToCaloriesRate( _config._massToEnergyRate * _config._energyToCalRate );

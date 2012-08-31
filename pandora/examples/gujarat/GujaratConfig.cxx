@@ -48,11 +48,11 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 	element = root->FirstChildElement("hunterGatherers");
 	retrieveAttributeMandatory( element, "num", _numHG );
 	retrieveAttributeMandatory( element, "homeRange", _homeRange );
-	retrieveAttributeMandatory( element, "surplusForReproductionThreshold", _surplusForReproductionThreshold );
-	retrieveAttributeMandatory( element, "surplusWanted", _surplusWanted );
-	retrieveAttributeMandatory( element, "surplusSpoilage", _surplusSpoilage );
+//	retrieveAttributeMandatory( element, "surplusForReproductionThreshold", _surplusForReproductionThreshold );
+//	retrieveAttributeMandatory( element, "surplusWanted", _surplusWanted );
+//	retrieveAttributeMandatory( element, "surplusSpoilage", _surplusSpoilage );
 	
-	retrieveAttributeMandatory( element, "foodNeedsForReproduction", _hgFoodNeedsForReproduction );
+//	retrieveAttributeMandatory( element, "foodNeedsForReproduction", _hgFoodNeedsForReproduction );
 	
 	retrieveAttributeMandatory( element, "adulthoodAge", _adulthoodAge );	
 	
@@ -76,6 +76,7 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		sstr << "[CONFIG]: ERROR: No caloriesTable element found for Hunter Gatherers in Config" << std::endl;
 		throw Engine::Exception(sstr.str());
 	}
+	/*
 	TiXmlElement* initializerElem = element->FirstChildElement( "initialization" );
 	if ( initializerElem == NULL )	
 	{
@@ -83,7 +84,7 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		sstr << "[CONFIG]: ERROR: No <initialization> element found for Hunter Gatherers in Config" << std::endl;
 		throw Engine::Exception(sstr.str());
 	}
-	std::string initializerType = initializerElem->Attribute("type");
+	std::string initializerType = initializerElem->Attribute("type");	
 	if ( initializerType == "fixed" )
 	{
 		_hgInitializer = new FixedAgentInitializer( initializerElem );
@@ -94,6 +95,7 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		sstr << "[CONFIG]: ERROR: Unknown initializer '" << initializerType << "' type specified" << std::endl;
 		throw Engine::Exception(sstr.str());	
 	}
+	*/
 
 	GujaratState::setHGCaloricRequirements(calTable);
 
@@ -108,6 +110,7 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		throw Engine::Exception(sstr.str());
 	}
 
+	/*
 	initializerElem = element->FirstChildElement( "initialization" );
 	if ( initializerElem == NULL )	
 	{
@@ -126,6 +129,7 @@ void GujaratConfig::extractParticularAttribs(TiXmlElement * root)
 		sstr << "[CONFIG]: ERROR: Unknown initializer '" << initializerType << "' type specified" << std::endl;
 		throw Engine::Exception(sstr.str());	
 	}
+	*/
 
 	GujaratState::setAPCaloricRequirements(calTable);
 	

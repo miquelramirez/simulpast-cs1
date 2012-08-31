@@ -18,8 +18,8 @@ GujaratAgent::GujaratAgent( const std::string & id )
 	 _spentTime(0), _collectedResources(0), _age(0),
 	_socialRange( 50 ), _starved( 0 )
 {
-	_emigrationProbability = 0.0;
-	_reproductionProbability = 0.0;
+	//_emigrationProbability = 0.0;
+	//_reproductionProbability = 0.0;
 }
 
 GujaratAgent::~GujaratAgent()
@@ -213,7 +213,7 @@ void GujaratAgent::checkMarriage()
 				return;
 			}
 			
-			GujaratAgent * newAgent = agent->createNewAgent();
+			GujaratAgent * newAgent = createNewAgent();
 
 			newAgent->_populationAges[0] = _populationAges[i];
 			_populationAges[i] = -1;
@@ -230,7 +230,7 @@ void GujaratAgent::checkMarriage()
 			// location inside home range of husband family
 			_world->addAgent(newAgent);
 			newAgent->setPosition(getNearLocation(getSocialRange()));
-			//std::cout << "new agent created: " << newAgent << " with husband age: " << newAgent->_populationAges[0] << " and wife age: " << newAgent->_populationAges[1] << std::endl;
+			std::cout << "new agent created: " << newAgent << " with husband age: " << newAgent->_populationAges[0] << " and wife age: " << newAgent->_populationAges[1] << std::endl;
 		}
 	}
 }
@@ -295,13 +295,11 @@ int GujaratAgent::computeConsumedResources( int timeSteps ) const
 	{
 		if(_populationAges[index]!=-1)
 		{
-			CaloricRequirementsTable & foo = GujaratState::caloricRequirements(getType());
-			requiredResources += foo.getCaloriesFor(_populationAges[index]);
+			CaloricRequirementsTable & table = GujaratState::caloricRequirements(getType());
+			requiredResources += table.getCaloriesFor(_populationAges[index]);
 		}
 	}
-	
-	requiredResources += _foodNeedsForReproduction;
-	
+	//requiredResources += _foodNeedsForReproduction;
 	return requiredResources * timeSteps;	
 }
 
@@ -407,15 +405,18 @@ void	GujaratAgent::decimatePopulation()
 
 void	GujaratAgent::checkDeath( int minAge, int maxAge, int chance )
 {
-	for ( unsigned index = 0; index < _populationAges.size(); index++ )
+	for( unsigned index = 0; index < _populationAges.size(); index++ )
 	{
-		if ( _populationAges[index] < 0 ) continue;
-		if ( _populationAges[index] < minAge
-			|| _populationAges[index] >= maxAge )
+		if( _populationAges[index] < minAge || _populationAges[index] >= maxAge )
+		{
 			continue;
+		}
+
 		int die = Engine::GeneralState::statistics().getUniformDistValue(0,100);
-		if ( die < chance )
+		if( die < chance )
+		{
 			_populationAges[index] = -1;
+		}
 	}
 }
 
@@ -464,6 +465,12 @@ void	GujaratAgent::addNewChild()
 
 void GujaratAgent::createInitialPopulation()
 {
+	_populationAges.resize(4);
+	_populationAges[0] = 25;
+	_populationAges[1] = 22;
+	_populationAges[2] = 5;
+	_populationAges[3] = 7;
+	/*
 	_populationAges.resize(2);
 	_populationAges.at(0) = Engine::GeneralState::statistics().getUniformDistValue(15, 50);
 	_populationAges.at(1) = Engine::GeneralState::statistics().getUniformDistValue(15, 50);
@@ -485,6 +492,7 @@ void GujaratAgent::createInitialPopulation()
 			}
 		}
 	}
+	*/
 }
 	
 float GujaratAgent::getPercentageOfStarvingDays() const
