@@ -465,12 +465,14 @@ void	GujaratAgent::addNewChild()
 
 void GujaratAgent::createInitialPopulation()
 {
+	/*
 	_populationAges.resize(4);
 	_populationAges[0] = 25;
 	_populationAges[1] = 22;
 	_populationAges[2] = 5;
 	_populationAges[3] = 7;
-	/*
+	*/
+	
 	_populationAges.resize(2);
 	_populationAges.at(0) = Engine::GeneralState::statistics().getUniformDistValue(15, 50);
 	_populationAges.at(1) = Engine::GeneralState::statistics().getUniformDistValue(15, 50);
@@ -492,7 +494,6 @@ void GujaratAgent::createInitialPopulation()
 			}
 		}
 	}
-	*/
 }
 	
 float GujaratAgent::getPercentageOfStarvingDays() const
