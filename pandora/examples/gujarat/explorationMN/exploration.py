@@ -1,13 +1,13 @@
 #!/usr/bin/python
 import fileinput, sys, os, random
 
-mapSizes = ['1200']
+mapSizes = ['800']
 
-numExecutions = 2
-numHGs = ['100']
-controllers = ['DecisionTree']
+numExecutions = 1
+numHGs = ['50']
+controllers = ['Random', 'DecisionTree', 'MDP']
 
-xmlTemplate = 'templates/config_template.xml'
+xmlTemplate = 'templates/config_template_mn_gpfs.xml'
 runTemplate = 'templates/run_template.cmd'
 
 mapSizeKey = 'MAPSIZE'

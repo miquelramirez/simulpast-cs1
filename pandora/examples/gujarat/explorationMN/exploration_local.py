@@ -2,14 +2,13 @@
 import fileinput, sys, os, random
 
 #mapSizes = ['400','800','1600']
-mapSizes = ['1200']
+mapSizes = ['800']
 
-numExecutions = 10
-numHGs = ['1']
-controllers = ['MDP']
+numExecutions = 1
+numHGs = ['50']
+controllers = ['DecisionTree']
 
 xmlTemplate = 'templates/config_template_local.xml'
-runTemplate = 'templates/run_template.cmd'
 
 mapSizeKey = 'MAPSIZE'
 numHGKey = 'NUMHG'
@@ -53,10 +52,6 @@ for numExecution in range(0,numExecutions):
 				replaceKey(configName, climateKey, randomValue)
 				replaceKey(configName, numExecutionKey, str(numExecution))
 
-				runName = dirName+'/run.cmd'
-				os.system('cp '+runTemplate+' '+runName)
-				replaceKey(runName, indexKey, str(index))
-				replaceKey(runName, initialDirKey, dirName)
 				index += 1
 
 print 'workbench done, submitting tasks'

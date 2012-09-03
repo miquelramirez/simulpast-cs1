@@ -2,7 +2,7 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="data_controllerCTYPE_sizeMAPSIZE_hgNUMHG_exNUMEXEC/gujarat.h5" logsDir="logs_controllerCTYPE_sizeMAPSIZE_hgNUMHG_exNUMEXEC"/>
-	<numSteps value="360"/>
+	<numSteps value="3600"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 Cal = 4.184 KJ, Conversion Rate = 1/4.184 -->
@@ -21,9 +21,6 @@
 	efficiency given as a percentage [0,1] -->
 	<cellBiomass type="dune" mean="700" stddev="100" efficiency="0.13" />
 	<cellBiomass type="interdune" mean="4000" stddev="500" efficiency="0.23" />
-	<!-- Variance for biomass per cell distribution -->
-	<biomassDistVariance type="dune" value="500" />
-	<biomassDistVariance type="interdune" value="100" />
 	<!-- GIS rasters -->
 	<soil fileName="../resources/MAPSIZE/soils_MAPSIZE.tiff" size="MAPSIZE"/>
 	<dem fileName="../resources/MAPSIZE/dem_MAPSIZE.tiff" size="MAPSIZE"/>
@@ -60,9 +57,6 @@
 					width="20"
 					explorationBonus ="10.0"
 		/>
-		<!-- TODO: Proposal for representing individual initialization
-		<initialization type="randomized" />
-		-->
 		<caloriesTable>
 			<entry ageMin="0" ageMax="1000" value="2000"/>
 		</caloriesTable>
