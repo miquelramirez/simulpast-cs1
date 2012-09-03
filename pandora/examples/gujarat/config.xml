@@ -8,7 +8,7 @@
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
 	<energyToCaloriesRate value="0.239006" />
 	<!-- Global agent parameters !-->
-	<socialRange value="25" />
+	<socialRange value="100" />
 	<!-- Simulation time scale -->
 	<daysPerSeason value="120" />
 	<daysPerYear value="360" />
@@ -21,15 +21,12 @@
 	efficiency given as a percentage [0,1] -->
 	<cellBiomass type="dune" mean="700" stddev="100" efficiency="0.13" />
 	<cellBiomass type="interdune" mean="4000" stddev="500" efficiency="0.23" />
-	<!-- Variance for biomass per cell distribution -->
-	<biomassDistVariance type="dune" value="500" />
-	<biomassDistVariance type="interdune" value="100" />
 	<!-- GIS rasters -->
 	<soil fileName="./resources/1200/soils_1200.tiff" size="1200"/>
 	<dem fileName="./resources/1200/dem_1200.tiff" size="1200"/>
 	<duneMap fileName="./resources/1200/dunes_1200_low.tiff" size="1200"/>
 	<!-- Climatic model parameters -->
-	<climateSeed value="21321321"/>
+	<climateSeed value="123123512"/>
 	<rainHistoricalDistribution shape="2.628" scale="5278.807" mean="4643.847826087"/>
 	<!-- Agents definition -->
 	<!-- overlap will be defined as homeRange + 1. It must be < 1/4 of world size -->
@@ -37,18 +34,15 @@
 	<!-- * Available Forage Time = # hours a day the forage action takes -->
 	<!-- * forageTimeCost = how much time (in hours) does it cost the agent to exploit a tile resources -->
 	<hunterGatherers 
-		num="100" homeRange="100"
+		num="50" homeRange="100"
 		surplusForReproductionThreshold="2" 
-		surplusWanted="1"
-		surplusSpoilage="1.0"		
-		foodNeedsForReproduction="500.0"
 		adulthoodAge="15"
 		numSectors="8"
 		walkingSpeedHour="3000"
 		forageTimeCost="0.5"
 		availableForageTime="4.5"
 		demographicsModel="original"
-		controllerType="DecisionTree" >
+		controllerType="MDP" >
 		<!-- * width = number of trials before selecting an action, the higher the
 		 	the number, the more informed is the action selection and more
 			computation time is required -->
@@ -60,28 +54,18 @@
 					nrForageActions="8"
 					nrMoveHomeActions="5"
 					doNothingIsAllowed="true"
-					horizon="4"
-					width="30"
+					horizon="7"
+					width="10"
 					explorationBonus ="10.0"
 		/>
 		<!-- TODO: Proposal for representing individual initialization
 		<initialization type="randomized" />
 		-->
-		<initialization type="fixed" >	
-			<individual age="15"/>
-			<individual age="15"/>
-		</initialization>
 		<caloriesTable>
 			<entry ageMin="0" ageMax="1000" value="2000"/>
 		</caloriesTable>
 	</hunterGatherers>
-	<agroPastoralists num="0" 
-		maxCropHomeDistance="10" >
-		<initialization type="fixed" >	
-			<individual age="15"/>
-			<individual age="15"/>
-		</initialization>
-
+	<agroPastoralists num="0" maxCropHomeDistance="10" >
 		<caloriesTable>
 			<entry ageMin="0" ageMax="1000" value="2000"/>
 		</caloriesTable>
