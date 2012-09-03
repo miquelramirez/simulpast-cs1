@@ -53,7 +53,7 @@ void TestWorld::stepAgents()
 		assert(countNeighbours(agent, euclideanDistance, "TestAgent")==1);
 		assert(countNeighbours(agent, 9, "TestAgent")==1);
 
-		Engine::World::AgentsList neighbors = getNeighbours(agent, euclideanDistance , "TestAgent");
+		Engine::World::AgentsVector neighbors = getNeighbours(agent, euclideanDistance , "TestAgent");
 		Engine::Agent * neighbor = *neighbors.begin();
 		assert(neighbors.size()==1);
 		assert(neighbor->getId().compare("TestAgent_1")==0);

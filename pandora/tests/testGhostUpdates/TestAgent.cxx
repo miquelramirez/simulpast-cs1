@@ -65,8 +65,8 @@ void TestAgent::updateTurnInformation()
 		std::stringstream logName;
 		logName << "agents_" << _world->getId() << "_" << getId();
 		log_DEBUG(logName.str(), "Agent: " << this << " on odd turn in step: " << _world->getCurrentStep());
-		Engine::World::AgentsList neighbors = _world->getNeighbours(this, 1);
-		for(Engine::World::AgentsList::iterator it=neighbors.begin(); it!=neighbors.end(); it++)
+		Engine::World::AgentsVector neighbors = _world->getNeighbours(this, 1);
+		for(Engine::World::AgentsVector ::iterator it=neighbors.begin(); it!=neighbors.end(); it++)
 		{
 			TestAgent * agent = (TestAgent*)(*it);
 			log_DEBUG(logName.str(), "agent: " << this << " is updating: " << agent);

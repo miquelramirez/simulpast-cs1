@@ -41,12 +41,19 @@ public:
 	
 	void updateState();
 	const int & getTestValueB();
-	
-	// Mpi related
-	TestAgentB( void * package );
+
+	////////////////////////////////////////////////
+	// This code has been automatically generated //
+	/////// Please do not modify it ////////////////
+	////////////////////////////////////////////////
+	TestAgentB( void * );
 	void * fillPackage();
 	void sendVectorAttributes(int);
 	void receiveVectorAttributes(int);
+	////////////////////////////////////////////////
+	//////// End of generated code /////////////////
+	////////////////////////////////////////////////
+
 };
 
 } // namespace Test

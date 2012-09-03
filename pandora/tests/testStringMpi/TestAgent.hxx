@@ -44,12 +44,19 @@ public:
 
 	void setMessage( const std::string & message );
 	const std::string & getMessage();
-	
-	// MPI Script Generated code
+
+	////////////////////////////////////////////////
+	// This code has been automatically generated //
+	/////// Please do not modify it ////////////////
+	////////////////////////////////////////////////
 	TestAgent( void * );
 	void * fillPackage();
- 	void sendVectorAttributes(int);
+	void sendVectorAttributes(int);
 	void receiveVectorAttributes(int);
+	////////////////////////////////////////////////
+	//////// End of generated code /////////////////
+	////////////////////////////////////////////////
+
 };
 
 } // namespace Test

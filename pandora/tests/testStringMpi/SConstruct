@@ -71,6 +71,7 @@ for agent in agents:
 	if agent != '':
 		agentsSrc.append(agent+".cxx")
 		mpiAgentsSrc.append("mpiCode/"+agent+"_mpi.cxx")
+		generateMpi.checkHeader(agent,agent+".hxx")
 env['namespaces'] = namespaceAgents
 env.GenerateMPICode( target=mpiAgentsSrc, source=agentsSrc)
 env.Program(nameProgram, srcFiles+mpiAgentsSrc, CPPPATH=includeDirs, LIBS=libs, LIBPATH=libDirs, LINKFLAGS=linkFlags)

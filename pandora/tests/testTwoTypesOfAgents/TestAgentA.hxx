@@ -43,12 +43,19 @@ public:
 	void updateState();
 	const std::string & getTestId();
 	const int & getTestValueA();
-	
-	// Mpi related
-	TestAgentA( void * package );
-	void * fillPackage(); 	
+
+	////////////////////////////////////////////////
+	// This code has been automatically generated //
+	/////// Please do not modify it ////////////////
+	////////////////////////////////////////////////
+	TestAgentA( void * );
+	void * fillPackage();
 	void sendVectorAttributes(int);
 	void receiveVectorAttributes(int);
+	////////////////////////////////////////////////
+	//////// End of generated code /////////////////
+	////////////////////////////////////////////////
+
 };
 
 } // namespace Test
