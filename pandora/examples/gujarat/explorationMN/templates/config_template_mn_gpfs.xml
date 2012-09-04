@@ -34,7 +34,7 @@
 	<!-- * Available Forage Time = # hours a day the forage action takes -->
 	<!-- * forageTimeCost = how much time (in hours) does it cost the agent to exploit a tile resources -->
 	<hunterGatherers 
-		num="NUMHG" homeRange="30"
+		num="NUMHG" homeRange="100"
 		adulthoodAge="15"
 		numSectors="8"
 		walkingSpeedHour="3000"

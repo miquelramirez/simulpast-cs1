@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
 	try
 	{
-		Engine::SimulationRecord simRecord( 1, false);
+		Engine::SimulationRecord simRecord( 10, false);
 		simRecord.loadHDF5(argv[1], false, true);
 
 		Analysis::AgentResults agentResults(simRecord, argv[2], "HunterGatherer");
