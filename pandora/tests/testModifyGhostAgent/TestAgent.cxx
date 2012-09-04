@@ -57,7 +57,6 @@ void TestAgent::updateState()
 		}
 		TestAgent * agent = (TestAgent*)neighbors.at(0);
 		agent->setFlag(true);
-		_world->agentModified(agent);
 		return;
 	}
 }

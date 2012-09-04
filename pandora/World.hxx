@@ -32,7 +32,9 @@ enum MpiMessageType
 	eRasterData = 5,
 	eRasterMaxData = 6,
 	eVectorAttribute = 7, 	
-	eSizeVector = 8		
+	eSizeVector = 8,
+	eNumModifiedAgents = 9,
+	eModifiedAgent = 10
 };
 
 #include <map>
@@ -88,8 +90,6 @@ protected:
 	AgentsList _overlapAgents;
 	//! this list has the agents that need to be removed at the end of step.
 	AgentsList _removedAgents;
-	// this list provides a way to collect all the ghost agents that need to be sent to their owners in order to keep the updates
-	AgentsList _modifiedGhostAgents;
 
 	//! this method returns true if the agent is already in executedAgents list
 	bool hasBeenExecuted( Agent * agent );
@@ -144,7 +144,6 @@ private:
 
 	// add the agent to overlap agents list, and remove previous instances if they exist
 	//void updateOverlapAgent( Agent * agent );
-
 	void receiveGhostAgents( const int & sectionIndex );
 	// method to receive agents
 	void receiveAgents( const int & sectionIndex );
@@ -225,9 +224,6 @@ public:
 	AgentsList::iterator getOwnedAgent( const std::string & id );
 	//! return an agent, if it is in the list of ghosts 
 	AgentsList::iterator getGhostAgent( const std::string & id );
-
-	// This method is used to tag ghost agents that have been modified, in order to update the real agents
-	 void agentModified( Agent * agent );
 
 	// this method returns a list with the list of agents in manhattan distance radius of position. if include center is false, position is not checked
 //	AgentsList getAgentsNear( const Point2D<int> & position, const int & radius, const bool & includeCenter );

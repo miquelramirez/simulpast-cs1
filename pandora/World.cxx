@@ -1063,11 +1063,6 @@ World::AgentsVector World::getAgent( const Point2D<int> & position, const std::s
 	return result;
 }
 
-void World::agentModified( Agent * agent )
-{
-	_modifiedGhostAgents.push_back(agent);
-}
-
 /*
 World::AgentsList World::getAgentsNear( const Position<int> & position, const int & radius, const bool & includeCenter )
 {	
