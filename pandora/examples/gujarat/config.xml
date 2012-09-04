@@ -2,7 +2,7 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/gujarat.h5" logsDir="./logs"/>
-	<numSteps value="360"/>
+	<numSteps value="50"/>
 	<!-- g to KJ -->
 	<massToEnergyRate value="20" />
 	<!-- 1 KCal = 4.184 KJ, Conversion Rate = 1/4.184 -->
@@ -22,11 +22,11 @@
 	<cellBiomass type="dune" mean="700" stddev="100" efficiency="0.13" />
 	<cellBiomass type="interdune" mean="4000" stddev="500" efficiency="0.23" />
 	<!-- GIS rasters -->
-	<soil fileName="./resources/1200/soils_1200.tiff" size="1200"/>
-	<dem fileName="./resources/1200/dem_1200.tiff" size="1200"/>
-	<duneMap fileName="./resources/1200/dunes_1200_low.tiff" size="1200"/>
+	<soil fileName="./resources/1600/soils_1600.tiff" size="1600"/>
+	<dem fileName="./resources/1600/dem_1600.tiff" size="1600"/>
+	<duneMap fileName="./resources/1600/dunes_1600_low.tiff" size="1600"/>
 	<!-- Climatic model parameters -->
-	<climateSeed value="123123512"/>
+	<climateSeed value="3123124"/>
 	<rainHistoricalDistribution shape="2.628" scale="5278.807" mean="4643.847826087"/>
 	<!-- Agents definition -->
 	<!-- overlap will be defined as homeRange + 1. It must be < 1/4 of world size -->
@@ -34,7 +34,7 @@
 	<!-- * Available Forage Time = # hours a day the forage action takes -->
 	<!-- * forageTimeCost = how much time (in hours) does it cost the agent to exploit a tile resources -->
 	<hunterGatherers 
-		num="50" homeRange="299"
+		num="10" homeRange="299"
 		adulthoodAge="15"
 		numSectors="8"
 		walkingSpeedHour="3000"
@@ -53,8 +53,8 @@
 					nrForageActions="8"
 					nrMoveHomeActions="5"
 					doNothingIsAllowed="true"
-					horizon="2"
-					width="10"
+					horizon="3"
+					width="30"
 					explorationBonus ="10.0"
 		/>
 		<!-- TODO: Proposal for representing individual initialization
